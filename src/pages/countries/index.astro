@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { gccCountries } from "../../data/gcc-countries";
+import { gccPorts } from "../../data/gcc-ports";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "GCC Countries",
+  itemListElement: gccCountries.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    url: `https://worldfreighthub.net/countries/${c.slug}/`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Countries — China to GCC Markets"
+  description="Destination country intelligence for China to GCC freight: Saudi Arabia, UAE, Qatar, Kuwait, Oman, Bahrain."
+  canonical="/countries/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">Destination Countries</h1>
+    <p class="muted">Phase 1 markets in the Gulf Cooperation Council (GCC).</p>
+    <div class="card-grid">
+      {gccCountries.map((c) => (
+        <div class="card">
+          <a class="card-link" href={`/countries/${c.slug}/`}>
+            <h3>{c.name}</h3>
+            <p class="muted small">{c.capital} · {c.currency} · {c.iso3}</p>
+            <p class="small">{c.summary}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

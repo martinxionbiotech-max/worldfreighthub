@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ConfidenceBadge from "../../components/ConfidenceBadge.astro";
+import SourceList from "../../components/SourceList.astro";
+import { routes } from "../../data/routes";
+import { chinaPorts } from "../../data/china-ports";
+import { gccPorts } from "../../data/gcc-ports";
+import { gccCountries } from "../../data/gcc-countries";
+
+export function getStaticPaths() {
+  return routes.map((r) => ({ params: { slug: r.slug }, props: { route: r } }));
+}
+
+const { route } = Astro.props;
+const origin = [...chinaPorts, ...gccPorts].find((p) => p.slug === route.origin);
+const destination = [...chinaPorts, ...gccPorts].find((p) => p.slug === route.destination);
+const country = gccCountries.find((c) => c.slug === route.country);
+const routeName = `${origin?.name ?? route.origin} → ${destination?.name ?? route.destination}`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: `Shipping route: ${routeName}`,
+  description: `China to ${country?.name ?? route.country} shipping route between ${origin?.name} and ${destination?.name}.`,
+  datePublished: route.lastUpdated,
+  dateModified: route.lastUpdated,
+  author: { "@type": "Organization", name: "World Freight Hub" },
+};
+---
+
+<BaseLayout
+  title={`${routeName} Shipping Route`}
+  description={`China to ${country?.name ?? route.country} shipping route: ${origin?.name} to ${destination?.name}. Transit times, indicative rates, and ports.`}
+  canonical={`/routes/${route.slug}/`}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <Breadcrumbs
+      items={[
+        { label: "Routes", href: "/routes/" },
+        { label: routeName },
+      ]}
+    />
+    <h1>{routeName}</h1>
+    <p class="muted">
+      Destination country: <strong>{country?.name ?? route.country}</strong> ·{" "}
+      <ConfidenceBadge confidence={route.confidence} />
+    </p>
+
+    <p>
+      {route.notes}
+    </p>
+
+    <div class="callout">
+      <strong>Data status:</strong> Transit times and freight rates for this route are
+      not yet verified. Figures will be published only after cross-source verification
+      (Master Prompt §11/§13). Freight rates vary by carrier, season, cargo, container
+      type, and surcharges.
+    </div>
+
+    {route.sourceSlugs.length > 0 && <SourceList slugs={route.sourceSlugs} />}
+  </div>
+</BaseLayout>

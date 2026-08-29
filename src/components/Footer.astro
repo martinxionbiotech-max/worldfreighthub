@@ -1,0 +1,41 @@
+---
+import { site, subsites } from "../config";
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <h4>World Freight Hub</h4>
+      <p class="small" style="color: var(--navy-100);">
+        Global freight intelligence and shipping information, built on verified sources and transparent methodology.
+      </p>
+      <p class="small" style="color: var(--navy-100);">
+        Freight rates and transit times are indicative. Always confirm with a licensed forwarder or carrier.
+      </p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="/routes/">Shipping Routes</a>
+      <a href="/countries/">Countries</a>
+      <a href="/ports/">Ports</a>
+      <a href="/methods/">Shipping Methods</a>
+      <a href="/tools/">Freight Tools</a>
+    </div>
+    <div>
+      <h4>Region Hub</h4>
+      <a href={subsites.middleEast.url}>{subsites.middleEast.name}</a>
+      <a href="/directory/">Forwarder Directory</a>
+      <a href="/get-quote/">Get a Quote</a>
+    </div>
+    <div>
+      <h4>Trust</h4>
+      <a href="/about/">About</a>
+      <a href="/methodology/">Data Methodology</a>
+      <a href="/editorial-policy/">Editorial Policy</a>
+      <a href="/contact/">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © {new Date().getFullYear()} {site.name}. All rights reserved. · <a href="/sitemap/" style="color: var(--navy-100);">Sitemap</a>
+  </div>
+</footer>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config";
+
+const pages = [
+  { path: "/about/", name: "About" },
+  { path: "/methodology/", name: "Data Methodology" },
+  { path: "/editorial-policy/", name: "Editorial Policy" },
+  { path: "/contact/", name: "Contact" },
+];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: `About ${site.name}`,
+  url: `${site.url}/about/`,
+};
+---
+
+<BaseLayout
+  title={`About ${site.name}`}
+  description={`${site.name} is a freight intelligence and shipping information network. Learn who operates the site, how data is collected, and how content is reviewed.`}
+  canonical="/about/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">About {site.name}</h1>
+    <p>
+      {site.name} is a global freight intelligence and shipping information network. We publish
+      shipping routes, port data, customs guidance, and cost references — grounded in verifiable
+      sources and transparent methodology.
+    </p>
+    <h2>What we cover (Phase 1)</h2>
+    <p>
+      Our first market is <strong>China → GCC</strong> freight: Saudi Arabia, UAE, Qatar, Kuwait,
+      Oman, and Bahrain.
+    </p>
+    <h2>How we work</h2>
+    <ul>
+      <li><a href="/methodology/">Data Methodology</a> — how freight rates and transit times are estimated.</li>
+      <li><a href="/editorial-policy/">Editorial Policy</a> — how content is researched, verified, and reviewed.</li>
+      <li><a href="/contact/">Contact</a> — corrections and inquiries.</li>
+    </ul>
+  </div>
+</BaseLayout>

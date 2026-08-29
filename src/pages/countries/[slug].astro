@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { gccCountries } from "../../data/gcc-countries";
+import { gccPorts } from "../../data/gcc-ports";
+
+export function getStaticPaths() {
+  return gccCountries.map((c) => ({ params: { slug: c.slug }, props: { country: c } }));
+}
+
+const { country } = Astro.props;
+const countryPorts = gccPorts.filter((p) => p.country === country.slug);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Country",
+  name: country.name,
+  description: country.summary,
+};
+---
+
+<BaseLayout
+  title={`Freight to ${country.name}`}
+  description={`China to ${country.name} freight: ports, shipping routes, customs, and cost guidance.`}
+  canonical={`/countries/${country.slug}/`}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <Breadcrumbs
+      items={[
+        { label: "Countries", href: "/countries/" },
+        { label: country.name },
+      ]}
+    />
+    <h1>Freight to {country.name}</h1>
+    <p><strong>Capital:</strong> {country.capital} · <strong>Currency:</strong> {country.currency} · <strong>ISO:</strong> {country.iso3}</p>
+    <p>{country.summary}</p>
+
+    <h2>Ports</h2>
+    <div class="card-grid">
+      {countryPorts.map((p) => (
+        <div class="card">
+          <a class="card-link" href={`/ports/${p.slug}/`}>
+            <h3>{p.name}</h3>
+            <p class="muted small">{p.code} · {p.city}</p>
+            <p class="small">{p.summary}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

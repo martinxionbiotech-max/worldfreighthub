@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const tools = [
+  { slug: "cbm-calculator", name: "CBM Calculator", desc: "Calculate cubic meters for LCL freight.", status: "planned" },
+  { slug: "container-loading", name: "Container Loading Calculator", desc: "Estimate how many cartons fit in a 20GP/40HQ.", status: "planned" },
+  { slug: "volumetric-weight", name: "Volumetric Weight Calculator", desc: "Compute chargeable weight for air freight.", status: "planned" },
+];
+---
+
+<BaseLayout
+  title="Freight Tools"
+  description="Free freight calculators: CBM, container loading, and volumetric weight. Fast, mobile-friendly, no login."
+  canonical="/tools/"
+>
+  <div class="container">
+    <h1 class="section">Freight Tools</h1>
+    <p class="muted">Free, fast, mobile-friendly calculators. No login required.</p>
+    <div class="card-grid">
+      {tools.map((t) => (
+        <div class="card">
+          <h3>{t.name} <span class="badge navy">coming soon</span></h3>
+          <p class="muted small">{t.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

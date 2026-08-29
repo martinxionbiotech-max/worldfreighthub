@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { routes } from "../../data/routes";
+import { chinaPorts } from "../../data/china-ports";
+import { gccPorts } from "../../data/gcc-ports";
+import { gccCountries } from "../../data/gcc-countries";
+
+const portName = (slug: string) =>
+  [...chinaPorts, ...gccPorts].find((p) => p.slug === slug)?.name ?? slug;
+const countryName = (slug: string) =>
+  gccCountries.find((c) => c.slug === slug)?.name ?? slug;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "China to GCC Shipping Routes",
+  itemListElement: routes.map((r, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: `${portName(r.origin)} → ${portName(r.destination)}`,
+    url: `https://worldfreighthub.net/routes/${r.slug}/`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Shipping Routes — China to GCC"
+  description="China to GCC shipping routes: Shanghai, Shenzhen, and other origin ports to Jeddah, Dammam, Jebel Ali, and more. Transit times and indicative rates."
+  canonical="/routes/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">China → GCC Shipping Routes</h1>
+    <p class="muted">
+      Route intelligence for Phase 1 markets. Transit times and rates are <strong>indicative</strong> and pending secondary verification.
+    </p>
+
+    <div class="card-grid">
+      {routes.map((r) => (
+        <div class="card">
+          <a class="card-link" href={`/routes/${r.slug}/`}>
+            <h3>{portName(r.origin)} → {portName(r.destination)}</h3>
+            <p class="muted small">
+              {countryName(r.country)} · status: data verification in progress
+            </p>
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <p class="muted small" style="margin-top: 2rem;">
+      Note: This is the architecture skeleton. Route rate and transit-time data is intentionally zeroed until verified (Master Prompt §13).
+    </p>
+  </div>
+</BaseLayout>

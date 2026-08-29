@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ConfidenceBadge from "../../components/ConfidenceBadge.astro";
+import SourceList from "../../components/SourceList.astro";
+import { chinaPorts } from "../../data/china-ports";
+import { gccPorts } from "../../data/gcc-ports";
+
+export function getStaticPaths() {
+  const allPorts = [...chinaPorts, ...gccPorts];
+  return allPorts.map((p) => ({ params: { slug: p.slug }, props: { port: p } }));
+}
+
+const { port } = Astro.props;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Place",
+  name: port.name,
+  description: port.summary,
+  additionalProperty: {
+    "@type": "PropertyValue",
+    name: "UN/LOCODE",
+    value: port.code,
+  },
+};
+---
+
+<BaseLayout
+  title={port.name}
+  description={port.summary}
+  canonical={`/ports/${port.slug}/`}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <Breadcrumbs
+      items={[
+        { label: "Ports", href: "/ports/" },
+        { label: port.name },
+      ]}
+    />
+    <h1>{port.name}</h1>
+    <p class="muted">
+      <span class="mono">{port.code}</span> · {port.city} ·{" "}
+      {port.role === "origin" ? "Origin" : "Destination"} ·{" "}
+      <ConfidenceBadge confidence={port.confidence} />
+    </p>
+    <p>{port.summary}</p>
+    <SourceList slugs={port.sourceSlugs} />
+  </div>
+</BaseLayout>

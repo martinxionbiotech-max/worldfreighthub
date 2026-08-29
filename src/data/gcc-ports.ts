@@ -1,0 +1,150 @@
+// GCC destination ports — Phase 1 priority markets.
+// UN/LOCODE + names are public, verifiable facts.
+
+import type { Port } from "./types";
+
+export const gccPorts: Port[] = [
+  {
+    slug: "jeddah",
+    name: "Jeddah Islamic Port",
+    country: "saudi-arabia",
+    code: "SAJED",
+    city: "Jeddah",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Saudi Arabia's principal Red Sea port and a key gateway for China→Saudi sea freight. Ranked among the region's largest container ports.",
+    confidence: "HIGH",
+    sourceSlugs: ["saudi-ports-authority"],
+  },
+  {
+    slug: "dammam",
+    name: "King Abdulaziz Port Dammam",
+    country: "saudi-arabia",
+    code: "SADMM",
+    city: "Dammam",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Saudi Arabia's main Arabian Gulf port, serving the Eastern Province and Riyadh via rail/road.",
+    confidence: "HIGH",
+    sourceSlugs: ["saudi-ports-authority"],
+  },
+  {
+    slug: "riyadh-dry",
+    name: "Riyadh Dry Port",
+    country: "saudi-arabia",
+    code: "SARUH",
+    city: "Riyadh",
+    type: "dry",
+    role: "destination",
+    summary:
+      "Inland dry port connected by rail to King Abdulaziz Port Dammam, serving central Saudi Arabia.",
+    confidence: "HIGH",
+    sourceSlugs: ["saudi-ports-authority"],
+  },
+  {
+    slug: "jebel-ali",
+    name: "Port of Jebel Ali",
+    country: "united-arab-emirates",
+    code: "AEJEA",
+    city: "Dubai",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Largest container port in the Middle East and a leading global transshipment hub (DP World).",
+    confidence: "HIGH",
+    sourceSlugs: ["dp-world"],
+  },
+  {
+    slug: "khalifa",
+    name: "Khalifa Port",
+    country: "united-arab-emirates",
+    code: "AEKHL",
+    city: "Abu Dhabi",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Abu Dhabi's deep-water gateway, adjacent to KIZAD industrial zone.",
+    confidence: "HIGH",
+    sourceSlugs: ["ad-ports"],
+  },
+  {
+    slug: "hamad",
+    name: "Hamad Port",
+    country: "qatar",
+    code: "QAHMD",
+    city: "Doha",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Qatar's primary commercial port (opened 2017), handling the vast majority of the country's sea freight.",
+    confidence: "HIGH",
+    sourceSlugs: ["mwani-qatar"],
+  },
+  {
+    slug: "shuwaikh",
+    name: "Shuwaikh Port",
+    country: "kuwait",
+    code: "KWSWK",
+    city: "Kuwait City",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Kuwait's principal commercial port for general cargo and containers.",
+    confidence: "MEDIUM",
+    sourceSlugs: ["kuwait-ports"],
+  },
+  {
+    slug: "shuaiba",
+    name: "Shuaiba Port",
+    country: "kuwait",
+    code: "KWSAA",
+    city: "Shuaiba",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Kuwait's industrial port, handling containers and bulk cargo.",
+    confidence: "MEDIUM",
+    sourceSlugs: ["kuwait-ports"],
+  },
+  {
+    slug: "salalah",
+    name: "Port of Salalah",
+    country: "oman",
+    code: "OMSLL",
+    city: "Salalah",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Oman's major deep-water container and transshipment port on the Arabian Sea.",
+    confidence: "HIGH",
+    sourceSlugs: ["salalah-port"],
+  },
+  {
+    slug: "sohar",
+    name: "Sohar Port",
+    country: "oman",
+    code: "OMSOH",
+    city: "Sohar",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Oman's industrial port outside the Strait of Hormuz, serving container and bulk traffic.",
+    confidence: "HIGH",
+    sourceSlugs: ["sohar-port"],
+  },
+  {
+    slug: "khalifa-bin-salman",
+    name: "Khalifa Bin Salman Port",
+    country: "bahrain",
+    code: "BHKBS",
+    city: "Hidd",
+    type: "sea",
+    role: "destination",
+    summary:
+      "Bahrain's principal commercial port (APM Terminals), opened 2009.",
+    confidence: "HIGH",
+    sourceSlugs: ["bahrain-ports"],
+  },
+];

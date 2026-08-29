@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { chinaPorts } from "../../data/china-ports";
+import { gccPorts } from "../../data/gcc-ports";
+
+const allPorts = [...chinaPorts, ...gccPorts];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Ports",
+  itemListElement: allPorts.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: p.name,
+    url: `https://worldfreighthub.net/ports/${p.slug}/`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Ports — China Origin & GCC Destination"
+  description="Port intelligence for China to GCC freight: Shanghai, Ningbo, Shenzhen origin ports and Jeddah, Dammam, Jebel Ali destination ports."
+  canonical="/ports/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">Ports</h1>
+
+    <h2>China Origin Ports</h2>
+    <div class="card-grid">
+      {chinaPorts.map((p) => (
+        <div class="card">
+          <a class="card-link" href={`/ports/${p.slug}/`}>
+            <h3>{p.name}</h3>
+            <p class="muted small">{p.code} · {p.city}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+
+    <h2 style="margin-top: 2.5rem;">GCC Destination Ports</h2>
+    <div class="card-grid">
+      {gccPorts.map((p) => (
+        <div class="card">
+          <a class="card-link" href={`/ports/${p.slug}/`}>
+            <h3>{p.name}</h3>
+            <p class="muted small">{p.code} · {p.city}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+import { sources } from "../data/sources";
+
+interface Props {
+  slugs: string[];
+}
+
+const { slugs } = Astro.props;
+const matched = slugs
+  .map((slug) => sources.find((s) => s.slug === slug))
+  .filter((s): s is NonNullable<typeof s> => Boolean(s));
+---
+
+{matched.length > 0 && (
+  <section>
+    <h2>Sources</h2>
+    <ul class="source-list">
+      {matched.map((s) => (
+        <li>
+          <a href={s.url} rel="noopener nofollow" target="_blank">{s.title}</a>{" "}
+          <span class="muted">— {s.publisher}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

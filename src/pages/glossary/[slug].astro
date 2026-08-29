@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { glossary } from "../../data/glossary";
+
+export function getStaticPaths() {
+  return glossary.map((g) => ({ params: { slug: g.slug }, props: { term: g } }));
+}
+
+const { term } = Astro.props;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  name: term.term,
+  description: term.definition,
+  ...(term.abbreviation ? { alternateName: term.abbreviation } : {}),
+};
+---
+
+<BaseLayout
+  title={term.term}
+  description={`${term.term}: ${term.definition}`}
+  canonical={`/glossary/${term.slug}/`}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <Breadcrumbs
+      items={[
+        { label: "Glossary", href: "/glossary/" },
+        { label: term.term },
+      ]}
+    />
+    <h1>{term.term}{term.abbreviation ? ` (${term.abbreviation})` : ""}</h1>
+    <p>{term.definition}</p>
+    {term.relatedTerms && term.relatedTerms.length > 0 && (
+      <p class="muted small">
+        Related: {term.relatedTerms.map((r) => <a href={`/glossary/${r}/`} style="margin-right:0.5rem;">{r}</a>)}
+      </p>
+    )}
+  </div>
+</BaseLayout>

@@ -1,17 +1,92 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site, subsites } from "../config";
+import { gccCountries } from "../data/gcc-countries";
+import { chinaPorts } from "../data/china-ports";
 
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.legalName,
+  url: site.url,
+  description: site.description,
+  email: site.email,
+};
+
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: site.url,
+  description: site.description,
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title={site.name}
+  description={site.description}
+  canonical="/"
+  jsonLd={[orgJsonLd, webSiteJsonLd]}
+>
+  <section class="hero">
+    <div class="container">
+      <h1>Global Freight Intelligence, Built on Verified Data</h1>
+      <p class="lead">
+        {site.tagline}. Shipping routes, port data, customs guidance, and transparent cost methodology for China→GCC and beyond.
+      </p>
+      <div class="badge-row">
+        <span class="badge">Data-driven</span>
+        <span class="badge">Source-backed</span>
+        <span class="badge">Transparent methodology</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Phase 1 Focus: China → GCC</h2>
+      <p class="muted">
+        Our first market is China to the Gulf Cooperation Council (GCC). Explore destination markets and origin ports below.
+      </p>
+      <div class="card-grid" style="margin-top: 1.25rem;">
+        {gccCountries.map((c) => (
+          <div class="card">
+            <a class="card-link" href={`/countries/${c.slug}/`}>
+              <h3>{c.name}</h3>
+              <p class="muted small">{c.summary}</p>
+              <p class="small"><strong>Currency:</strong> {c.currency} · <strong>Ports:</strong> {c.ports.length}</p>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2>China Origin Ports</h2>
+      <div class="card-grid">
+        {chinaPorts.map((p) => (
+          <div class="card">
+            <a class="card-link" href={`/ports/${p.slug}/`}>
+              <h3>{p.name}</h3>
+              <p class="muted small">{p.code} · {p.city}</p>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Regional Hub</h2>
+      <div class="card">
+        <a class="card-link" href={subsites.middleEast.url}>
+          <h3>{subsites.middleEast.name}</h3>
+          <p class="muted">{subsites.middleEast.description}</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

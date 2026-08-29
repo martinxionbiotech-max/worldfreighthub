@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config";
+---
+
+<BaseLayout
+  title="Contact"
+  description={`Contact ${site.name} for corrections, inquiries, and partnerships.`}
+  canonical="/contact/"
+>
+  <div class="container">
+    <h1 class="section">Contact</h1>
+    <p>Email: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+    <p>For corrections, partnerships, or listing inquiries, use the email above.</p>
+  </div>
+</BaseLayout>

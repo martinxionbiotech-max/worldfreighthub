@@ -1,0 +1,262 @@
+/* ============================================================
+   WorldFreightHub — Design System (pure CSS, static-first)
+   Reference: financial intelligence / data platform / SaaS
+   ============================================================ */
+
+:root {
+  /* Brand — deep maritime navy + signal amber accent */
+  --navy-900: #0a1a2f;
+  --navy-800: #0f2544;
+  --navy-700: #16335c;
+  --navy-100: #e4ebf4;
+  --navy-50: #f4f7fb;
+
+  --accent: #f59e0b;      /* signal amber */
+  --accent-strong: #d97706;
+  --accent-soft: #fef3c7;
+
+  --ink: #101827;          /* near-black text */
+  --ink-soft: #374151;     /* secondary text */
+  --ink-muted: #6b7280;    /* muted text */
+
+  --border: #e5e7eb;
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+
+  --success: #059669;
+  --warning: #b45309;
+  --danger: #b91c1c;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  --maxw: 1120px;
+
+  --shadow-sm: 0 1px 2px rgba(10, 26, 47, 0.06);
+  --shadow-md: 0 4px 16px rgba(10, 26, 47, 0.08);
+
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--surface);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--navy-700); text-decoration: none; }
+a:hover { color: var(--accent-strong); }
+
+h1, h2, h3, h4 { line-height: 1.25; color: var(--navy-900); margin: 0 0 0.5em; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 2.6vw, 1.8rem); font-weight: 650; margin-top: 2rem; }
+h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.5rem; }
+
+p { margin: 0 0 1rem; }
+
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  background: var(--navy-900);
+  color: #fff;
+  border-bottom: 3px solid var(--accent);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+.brand:hover { color: var(--accent); }
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  background: var(--accent);
+  color: var(--navy-900);
+  border-radius: 8px;
+  font-weight: 800;
+}
+.site-nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.site-nav a {
+  color: var(--navy-100);
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+.site-nav a:hover { background: var(--navy-700); color: #fff; }
+.site-nav a.active { background: var(--accent); color: var(--navy-900); font-weight: 600; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+  background: var(--navy-900);
+  color: var(--navy-100);
+  margin-top: 4rem;
+  font-size: 0.9rem;
+}
+.site-footer .container { padding: 3rem 1.25rem; display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.site-footer h4 { color: #fff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+.site-footer a { color: var(--navy-100); display: block; padding: 0.2rem 0; }
+.site-footer a:hover { color: var(--accent); }
+.footer-bottom {
+  border-top: 1px solid var(--navy-700);
+  padding: 1rem 0;
+  text-align: center;
+  color: var(--navy-100);
+  font-size: 0.8rem;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: linear-gradient(160deg, var(--navy-900) 0%, var(--navy-700) 100%);
+  color: #fff;
+  padding: 3.5rem 0;
+}
+.hero h1 { color: #fff; margin-bottom: 0.5rem; }
+.hero p.lead { font-size: 1.15rem; color: var(--navy-100); max-width: 720px; margin: 0 0 1.25rem; }
+.hero .badge-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* ---------- Cards ---------- */
+.card-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.card h3 { margin-top: 0; font-size: 1.05rem; }
+.card a.card-link { color: var(--ink); }
+.card a.card-link:hover h3 { color: var(--accent-strong); }
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+.badge.navy { background: var(--navy-100); color: var(--navy-700); }
+.badge.verified { background: #d1fae5; color: var(--success); }
+.badge.indicative { background: #fef3c7; color: var(--warning); }
+.badge.reported { background: #fee2e2; color: var(--danger); }
+
+/* ---------- Tables ---------- */
+.data-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); margin: 1.25rem 0; }
+table.data-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.data-table th {
+  background: var(--navy-50);
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  color: var(--navy-800);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.data-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background: var(--surface-alt); }
+
+/* ---------- FAQ ---------- */
+.faq { border-top: 1px solid var(--border); }
+.faq details { border-bottom: 1px solid var(--border); padding: 0.9rem 0; }
+.faq summary { cursor: pointer; font-weight: 600; color: var(--navy-800); }
+.faq summary:hover { color: var(--accent-strong); }
+.faq details p { margin: 0.6rem 0 0; color: var(--ink-soft); }
+
+/* ---------- Source / trust ---------- */
+.source-list { font-size: 0.85rem; color: var(--ink-muted); }
+.source-list li { margin-bottom: 0.4rem; }
+.callout {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 0.9rem 1.1rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 1.25rem 0;
+  color: var(--warning);
+  font-size: 0.95rem;
+}
+
+/* ---------- Breadcrumbs ---------- */
+.breadcrumbs { font-size: 0.82rem; color: var(--ink-muted); padding: 0.9rem 0; }
+.breadcrumbs ol { list-style: none; display: flex; gap: 0.4rem; padding: 0; margin: 0; flex-wrap: wrap; }
+.breadcrumbs li + li::before { content: "›"; margin-right: 0.4rem; color: var(--ink-muted); }
+
+/* ---------- CTA / Quote ---------- */
+.cta-band {
+  background: var(--navy-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--navy-900);
+  font-weight: 700;
+  padding: 0.65rem 1.3rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+}
+.btn:hover { background: var(--accent-strong); color: #fff; }
+.btn.navy { background: var(--navy-800); color: #fff; }
+.btn.navy:hover { background: var(--navy-900); }
+
+/* ---------- Ad slot placeholder (UX-first, non-intrusive) ---------- */
+.ad-slot {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.75rem;
+  background: var(--surface-alt);
+  margin: 1.5rem 0;
+}
+
+/* ---------- Utilities ---------- */
+.mt-0 { margin-top: 0; }
+.mb-0 { margin-bottom: 0; }
+.muted { color: var(--ink-muted); }
+.small { font-size: 0.85rem; }
+.section { padding: 2.5rem 0; }
+.section-alt { background: var(--surface-alt); }
+.mono { font-family: var(--font-mono); font-size: 0.9em; }

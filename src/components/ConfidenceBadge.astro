@@ -1,0 +1,18 @@
+---
+import { confidenceLabels, type Confidence } from "../config";
+
+interface Props {
+  confidence: Confidence;
+}
+
+const { confidence } = Astro.props;
+const cls =
+  confidence === "HIGH"
+    ? "verified"
+    : confidence === "MEDIUM"
+      ? "indicative"
+      : "reported";
+const label = confidenceLabels[confidence];
+---
+
+<span class={`badge ${cls}`}>{label}</span>

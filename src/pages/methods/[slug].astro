@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import ConfidenceBadge from "../../components/ConfidenceBadge.astro";
+import { shippingMethods } from "../../data/shipping-methods";
+
+export function getStaticPaths() {
+  return shippingMethods.map((m) => ({ params: { slug: m.slug }, props: { method: m } }));
+}
+
+const { method } = Astro.props;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  name: method.name,
+  description: method.shortDefinition,
+};
+---
+
+<BaseLayout
+  title={method.name}
+  description={`${method.name}: ${method.shortDefinition}`}
+  canonical={`/methods/${method.slug}/`}
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <Breadcrumbs
+      items={[
+        { label: "Shipping Methods", href: "/methods/" },
+        { label: method.name },
+      ]}
+    />
+    <h1>{method.name}</h1>
+    <p class="muted"><ConfidenceBadge confidence={method.confidence} /></p>
+    <p><strong>Definition:</strong> {method.shortDefinition}</p>
+    <p><strong>When to use:</strong> {method.useCase}</p>
+  </div>
+</BaseLayout>

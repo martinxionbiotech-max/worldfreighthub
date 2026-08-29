@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { glossary } from "../../data/glossary";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Freight Glossary",
+  itemListElement: glossary.map((g, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: g.term,
+    url: `https://worldfreighthub.net/glossary/${g.slug}/`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Freight & Shipping Glossary"
+  description="Clear definitions of freight and shipping terms: CBM, demurrage, detention, TEU, Incoterms, HS Code, Bill of Lading, and more."
+  canonical="/glossary/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">Freight & Shipping Glossary</h1>
+    <div class="card-grid">
+      {glossary.map((g) => (
+        <div class="card">
+          <a class="card-link" href={`/glossary/${g.slug}/`}>
+            <h3>{g.term}</h3>
+            <p class="muted small">{g.definition}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

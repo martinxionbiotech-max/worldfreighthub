@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Data Methodology"
+  description="How World Freight Hub estimates freight rates, transit times, and confidence levels."
+  canonical="/methodology/"
+>
+  <div class="container">
+    <h1 class="section">Data Methodology</h1>
+    <h2>Confidence levels</h2>
+    <ul>
+      <li><strong>Verified (HIGH)</strong> — government, customs, port authority, or official carrier data.</li>
+      <li><strong>Indicative (MEDIUM)</strong> — consistent across multiple credible industry sources.</li>
+      <li><strong>Reported (LOW)</strong> — single company, forum, or personal source.</li>
+    </ul>
+    <h2>Freight rates & transit times</h2>
+    <p>
+      We do not publish live prices or schedules. Rate figures are indicative ranges with a
+      stated last-updated date, source, and assumptions. Freight rates vary by carrier, season,
+      cargo, container type, and surcharges.
+    </p>
+    <h2>Secondary verification</h2>
+    <p>
+      Core facts are cross-checked against at least two independent sources before publication.
+      Single-source information is explicitly marked.
+    </p>
+  </div>
+</BaseLayout>

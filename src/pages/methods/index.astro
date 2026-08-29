@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { shippingMethods } from "../../data/shipping-methods";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Shipping Methods",
+  itemListElement: shippingMethods.map((m, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: m.name,
+    url: `https://worldfreighthub.net/methods/${m.slug}/`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Shipping Methods — FCL, LCL, DDP, Air Freight"
+  description="Understand FCL, LCL, DDP, DAP, air freight, and rail freight for China to GCC shipping — definitions, use cases, and when to choose each."
+  canonical="/methods/"
+  jsonLd={jsonLd}
+>
+  <div class="container">
+    <h1 class="section">Shipping Methods</h1>
+    <div class="card-grid">
+      {shippingMethods.map((m) => (
+        <div class="card">
+          <a class="card-link" href={`/methods/${m.slug}/`}>
+            <h3>{m.name}</h3>
+            <p class="muted small">{m.shortDefinition}</p>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,34 @@
+---
+import { site, subsites } from "../config";
+
+const path = Astro.url.pathname;
+const nav = [
+  { label: "Home", href: "/" },
+  { label: "Routes", href: "/routes/" },
+  { label: "Countries", href: "/countries/" },
+  { label: "Ports", href: "/ports/" },
+  { label: "Shipping Methods", href: "/methods/" },
+  { label: "Glossary", href: "/glossary/" },
+  { label: "Tools", href: "/tools/" },
+  { label: "Directory", href: "/directory/" },
+];
+
+function isActive(href: string): string {
+  if (href === "/") return path === "/" ? "active" : "";
+  return path.startsWith(href) ? "active" : "";
+}
+---
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/">
+      <span class="brand-mark">WF</span>
+      <span>World Freight Hub</span>
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      {nav.map((item) => (
+        <a href={item.href} class={isActive(item.href)}>{item.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
