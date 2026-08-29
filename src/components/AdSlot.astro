@@ -1,0 +1,12 @@
+---
+interface Props {
+  slotLabel?: string;
+}
+
+const { slotLabel = 'Advertisement' } = Astro.props;
+---
+
+<div class="ad-slot" aria-label={slotLabel}>
+  <span class="ad-label">{slotLabel}</span>
+  <span>Reserved placement</span>
+</div>

@@ -1,0 +1,21 @@
+---
+interface Props {
+  title?: string;
+  text?: string;
+  label?: string;
+  href?: string;
+}
+
+const {
+  title = 'Get a freight quote',
+  text = 'Tell us about your shipment and we will connect you with verified providers on the China–GCC corridor.',
+  label = 'Get a quote',
+  href = '/get-quote/',
+} = Astro.props;
+---
+
+<section class="cta">
+  <h2>{title}</h2>
+  <p>{text}</p>
+  <a class="btn btn-amber" href={href}>{label}</a>
+</section>

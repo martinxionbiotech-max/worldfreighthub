@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { gccPorts } from '../../data/gcc-ports';
+import { SITE_URL } from '../../site';
+
+const rows = gccPorts.map((port) => ({
+  port: { href: `/ports/${port.slug}/`, label: port.name },
+  country: port.country,
+  type: port.type === 'dry-port' ? 'Dry port' : 'Seaport',
+  unlocode: port.unlocode ?? '—',
+}));
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'GCC ports and terminals',
+      itemListElement: gccPorts.map((port, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: port.name,
+        url: `${SITE_URL}/ports/${port.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="GCC Ports & Terminals"
+  description="Major seaports and dry ports across the Gulf Cooperation Council, from Jeddah to Khalifa bin Salman."
+  canonical={`${SITE_URL}/ports/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Ports' }]} />
+      <h1>GCC ports & terminals</h1>
+      <p class="lead">
+        Major seaports and dry ports served by the China freight corridor.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port', type: 'link' },
+        { key: 'country', label: 'Country' },
+        { key: 'type', label: 'Type' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+      ]}
+      rows={rows}
+      caption="Port profiles — details verified against port authority sources before publish."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

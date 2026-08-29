@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import { glossary } from '../../data/glossary';
+import { SITE_URL } from '../../site';
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Freight glossary',
+      itemListElement: glossary.map((term, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: term.term,
+        url: `${SITE_URL}/glossary/${term.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Freight & Customs Glossary"
+  description="Definitions of key freight, customs and logistics terms: FCL, LCL, DDP, Incoterms, TEU, HS Code, SASO, SABER and more."
+  canonical={`${SITE_URL}/glossary/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Glossary' }]} />
+      <h1>Freight & customs glossary</h1>
+      <p class="lead">
+        Key terms used across the China–GCC freight corridor.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {glossary.map((term) => (
+        <Card
+          title={term.term}
+          description={term.definition}
+          href={`/glossary/${term.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

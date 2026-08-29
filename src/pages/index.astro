@@ -1,17 +1,116 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
+import Cta from '../components/Cta.astro';
+import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '../site';
 
+const schema = [
+  {
+    type: 'WebSite',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+  },
+  {
+    type: 'Organization',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="China to GCC Freight Intelligence — Routes, Ports & Costs"
+  description={SITE_DESCRIPTION}
+  canonical={`${SITE_URL}/`}
+  schema={schema}
+>
+  <section class="hero">
+    <div class="container">
+      <h1>China to GCC freight intelligence, without the noise</h1>
+      <p>
+        WorldFreightHub is a {SITE_TAGLINE} for the China–GCC corridor. Explore
+        shipping routes, ports, destination countries, methods and tools — built
+        on primary sources, with every rate clearly marked as an estimate.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-amber" href="/routes/">Explore routes</a>
+        <a class="btn btn-secondary" href="/get-quote/">Get a quote</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>What we do</h2>
+    <p class="lead">
+      A structured, data-driven reference for importers, exporters and
+      forwarders moving goods between China and the Gulf Cooperation Council
+      states.
+    </p>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Shipping routes"
+        description="China to GCC corridors with indicative transit times and rate placeholders."
+        href="/routes/"
+      />
+      <Card
+        title="Destination countries"
+        description="VAT, customs and port profiles for the six GCC member states."
+        href="/countries/"
+      />
+      <Card
+        title="Ports & terminals"
+        description="Major seaports and dry ports from Shanghai to Khalifa bin Salman."
+        href="/ports/"
+      />
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Everything you need to plan a shipment</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="Freight methods"
+          description="FCL, LCL, air, rail, DDP and express explained."
+          href="/methods/"
+        />
+        <Card
+          title="Tools"
+          description="CBM, container loading and volumetric weight calculators."
+          href="/tools/"
+        />
+        <Card
+          title="Provider directory"
+          description="A framework for trusted freight and customs partners."
+          href="/directory/"
+        />
+      </div>
+      <div class="note mt-3">
+        <strong>Rate transparency:</strong> all freight rates on this site are
+        indicative estimates and are displayed as placeholders until verified
+        against primary sources. No live pricing is published.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Middle East focus</h2>
+    <p class="lead">
+      We cover the China → GCC corridor in depth, including Saudi Arabia, the
+      UAE, Qatar, Kuwait, Oman and Bahrain.
+    </p>
+    <p class="mt-2">
+      <a class="btn btn-secondary" href="/middleeast/">Explore the Middle East</a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

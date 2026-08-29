@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL } from '../site';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact the WorldFreightHub team with corrections, partnerships or general enquiries."
+  canonical={`${SITE_URL}/contact/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Contact' }]} />
+      <h1>Contact</h1>
+      <p class="lead">Get in touch with the WorldFreightHub team.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>General enquiries</h2>
+    <p>
+      For corrections, data updates or general questions, email
+      <a href="mailto:hello@worldfreighthub.com"> hello@worldfreighthub.com</a>.
+    </p>
+    <h2>Partnerships & directory</h2>
+    <p>
+      If you are a freight forwarder, customs broker or logistics provider
+      interested in the directory, use the same address with the subject line
+      "Directory".
+    </p>
+    <p class="mt-3">
+      <a class="btn btn-primary" href="/get-quote/">Request a quote</a>
+    </p>
+  </section>
+</BaseLayout>

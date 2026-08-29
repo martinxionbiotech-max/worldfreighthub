@@ -1,0 +1,25 @@
+---
+import { SITE_NAME } from '../site';
+
+const nav = [
+  { label: 'Routes', href: '/routes/' },
+  { label: 'Countries', href: '/countries/' },
+  { label: 'Ports', href: '/ports/' },
+  { label: 'Methods', href: '/methods/' },
+  { label: 'Tools', href: '/tools/' },
+  { label: 'Directory', href: '/directory/' },
+  { label: 'Middle East', href: '/middleeast/' },
+];
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="/">{SITE_NAME}</a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      {nav.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+      <a class="nav-cta" href="/get-quote/">Get Quote</a>
+    </nav>
+  </div>
+</header>

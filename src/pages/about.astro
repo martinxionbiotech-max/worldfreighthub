@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Cta from '../components/Cta.astro';
+import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../site';
+---
+
+<BaseLayout
+  title="About WorldFreightHub"
+  description="WorldFreightHub is a freight intelligence network covering the China to GCC corridor with routes, ports, countries, methods and tools."
+  canonical={`${SITE_URL}/about/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'About' }]} />
+      <h1>About {SITE_NAME}</h1>
+      <p class="lead">{SITE_TAGLINE}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>What we do</h2>
+    <p>
+      WorldFreightHub is a data-driven reference for importers, exporters,
+      freight forwarders and customs brokers moving goods between China and the
+      Gulf Cooperation Council. We organize routes, ports, destination
+      countries, shipping methods and practical tools into a single,
+      well-structured resource.
+    </p>
+    <h2>Our principles</h2>
+    <ul>
+      <li>Static first — fast, reliable pages without unnecessary runtime.</li>
+      <li>Data driven — every page is generated from structured source data.</li>
+      <li>Zero fake data — rates and transit times are placeholders until verified.</li>
+    </ul>
+    <h2>What we don't do</h2>
+    <p>
+      We do not publish live prices, schedules or quotes, and we do not invent
+      reviews, ratings or figures. Every number on this site is either sourced
+      from a primary authority or clearly marked as an estimate.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

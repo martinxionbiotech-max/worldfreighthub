@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { routes } from '../../data/routes';
+import { portName, countryName } from '../../data/lookup';
+import { SITE_URL } from '../../site';
+
+const rows = routes.map((route) => ({
+  route: {
+    href: `/routes/${route.slug}/`,
+    label: `${portName(route.originPort)} → ${portName(route.destPort)}`,
+  },
+  origin: portName(route.originPort),
+  destination: portName(route.destPort),
+  country: { href: `/countries/${route.country}/`, label: countryName(route.country) },
+  transit: `${route.transitDays.typical} days`,
+  confidence: route.confidence,
+}));
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'China to GCC freight routes',
+      itemListElement: routes.map((route, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: `${portName(route.originPort)} to ${portName(route.destPort)}`,
+        url: `${SITE_URL}/routes/${route.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to GCC Freight Routes"
+  description="Indicative shipping routes from China (Shanghai, Ningbo, Shenzhen) to GCC ports, with transit time estimates."
+  canonical={`${SITE_URL}/routes/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Routes' }]} />
+      <h1>China to GCC freight routes</h1>
+      <p class="lead">
+        Main corridors from Shanghai, Ningbo-Zhoushan and Shenzhen to major Gulf
+        ports. Transit times are estimates and must be verified with carriers.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <DataTable
+      columns={[
+        { key: 'route', label: 'Route', type: 'link' },
+        { key: 'origin', label: 'Origin' },
+        { key: 'destination', label: 'Destination' },
+        { key: 'country', label: 'Country', type: 'link' },
+        { key: 'transit', label: 'Typical transit' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rows}
+      caption="Indicative transit times only — verify via carrier schedules before publish."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

@@ -1,0 +1,137 @@
+---
+import { getStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import SourceList from '../../components/SourceList.astro';
+import Cta from '../../components/Cta.astro';
+import { gccCountries } from '../../data/gcc-countries';
+import { routes } from '../../data/routes';
+import { sources } from '../../data/sources';
+import { getPortBySlug, portName } from '../../data/lookup';
+import { SITE_URL } from '../../site';
+
+export function getStaticPaths() {
+  return gccCountries.map((country) => ({
+    params: { slug: country.slug },
+    props: { country },
+  }));
+}
+
+const { country } = Astro.props;
+
+const countryPorts = country.ports
+  .map((slug) => getPortBySlug(slug))
+  .filter((port) => port !== undefined);
+
+const countryRoutes = routes.filter((route) => route.country === country.slug);
+
+const sourceIds: Record<string, string[]> = {
+  'saudi-arabia': ['mawani', 'zatca'],
+  'united-arab-emirates': ['dubai-customs', 'dp-world', 'abu-dhabi-ports'],
+  qatar: ['qatar-customs'],
+  kuwait: ['kuwait-customs'],
+  oman: ['oman-customs'],
+  bahrain: ['bahrain-customs'],
+};
+
+const countrySources = sources.filter((source) =>
+  (sourceIds[country.slug] ?? []).includes(source.id),
+);
+
+const schema = [
+  {
+    type: 'Country',
+    data: {
+      name: country.name,
+      url: `${SITE_URL}/countries/${country.slug}/`,
+      address: { addressCountry: country.iso2 },
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`Shipping to ${country.name} from China`}
+  description={`Freight information for ${country.name}: VAT, capital ${country.capital}, currency ${country.currency}, and entry ports.`}
+  canonical={`${SITE_URL}/countries/${country.slug}/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Countries', href: '/countries/' },
+          { label: country.name },
+        ]}
+      />
+      <h1>{country.name}</h1>
+      <p class="lead">Destination profile for the China freight corridor.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">ISO code</span>
+        <span class="fact-value">{country.iso2}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Capital</span>
+        <span class="fact-value">{country.capital}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Currency</span>
+        <span class="fact-value">{country.currency}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">VAT rate</span>
+        <span class="fact-value">{country.vatRate === null ? 'None' : `${country.vatRate}%`}</span>
+      </div>
+    </div>
+    <div class="note mt-3">
+      <strong>VAT note:</strong> {country.vatNote}. Always confirm current rates
+      with the relevant customs authority before making commercial decisions.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Ports</h2>
+      <div class="grid grid--3 mt-2">
+        {countryPorts.map((port) => (
+          <Card
+            title={port.name}
+            description={`${port.type === 'dry-port' ? 'Dry port' : 'Seaport'} in ${port.country}.`}
+            href={`/ports/${port.slug}/`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>China routes to {country.name}</h2>
+    {countryRoutes.length > 0 ? (
+      <div class="grid grid--3 mt-2">
+        {countryRoutes.map((route) => (
+          <Card
+            title={`${portName(route.originPort)} → ${portName(route.destPort)}`}
+            description={`Typical transit ${route.transitDays.typical} days (estimate).`}
+            href={`/routes/${route.slug}/`}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="muted">No routes published for this country yet.</p>
+    )}
+  </section>
+
+  <section class="section container">
+    <SourceList sources={countrySources} title="Official sources" />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

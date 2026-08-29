@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { SITE_URL } from '../../site';
+---
+
+<BaseLayout
+  title="Get a Freight Quote"
+  description="Request a freight quote for your China to GCC shipment — origin, destination, cargo, weight, volume, incoterm and method."
+  canonical={`${SITE_URL}/get-quote/`}
+  noindex={true}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Get Quote' }]} />
+      <h1>Get a freight quote</h1>
+      <p class="lead">
+        Tell us about your shipment and we will route it to a verified provider
+        on the China–GCC corridor.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="note">
+      <strong>Placeholder form:</strong> this form is not yet connected to a
+      backend. Submissions are not currently processed.
+    </div>
+
+    <form class="form-card mt-2" action="#" method="post">
+      <div class="form-grid">
+        <div class="field">
+          <label for="origin">Origin (port / city)</label>
+          <input type="text" id="origin" name="origin" placeholder="e.g. Shanghai" />
+        </div>
+        <div class="field">
+          <label for="destination">Destination (port / city)</label>
+          <input type="text" id="destination" name="destination" placeholder="e.g. Jeddah" />
+        </div>
+        <div class="field">
+          <label for="cargo">Cargo description</label>
+          <input type="text" id="cargo" name="cargo" placeholder="e.g. 200 cartons of electronics" />
+        </div>
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" name="weight" min="0" step="any" />
+          </div>
+          <div class="field">
+            <label for="cbm">Volume (CBM)</label>
+            <input type="number" id="cbm" name="cbm" min="0" step="any" />
+          </div>
+        </div>
+        <div class="grid grid--2">
+          <div class="field">
+            <label for="incoterm">Incoterm</label>
+            <select id="incoterm" name="incoterm">
+              <option value="DAP">DAP</option>
+              <option value="DDP">DDP</option>
+              <option value="FOB">FOB</option>
+              <option value="CIF">CIF</option>
+              <option value="EXW">EXW</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="method">Method</label>
+            <select id="method" name="method">
+              <option value="FCL">FCL</option>
+              <option value="LCL">LCL</option>
+              <option value="Air">Air Freight</option>
+              <option value="Rail">Rail Freight</option>
+              <option value="Express">Express</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" />
+        </div>
+        <button class="btn btn-primary" type="submit">Request quote</button>
+      </div>
+    </form>
+  </section>
+</BaseLayout>

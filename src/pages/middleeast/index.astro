@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import { gccCountries } from '../../data/gcc-countries';
+import { SITE_URL } from '../../site';
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Middle East destination countries',
+      itemListElement: gccCountries.map((country, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: country.name,
+        url: `${SITE_URL}/countries/${country.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Middle East Freight — China to GCC"
+  description="WorldFreightHub Middle East: freight intelligence for the China to GCC corridor, covering Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain."
+  canonical={`${SITE_URL}/middleeast/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Middle East' }]} />
+      <h1>Middle East freight intelligence</h1>
+      <p class="lead">
+        A dedicated view of the China → GCC corridor, covering routes, ports and
+        customs profiles for the six Gulf Cooperation Council states.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Destination countries</h2>
+    <div class="grid grid--3 mt-2">
+      {gccCountries.map((country) => (
+        <Card
+          title={country.name}
+          description={`Capital ${country.capital} · Currency ${country.currency} · VAT ${
+            country.vatRate === null ? 'none' : `${country.vatRate}%`
+          }.`}
+          href={`/countries/${country.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Start exploring</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="Shipping routes"
+          description="China to GCC corridors with indicative transit times."
+          href="/routes/"
+        />
+        <Card
+          title="GCC ports"
+          description="Major seaports and dry ports across the region."
+          href="/ports/"
+        />
+        <Card
+          title="Get a quote"
+          description="Request a quote for your China to GCC shipment."
+          href="/get-quote/"
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

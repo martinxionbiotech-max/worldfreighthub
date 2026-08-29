@@ -1,0 +1,119 @@
+---
+import { getStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import SourceList from '../../components/SourceList.astro';
+import Cta from '../../components/Cta.astro';
+import { gccPorts } from '../../data/gcc-ports';
+import { routes } from '../../data/routes';
+import { sources } from '../../data/sources';
+import { portName } from '../../data/lookup';
+import { SITE_URL } from '../../site';
+
+export function getStaticPaths() {
+  return gccPorts.map((port) => ({
+    params: { slug: port.slug },
+    props: { port },
+  }));
+}
+
+const { port } = Astro.props;
+
+const portRoutes = routes.filter((route) => route.destPort === port.slug);
+
+const sourceIds: Record<string, string[]> = {
+  jeddah: ['mawani'],
+  dammam: ['mawani'],
+  'riyadh-dry-port': ['mawani'],
+  'jebel-ali': ['dp-world'],
+  'khalifa-port-abu-dhabi': ['abu-dhabi-ports'],
+  'port-khalid': ['dubai-customs'],
+  hamad: ['qatar-customs'],
+  shuwaikh: ['kuwait-customs'],
+  shuaiba: ['kuwait-customs'],
+  sohar: ['oman-customs'],
+  salalah: ['oman-customs'],
+  'khalifa-bin-salman': ['bahrain-customs'],
+};
+
+const portSources = sources.filter((source) =>
+  (sourceIds[port.slug] ?? []).includes(source.id),
+);
+
+const schema = [
+  {
+    type: 'Place',
+    data: {
+      name: port.name,
+      url: `${SITE_URL}/ports/${port.slug}/`,
+      address: { addressCountry: port.country },
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${port.name} — Port Profile`}
+  description={`Port profile for ${port.name} (${port.country}): type, UN/LOCODE and China freight routes.`}
+  canonical={`${SITE_URL}/ports/${port.slug}/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Ports', href: '/ports/' },
+          { label: port.name },
+        ]}
+      />
+      <h1>{port.name}</h1>
+      <p class="lead">Port profile for the China freight corridor.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">Country</span>
+        <span class="fact-value">{port.country}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Type</span>
+        <span class="fact-value">{port.type === 'dry-port' ? 'Dry port' : 'Seaport'}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">UN/LOCODE</span>
+        <span class="fact-value">{port.unlocode ?? '—'}</span>
+      </div>
+    </div>
+    {port.note && <div class="note mt-3"><strong>Note:</strong> {port.note}</div>}
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>China routes to this port</h2>
+      {portRoutes.length > 0 ? (
+        <div class="grid grid--3 mt-2">
+          {portRoutes.map((route) => (
+            <Card
+              title={`${portName(route.originPort)} → ${port.name}`}
+              description={`Typical transit ${route.transitDays.typical} days (estimate).`}
+              href={`/routes/${route.slug}/`}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="muted">No routes published for this port yet.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={portSources} title="Port authority & customs sources" />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

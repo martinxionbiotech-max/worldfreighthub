@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import { SITE_URL } from '../../site';
+
+const tools = [
+  {
+    name: 'CBM Calculator',
+    description: 'Convert dimensions into cubic meters for LCL and volumetric calculations.',
+  },
+  {
+    name: 'Container Loading Calculator',
+    description: 'Estimate how many cartons or pallets fit in a 20ft or 40ft container.',
+  },
+  {
+    name: 'Volumetric Weight Calculator',
+    description: 'Compute volumetric and chargeable weight for air freight.',
+  },
+];
+---
+
+<BaseLayout
+  title="Freight Tools & Calculators"
+  description="CBM, container loading and volumetric weight calculators for the China–GCC freight corridor."
+  canonical={`${SITE_URL}/tools/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Tools' }]} />
+      <h1>Freight tools & calculators</h1>
+      <p class="lead">
+        Practical calculators to support shipment planning. These are in
+        development.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {tools.map((tool) => (
+        <div class="card">
+          <h3>{tool.name}</h3>
+          <p>{tool.description}</p>
+          <span class="coming-soon">Coming soon</span>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

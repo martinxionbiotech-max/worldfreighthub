@@ -1,0 +1,11 @@
+---
+import type { Confidence } from '../data/types';
+
+interface Props {
+  level: Confidence;
+}
+
+const { level } = Astro.props;
+---
+
+<span class={`confidence-badge confidence--${level.toLowerCase()}`}>{level}</span>

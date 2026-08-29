@@ -1,0 +1,59 @@
+---
+import { SITE_NAME } from '../site';
+
+const explore = [
+  { label: 'Routes', href: '/routes/' },
+  { label: 'Countries', href: '/countries/' },
+  { label: 'Ports', href: '/ports/' },
+  { label: 'Methods', href: '/methods/' },
+  { label: 'Glossary', href: '/glossary/' },
+  { label: 'Tools', href: '/tools/' },
+];
+
+const company = [
+  { label: 'About', href: '/about/' },
+  { label: 'Methodology', href: '/methodology/' },
+  { label: 'Editorial Policy', href: '/editorial-policy/' },
+  { label: 'Contact', href: '/contact/' },
+  { label: 'Middle East', href: '/middleeast/' },
+];
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <h4>{SITE_NAME}</h4>
+        <p>
+          A freight intelligence network for the China–GCC corridor: routes,
+          ports, countries, methods, and a trusted provider directory.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          {explore.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          {company.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <p class="footer-disclaimer">
+      Disclaimer: All freight rates and transit times on this site are indicative
+      estimates, not live quotes. Always confirm figures with a licensed carrier
+      or customs broker before making commercial decisions.
+    </p>
+  </div>
+</footer>

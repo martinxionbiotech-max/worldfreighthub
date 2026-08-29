@@ -1,0 +1,58 @@
+---
+import { getStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { glossary } from '../../data/glossary';
+import { SITE_URL } from '../../site';
+
+export function getStaticPaths() {
+  return glossary.map((term) => ({
+    params: { slug: term.slug },
+    props: { term },
+  }));
+}
+
+const { term } = Astro.props;
+
+const schema = [
+  {
+    type: 'DefinedTerm',
+    data: {
+      name: term.term,
+      description: term.definition,
+      url: `${SITE_URL}/glossary/${term.slug}/`,
+      inDefinedTermSet: {
+        '@type': 'DefinedTermSet',
+        name: 'WorldFreightHub Freight Glossary',
+        url: `${SITE_URL}/glossary/`,
+      },
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${term.term} — Freight Glossary`}
+  description={term.definition}
+  canonical={`${SITE_URL}/glossary/${term.slug}/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Glossary', href: '/glossary/' },
+          { label: term.term },
+        ]}
+      />
+      <h1>{term.term}</h1>
+      <p class="lead">{term.definition}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <p>
+      <a class="btn btn-secondary" href="/glossary/">Back to glossary</a>
+    </p>
+  </section>
+</BaseLayout>

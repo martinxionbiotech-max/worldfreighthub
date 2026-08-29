@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { methods } from '../../data/methods';
+import { SITE_URL } from '../../site';
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Freight shipping methods',
+      itemListElement: methods.map((method, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: method.name,
+        url: `${SITE_URL}/methods/${method.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Freight Shipping Methods"
+  description="FCL, LCL, air freight, rail freight, DDP and express — shipping methods explained for the China–GCC corridor."
+  canonical={`${SITE_URL}/methods/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Methods' }]} />
+      <h1>Freight shipping methods</h1>
+      <p class="lead">
+        The main ways to move goods from China to the GCC, explained.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {methods.map((method) => (
+        <Card
+          title={method.name}
+          description={method.summary}
+          href={`/methods/${method.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

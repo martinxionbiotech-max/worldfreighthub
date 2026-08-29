@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { SITE_URL } from '../../site';
+---
+
+<BaseLayout
+  title="Freight Provider Directory"
+  description="A directory framework for trusted freight forwarders, customs brokers and logistics providers on the China–GCC corridor."
+  canonical={`${SITE_URL}/directory/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Directory' }]} />
+      <h1>Freight provider directory</h1>
+      <p class="lead">
+        A structured directory of freight forwarders, customs brokers and
+        logistics providers.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="note">
+      <strong>Coming soon:</strong> the directory framework is under development.
+      Providers will be listed with verified contact details and no paid
+      rankings. No provider entries are published until verification is complete.
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,88 @@
+import type { Port } from './types';
+
+export const gccPorts: Port[] = [
+  {
+    slug: 'jeddah',
+    name: 'Jeddah Islamic Port',
+    country: 'Saudi Arabia',
+    type: 'seaport',
+    unlocode: 'SAJED',
+  },
+  {
+    slug: 'dammam',
+    name: 'King Abdulaziz Port Dammam',
+    country: 'Saudi Arabia',
+    type: 'seaport',
+    unlocode: 'SADMM',
+  },
+  {
+    slug: 'riyadh-dry-port',
+    name: 'Riyadh Dry Port',
+    country: 'Saudi Arabia',
+    type: 'dry-port',
+    note: 'Inland dry port served by rail/road from coastal ports.',
+  },
+  {
+    slug: 'jebel-ali',
+    name: 'Jebel Ali',
+    country: 'United Arab Emirates',
+    type: 'seaport',
+    unlocode: 'AEJEA',
+  },
+  {
+    slug: 'khalifa-port-abu-dhabi',
+    name: 'Khalifa Port Abu Dhabi',
+    country: 'United Arab Emirates',
+    type: 'seaport',
+    unlocode: 'AEKHL',
+  },
+  {
+    slug: 'port-khalid',
+    name: 'Sharjah / Port Khalid',
+    country: 'United Arab Emirates',
+    type: 'seaport',
+    unlocode: 'AESHJ',
+  },
+  {
+    slug: 'hamad',
+    name: 'Hamad Port',
+    country: 'Qatar',
+    type: 'seaport',
+    unlocode: 'QAHMD',
+  },
+  {
+    slug: 'shuwaikh',
+    name: 'Shuwaikh',
+    country: 'Kuwait',
+    type: 'seaport',
+    unlocode: 'KWSWK',
+  },
+  {
+    slug: 'shuaiba',
+    name: 'Shuaiba',
+    country: 'Kuwait',
+    type: 'seaport',
+    unlocode: 'KWSHB',
+  },
+  {
+    slug: 'sohar',
+    name: 'Sohar',
+    country: 'Oman',
+    type: 'seaport',
+    unlocode: 'OMSOH',
+  },
+  {
+    slug: 'salalah',
+    name: 'Salalah',
+    country: 'Oman',
+    type: 'seaport',
+    unlocode: 'OMSLL',
+  },
+  {
+    slug: 'khalifa-bin-salman',
+    name: 'Khalifa bin Salman',
+    country: 'Bahrain',
+    type: 'seaport',
+    unlocode: 'BHKBS',
+  },
+];

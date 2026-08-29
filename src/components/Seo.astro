@@ -1,0 +1,50 @@
+---
+import { SITE_NAME, SITE_URL } from '../site';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  ogImage,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} — ${SITE_NAME}`;
+const url = canonical ?? new URL(Astro.url.pathname, SITE_URL).toString();
+const robots = noindex ? 'noindex, nofollow' : 'index, follow';
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={url} />
+<meta name="robots" content={robots} />
+
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={url} />
+{
+  ogImage && (
+    <meta property="og:image" content={new URL(ogImage, SITE_URL).toString()} />
+  )
+}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+{
+  ogImage && (
+    <meta name="twitter:image" content={new URL(ogImage, SITE_URL).toString()} />
+  )
+}

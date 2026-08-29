@@ -1,0 +1,88 @@
+import type { FreightRate } from './types';
+
+export const rates: FreightRate[] = [
+  {
+    id: 'r-001',
+    route: 'shanghai-jeddah',
+    container: '20ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-002',
+    route: 'shanghai-jeddah',
+    container: '40ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-003',
+    route: 'ningbo-zhoushan-jebel-ali',
+    container: '20ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-004',
+    route: 'ningbo-zhoushan-jebel-ali',
+    container: '40ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-005',
+    route: 'shenzhen-dammam',
+    container: '20ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-006',
+    route: 'shenzhen-dammam',
+    container: '40ft FCL',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-007',
+    route: 'shanghai-jeddah',
+    container: 'LCL (per CBM)',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+  {
+    id: 'r-008',
+    route: 'ningbo-zhoushan-hamad',
+    container: 'LCL (per CBM)',
+    amount: 0,
+    currency: 'USD',
+    confidence: 'LOW',
+    lastUpdated: '2026-08-30',
+    note: 'placeholder — requires secondary verification before publish (§11/§13)',
+  },
+];
+
+export function getRatesByRoute(routeSlug: string): FreightRate[] {
+  return rates.filter((rate) => rate.route === routeSlug);
+}
