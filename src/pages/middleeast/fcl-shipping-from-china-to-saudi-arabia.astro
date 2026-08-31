@@ -1,0 +1,858 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/fcl-shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const globalimporter: Source = {
+  id: 'globalimporter',
+  name: 'Global Importer — Guangzhou/Shenzhen to Saudi DDP sample quote',
+  url: 'https://www.globalimporter.net/cdetail_753_8551690.html',
+  type: 'industry',
+};
+const isoContainer: Source = {
+  id: 'iso-668',
+  name: 'ISO 668:2020 — Series 1 freight containers — classification, dimensions and ratings',
+  url: 'https://www.iso.org/standard/76912.html',
+  type: 'organization',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, sinoShipping];
+const transitSources: Source[] = [freightos, cargofromchina, ddpchain, chinaddpshipping];
+const containerSources: Source[] = [isoContainer, freightos];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  freightos,
+];
+const ddpContextSources: Source[] = [ddpchain, globalimporter, chinaddpshipping];
+
+const fclRows = [
+  {
+    container: 'FCL 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'Not published',
+    confidence: 'LOW',
+  },
+];
+
+const lclRows = [
+  {
+    volume: 'LCL 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / CBM',
+    confidence: 'LOW',
+  },
+];
+
+const ddpContextRows = [
+  {
+    service: 'DDP sea — LCL by volume',
+    benchmark: 'from ~1,600 RMB / CBM',
+    basis: 'ddpchain China→Saudi comparison table',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air — per chargeable kg',
+    benchmark: '33–48 RMB / kg',
+    basis: 'ddpchain route examples',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door sample',
+    benchmark: '45 RMB / kg',
+    basis: 'globalimporter Guangzhou/Shenzhen→Saudi example',
+    confidence: 'LOW',
+  },
+];
+
+const fclTransitRows = [
+  {
+    service: 'FCL — Shanghai to Riyadh',
+    origin: 'Shanghai',
+    destination: 'Riyadh Dry Port / Dammam',
+    transit: '30–40 days',
+    basis: 'Freightos FCL route data',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL — Shanghai to Riyadh',
+    origin: 'Shanghai',
+    destination: 'Riyadh Dry Port / Dammam',
+    transit: '32–45 days',
+    basis: 'Freightos LCL route data',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Sea — South China to Jeddah',
+    origin: 'Shenzhen / South China',
+    destination: 'Jeddah',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days average; ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Sea — Dammam / Riyadh Dry Port',
+    origin: 'China',
+    destination: 'Dammam / Riyadh Dry Port',
+    transit: '30–45 days',
+    basis: 'Freightos Shanghai–Riyadh corridor',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air — Jeddah & Dammam',
+    origin: 'China',
+    destination: 'Jeddah & Dammam',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days; ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const containerRows = [
+  {
+    type: '20GP (20ft general purpose)',
+    interior: '~5.90 × 2.35 × 2.39 m',
+    volume: '~33 CBM',
+    payload: '~28,200 kg',
+    note: 'Best for heavy, dense cargo',
+    confidence: 'LOW',
+  },
+  {
+    type: '40GP (40ft general purpose)',
+    interior: '~12.03 × 2.35 × 2.39 m',
+    volume: '~67 CBM',
+    payload: '~26,500 kg',
+    note: 'Doubles cube at a smaller rate premium',
+    confidence: 'LOW',
+  },
+  {
+    type: '40HQ (40ft high cube)',
+    interior: '~12.03 × 2.35 × 2.69 m',
+    volume: '~76 CBM',
+    payload: '~26,300 kg',
+    note: 'Extra height for volume, not weight',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'Coast / region',
+    jeddah: 'Red Sea, western Saudi Arabia',
+    dammam: 'Arabian Gulf, eastern Saudi Arabia',
+    riyadh: 'Inland (served by coastal ports)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Main role',
+    jeddah: 'Principal container gateway',
+    dammam: 'Main Gulf port serving Riyadh + Eastern/Central provinces',
+    riyadh: 'Inland dry port for Riyadh metro distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical FCL use case',
+    jeddah: 'Western/Central Saudi consignees',
+    dammam: 'Riyadh + Eastern Province consignees',
+    riyadh: 'Door deliveries around Riyadh',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight (FCL)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'See FCL rate table',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jeddah / Dammam terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & cargo service fees',
+    who: 'Saudi customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER / SASO conformity fees',
+    who: 'SASO / SABER platform + laboratories',
+    magnitude: 'PC per product + SC per shipment; not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'ZATCA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'ZATCA',
+    magnitude: '15% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Excise tax (if applicable)',
+    who: 'ZATCA',
+    magnitude: 'Tobacco 100%; energy drinks 50%; carbonated drinks 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much does FCL shipping from China to Saudi Arabia cost?',
+    a: 'Indicative August 2026 market snapshots put FCL 20GP around $3,333–$5,085 and FCL 40GP around $4,623–$8,085, depending on the route and data source. Freightos shows Shanghai–Riyadh 20ft at $3,333–$4,443 and 40ft/40HQ at $4,623–$6,164, while Sino-shipping shows China–Saudi 20GP at $5,085–$6,215 and 40GP at $6,615–$8,085. These are LOW-confidence market figures, not carrier quotes — verify before booking.',
+  },
+  {
+    q: 'How long does FCL take from China to Saudi Arabia?',
+    a: 'Indicative windows are 30–40 days for FCL Shanghai–Riyadh, 32–45 days for LCL Shanghai–Riyadh, roughly 20–35 days to Jeddah, and 30–45 days to Dammam/Riyadh Dry Port. Air is around 2–10 days. These are LOW-confidence research findings, verify with the carrier.',
+  },
+  {
+    q: 'What are the 20GP, 40GP and 40HQ dimensions and load capacity?',
+    a: 'Nominal ISO 668/ISO 1496 figures are roughly 33 CBM and 28,200 kg payload for a 20GP, 67 CBM and 26,500 kg for a 40GP, and 76 CBM and 26,300 kg for a 40HQ. Actual tare weight, payload and interior dimensions vary by container age and manufacturer, and Saudi road-weight limits also apply, so verify with your line before load planning.',
+  },
+  {
+    q: 'FCL or LCL — which is cheaper for my cargo?',
+    a: 'There is no fixed break-even volume in the verified research snapshot. Use the LCL per-CBM table against an FCL all-in quote for your actual volume; as volume rises, FCL usually becomes cheaper per CBM because you stop paying consolidation handling and for unused space is reduced. Ask for both quotes before deciding.',
+  },
+  {
+    q: 'What is VGM and when do I submit it?',
+    a: 'VGM is the Verified Gross Mass of the packed container, required under the SOLAS rule so the vessel can plan stowage safely. The shipper must declare the verified weight before the carrier’s VGM cutoff; submit it early because a missed cutoff means the container is rolled to the next vessel.',
+  },
+  {
+    q: 'What weight limits apply to an FCL shipment to Saudi Arabia?',
+    a: 'Each container has a maximum gross mass and payload rating, but the operative limit is often the road-legal weight on the Saudi leg. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
+  },
+  {
+    q: 'Can I ship dangerous goods in an FCL container?',
+    a: 'Yes, but only with a correctly declared IMDG class, UN number, packing group, dangerous goods declaration and container packing certificate, and the right placards. Undeclared dangerous goods can be rejected at the port and expose the shipper to penalties and delays.',
+  },
+  {
+    q: 'Should I palletise or floor-load my FCL container?',
+    a: 'Palletised cargo is faster to load and unload and easier to inspect, but pallets consume volume and add weight. Floor-loading maximises cube but needs proper blocking and bracing and is slower to handle. Match the choice to your product, destination labour and whether the consignee can handle either type.',
+  },
+  {
+    q: 'What hidden fees should I expect on an FCL shipment?',
+    a: 'Beyond ocean freight, expect origin charges, destination THC and port charges, clearance and cargo service fees, SABER PC/SC conformity fees, and potential demurrage/detention after free time. Import duty is 5% of CIF and VAT is 15% on CIF plus duty. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
+  },
+  {
+    q: 'Do I need SABER certificates for an FCL shipment?',
+    a: 'Yes, if your goods are regulated. Obtain the Product Conformity Certificate (PC) per product, then the Shipment Conformity Certificate (SC) per shipment. Since 1 January 2025 the SC must be obtained before cargo arrival or clearance fails.',
+  },
+  {
+    q: 'Which Saudi port should I use for FCL — Jeddah or Dammam?',
+    a: 'Jeddah is the principal Red Sea gateway and suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and suits Riyadh and Eastern Province, with Riyadh Dry Port for the inland leg. Match the discharge port to your consignee and confirm inland trucking cost.',
+  },
+  {
+    q: 'How do demurrage and detention work on an FCL container?',
+    a: 'Demurrage is charged by the terminal when the container stays inside the port beyond free time after discharge; detention is charged by the carrier when the container stays outside the port beyond free time. Avoid both by filing the FASAH pre-arrival declaration, obtaining the SC before arrival and booking trucking before discharge.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'FCL Shipping from China to Saudi Arabia: Container Sizes, Rates & Loading Rules (August 2026)',
+      description:
+        'FCL shipping from China to Saudi Arabia explained: 20GP/40GP/40HQ sizes and load capacity, indicative FCL/LCL rates and transit times, FCL vs LCL, VGM, weight limits and dangerous goods.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="FCL Shipping from China to Saudi Arabia: Container Sizes, Rates & Loading Rules (August 2026)"
+  description="FCL shipping from China to Saudi Arabia explained: 20GP/40GP/40HQ sizes and load capacity, indicative FCL/LCL rates and transit times, FCL vs LCL, VGM, weight limits and dangerous goods."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'FCL shipping from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>FCL shipping from China to Saudi Arabia: container sizes, rates &amp; loading rules</h1>
+      <p class="lead">
+        Full Container Load is the default choice for larger, heavier China-to-Saudi shipments. This
+        page covers 20GP, 40GP and 40HQ planning, indicative FCL/LCL rates and transit windows, when
+        to stay full-container instead of sharing LCL space, and the load-side rules — VGM, weight
+        limits, dangerous goods and palletised versus floor-loaded — that decide whether the box
+        moves on time.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and container-planning figure as indicative, verify with carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">FCL sea transit</span>
+          <span class="fact-value">30–40 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL sea transit</span>
+          <span class="fact-value">32–45 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Indicative FCL rates from China to Saudi Arabia</h2>
+    <p>
+      FCL is quoted per container, not per cubic metre, so the headline is an all-in port-to-port
+      ocean price for one box. The figures below are market snapshots collected on different route
+      and date bases and are deliberately labelled LOW confidence — ocean pricing moves weekly with
+      capacity, fuel and peak season.
+    </p>
+
+    <h3>Full container load (FCL)</h3>
+    <DataTable
+      columns={[
+        { key: 'container', label: 'Container' },
+        { key: 'freightos', label: 'Freightos · Shanghai–Riyadh' },
+        { key: 'sino', label: 'Sino-shipping · China–Saudi (Aug 2026)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="Indicative market snapshots, not carrier quotes. Verify with a forwarder before relying on these figures."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL rates" />
+
+    <h3 class="mt-3">Less than container load (LCL) for comparison</h3>
+    <DataTable
+      columns={[
+        { key: 'volume', label: 'Volume' },
+        { key: 'total', label: 'Total (Freightos · Shanghai–Riyadh)' },
+        { key: 'perCbm', label: 'Indicative per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclRows}
+      caption="LCL unit cost falls as volume rises. Use these per-CBM figures against an FCL all-in quote to find your crossover."
+    />
+    <SourceList sources={rateSources} title="Sources — LCL rates" />
+
+    <h3 class="mt-3">DDP all-in context</h3>
+    <DataTable
+      columns={[
+        { key: 'service', label: 'DDP service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={ddpContextRows}
+      caption="Door-to-door DDP benchmarks already bundle duty, VAT, SABER and last-mile — not comparable line-by-line with FCL ocean freight."
+    />
+    <SourceList sources={ddpContextSources} title="Sources — DDP context" />
+
+    <div class="note mt-2">
+      <strong>Why the 40HQ and 40GP overlap:</strong> some marketplaces publish the same 40ft rate
+      for general purpose and high-cube boxes. In practice, a high cube can carry more volume for the
+      same weight rating, so ask the line for the exact equipment surcharge and availability before
+      assuming the rates are identical.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. FCL transit times by port and mode</h2>
+      <p>
+        FCL is usually faster than LCL on the same corridor because it skips consolidation and
+        deconsolidation, but the difference is not constant at every port. The figures below are
+        research findings, not schedule guarantees.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclTransitRows}
+        caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+      />
+      <SourceList sources={transitSources} title="Sources — FCL transit times" />
+
+      <div class="note mt-2">
+        <strong>Door-to-door context:</strong> the research snapshot also records DDP sea door-to-door
+        around 30–35 days and DDP air door-to-door around 10–15 days. Those add clearance and
+        last-mile time on top of the port-to-port leg.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL vs LCL: which should you book?</h2>
+    <p>
+      The decision is a landed-cost and delivery-priority question, not just a volume question. FCL
+      gives you an exclusive container and a single clearance entry; LCL lets you pay only for the
+      space you use on smaller volumes. Use the LCL per-CBM table above against the FCL all-in quote
+      — at higher CBM volumes there is normally a crossover point where FCL becomes the cheaper
+      option per cubic metre.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>Your cargo fills most of a container or is dense and heavy.</li>
+          <li>You need predictable transit and a single clearance entry.</li>
+          <li>Goods are fragile, high-value, or should not be consolidated with other cargo.</li>
+          <li>You are moving oversized or hazardous cargo that needs a dedicated unit.</li>
+        </ul>
+      </Card>
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>Your shipment is small — commonly well below a full container.</li>
+          <li>You want to avoid paying for unused container space.</li>
+          <li>You are testing a market or restocking slowly with multiple SKUs.</li>
+          <li>You accept extra consolidation/deconsolidation handling and slightly longer transit.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      For LCL, cargo is consolidated at an origin CFS warehouse and deconsolidated at the destination
+      CFS, so the door-to-door time includes extra handling at both ends. Ask whether your forwarder
+      runs a direct or transhipped consolidation before comparing LCL against FCL.
+    </p>
+
+    <p class="mt-2">
+      There is no single verified break-even CBM in the research snapshot, so ask for both an LCL
+      quote at your actual volume and an FCL all-in quote before deciding. The crossover depends on
+      the route, the surcharges and the destination fees — not on container size alone.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Ports: Shanghai, Ningbo-Zhoushan &amp; Shenzhen to Jeddah, Dammam &amp; Riyadh Dry Port</h2>
+      <p>
+        China’s three biggest container gateways anchor this corridor. Shanghai and Ningbo-Zhoushan
+        are the throughput leaders, while Shenzhen (Yantian/Shekou) is the South China option.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen throughput was not stated in the research snapshot."
+      />
+      <SourceList sources={primaryPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">Saudi destination ports</h3>
+      <p>
+        Mawani-operated Saudi ports handled <strong>8.3 million TEU in 2025</strong> (+10.6% year on
+        year), a MEDIUM-confidence figure from trade press because mawani.gov.sa was unavailable
+        during research. Jeddah and Dammam are the two seaports that matter for most China FCL
+        imports.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jeddah', label: 'Jeddah' },
+          { key: 'dammam', label: 'Dammam' },
+          { key: 'riyadh', label: 'Riyadh Dry Port' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="Port roles are secondary-source findings; verify routing with your forwarder."
+      />
+      <SourceList
+        sources={[...primaryPortSources, worldcargonews]}
+        title="Sources — Saudi ports"
+      />
+
+      <div class="note mt-2">
+        <strong>Jeddah vs Dammam in one line:</strong> pick Jeddah for western and central Saudi
+        consignees, and Dammam (then Riyadh Dry Port by rail/road) for Riyadh and Eastern Province
+        consignees. Confirm the final inland leg and cost before you pick the discharge port.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Container planning: 20GP, 40GP, 40HQ, VGM, weight &amp; dangerous goods</h2>
+    <p>
+      The cheapest FCL quote is not the lowest landed cost if the load is planned wrong. A container
+      that exceeds road weight, misses the VGM cutoff, or hides dangerous goods will be stopped,
+      reworked or rolled — each of which is more expensive than the ocean-rate saving.
+    </p>
+
+    <h3>Nominal sizes and load capacity</h3>
+    <DataTable
+      columns={[
+        { key: 'type', label: 'Container type' },
+        { key: 'interior', label: 'Nominal interior (L × W × H)' },
+        { key: 'volume', label: 'Nominal volume' },
+        { key: 'payload', label: 'Typical payload' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={containerRows}
+      caption="Nominal ISO 668/ISO 1496 series-1 figures; actual tare and payload vary by carrier, build year and Saudi road-weight limits. Verify with the line before load planning."
+    />
+    <SourceList sources={containerSources} title="Sources — container dimensions" />
+
+    <h3 class="mt-3">VGM before the cutoff</h3>
+    <p>
+      A packed container must have a <strong>Verified Gross Mass (VGM)</strong> declared to the
+      carrier before the vessel’s VGM cutoff under the SOLAS rule. The shipper obtains the verified
+      weight — usually by weighbridge or by calculated method — and submits it in the carrier’s
+      booking flow. A missed cutoff means the container is rolled, so treat VGM as part of loading,
+      not an afterthought.
+    </p>
+
+    <h3>Weight limits and road feasibility</h3>
+    <p>
+      Each container has a maximum gross mass and payload rating, but the operative limit for a
+      China-to-Saudi move is often the road-legal weight on the Saudi leg. Confirm the container
+      payload, the trucker’s axle limits and the road corridor before loading dense cargo, especially
+      in a 20GP where a heavy commodity can reach the payload rating before the box is cube-full.
+    </p>
+
+    <h3>Dangerous goods declaration</h3>
+    <p>
+      Hazardous cargo can move in an FCL unit only with the correct <strong>IMDG class</strong>, UN
+      number, proper shipping name, packing group, dangerous goods declaration and container packing
+      certificate, plus the required placards. Undeclared dangerous goods are the classic cause of
+      port rejections, so declare the commodity accurately on the booking and the bill of lading.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Palletised cargo">
+        <ul>
+          <li>Faster loading and unloading, safer manual handling.</li>
+          <li>Easier customs inspection and damage checks.</li>
+          <li>Consumes cube and adds pallet weight.</li>
+          <li>Works well for retail cartons and fragile goods.</li>
+        </ul>
+      </Card>
+      <Card title="Floor-loaded (loose) cargo">
+        <ul>
+          <li>Maximises cubic utilisation for volume goods.</li>
+          <li>Needs blocking, bracing and load distribution.</li>
+          <li>Slower to load and unload; higher rework risk.</li>
+          <li>Works well for homogeneous, robust goods.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. FCL landed cost: the fees competitors skip</h2>
+      <p>
+        The FCL ocean rate is only one line of the landed cost. Demurrage, detention, THC, clearance
+        handling and SABER conformity fees are the costs that surprise first-time importers — and the
+        reason “all-in” is the only useful comparison number for a full container.
+      </p>
+
+      <p>
+        <strong>THC (terminal handling charge)</strong> is levied at both ends for moving the
+        container through the terminal, while Saudi destination charges can also include a cargo
+        service fee, customs inspection handling and delivery/clearance charges. SABER conformity fees
+        are separate again: you normally pay for product testing and the per-product PC, then a
+        per-shipment SC. None of these destination fee amounts were published in the verified research
+        snapshot, so ask the forwarder to itemise them in writing.
+      </p>
+
+      <h3>Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged
+        by the ocean carrier when the container stays outside the port beyond the free time allowed
+        after collection. Free-time allowances and per-day rates differ by line and terminal and were
+        not published in the verified research snapshot, so always request the fee schedule before
+        booking.
+      </p>
+
+      <h3>Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — FCL cost & customs" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>7. Compliance: VAT, duty, SABER/SASO, FASAH &amp; HS codes</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+        possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+        carbonated drinks where applicable.
+      </p>
+      <p>
+        One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+        de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+        such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+      </p>
+
+      <h3>SABER / SASO in the correct order</h3>
+      <ol>
+        <li>Register the importer and product on the SABER conformity platform.</li>
+        <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+        <li>Once the bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+        <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+        <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+      </ol>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list, certificate of
+        origin and the SABER conformity certificate for regulated goods. Classify goods with the
+        correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+        depend on it. Note that <strong>ISF</strong> is a United States requirement and does not apply
+        to Saudi Arabia; Saudi Arabia’s equivalent advance-filing step is the FASAH pre-arrival
+        declaration.
+      </p>
+      <p>
+        FASAH is the single window that connects importers, customs brokers, terminals and ZATCA, so
+        the pre-arrival declaration, duty/VAT assessment and clearance status all sit in one flow. In
+        practice, that means clearing before discharge is realistic when the SC and documents are
+        ready, which is the single most effective way to keep demurrage and detention off the final
+        FCL invoice.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>8. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Saudi Arabia FCL quote"
+      text="Tell us your origin, destination, container type, commodity and gross weight, and we will connect you with providers who can quote ocean freight, SABER and destination fees together."
+    />
+  </section>
+</BaseLayout>

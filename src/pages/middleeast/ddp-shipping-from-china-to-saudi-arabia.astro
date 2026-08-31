@@ -1,0 +1,896 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/ddp-shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const globalimporter: Source = {
+  id: 'globalimporter',
+  name: 'Global Importer — Guangzhou/Shenzhen to Saudi DDP sample quote',
+  url: 'https://www.globalimporter.net/cdetail_753_8551690.html',
+  type: 'industry',
+};
+const amz123: Source = {
+  id: 'amz123',
+  name: 'AMZ123 — China to Saudi double-clearance DDP flow (July 2024)',
+  url: 'https://m.amz123.com/ask/dX9w7vZU',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const ddpRateSources: Source[] = [ddpchain, globalimporter, chinaddpshipping];
+const comparisonRateSources: Source[] = [freightos, sinoShipping];
+const transitSources: Source[] = [chinaddpshipping, cargofromchina, ddpchain, freightos];
+const incotermSources: Source[] = [amz123, ddpchain, chinaddpshipping];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  sasoInfo,
+  ddpchain,
+  globalimporter,
+];
+
+const ddpRows = [
+  {
+    service: 'DDP sea — LCL by volume',
+    benchmark: 'from ~1,600 RMB / CBM',
+    basis: 'ddpchain China→Saudi comparison table',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air — per chargeable kg',
+    benchmark: '33–48 RMB / kg',
+    basis: 'ddpchain route examples, e.g. Shenzhen→Riyadh',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door sample quote',
+    benchmark: '45 RMB / kg',
+    basis: 'globalimporter Guangzhou/Shenzhen→Saudi example',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP sea door-to-door',
+    benchmark: '~30–35 days',
+    basis: 'chinaddpshipping',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air door-to-door',
+    benchmark: '~10–15 days',
+    basis: 'chinaddpshipping',
+    confidence: 'LOW',
+  },
+];
+
+const fclRows = [
+  {
+    container: 'FCL 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'Not published',
+    confidence: 'LOW',
+  },
+];
+
+const lclRows = [
+  {
+    volume: 'LCL 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / CBM',
+    confidence: 'LOW',
+  },
+];
+
+const ddpTransitRows = [
+  {
+    service: 'DDP sea door-to-door',
+    origin: 'Guangzhou / Shenzhen / other China origin',
+    destination: 'Saudi named address',
+    transit: '~30–35 days',
+    basis: 'chinaddpshipping DDP sea benchmark',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air door-to-door',
+    origin: 'Guangzhou / Shenzhen / other China origin',
+    destination: 'Saudi named address',
+    transit: '~10–15 days',
+    basis: 'chinaddpshipping DDP air benchmark',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Port-to-port sea',
+    origin: 'South China',
+    destination: 'Jeddah',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days average (Shenzhen–Jeddah); ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Port-to-port sea',
+    origin: 'Shanghai',
+    destination: 'Dammam / Riyadh Dry Port',
+    transit: '30–45 days',
+    basis: 'Freightos Shanghai–Riyadh: FCL 30–40 days, LCL 32–45 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air port-to-port',
+    origin: 'China',
+    destination: 'Jeddah & Dammam',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days; ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const incotermRows = [
+  {
+    term: 'EXW (Ex Works)',
+    exportClearance: 'Buyer',
+    oceanFreight: 'Buyer',
+    saudiImport: 'Buyer',
+    riskTransfer: 'When goods are made available at the seller premises',
+  },
+  {
+    term: 'FOB (Free On Board)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Buyer',
+    saudiImport: 'Buyer',
+    riskTransfer: 'When goods are loaded on board the vessel at the named Chinese port',
+  },
+  {
+    term: 'DAP (formerly DDU)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Seller',
+    saudiImport: 'Buyer',
+    riskTransfer: 'At the named destination place before unloading',
+  },
+  {
+    term: 'DDP (Delivered Duty Paid)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Seller',
+    saudiImport: 'Seller',
+    riskTransfer: 'At the named destination after import clearance; buyer takes delivery',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway used in the Guangzhou/Shenzhen DDP benchmark',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named in the 45 RMB/kg DDP sample',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'Coast / region',
+    jeddah: 'Red Sea, western Saudi Arabia',
+    dammam: 'Arabian Gulf, eastern Saudi Arabia',
+    riyadh: 'Inland (served by coastal ports)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Main role',
+    jeddah: 'Principal container gateway',
+    dammam: 'Main Gulf port serving Riyadh + Eastern/Central provinces',
+    riyadh: 'Inland dry port for Riyadh metro distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical DDP use case',
+    jeddah: 'Western/Central Saudi door deliveries',
+    dammam: 'Riyadh + Eastern Province door deliveries',
+    riyadh: 'Last-mile distribution around Riyadh',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean or air freight',
+    who: 'Carrier / forwarder',
+    ddpStatus: 'Included in a true DDP quote — confirm scope',
+    confidence: 'LOW',
+  },
+  {
+    item: 'China export clearance',
+    who: 'Forwarder / customs broker',
+    ddpStatus: 'Included in a true DDP quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'ZATCA',
+    ddpStatus: 'Included — 5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'ZATCA',
+    ddpStatus: 'Included — 15% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Excise tax (if applicable)',
+    who: 'ZATCA',
+    ddpStatus: 'Included where goods are taxable — tobacco 100%; energy drinks 50%; carbonated drinks 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'SABER PC / SC conformity fees',
+    who: 'SABER platform + laboratories',
+    ddpStatus: 'Usually arranged by the forwarder — confirm inclusion in writing',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jeddah / Dammam terminal',
+    ddpStatus: 'Usually included — confirm itemisation',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Saudi customs clearance & cargo service fees',
+    who: 'Local broker / agent',
+    ddpStatus: 'Included in a true DDP quote — confirm itemisation',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Last-mile delivery',
+    who: 'Local trucking partner',
+    ddpStatus: 'Included to the named address — confirm address type and access',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage / detention beyond free time',
+    who: 'Terminal / carrier',
+    ddpStatus: 'Usually excluded after free time — confirm the free-time policy',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance',
+    who: 'Insurer / forwarder',
+    ddpStatus: 'Optional — confirm whether a DDP quote includes it',
+    confidence: 'LOW',
+  },
+];
+
+const hiddenFeeRows = [
+  {
+    component: 'Import duty',
+    ddp: 'Usually included in the DDP all-in price',
+    selfPay: 'Importer pays to ZATCA at 5% of CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Import VAT',
+    ddp: 'Included in the DDP all-in price',
+    selfPay: 'Importer pays to ZATCA at 15% on CIF + duty',
+    confidence: 'HIGH',
+  },
+  {
+    component: 'SABER PC / SC',
+    ddp: 'Usually arranged by the forwarder — confirm inclusion',
+    selfPay: 'Importer or broker arranges product + shipment conformity',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Destination THC / port charges',
+    ddp: 'Usually included — confirm itemisation',
+    selfPay: 'Importer pays terminal and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Customs clearance & brokerage',
+    ddp: 'Included in a true DDP quote',
+    selfPay: 'Importer pays broker or handles clearance',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Demurrage / detention beyond free time',
+    ddp: 'Usually excluded after free time — confirm policy',
+    selfPay: 'Importer pays per-day charges',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Last-mile delivery',
+    ddp: 'Included to the named address',
+    selfPay: 'Importer arranges and pays trucking',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What does DDP shipping from China to Saudi Arabia include?',
+    a: 'A true DDP quote should cover China export clearance, international transport, Saudi import clearance, import duty, VAT, SABER conformity fees and last-mile delivery to the named address. In practice, scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
+  },
+  {
+    q: 'Who pays Saudi import duty and VAT under DDP?',
+    a: 'The seller pays them as part of the delivered duty paid arrangement. Saudi VAT is 15% on the CIF value plus customs duty, and the baseline import duty is 5% of CIF under the GCC Common External Tariff. The forwarder normally settles these on the seller’s behalf during Saudi clearance.',
+  },
+  {
+    q: 'Does DDP include SABER PC and SC fees?',
+    a: 'It should, but inclusion is not automatic. A Product Conformity Certificate (PC) is issued per product and is usually valid for about one year, while a Shipment Conformity Certificate (SC) is issued per shipment. Since 1 January 2025 the SC must be obtained before cargo arrival. Ask the forwarder to confirm that both PC and SC fees are inside the DDP price.',
+  },
+  {
+    q: 'What is the difference between DDP, DDU/DAP and EXW/FOB?',
+    a: 'DDP puts the most responsibility on the seller: the seller clears export, pays freight, handles Saudi import clearance, and pays duty and VAT. DAP (the Incoterms 2020 successor to the old DDU term) delivers to a named place but leaves import clearance and taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
+  },
+  {
+    q: 'How much does DDP shipping from China to Saudi Arabia cost?',
+    a: 'Indicative market benchmarks include DDP sea from around 1,600 RMB per CBM, DDP air at 33–48 RMB per kg, and a Guangzhou/Shenzhen-to-Saudi door-to-door sample of 45 RMB per kg. These are LOW-confidence examples collected from different forwarders and dates, not binding quotes — always request an itemised all-in quote for your product and address.',
+  },
+  {
+    q: 'How long does DDP sea and air freight take?',
+    a: 'Indicative door-to-door DDP windows are around 30–35 days by sea and 10–15 days by air. Port-to-port sea is commonly reported around 20–35 days to Jeddah and 30–45 days to Dammam/Riyadh Dry Port, with air port-to-port around 2–10 days. These are LOW-confidence figures, verify with carrier.',
+  },
+  {
+    q: 'Are demurrage and detention included in a DDP quote?',
+    a: 'Usually not after the free-time allowance. Demurrage is charged by the terminal and detention by the carrier once the container exceeds free time, and these per-day charges are commonly excluded or capped in DDP pricing. Confirm the free-time policy and any per-day rates in writing before booking.',
+  },
+  {
+    q: 'Do I need a Saudi importer of record with DDP?',
+    a: 'A DDP forwarder with a local partner normally provides the Saudi clearance capability, but the practical answer depends on the forwarder’s local structure and your product’s licensing. Some DDP providers use their own importer of record or work with the buyer’s commercial registration. Confirm this before the first shipment because it affects SABER registration and duty/VAT settlement.',
+  },
+  {
+    q: 'What happens if the SABER SC certificate is not obtained before arrival?',
+    a: 'Clearance fails. Since 1 January 2025, an SC applied after cargo arrival is treated as void, so the shipment cannot clear until the certificate issue is resolved — which typically means delays, storage and demurrage. Under DDP, the forwarder still needs the bill of lading and product PC before it can apply for the SC, so send documents early.',
+  },
+  {
+    q: 'Can a DDP shipment still attract Saudi excise tax?',
+    a: 'Yes. DDP does not remove Saudi excise tax. Tobacco attracts 100%, energy drinks 50% and carbonated drinks 50% on top of VAT where applicable. A compliant DDP quote should reflect these amounts, but confirm the calculation for your HS codes.',
+  },
+  {
+    q: 'Is 45 RMB per kg a real DDP rate?',
+    a: 'It is a real example recorded during research — a Guangzhou/Shenzhen-to-Saudi door-to-door quote. It is a LOW-confidence benchmark, not a universal tariff: density, product type, SABER requirements, delivery address and market conditions all move the final price. Use it as a sanity check, not as a booking rate.',
+  },
+  {
+    q: 'How do I compare DDP with a self-arranged CIF or DAP shipment?',
+    a: 'Build the same landed-cost stack for both: freight, origin fees, destination THC and port charges, clearance and brokerage, SABER PC/SC, duty, VAT, last-mile trucking, plus the risk of demurrage/detention. DDP is usually easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'DDP Shipping from China to Saudi Arabia: What Duty Paid Really Includes (August 2026)',
+      description:
+        'DDP shipping from China to Saudi Arabia explained: who pays duty, VAT and SABER fees, indicative all-in benchmarks, DDP vs DAP/EXW/FOB, and the hidden fees to confirm before booking.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="DDP Shipping from China to Saudi Arabia: What Duty Paid Really Includes (August 2026)"
+  description="DDP shipping from China to Saudi Arabia explained: who pays duty, VAT and SABER fees, indicative all-in benchmarks, DDP vs DAP/EXW/FOB, and the hidden fees to confirm before booking."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'DDP shipping from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>DDP shipping from China to Saudi Arabia: what “duty paid” really includes</h1>
+      <p class="lead">
+        Delivered Duty Paid is the easiest China-to-Saudi option to explain and the easiest to
+        misquote. This page walks through who actually pays the 5% duty, 15% VAT and SABER fees,
+        what a realistic all-in DDP benchmark looks like, how DDP compares with DAP, EXW and FOB,
+        and the destination charges that hide outside a “tax-inclusive” headline.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence price, transit and DDP benchmark as indicative, verify with carrier or
+        forwarder before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DDP sea transit</span>
+          <span class="fact-value">30–35 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DDP air transit</span>
+          <span class="fact-value">10–15 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DDP sample quote</span>
+          <span class="fact-value">45 RMB/kg <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. DDP rate benchmarks: FCL, LCL and door-to-door all-in</h2>
+    <p>
+      DDP is priced differently from port-to-port freight because it bundles clearance, taxes and
+      delivery. The first table below records the all-in RMB benchmarks found in the research
+      snapshot; the second table shows port-to-port FCL/LCL ocean freight for context. They are not
+      comparable line by line — the DDP figures already include duty, VAT, SABER and last-mile, while
+      the FCL/LCL figures are ocean-leg only.
+    </p>
+
+    <h3>Indicative DDP all-in benchmarks</h3>
+    <DataTable
+      columns={[
+        { key: 'service', label: 'DDP service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={ddpRows}
+      caption="Indicative market examples, not binding quotes. Scope varies between forwarders — verify with a forwarder before relying on these figures."
+    />
+    <SourceList sources={ddpRateSources} title="Sources — DDP benchmarks" />
+
+    <h3 class="mt-3">Port-to-port FCL context</h3>
+    <DataTable
+      columns={[
+        { key: 'container', label: 'Container' },
+        { key: 'freightos', label: 'Freightos · Shanghai–Riyadh' },
+        { key: 'sino', label: 'Sino-shipping · China–Saudi (Aug 2026)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="Ocean-freight-only market snapshots. Add duty, VAT, SABER and delivery to compare against DDP."
+    />
+    <SourceList sources={comparisonRateSources} title="Sources — FCL rates" />
+
+    <h3 class="mt-3">Port-to-port LCL context</h3>
+    <DataTable
+      columns={[
+        { key: 'volume', label: 'Volume' },
+        { key: 'total', label: 'Total (Freightos · Shanghai–Riyadh)' },
+        { key: 'perCbm', label: 'Indicative per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclRows}
+      caption="LCL unit cost falls as volume rises. These are ocean-only figures — add taxes, SABER and delivery."
+    />
+    <SourceList sources={comparisonRateSources} title="Sources — LCL rates" />
+
+    <div class="note mt-2">
+      <strong>Why DDP prices are hard to compare:</strong> one forwarder may quote “tax included” but
+      exclude destination THC and demurrage after free time, while another quotes the full landed
+      cost. Always ask for the same scope: which fees, which taxes, which delivery address and which
+      free-time policy are inside the number.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. DDP transit times by port and mode</h2>
+      <p>
+        A DDP door-to-door service adds clearance and last-mile time to the port-to-port leg. The
+        figures below are corridor-level research findings, not schedule guarantees, and the exact
+        window depends on origin city, discharge port, SABER readiness and the final delivery
+        address.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpTransitRows}
+        caption="Indicative transit windows only — verify with the relevant carrier or forwarder before relying on these figures."
+      />
+      <SourceList sources={transitSources} title="Sources — DDP transit times" />
+
+      <div class="note mt-2">
+        <strong>The SABER variable:</strong> transit estimates assume the PC is already in place and
+        the SC is applied for as soon as the bill of lading is available. If conformity paperwork
+        starts late, the delay at the Saudi side can easily exceed the sailing time saved on the
+        ocean leg.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. DDP vs DAP (DDU), EXW and FOB</h2>
+    <p>
+      Incoterms allocate cost and risk; they do not set a price. DDP concentrates both on the seller
+      for the smoothest buyer experience, while EXW and FOB leave the importer to manage the Saudi
+      side. DAP — the Incoterms 2020 successor to the legacy DDU term — sits in between: the seller
+      delivers to a named place but the buyer clears import and pays duty/VAT.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'term', label: 'Incoterm' },
+        { key: 'exportClearance', label: 'China export clearance' },
+        { key: 'oceanFreight', label: 'Ocean freight' },
+        { key: 'saudiImport', label: 'Saudi import clearance, duty & VAT' },
+        { key: 'riskTransfer', label: 'Risk transfers' },
+      ]}
+      rows={incotermRows}
+      caption="Standard Incoterms responsibility allocation, not a price comparison. DDU was replaced by DAP in Incoterms 2020."
+    />
+    <SourceList sources={incotermSources} title="Sources — DDP practice & Incoterms" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="DDP is usually best when...">
+        <ul>
+          <li>The buyer wants one all-in price and one provider to chase.</li>
+          <li>You are not established with Saudi customs or a local broker.</li>
+          <li>You sell direct to consumers, Amazon or Noon, and need door delivery.</li>
+          <li>You want duty/VAT/SABER handled by a forwarder with local partners.</li>
+        </ul>
+      </Card>
+      <Card title="Self-arranged DAP/CIF is usually better when...">
+        <ul>
+          <li>You have a Saudi commercial registration and can reclaim VAT.</li>
+          <li>You have an existing broker, negotiated terminal rates and trucking.</li>
+          <li>Your product duty/VAT exposure is low and you want transparent tax visibility.</li>
+          <li>You can manage SABER PC/SC directly and clear before discharge.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      The commercial question is not “which term is cheapest” but “who can clear fastest and with the
+      lowest total landed cost”. A DDP provider with weak SABER discipline can be more expensive in
+      demurrage than a self-arranged shipment with a strong broker — so evaluate the operator, not
+      just the term.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Ports: Shanghai, Ningbo-Zhoushan, Shenzhen &amp; Guangzhou to Jeddah, Dammam &amp; Riyadh Dry Port</h2>
+      <p>
+        The DDP benchmark examples in the research snapshot are anchored on South China origins —
+        Guangzhou and Shenzhen — but Shanghai and Ningbo-Zhoushan are the corridor’s throughput
+        leaders and remain common origins for larger volumes.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={primaryPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">Saudi destination ports</h3>
+      <p>
+        Mawani-operated Saudi ports handled <strong>8.3 million TEU in 2025</strong> (+10.6% year on
+        year), a MEDIUM-confidence figure from trade press because mawani.gov.sa was unavailable
+        during research. Jeddah and Dammam are the two seaports that matter for most DDP deliveries;
+        Riyadh Dry Port handles the inland leg for Riyadh metro distribution.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jeddah', label: 'Jeddah' },
+          { key: 'dammam', label: 'Dammam' },
+          { key: 'riyadh', label: 'Riyadh Dry Port' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="Port roles are secondary-source findings; verify routing and the final delivery leg with your forwarder."
+      />
+      <SourceList
+        sources={[...primaryPortSources, worldcargonews]}
+        title="Sources — Saudi ports"
+      />
+
+      <div class="note mt-2">
+        <strong>DDP routing in one line:</strong> ask your forwarder which Saudi port the DDP quote
+        assumes. Jeddah suits western and central Saudi consignees; Dammam, then Riyadh Dry Port,
+        suits Riyadh and Eastern Province. A cheaper quote that lands at the wrong port can become
+        more expensive after long-haul trucking.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed cost under DDP: the hidden-fee comparison competitors skip</h2>
+    <p>
+      “Tax inclusive” is not the same as “all-in”. A proper DDP landed-cost check separates the
+      charges that are genuinely included from the ones that appear later — destination THC, cargo
+      service fees, customs inspection handling, SABER conformity work, remote-area delivery, and
+      demurrage or detention after free time.
+    </p>
+
+    <h3>What the DDP price should contain</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'ddpStatus', label: 'DDP status' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request an itemised fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — DDP landed cost & customs" />
+
+    <h3 class="mt-3">DDP all-in vs self-arranged import</h3>
+    <DataTable
+      columns={[
+        { key: 'component', label: 'Cost component' },
+        { key: 'ddp', label: 'Under DDP' },
+        { key: 'selfPay', label: 'Self-arranged CIF/DAP' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={hiddenFeeRows}
+      caption="Scope comparison, not a price comparison. Confirm inclusion or exclusion in writing for each component."
+    />
+    <SourceList sources={costSources} title="Sources — hidden-fee comparison" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Insist on these in a DDP quote">
+        <ul>
+          <li>Duty and VAT calculated on your actual HS codes and CIF value.</li>
+          <li>SABER PC and SC fees, including testing if your product is new.</li>
+          <li>Destination THC, port charges, cargo service and brokerage fees.</li>
+          <li>Delivery to a named address with access type stated.</li>
+        </ul>
+      </Card>
+      <Card title="Watch for these exclusions">
+        <ul>
+          <li>Demurrage and detention after the free-time allowance.</li>
+          <li>Customs inspection or re-examination charges.</li>
+          <li>Remote-area or restricted-access delivery surcharges.</li>
+          <li>Duty/VAT adjustments if HS classification changes during audit.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      <strong>The delay cost is the biggest hidden line.</strong> If the SC is not obtained before
+      arrival, or documents are incomplete, the container stops inside the terminal and demurrage
+      starts accruing. A DDP forwarder with a disciplined pre-arrival checklist is worth more than a
+      slightly lower headline rate, because the per-day terminal charge can erase the saving in a few
+      days.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance: VAT, duty, SABER/SASO, FASAH &amp; HS codes</h2>
+
+      <h3>Tax and duty under DDP</h3>
+      <p>
+        Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+        possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+        carbonated drinks where applicable. DDP transfers payment to the seller/forwarder, but the
+        underlying rates do not change.
+      </p>
+      <p>
+        One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+        de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+        such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+      </p>
+
+      <h3>SABER / SASO still applies to DDP</h3>
+      <ol>
+        <li>Register the importer and product on the SABER conformity platform.</li>
+        <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+        <li>Once the bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+        <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+        <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+      </ol>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list, certificate of
+        origin and the SABER conformity certificate for regulated goods. Classify goods with the
+        correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+        depend on it — and under DDP, a wrong HS code means the duty/VAT embedded in your all-in price
+        is wrong too. Note that <strong>ISF</strong> is a United States requirement and does not apply
+        to Saudi Arabia.
+      </p>
+      <p>
+        FASAH is the single window that connects importers, customs brokers, terminals and ZATCA, so
+        the pre-arrival declaration, duty/VAT assessment and clearance status all sit in one flow. For
+        DDP, this is where the forwarder proves the arrangement is real: if the SC and documents are
+        ready before discharge, the cargo can clear without the demurrage clock running.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Saudi Arabia DDP quote"
+      text="Tell us your origin, destination address, volume and product type, and we will connect you with providers who can quote duty, VAT, SABER and last-mile delivery in one scope."
+    />
+  </section>
+</BaseLayout>
