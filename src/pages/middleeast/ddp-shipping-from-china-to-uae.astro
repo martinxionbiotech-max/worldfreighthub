@@ -1,0 +1,822 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/ddp-shipping-from-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const ddpRateSources: Source[] = [cargofromchinaUae];
+const comparisonRateSources: Source[] = [cargofromchinaUae];
+const transitSources: Source[] = [cargofromchinaUae, wfhRouteData];
+const incotermSources: Source[] = [cargofromchinaUae, docshipper];
+const freeZoneSources: Source[] = [...sourcesByIds(['dubai-customs']), fta];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const ddpRows = [
+  {
+    service: 'DDP air door-to-door',
+    benchmark: '3–6 days; rate not separately published',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP sea door-to-door',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE DDP sea benchmark in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP per-kg air context',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina air snapshot — add duty, VAT and clearance to reach DDP',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP per-CBM sea context',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina LCL snapshot (Dubai) — add duty, VAT and last-mile',
+    confidence: 'LOW',
+  },
+];
+
+const portToPortRows = [
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight / express',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE FCL rate appeared in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const ddpTransitRows = [
+  {
+    service: 'DDP air door-to-door',
+    origin: 'China',
+    destination: 'UAE named address',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Port-to-port sea',
+    origin: 'China',
+    destination: 'Dubai / Jebel Ali corridor',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Port-to-port sea',
+    origin: 'Shanghai',
+    destination: 'Jebel Ali',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Air express port-to-port',
+    origin: 'China',
+    destination: 'Dubai / UAE corridor',
+    transit: '2–4 days',
+    basis: 'cargofromchina express snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const incotermRows = [
+  {
+    term: 'EXW (Ex Works)',
+    exportClearance: 'Buyer',
+    oceanFreight: 'Buyer',
+    uaeImport: 'Buyer',
+    riskTransfer: 'When goods are made available at the seller premises',
+  },
+  {
+    term: 'FOB (Free On Board)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Buyer',
+    uaeImport: 'Buyer',
+    riskTransfer: 'When goods are loaded on board the vessel at the named Chinese port',
+  },
+  {
+    term: 'DAP (formerly DDU)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Seller',
+    uaeImport: 'Buyer',
+    riskTransfer: 'At the named destination place before unloading',
+  },
+  {
+    term: 'DDP (Delivered Duty Paid)',
+    exportClearance: 'Seller',
+    oceanFreight: 'Seller',
+    uaeImport: 'Seller',
+    riskTransfer: 'At the named destination after import clearance; buyer takes delivery',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across UAE freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const uaePortRows = [
+  {
+    factor: 'Emirate / coast',
+    jebelAli: 'Dubai — Arabian Gulf',
+    khalifa: 'Abu Dhabi — Arabian Gulf',
+    sharjah: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'UN/LOCODE',
+    jebelAli: 'AEJEA',
+    khalifa: 'AEKHL',
+    sharjah: 'AESHJ',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Main role',
+    jebelAli: "Middle East's largest container port; DP World operated",
+    khalifa: 'Semi-automated deep-water Abu Dhabi gateway',
+    sharjah: 'Container gateway for Sharjah and the northern emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical DDP use case',
+    jebelAli: 'Dubai mainland + Jebel Ali Free Zone (JAFZA) door deliveries',
+    khalifa: 'Abu Dhabi mainland + Khalifa-linked free-zone deliveries',
+    sharjah: 'Sharjah/northern emirates door deliveries',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean or air freight',
+    who: 'Carrier / forwarder',
+    ddpStatus: 'Included in a true DDP quote — confirm scope',
+    confidence: 'LOW',
+  },
+  {
+    item: 'China export clearance',
+    who: 'Forwarder / customs broker',
+    ddpStatus: 'Included in a true DDP quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    ddpStatus: 'Included — 5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    ddpStatus: 'Included — 5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jebel Ali / Khalifa / Sharjah terminal',
+    ddpStatus: 'Usually included — confirm itemisation',
+    confidence: 'LOW',
+  },
+  {
+    item: 'UAE customs clearance & brokerage',
+    who: 'Local broker / agent',
+    ddpStatus: 'Included in a true DDP quote — confirm itemisation',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Last-mile delivery',
+    who: 'Local trucking partner',
+    ddpStatus: 'Included to the named address — confirm address type and access',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage / detention beyond free time',
+    who: 'Terminal / carrier',
+    ddpStatus: 'Usually excluded after free time — confirm the free-time policy',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance',
+    who: 'Insurer / forwarder',
+    ddpStatus: 'Optional — confirm whether the DDP quote includes it',
+    confidence: 'LOW',
+  },
+];
+
+const hiddenFeeRows = [
+  {
+    component: 'Import duty',
+    ddp: 'Usually included in the DDP all-in price',
+    selfPay: 'Importer pays 5% of CIF to Dubai Customs / FTA',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Import VAT',
+    ddp: 'Included in the DDP all-in price',
+    selfPay: 'Importer pays 5% on CIF + duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Destination THC / port charges',
+    ddp: 'Usually included — confirm itemisation',
+    selfPay: 'Importer pays terminal and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Customs clearance & brokerage',
+    ddp: 'Included in a true DDP quote',
+    selfPay: 'Importer pays broker or handles clearance',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Demurrage / detention beyond free time',
+    ddp: 'Usually excluded after free time — confirm policy',
+    selfPay: 'Importer pays per-day charges',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Last-mile delivery',
+    ddp: 'Included to the named address',
+    selfPay: 'Importer arranges and pays trucking',
+    confidence: 'LOW',
+  },
+];
+
+const freeZoneRows = [
+  {
+    factor: 'Import duty',
+    mainland: '5% CIF payable at import',
+    freeZone: 'Duty can be suspended while goods remain in the zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Import VAT',
+    mainland: '5% on CIF + duty payable at import',
+    freeZone: 'VAT can be suspended within the designated free zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'When goods exit the zone',
+    mainland: 'N/A — goods are already in the mainland',
+    freeZone: 'Duty/VAT generally apply when goods exit to the mainland market',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'DDP scope',
+    mainland: 'Forwarder pays duty + VAT + last-mile to the mainland address',
+    freeZone: 'Forwarder may deliver into the zone under suspension; confirm exit treatment',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What does DDP shipping from China to the UAE include?',
+    a: 'A true DDP quote should cover China export clearance, international transport, UAE import clearance, import duty, VAT and last-mile delivery to the named address. In practice scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
+  },
+  {
+    q: 'Who pays UAE import duty and VAT under DDP?',
+    a: 'The seller pays them as part of the delivered duty paid arrangement. UAE VAT is 5% on the CIF value plus customs duty, and the baseline import duty is 5% of CIF under the GCC Common External Tariff. The forwarder normally settles these on the seller’s behalf during UAE clearance.',
+  },
+  {
+    q: 'What is the difference between DDP, DDU/DAP and EXW/FOB?',
+    a: 'DDP puts the most responsibility on the seller: the seller clears export, pays freight, handles UAE import clearance, and pays duty and VAT. DAP (the Incoterms 2020 successor to the old DDU term) delivers to a named place but leaves import clearance and taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
+  },
+  {
+    q: 'How much does DDP shipping from China to the UAE cost?',
+    a: 'Verified UAE DDP benchmarks are thin: the research snapshot records DDP air at 3–6 days but does not publish a separate DDP rate, and no verified DDP sea rate appeared. For context, port-to-port air is AED 20–23.5 per kg and LCL is AED 880–980 per CBM, both LOW confidence. Always request an itemised all-in DDP quote for your product and address.',
+  },
+  {
+    q: 'How long does DDP sea and air freight take?',
+    a: 'DDP air is commonly reported at 3–6 days. Port-to-port sea is 14–18 days on the Dubai corridor (LOW) or a typical 21 days with a 15–30 day range for Shanghai–Jebel Ali (MEDIUM). Air express is around 2–4 days. All are indicative — verify with your carrier or forwarder.',
+  },
+  {
+    q: 'Do free zone deliveries avoid UAE VAT under DDP?',
+    a: 'Not automatically, and the answer depends on where the goods stay. Goods can be held under duty/VAT suspension within a designated free zone, but duty and VAT generally apply when goods leave the zone for the mainland market. Tell your DDP forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
+  },
+  {
+    q: 'Is there a de minimis threshold for UAE DDP shipments?',
+    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure and should be confirmed with Dubai Customs or the FTA, especially for low-value e-commerce DDP parcels.',
+  },
+  {
+    q: 'What documents are needed for DDP to the UAE?',
+    a: 'The standard set includes a commercial invoice, bill of lading, packing list and certificate of origin, plus conformity documentation such as CE evidence for regulated goods. Classify goods with the correct HS code before quoting, because a wrong code under DDP means the duty and VAT embedded in your all-in price are wrong too.',
+  },
+  {
+    q: 'Are demurrage and detention included in a DDP quote?',
+    a: 'Usually not after the free-time allowance. Demurrage is charged by the terminal and detention by the carrier once the container exceeds free time, and these per-day charges are commonly excluded or capped in DDP pricing. Confirm the free-time policy and any per-day rates in writing before booking.',
+  },
+  {
+    q: 'Do I need a UAE importer of record with DDP?',
+    a: 'A DDP forwarder with a local partner normally provides the UAE clearance capability, but the practical answer depends on the forwarder’s local structure and your product’s licensing. Some providers use their own importer of record or work with the buyer’s trade licence. Confirm this before the first shipment because it affects the customs declaration, duty/VAT settlement and free-zone vs mainland treatment.',
+  },
+  {
+    q: 'How do I compare DDP with a self-arranged CIF or DAP shipment?',
+    a: 'Build the same landed-cost stack for both: freight, origin fees, destination THC and port charges, clearance and brokerage, duty, VAT, last-mile trucking, plus the risk of demurrage/detention. DDP is easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'DDP Shipping from China to the UAE: What Duty Paid Really Includes (August 2026)',
+      description:
+        'DDP shipping from China to the UAE explained: who pays the 5% duty and 5% VAT, indicative air/LCL benchmarks, DDP vs DAP/EXW/FOB, free zone vs mainland treatment, and the hidden fees to confirm before booking.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="DDP Shipping from China to the UAE: What Duty Paid Really Includes (August 2026)"
+  description="DDP shipping from China to the UAE explained: who pays the 5% duty and 5% VAT, indicative air/LCL benchmarks, DDP vs DAP/EXW/FOB, free zone vs mainland treatment, and the hidden fees to confirm before booking."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'DDP shipping from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>DDP shipping from China to the UAE: what “duty paid” really includes</h1>
+      <p class="lead">
+        Delivered Duty Paid is the easiest China-to-UAE option to explain and the easiest to
+        misquote. This page walks through who actually pays the 5% duty and 5% VAT, what a realistic
+        all-in DDP benchmark looks like, how DDP compares with DAP, EXW and FOB, and why the
+        free-zone-vs-mainland destination changes the answer.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence price, transit and DDP benchmark as indicative, verify with carrier or
+        forwarder before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">AED <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DDP air transit</span>
+          <span class="fact-value">3–6 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Port-to-port sea</span>
+          <span class="fact-value">14–18 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air benchmark</span>
+          <span class="fact-value">AED 20–23.5/kg <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. DDP rate benchmarks: what the research snapshot shows</h2>
+    <p>
+      DDP is priced differently from port-to-port freight because it bundles clearance, taxes and
+      delivery. The UAE research snapshot is thinner than the Saudi one: it records a DDP air window
+      but no separate UAE DDP rate, so the table below separates the true DDP rows from the
+      port-to-port context you would need to add duty, VAT and last-mile on top of.
+    </p>
+
+    <h3>Indicative DDP all-in benchmarks</h3>
+    <DataTable
+      columns={[
+        { key: 'service', label: 'DDP service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={ddpRows}
+      caption="Indicative market examples, not binding quotes. Scope varies between forwarders — verify with a forwarder before relying on these figures."
+    />
+    <SourceList sources={ddpRateSources} title="Sources — DDP benchmarks" />
+
+    <h3 class="mt-3">Port-to-port context (add duty, VAT and delivery)</h3>
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portToPortRows}
+      caption="Ocean/air-only market snapshots. Add duty, VAT, clearance and last-mile to compare against DDP."
+    />
+    <SourceList sources={comparisonRateSources} title="Sources — port-to-port rates" />
+
+    <div class="note mt-2">
+      <strong>Why DDP prices are hard to compare:</strong> one forwarder may quote “tax included” but
+      exclude destination THC and demurrage after free time, while another quotes the full landed
+      cost. Always ask for the same scope: which fees, which taxes, which delivery address, and
+      whether the destination is a free zone or mainland.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. DDP transit times by port and mode</h2>
+      <p>
+        A DDP door-to-door service adds clearance and last-mile time to the port-to-port leg. The
+        figures below are corridor-level research findings, not schedule guarantees, and the exact
+        window depends on the origin city, discharge port, document readiness and whether the final
+        consignee is a free zone or mainland address.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpTransitRows}
+        caption="Indicative transit windows only — verify with the relevant carrier or forwarder before relying on these figures."
+      />
+      <SourceList sources={transitSources} title="Sources — DDP transit times" />
+
+      <div class="note mt-2">
+        <strong>The free-zone variable:</strong> transit estimates assume the customs declaration,
+        HS code and commercial invoice are ready before arrival. If a free-zone delivery is not
+        declared correctly, the clearance or exit step can add days after the ocean leg has already
+        landed.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. DDP vs DAP (DDU), EXW and FOB</h2>
+    <p>
+      Incoterms allocate cost and risk; they do not set a price. DDP concentrates both on the seller
+      for the smoothest buyer experience, while EXW and FOB leave the importer to manage the UAE
+      side. DAP — the Incoterms 2020 successor to the legacy DDU term — sits in between: the seller
+      delivers to a named place but the buyer clears import and pays duty/VAT.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'term', label: 'Incoterm' },
+        { key: 'exportClearance', label: 'China export clearance' },
+        { key: 'oceanFreight', label: 'Ocean freight' },
+        { key: 'uaeImport', label: 'UAE import clearance, duty & VAT' },
+        { key: 'riskTransfer', label: 'Risk transfers' },
+      ]}
+      rows={incotermRows}
+      caption="Standard Incoterms responsibility allocation, not a price comparison. DDU was replaced by DAP in Incoterms 2020."
+    />
+    <SourceList sources={incotermSources} title="Sources — DDP practice & Incoterms" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="DDP is usually best when...">
+        <ul>
+          <li>The buyer wants one all-in price and one provider to chase.</li>
+          <li>You are not established with UAE customs or a local broker.</li>
+          <li>You sell direct to consumers, Amazon UAE or noon and need door delivery.</li>
+          <li>You want duty/VAT/clearance handled by a forwarder with local partners.</li>
+        </ul>
+      </Card>
+      <Card title="Self-arranged DAP/CIF is usually better when...">
+        <ul>
+          <li>You have a UAE trade licence or free-zone entity and can reclaim VAT.</li>
+          <li>You have an existing broker, negotiated terminal rates and trucking.</li>
+          <li>Your product duty/VAT exposure is low and you want tax visibility.</li>
+          <li>You import into a free zone and can manage the suspension/exit flow directly.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      The commercial question is not “which term is cheapest” but “who can clear fastest and with the
+      lowest total landed cost”. A DDP provider with weak free-zone or HS-code discipline can be more
+      expensive in demurrage than a self-arranged shipment with a strong broker — so evaluate the
+      operator, not just the term.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Ports: Shanghai, Ningbo-Zhoushan, Shenzhen &amp; Guangzhou to Jebel Ali, Khalifa &amp; Sharjah</h2>
+      <p>
+        The China origin choice follows the export base — Shanghai and Ningbo-Zhoushan for East China,
+        Shenzhen and Guangzhou for the Pearl River Delta. The UAE destination choice is what changes
+        the DDP calculation, because Jebel Ali, Khalifa and Sharjah serve different emirates and
+        different free-zone/mainland mixes.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">UAE destination ports for DDP</h3>
+      <p>
+        Jebel Ali is the Middle East’s largest container port and DP World-operated hub, Khalifa
+        Port Abu Dhabi is a semi-automated deep-water gateway, and Port Khalid serves Sharjah and the
+        northern emirates. Jebel Ali and Khalifa Port profiles are HIGH-confidence; the routing and
+        DDP use-case columns are LOW and should be verified with your forwarder.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port' },
+          { key: 'sharjah', label: 'Sharjah / Port Khalid' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={uaePortRows}
+        caption="Port roles and free-zone delivery use cases are secondary-source findings; verify routing and the final delivery leg with your forwarder."
+      />
+      <SourceList sources={uaePortSources} title="Sources — UAE ports" />
+
+      <div class="note mt-2">
+        <strong>DDP routing in one line:</strong> ask your forwarder which UAE port the DDP quote
+        assumes. Jebel Ali suits Dubai mainland and JAFZA deliveries, Khalifa suits Abu Dhabi and its
+        linked free zones, and Sharjah suits the northern emirates. A cheaper quote that lands at the
+        wrong port can become more expensive after long-haul trucking.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed cost under DDP: the hidden-fee comparison competitors skip</h2>
+    <p>
+      “Tax inclusive” is not the same as “all-in”. A proper DDP landed-cost check separates the
+      charges that are genuinely included from the ones that appear later — destination THC, port
+      service fees, customs inspection handling, remote-area delivery, and demurrage or detention
+      after free time.
+    </p>
+
+    <h3>What the DDP price should contain</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'ddpStatus', label: 'DDP status' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="The 5% duty and 5% VAT are stated from verified/secondary sources. Unquantified fees are LOW confidence because the snapshot did not publish amounts — request an itemised fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — DDP landed cost & customs" />
+
+    <h3 class="mt-3">DDP all-in vs self-arranged import</h3>
+    <DataTable
+      columns={[
+        { key: 'component', label: 'Cost component' },
+        { key: 'ddp', label: 'Under DDP' },
+        { key: 'selfPay', label: 'Self-arranged CIF/DAP' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={hiddenFeeRows}
+      caption="Scope comparison, not a price comparison. Confirm inclusion or exclusion in writing for each component."
+    />
+    <SourceList sources={costSources} title="Sources — hidden-fee comparison" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Insist on these in a DDP quote">
+        <ul>
+          <li>Duty and VAT calculated on your actual HS codes and CIF value.</li>
+          <li>Destination THC, port charges, clearance and brokerage fees.</li>
+          <li>Free-zone vs mainland treatment stated for the final consignee.</li>
+          <li>Delivery to a named address with access type stated.</li>
+        </ul>
+      </Card>
+      <Card title="Watch for these exclusions">
+        <ul>
+          <li>Demurrage and detention after the free-time allowance.</li>
+          <li>Customs inspection or re-examination charges.</li>
+          <li>Remote-area or restricted-access delivery surcharges.</li>
+          <li>Duty/VAT adjustments if HS classification changes during audit.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      <strong>The delay cost is the biggest hidden line.</strong> If the customs declaration,
+      commercial invoice or free-zone status is wrong, the consignment stops inside the terminal and
+      demurrage starts accruing. A DDP forwarder with a disciplined pre-arrival checklist is worth
+      more than a slightly lower headline rate, because the per-day terminal charge can erase the
+      saving in a few days.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance: VAT, duty, free zone vs mainland &amp; HS codes</h2>
+
+      <h3>Tax and duty under DDP</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on the
+        CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher protective or anti-dumping rates possible
+        on specific goods. DDP transfers payment to the seller/forwarder, but the underlying rates do
+        not change.
+      </p>
+      <p>
+        In formula terms the standard tax stack is <code>CIF × 1.05 (duty) × 1.05 (VAT)</code>, or
+        <code>CIF × 1.1025</code>. For AED 10,000 CIF that is AED 500 duty plus AED 525 VAT —
+        AED 11,525 before other fees. Rates are subject to change; verify with the FTA before relying
+        on this calculation.
+      </p>
+
+      <h3>Free zone vs mainland: how DDP treatment changes</h3>
+      <p>
+        This is the UAE-specific detail competitors skip. Goods destined for a <strong>mainland</strong>
+        address generally attract the 5% duty and 5% VAT at import. Goods moved into a designated
+        <strong>free zone</strong> can be held under duty/VAT suspension while they remain in the
+        zone, but duty and VAT generally apply when they later exit to the mainland market.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'mainland', label: 'Mainland' },
+          { key: 'freeZone', label: 'Free zone' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={freeZoneRows}
+        caption="General regulatory principle, not legal advice. Free-zone benefits vary by zone and activity — verify the specific treatment with Dubai Customs and the FTA."
+      />
+      <SourceList sources={freeZoneSources} title="Sources — free zone vs mainland" />
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list and certificate
+        of origin, plus conformity documentation such as CE evidence for regulated goods. Classify
+        goods with the correct <strong>HS code</strong> before quoting, because both duty and
+        conformity requirements depend on it — and under DDP, a wrong HS code means the duty/VAT
+        embedded in your all-in price is wrong too. Note that <strong>ISF</strong> is a United States
+        requirement and does not apply to the UAE.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE customs & VAT" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to UAE DDP quote"
+      text="Tell us your origin, destination emirate, free-zone or mainland status, volume and product type, and we will connect you with providers who can quote duty, VAT and last-mile delivery in one scope."
+    />
+  </section>
+</BaseLayout>

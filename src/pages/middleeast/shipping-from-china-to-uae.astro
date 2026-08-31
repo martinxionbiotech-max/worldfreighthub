@@ -1,0 +1,730 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-from-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const rateSources: Source[] = [cargofromchinaUae];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const modeSources: Source[] = [cargofromchinaUae, docshipper];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const rateRows = [
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight / express',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE FCL rate appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier',
+    benchmark: 'Not published in verified snapshot — request a per-kg quote',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    destination: 'Jebel Ali (Dubai)',
+    mode: 'Sea',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data for Shanghai–Jebel Ali',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'Dubai / UAE corridor',
+    mode: 'Sea',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Dubai / UAE corridor',
+    mode: 'Air express',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Dubai / UAE corridor',
+    mode: 'DDP air door-to-door',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea (FCL / LCL)',
+    bestFor: 'Large, heavy or cost-sensitive cargo; full pallets and containers',
+    indicativeTime: '14–18 days (LOW); Shanghai–Jebel Ali typical 21 days (MEDIUM)',
+    indicativeCost: 'LCL AED 880–980/CBM; FCL by quote (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo',
+    indicativeTime: '2–4 days (LOW)',
+    indicativeCost: 'AED 20–23.5/kg (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: '2–4 days (LOW)',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across UAE freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const uaePortRows = [
+  {
+    factor: 'Emirate / coast',
+    jebelAli: 'Dubai — Arabian Gulf',
+    khalifa: 'Abu Dhabi — Arabian Gulf',
+    sharjah: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'UN/LOCODE',
+    jebelAli: 'AEJEA',
+    khalifa: 'AEKHL',
+    sharjah: 'AESHJ',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Main role',
+    jebelAli: "Middle East's largest container port; DP World operated",
+    khalifa: 'Semi-automated deep-water Abu Dhabi gateway',
+    sharjah: 'Container gateway for Sharjah and the northern emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical use case',
+    jebelAli: 'Primary China import gateway + GCC/regional transshipment',
+    khalifa: 'Abu Dhabi consignees + industrial/project cargo',
+    sharjah: 'Sharjah/northern emirates + cost-sensitive cargo',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean or air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'See rate table',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jebel Ali / Khalifa / Sharjah terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'UAE customs clearance & brokerage',
+    who: 'Dubai Customs / local broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Peak season / general rate increases',
+    effect: 'Higher ocean and air rates; tighter space',
+    direction: 'Cost up, transit risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Fuel / bunker adjustment factor',
+    effect: 'Adds a variable surcharge to the base freight rate',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'LCL consolidation & CFS handling',
+    effect: 'Extra origin/destination warehouse handling vs FCL',
+    direction: 'Transit up vs FCL',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Free zone vs mainland final leg',
+    effect: 'Changes duty/VAT treatment and delivery routing',
+    direction: 'Cost/compliance variable',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Documents & HS code readiness',
+    effect: 'Late or wrong documents delay clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Port choice (Jebel Ali vs Khalifa vs Sharjah)',
+    effect: 'Shifts transit, destination THC and inland distance',
+    direction: 'Cost/time variable',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to the UAE take?',
+    a: 'Corridor-level research gives roughly 14–18 days by sea (cargofromchina, LOW confidence), while the WorldFreightHub route data records a typical 21 days with a 15–30 day range for Shanghai to Jebel Ali (MEDIUM confidence). Air express is commonly reported around 2–4 days and DDP air around 3–6 days (LOW). All figures are indicative — verify with your carrier before relying on them.',
+  },
+  {
+    q: 'How much does shipping from China to the UAE cost?',
+    a: 'The research snapshot records LCL ocean around AED 880–980 per CBM to Dubai and air freight around AED 20–23.5 per kg, both LOW-confidence market figures. Verified UAE FCL rates were not published in the snapshot, so request an all-in container quote. These are collected public figures, not carrier quotes — confirm with a forwarder before booking.',
+  },
+  {
+    q: 'What is the UAE VAT rate on imports?',
+    a: 'The UAE standard VAT rate is 5%, introduced on 1 January 2018. Import VAT is calculated on the CIF value plus customs duty, not just the product price. Treat the rate as subject to verification with the Federal Tax Authority before you rely on it.',
+  },
+  {
+    q: 'What is the standard UAE import duty?',
+    a: 'The baseline import duty is 5% of the CIF value under the GCC Common External Tariff. Specific goods can attract higher protective or anti-dumping rates, so classify your HS code correctly before quoting.',
+  },
+  {
+    q: 'Which UAE port should I use — Jebel Ali, Khalifa or Sharjah?',
+    a: 'Jebel Ali is the Middle East’s largest container port and the default China import gateway and regional transshipment hub. Khalifa Port Abu Dhabi is a semi-automated deep-water option that suits Abu Dhabi consignees and industrial cargo. Port Khalid in Sharjah suits Sharjah and the northern emirates. Match the discharge port to your consignee and confirm the inland delivery leg.',
+  },
+  {
+    q: 'Why is Jebel Ali considered the Middle East’s hub?',
+    a: 'Jebel Ali, operated by DP World, is the region’s largest container port and combines deep-water container capacity with a large free zone and strong road/sea connectivity. That makes it a natural consolidation and transshipment point for the GCC, Middle East, Africa and Indian subcontinent rather than only a Dubai gateway.',
+  },
+  {
+    q: 'Is there a de minimis threshold for UAE imports?',
+    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure and should be confirmed with Dubai Customs or the FTA before you rely on it.',
+  },
+  {
+    q: 'What documents do I need to import into the UAE?',
+    a: 'The standard set includes a commercial invoice, bill of lading, packing list and certificate of origin. Regulated goods may also need conformity documentation such as CE evidence. Classify the goods with the correct HS code before quoting because duty, VAT and any conformity requirements depend on it.',
+  },
+  {
+    q: 'Do I need an ISF filing to ship to the UAE?',
+    a: 'No. ISF (Importer Security Filing) is a United States requirement and does not apply to the UAE. The UAE equivalent step is the pre-arrival customs declaration through Dubai Customs / the FTA, supported by the commercial invoice, packing list and bill of lading.',
+  },
+  {
+    q: 'How does door-to-door shipping from China to the UAE work?',
+    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea/air to Jebel Ali, Khalifa or Sharjah, files the UAE import declaration, settles the 5% duty and 5% VAT, then arranges last-mile trucking to the named address. Under DDP the seller/forwarder carries those costs; under DAP or EXW the buyer handles more of the import side.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to the UAE: Costs, Transit Times & Compliance (August 2026)',
+      description:
+        'Verified China to UAE freight guide: 5% VAT, 5% baseline duty, Jebel Ali/Khalifa/Sharjah routing, Dubai gateway context, indicative LCL and air rates plus transit times.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to the UAE: Costs, Transit Times & Compliance (August 2026)"
+  description="Verified China to UAE freight guide: 5% VAT, 5% baseline duty, Jebel Ali/Khalifa/Sharjah routing, Dubai gateway context, indicative LCL and air rates plus transit times."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shipping from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Shipping from China to the UAE: costs, transit times &amp; compliance</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        or Guangzhou to Jebel Ali, Khalifa Port Abu Dhabi and Sharjah — with indicative LCL/air rates,
+        transit windows, the sea/air/express decision, and the 5% VAT and 5% duty rules that shape
+        your landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate and transit number as an indicative figure to verify with your carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">AED <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">14–18 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">2–4 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Indicative freight rates from China to the UAE</h2>
+    <p>
+      Ocean and air pricing moves weekly with capacity, fuel and peak season, so this page deliberately
+      labels market figures as LOW confidence rather than presenting them as guaranteed prices. The
+      UAE corridor is anchored by Jebel Ali, the region’s largest container port, which gives
+      importers deep schedule choice — but the headline rate still has to be locked with an all-in
+      quote, not an advertised number.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="Indicative market snapshots, not carrier quotes. FCL and courier rates were not published in the verified snapshot — request an all-in quote."
+    />
+    <SourceList sources={rateSources} title="Sources — UAE rates" />
+
+    <div class="note mt-2">
+      <strong>Why FCL is shown as “request a quote”:</strong> the research snapshot published LCL
+      and air benchmarks but no verified UAE FCL container rate. Never back into a container price
+      from the LCL figure — request the equipment type, surcharges and destination fees itemised
+      in writing.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit times by port and mode</h2>
+      <p>
+        UAE transit times vary more than a single “average” suggests. Jebel Ali is the deepest and
+        most direct container option for most China imports, while Khalifa and Sharjah can add or
+        remove inland time depending on where the consignee actually is. The figures below are
+        corridor-level research findings, not schedule guarantees.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'destination', label: 'Destination' },
+          { key: 'mode', label: 'Mode' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="The Shanghai–Jebel Ali typical 21 days comes from WorldFreightHub route data; the 14–18 day corridor figure is a LOW-confidence secondary snapshot. Verify with the carrier."
+      />
+      <SourceList sources={transitSources} title="Sources — transit times" />
+
+      <div class="note mt-2">
+        <strong>Two different sea windows, explained:</strong> the 14–18 day figure is a market
+        guide that assumes a fast direct sailing and no delay, while the 21-day typical with a
+        15–30 day range is a planning figure that absorbs schedule and port variability. Use the
+        wider range for commercial planning and the fast window only as a best case.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Sea vs air vs express: which should you book?</h2>
+    <p>
+      The UAE is unusual because its short-haul China corridor makes air and express genuinely
+      attractive for more than just emergency cargo. The right choice is a landed-cost and
+      delivery-priority decision: sea wins on cost per CBM, air wins on days, and express wins on
+      simplicity for parcels.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'mode', label: 'Mode' },
+        { key: 'bestFor', label: 'Best for' },
+        { key: 'indicativeTime', label: 'Indicative time' },
+        { key: 'indicativeCost', label: 'Indicative cost' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={modeRows}
+      caption="Mode decision overview. Time and cost figures are indicative and LOW confidence except the Shanghai–Jebel Ali typical, which is MEDIUM from route data."
+    />
+    <SourceList sources={modeSources} title="Sources — mode comparison" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose sea when...">
+        <ul>
+          <li>Your cargo is heavy, bulky or fills most of a pallet or container.</li>
+          <li>You are restocking a warehouse or FBA/noon plan on a predictable schedule.</li>
+          <li>Unit cost per CBM matters more than a few extra days.</li>
+          <li>You are shipping large industrial, project or free-zone cargo.</li>
+        </ul>
+      </Card>
+      <Card title="Choose air or express when...">
+        <ul>
+          <li>The product is light, high-value or time-critical.</li>
+          <li>You are testing a market with a small launch quantity.</li>
+          <li>A production delay means the sea window no longer works.</li>
+          <li>You need door-to-door speed for samples or urgent parcels.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      There is no fixed verified crossover in the research snapshot, so ask for both an LCL/FCL
+      all-in quote and an air quote on the same CBM/chargeable-weight basis. The crossover depends
+      on the route, the surcharges and the destination fees — not on the mode label alone.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Ports: Shanghai, Ningbo-Zhoushan, Shenzhen &amp; Guangzhou to Jebel Ali, Khalifa &amp; Sharjah</h2>
+      <p>
+        China’s biggest container gateways anchor the corridor. Shanghai and Ningbo-Zhoushan are the
+        throughput leaders, while Shenzhen (Yantian/Shekou) and Guangzhou are the South China options
+        closest to the Pearl River Delta export base.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">UAE destination ports</h3>
+      <p>
+        Jebel Ali is the Middle East’s largest container port and DP World-operated hub, Khalifa
+        Port Abu Dhabi is a semi-automated deep-water gateway, and Port Khalid serves Sharjah and the
+        northern emirates. Jebel Ali and Khalifa Port profiles are HIGH-confidence; Sharjah
+        positioning is a secondary finding to verify with your forwarder.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port' },
+          { key: 'sharjah', label: 'Sharjah / Port Khalid' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={uaePortRows}
+        caption="Jebel Ali as the Middle East’s largest container port (DP World) and Khalifa Port’s semi-automated operations are HIGH-confidence; routing and use-case columns are MEDIUM/LOW and should be verified."
+      />
+      <SourceList sources={uaePortSources} title="Sources — UAE ports" />
+
+      <div class="note mt-2">
+        <strong>Jebel Ali vs Khalifa vs Sharjah in one line:</strong> pick Jebel Ali for the deepest
+        schedule and regional transshipment, Khalifa for Abu Dhabi and industrial/project cargo, and
+        Sharjah for the northern emirates. Confirm the final inland leg and cost before you pick the
+        discharge port.
+      </div>
+
+      <h3 class="mt-3">Door-to-door process from China to the UAE</h3>
+      <ol>
+        <li>Supplier prepares the commercial invoice, packing list and certificate of origin.</li>
+        <li>Forwarder collects the cargo and completes China export clearance.</li>
+        <li>Cargo moves by sea or air to Jebel Ali, Khalifa Port or Sharjah.</li>
+        <li>Importer/broker files the UAE import declaration with the correct HS code and value.</li>
+        <li>Dubai Customs / the FTA assess the 5% duty and 5% VAT; free-zone vs mainland decides treatment.</li>
+        <li>The consignment is released and trucked to the named address or transshipped onward.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed cost and the factors that move it</h2>
+    <p>
+      The ocean or air rate is only one line of the landed cost. THC, destination port charges,
+      clearance and brokerage, demurrage and detention are the costs that surprise first-time
+      importers — and the reason “all-in” is the only useful comparison number.
+    </p>
+
+    <p>
+      <strong>THC (terminal handling charge)</strong> is levied at both ends for moving the container
+      through the terminal, while UAE destination charges can also include port service fees,
+      customs inspection handling and delivery/clearance charges. None of these destination fee
+      amounts were published in the verified research snapshot, so ask the forwarder to itemise them
+      in writing.
+    </p>
+
+    <h3>Tax stack and a worked example</h3>
+    <p>
+      The UAE import duty baseline is <strong>5% of CIF</strong> and import VAT is
+      <strong>5% on the CIF value plus duty</strong>. In formula terms that is
+      <code>CIF × 1.05 (duty) × 1.05 (VAT)</code>, or <code>CIF × 1.1025</code> for a standard-rate
+      shipment. For example, AED 10,000 CIF gives AED 500 duty, then AED 525 VAT on the
+      duty-inclusive base — AED 11,525 total before other fees. Rates are subject to change; verify
+      with the FTA before relying on this calculation.
+    </p>
+
+    <h3>Full cost stack</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'magnitude', label: 'Indicative magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only the 5% duty and 5% VAT are stated from verified/secondary sources. Unquantified fees are LOW confidence because the snapshot did not publish amounts — request a fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+    <h3 class="mt-3">What changes the cost and the clock</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'effect', label: 'Effect' },
+        { key: 'direction', label: 'Direction' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={factorRows}
+      caption="Directional factors, not quantified figures. Free-zone vs mainland and document readiness are MEDIUM-confidence regulatory effects; surcharges and port choice are LOW and route-specific."
+    />
+    <SourceList sources={[...costSources, ...uaePortSources]} title="Sources — cost & transit factors" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance: VAT, duty, documents &amp; free zone vs mainland</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher protective or anti-dumping rates possible
+        on specific goods. Excise tax can also apply to specified excise goods such as tobacco and
+        energy drinks; confirm the current rates with the Federal Tax Authority.
+      </p>
+      <p>
+        A de minimis threshold is recorded in secondary sources: goods at or below AED 1,000 are
+        duty/tax free and gifts up to AED 3,000 are exempt. Treat that as a secondary-source figure
+        and confirm with Dubai Customs before relying on it for low-value shipments.
+      </p>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list and certificate
+        of origin, with conformity documentation such as CE evidence for regulated goods. Classify
+        goods with the correct <strong>HS code</strong> before quoting, because duty, VAT and any
+        conformity requirements depend on it. Note that <strong>ISF</strong> is a United States
+        requirement and does not apply to the UAE; the UAE step is the pre-arrival import declaration
+        through Dubai Customs / the FTA.
+      </p>
+
+      <h3>Free zone vs mainland</h3>
+      <p>
+        The UAE splits imports between <strong>mainland</strong> and designated <strong>free
+        zones</strong>. In general, goods entering the mainland attract the 5% duty and 5% VAT at
+        import, while goods moving into a free zone can be held under duty/VAT suspension — but the
+        treatment reverses when goods later leave the free zone for the mainland market. This is a
+        general regulatory principle and free-zone benefits vary by zone and activity, so confirm the
+        specific treatment with Dubai Customs and the FTA for your setup.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE customs & VAT" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to UAE quote"
+      text="Tell us your origin, destination emirate, volume and product type, and we will connect you with providers who can quote ocean/air freight, duty, VAT and destination fees together."
+    />
+  </section>
+</BaseLayout>

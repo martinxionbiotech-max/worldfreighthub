@@ -1,0 +1,795 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/fcl-shipping-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const isoContainer: Source = {
+  id: 'iso-668',
+  name: 'ISO 668:2020 — Series 1 freight containers — classification, dimensions and ratings',
+  url: 'https://www.iso.org/standard/76912.html',
+  type: 'organization',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const rateSources: Source[] = [cargofromchinaUae];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const containerSources: Source[] = [isoContainer];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const fclRows = [
+  {
+    container: 'FCL 20GP',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+];
+
+const contextRows = [
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight / express',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const fclTransitRows = [
+  {
+    service: 'FCL — Shanghai to Jebel Ali',
+    origin: 'Shanghai',
+    destination: 'Jebel Ali (Dubai)',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Sea — China to Dubai corridor',
+    origin: 'China',
+    destination: 'Dubai / Jebel Ali corridor',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air — China to UAE',
+    origin: 'China',
+    destination: 'Dubai / UAE corridor',
+    transit: '2–4 days',
+    basis: 'cargofromchina express snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const containerRows = [
+  {
+    type: '20GP (20ft general purpose)',
+    interior: '~5.90 × 2.35 × 2.39 m',
+    volume: '~33 CBM',
+    payload: '~28,200 kg',
+    note: 'Best for heavy, dense cargo',
+    confidence: 'LOW',
+  },
+  {
+    type: '40GP (40ft general purpose)',
+    interior: '~12.03 × 2.35 × 2.39 m',
+    volume: '~67 CBM',
+    payload: '~26,500 kg',
+    note: 'Doubles cube at a smaller rate premium',
+    confidence: 'LOW',
+  },
+  {
+    type: '40HQ (40ft high cube)',
+    interior: '~12.03 × 2.35 × 2.69 m',
+    volume: '~76 CBM',
+    payload: '~26,300 kg',
+    note: 'Extra height for volume, not weight',
+    confidence: 'LOW',
+  },
+];
+
+const containerComparisonRows = [
+  {
+    metric: 'Nominal volume',
+    twenty: '~33 CBM',
+    forty: '~67 CBM (40GP) / ~76 CBM (40HQ)',
+    insight: '40ft carries roughly double the 20ft cube',
+    confidence: 'LOW',
+  },
+  {
+    metric: 'Typical payload',
+    twenty: '~28,200 kg',
+    forty: '~26,500 kg (40GP) / ~26,300 kg (40HQ)',
+    insight: '20ft carries more weight; 40ft carries more volume',
+    confidence: 'LOW',
+  },
+  {
+    metric: 'Typical rate relationship',
+    twenty: 'Base per-container rate',
+    forty: 'Usually materially less than 2x the 20ft rate',
+    insight: 'Per-CBM cost normally falls once volume exceeds ~30–33 CBM',
+    confidence: 'LOW',
+  },
+  {
+    metric: 'Unit-cost crossover',
+    twenty: 'Cheaper for heavy, dense cargo',
+    forty: 'Cheaper per CBM for volume cargo',
+    insight: 'Compare per-CBM landed cost, not just the container rate',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across UAE freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const uaePortRows = [
+  {
+    factor: 'Emirate / coast',
+    jebelAli: 'Dubai — Arabian Gulf',
+    khalifa: 'Abu Dhabi — Arabian Gulf',
+    sharjah: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'UN/LOCODE',
+    jebelAli: 'AEJEA',
+    khalifa: 'AEKHL',
+    sharjah: 'AESHJ',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Main role',
+    jebelAli: "Middle East's largest container port; DP World operated",
+    khalifa: 'Semi-automated deep-water Abu Dhabi gateway',
+    sharjah: 'Container gateway for Sharjah and the northern emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical FCL use case',
+    jebelAli: 'Main China import gateway + GCC/regional transshipment',
+    khalifa: 'Abu Dhabi consignees + industrial/project cargo',
+    sharjah: 'Sharjah/northern emirates + cost-sensitive cargo',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight (FCL)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jebel Ali / Khalifa / Sharjah terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'UAE customs clearance & brokerage',
+    who: 'Dubai Customs / local broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much does FCL shipping from China to the UAE cost?',
+    a: 'The research snapshot did not publish verified UAE FCL container rates, so request an all-in 20GP/40GP/40HQ quote rather than relying on a published number. For context, LCL is AED 880–980 per CBM and air is AED 20–23.5 per kg, both LOW-confidence market figures. These are collected public figures, not carrier quotes — verify before booking.',
+  },
+  {
+    q: 'How long does FCL take from China to the UAE?',
+    a: 'The WorldFreightHub route data records a typical 21 days with a 15–30 day range for Shanghai to Jebel Ali (MEDIUM confidence), while the corridor sea snapshot is 14–18 days and air is 2–4 days (LOW). FCL normally skips consolidation/deconsolidation handling, but the actual window depends on the sailing, port and clearance readiness — verify with the carrier.',
+  },
+  {
+    q: 'What are the 20GP, 40GP and 40HQ dimensions and load capacity?',
+    a: 'Nominal ISO 668/ISO 1496 figures are roughly 33 CBM and 28,200 kg payload for a 20GP, 67 CBM and 26,500 kg for a 40GP, and 76 CBM and 26,300 kg for a 40HQ. Actual tare weight, payload and interior dimensions vary by container age and manufacturer, and UAE road-weight limits also apply, so verify with your line before load planning.',
+  },
+  {
+    q: '20ft or 40ft — which is cheaper per CBM?',
+    a: 'For volume cargo, the 40ft normally wins on unit cost because it carries roughly double the 20ft cube for materially less than double the rate, so per-CBM cost falls once you exceed about 30–33 CBM. For heavy, dense cargo the 20ft is usually the better unit because its payload is higher. This is general container economics, LOW confidence without a route-specific quote — compare per-CBM landed cost, not the headline rate.',
+  },
+  {
+    q: 'FCL or LCL — which should I book for the UAE?',
+    a: 'Choose FCL when your cargo fills most of a container, is heavy, fragile, high-value, or needs a single clearance entry. Choose LCL when the volume is small and you want to pay only for the space used. Use the LCL per-CBM figure against an FCL all-in quote for your actual volume; as volume rises there is usually a crossover where FCL becomes cheaper per CBM.',
+  },
+  {
+    q: 'What is VGM and when do I submit it?',
+    a: 'VGM is the Verified Gross Mass of the packed container, required under the SOLAS rule so the vessel can plan stowage safely. The shipper must declare the verified weight before the carrier’s VGM cutoff; submit it early because a missed cutoff means the container is rolled to the next vessel.',
+  },
+  {
+    q: 'What weight limits apply to an FCL shipment to the UAE?',
+    a: 'Each container has a maximum gross mass and payload rating, but the operative limit is often the road-legal weight on the UAE leg. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
+  },
+  {
+    q: 'Can I ship dangerous goods in an FCL container to the UAE?',
+    a: 'Yes, but only with the correct IMDG class, UN number, proper shipping name, packing group, dangerous goods declaration and container packing certificate, plus the required placards. Undeclared dangerous goods are the classic cause of port rejections, so declare the commodity accurately on the booking and the bill of lading.',
+  },
+  {
+    q: 'Which UAE port should I use for FCL — Jebel Ali, Khalifa or Sharjah?',
+    a: 'Jebel Ali is the Middle East’s largest container port and the default China import and regional transshipment gateway. Khalifa Port Abu Dhabi suits Abu Dhabi consignees and industrial/project cargo. Port Khalid in Sharjah suits the northern emirates. Match the discharge port to your consignee and confirm the inland trucking cost.',
+  },
+  {
+    q: 'How does Jebel Ali transshipment help my shipment?',
+    a: 'As the region’s largest container port and a DP World hub, Jebel Ali is a natural relay point for cargo moving onward to the GCC, Middle East, Africa and the Indian subcontinent. Specific relay schedules and volumes were not published in the research snapshot, so confirm the transshipment window and any handling with your carrier if Jebel Ali is a waypoint rather than the final stop.',
+  },
+  {
+    q: 'How do demurrage and detention work on an FCL container?',
+    a: 'Demurrage is charged by the terminal when the container stays inside the port beyond free time after discharge; detention is charged by the carrier when the container stays outside the port beyond free time. Avoid both by filing the UAE import declaration early, keeping the invoice/packing list/BL ready, and booking trucking before discharge.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'FCL Shipping from China to the UAE: Container Sizes, Rates & Loading Rules (August 2026)',
+      description:
+        'FCL shipping from China to the UAE explained: 20GP/40GP/40HQ sizes and load capacity, 20ft vs 40ft unit-cost crossover, indicative transit times, VGM, weight limits, dangerous goods and Jebel Ali transshipment.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="FCL Shipping from China to the UAE: Container Sizes, Rates & Loading Rules (August 2026)"
+  description="FCL shipping from China to the UAE explained: 20GP/40GP/40HQ sizes and load capacity, 20ft vs 40ft unit-cost crossover, indicative transit times, VGM, weight limits, dangerous goods and Jebel Ali transshipment."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'FCL shipping from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>FCL shipping from China to the UAE: container sizes, rates &amp; loading rules</h1>
+      <p class="lead">
+        Full Container Load is the default choice for larger, heavier China-to-UAE shipments. This
+        page covers 20GP, 40GP and 40HQ planning, the 20ft-vs-40ft unit-cost crossover, indicative
+        transit windows, when to stay full-container instead of sharing LCL space, and the load-side
+        rules — VGM, weight limits, dangerous goods and palletised versus floor-loaded.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and container-planning figure as indicative, verify with carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">AED <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">FCL sea transit</span>
+          <span class="fact-value">21 days typical <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea corridor</span>
+          <span class="fact-value">14–18 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Indicative FCL rates from China to the UAE</h2>
+    <p>
+      FCL is quoted per container, not per cubic metre, so the headline is an all-in port-to-port
+      ocean price for one box. The research snapshot did not publish verified UAE FCL container
+      rates, so the table below is honest about that gap instead of inventing a number — request an
+      itemised all-in quote for the equipment type you actually need.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'container', label: 'Container' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="No verified UAE FCL rate appeared in the research snapshot. Request an all-in port-to-port quote from a forwarder before comparing."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL rates" />
+
+    <h3 class="mt-3">LCL and air context for comparison</h3>
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={contextRows}
+      caption="Use these per-CBM and per-kg figures to sanity-check an FCL quote; they are not direct FCL equivalents."
+    />
+    <SourceList sources={rateSources} title="Sources — LCL & air context" />
+
+    <div class="note mt-2">
+      <strong>Why the 40HQ and 40GP overlap matters:</strong> some marketplaces publish the same
+      40ft rate for general purpose and high-cube boxes. A high cube carries more volume for the
+      same weight rating, so ask the line for the exact equipment surcharge and availability before
+      assuming the rates are identical.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. FCL transit times by port and mode</h2>
+      <p>
+        FCL is usually faster than LCL on the same corridor because it skips consolidation and
+        deconsolidation, but the difference is not constant at every port. The figures below are
+        research findings, not schedule guarantees.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclTransitRows}
+        caption="The Shanghai–Jebel Ali typical 21 days (range 15–30) is MEDIUM from route data; the 14–18 day corridor and 2–4 day air figures are LOW. Verify with the carrier."
+      />
+      <SourceList sources={transitSources} title="Sources — FCL transit times" />
+
+      <div class="note mt-2">
+        <strong>Door-to-door context:</strong> the research snapshot records DDP air door-to-door
+        around 3–6 days. That adds clearance and last-mile time on top of the port-to-port leg, so
+        treat it as a different service from FCL ocean transit.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL vs LCL, and the 20ft vs 40ft unit-cost crossover</h2>
+    <p>
+      The FCL-vs-LCL decision is a landed-cost and delivery-priority question, not just a volume
+      question. Inside FCL there is a second decision most pages skip: whether to ship a 20ft or a
+      40ft, because the per-CBM economics change at roughly 30–33 CBM.
+    </p>
+
+    <h3>20ft vs 40ft: capacity and unit cost</h3>
+    <DataTable
+      columns={[
+        { key: 'metric', label: 'Metric' },
+        { key: 'twenty', label: '20GP' },
+        { key: 'forty', label: '40GP / 40HQ' },
+        { key: 'insight', label: 'Planning insight' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={containerComparisonRows}
+      caption="Nominal ISO series-1 figures and general container economics, LOW confidence without a route-specific quote. Verify per-CBM landed cost with your forwarder."
+    />
+    <SourceList sources={containerSources} title="Sources — container economics" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>Your cargo fills most of a container or is dense and heavy.</li>
+          <li>You need predictable transit and a single clearance entry.</li>
+          <li>Goods are fragile, high-value, or should not be consolidated with other cargo.</li>
+          <li>You are moving oversized or hazardous cargo that needs a dedicated unit.</li>
+        </ul>
+      </Card>
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>Your shipment is small — commonly well below a full container.</li>
+          <li>You want to avoid paying for unused container space.</li>
+          <li>You are testing a market or restocking slowly with multiple SKUs.</li>
+          <li>You accept extra consolidation/deconsolidation handling and slightly longer transit.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      For LCL, cargo is consolidated at an origin CFS warehouse and deconsolidated at the destination
+      CFS, so the door-to-door time includes extra handling at both ends. Ask whether your forwarder
+      runs a direct or transhipped consolidation before comparing LCL against FCL.
+    </p>
+
+    <p class="mt-2">
+      There is no single verified break-even CBM in the research snapshot, so ask for both an LCL
+      quote at your actual volume and an FCL all-in quote before deciding. The crossover depends on
+      the route, the surcharges and the destination fees — not on container size alone.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Ports: Shanghai, Ningbo-Zhoushan, Shenzhen &amp; Guangzhou to Jebel Ali, Khalifa &amp; Sharjah</h2>
+      <p>
+        China’s biggest container gateways anchor the corridor. Shanghai and Ningbo-Zhoushan are the
+        throughput leaders, while Shenzhen (Yantian/Shekou) and Guangzhou are the South China options
+        closest to the Pearl River Delta export base.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">UAE destination ports for FCL</h3>
+      <p>
+        Jebel Ali is the Middle East’s largest container port and DP World-operated hub, Khalifa
+        Port Abu Dhabi is a semi-automated deep-water gateway, and Port Khalid serves Sharjah and the
+        northern emirates. Jebel Ali and Khalifa Port profiles are HIGH-confidence; the routing and
+        FCL use-case columns are LOW and should be verified with your forwarder.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port' },
+          { key: 'sharjah', label: 'Sharjah / Port Khalid' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={uaePortRows}
+        caption="Port roles and routing are secondary-source findings; verify routing and inland trucking with your forwarder."
+      />
+      <SourceList sources={uaePortSources} title="Sources — UAE ports" />
+
+      <div class="note mt-2">
+        <strong>Jebel Ali vs Khalifa vs Sharjah in one line:</strong> pick Jebel Ali for the deepest
+        schedule and regional transshipment, Khalifa for Abu Dhabi and industrial/project cargo, and
+        Sharjah for the northern emirates. Confirm the final inland leg and cost before you pick the
+        discharge port.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Container planning: 20GP, 40GP, 40HQ, VGM, weight &amp; dangerous goods</h2>
+    <p>
+      The cheapest FCL quote is not the lowest landed cost if the load is planned wrong. A container
+      that exceeds road weight, misses the VGM cutoff, or hides dangerous goods will be stopped,
+      reworked or rolled — each of which is more expensive than the ocean-rate saving.
+    </p>
+
+    <h3>Nominal sizes and load capacity</h3>
+    <DataTable
+      columns={[
+        { key: 'type', label: 'Container type' },
+        { key: 'interior', label: 'Nominal interior (L × W × H)' },
+        { key: 'volume', label: 'Nominal volume' },
+        { key: 'payload', label: 'Typical payload' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={containerRows}
+      caption="Nominal ISO 668/ISO 1496 series-1 figures; actual tare and payload vary by carrier, build year and UAE road-weight limits. Verify with the line before load planning."
+    />
+    <SourceList sources={containerSources} title="Sources — container dimensions" />
+
+    <h3 class="mt-3">VGM before the cutoff</h3>
+    <p>
+      A packed container must have a <strong>Verified Gross Mass (VGM)</strong> declared to the
+      carrier before the vessel’s VGM cutoff under the SOLAS rule. The shipper obtains the verified
+      weight — usually by weighbridge or by calculated method — and submits it in the carrier’s
+      booking flow. A missed cutoff means the container is rolled, so treat VGM as part of loading,
+      not an afterthought.
+    </p>
+
+    <h3>Weight limits and road feasibility</h3>
+    <p>
+      Each container has a maximum gross mass and payload rating, but the operative limit for a
+      China-to-UAE move is often the road-legal weight on the UAE leg. Confirm the container payload,
+      the trucker’s axle limits and the road corridor before loading dense cargo, especially in a
+      20GP where a heavy commodity can reach the payload rating before the box is cube-full.
+    </p>
+
+    <h3>Dangerous goods declaration</h3>
+    <p>
+      Hazardous cargo can move in an FCL unit only with the correct <strong>IMDG class</strong>, UN
+      number, proper shipping name, packing group, dangerous goods declaration and container packing
+      certificate, plus the required placards. Undeclared dangerous goods are the classic cause of
+      port rejections, so declare the commodity accurately on the booking and the bill of lading.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Palletised cargo">
+        <ul>
+          <li>Faster loading and unloading, safer manual handling.</li>
+          <li>Easier customs inspection and damage checks.</li>
+          <li>Consumes cube and adds pallet weight.</li>
+          <li>Works well for retail cartons and fragile goods.</li>
+        </ul>
+      </Card>
+      <Card title="Floor-loaded (loose) cargo">
+        <ul>
+          <li>Maximises cubic utilisation for volume goods.</li>
+          <li>Needs blocking, bracing and load distribution.</li>
+          <li>Slower to load and unload; higher rework risk.</li>
+          <li>Works well for homogeneous, robust goods.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. FCL landed cost and Jebel Ali’s transshipment advantage</h2>
+      <p>
+        The FCL ocean rate is only one line of the landed cost. Demurrage, detention, THC, clearance
+        handling and brokerage are the costs that surprise first-time importers — and the reason
+        “all-in” is the only useful comparison number for a full container.
+      </p>
+
+      <p>
+        <strong>THC (terminal handling charge)</strong> is levied at both ends for moving the
+        container through the terminal, while UAE destination charges can also include port service
+        fees, customs inspection handling and delivery/clearance charges. None of these destination
+        fee amounts were published in the verified research snapshot, so ask the forwarder to itemise
+        them in writing.
+      </p>
+
+      <h3>Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only the 5% duty and 5% VAT are stated from verified/secondary sources. Unquantified fees are LOW confidence because the snapshot did not publish amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — FCL cost & customs" />
+
+      <h3 class="mt-3">Jebel Ali as a transshipment hub</h3>
+      <p>
+        Because Jebel Ali is the Middle East’s largest container port and is operated by DP World, an
+        FCL booked there is not limited to a Dubai final stop. The port’s deep-water container
+        capacity and adjacent free-zone infrastructure make it a natural relay point for cargo
+        moving onward to the GCC, Middle East, Africa and the Indian subcontinent. The hub status and
+        DP World operation are HIGH-confidence; specific relay schedules, handling fees and
+        transshipment windows were not published in the research snapshot, so treat those as LOW and
+        confirm with the carrier if Jebel Ali is a waypoint rather than the final discharge.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>7. Compliance: VAT, duty, documents &amp; HS codes</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on the
+        CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher protective or anti-dumping rates possible
+        on specific goods. In formula terms the standard tax stack is
+        <code>CIF × 1.05 (duty) × 1.05 (VAT)</code>, or <code>CIF × 1.1025</code>; rates are subject
+        to change and should be verified with the FTA.
+      </p>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list and certificate
+        of origin, plus conformity documentation such as CE evidence for regulated goods. Classify
+        goods with the correct <strong>HS code</strong> before quoting, because both duty and
+        conformity requirements depend on it. Note that <strong>ISF</strong> is a United States
+        requirement and does not apply to the UAE.
+      </p>
+
+      <h3>Free zone vs mainland</h3>
+      <p>
+        Goods destined for a UAE <strong>mainland</strong> address generally attract the 5% duty and
+        5% VAT at import, while goods moved into a designated <strong>free zone</strong> can be held
+        under duty/VAT suspension until they exit to the mainland market. This is a general
+        regulatory principle; confirm the treatment with Dubai Customs and the FTA for your free-zone
+        or mainland setup before booking an FCL.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE customs & VAT" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>8. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to UAE FCL quote"
+      text="Tell us your origin, destination emirate, container type, commodity and gross weight, and we will connect you with providers who can quote ocean freight, duty, VAT and destination fees together."
+    />
+  </section>
+</BaseLayout>
