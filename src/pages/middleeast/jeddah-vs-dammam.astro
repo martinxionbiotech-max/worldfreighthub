@@ -1,0 +1,865 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/jeddah-vs-dammam/`;
+const jeddah = gccPorts.find((item) => item.slug === 'jeddah');
+const dammam = gccPorts.find((item) => item.slug === 'dammam');
+const jeddahCode = jeddah?.unlocode ?? '—';
+const dammamCode = dammam?.unlocode ?? '—';
+
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+
+const portSources = sourcesByIds(['mawani']);
+const chinaOriginSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const transitSources: Source[] = [cargofromchina, ddpchain, freightos];
+const decisionSources: Source[] = [cargofromchina, freightos, ddpchain, worldcargonews];
+const facilitySources = sourcesByIds(['mawani', 'dp-world']);
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  freightos,
+];
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+
+const comparisonRows = [
+  {
+    parameter: 'Coast',
+    jeddah: 'Red Sea, western Saudi Arabia',
+    dammam: 'Arabian Gulf, eastern Saudi Arabia',
+    note: 'Opposite coasts; the choice is primarily an inland-leg decision',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Primary hinterland',
+    jeddah: 'Western KSA (Jeddah, Makkah, Madinah, Tabuk) plus Red Sea trade',
+    dammam: 'Eastern Province, Riyadh and central Saudi Arabia',
+    note: 'Match the discharge port to the final consignee region',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    jeddah: jeddahCode,
+    dammam: dammamCode,
+    note: 'Use the correct code on the bill of lading',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port role',
+    jeddah: 'Principal Red Sea container gateway',
+    dammam: 'Main Arabian Gulf gateway',
+    note: 'Both are national gateways on different coasts',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Riyadh access',
+    jeddah: 'Indirect; usually not the first choice',
+    dammam: 'Via Riyadh Dry Port rail/road corridor',
+    note: 'Dammam is the established route to the capital',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Port-specific throughput',
+    jeddah: 'Not published per-port',
+    dammam: 'Not published per-port',
+    note: 'Mawani total across Saudi ports was 8.3M TEU in 2025',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Berths / maximum depth',
+    jeddah: 'Not published in verified snapshot',
+    dammam: 'Not published in verified snapshot',
+    note: 'Verify with Mawani before capacity-sensitive bookings',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai',
+    destination: 'Jeddah',
+    transit: '~18 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shanghai',
+    destination: 'Dammam',
+    transit: '~20 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    destination: 'Jeddah',
+    transit: '~18 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    destination: 'Dammam',
+    transit: '~20 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    destination: 'Jeddah',
+    transit: '~18 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    destination: 'Dammam',
+    transit: '~20 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen',
+    destination: 'Jeddah',
+    transit: '~20 days average',
+    basis: 'cargofromchina — China to Saudi guide',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China',
+    destination: 'Jeddah',
+    transit: '~20–35 days',
+    basis: 'ddpchain — China to Saudi Arabia route examples',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shanghai',
+    destination: 'Riyadh (via Dammam)',
+    transit: '~30–40 days',
+    basis: 'Freightos Shanghai–Riyadh FCL route data',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China',
+    destination: 'Dammam / Riyadh Dry Port',
+    transit: '~30–45 days',
+    basis: 'Freightos and market corridor context',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    cargo: 'Western KSA consignees (Jeddah, Makkah, Madinah, Tabuk)',
+    bestPort: 'Jeddah',
+    why: 'Shortest western inland leg and direct Red Sea gateway',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Religious / Hajj and Umrah goods',
+    bestPort: 'Jeddah',
+    why: 'Nearest major gateway to Makkah and Madinah',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Red Sea / East Med / transhipment flows',
+    bestPort: 'Jeddah',
+    why: 'Red Sea hub role and regional feeder connections',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Eastern Province consignees (Dammam, Khobar, Jubail)',
+    bestPort: 'Dammam',
+    why: 'Arabian Gulf location sits inside the Eastern Province',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Riyadh and central Saudi Arabia',
+    bestPort: 'Dammam + Riyadh Dry Port',
+    why: 'Established rail/road inland corridor to the capital',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Oil & gas equipment and project cargo',
+    bestPort: 'Dammam',
+    why: 'Closest major gateway to Eastern Province energy sites',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Oversized / heavy industrial machinery',
+    bestPort: 'Dammam',
+    why: 'Eastern industrial hinterland handles project traffic',
+    confidence: 'LOW',
+  },
+  {
+    cargo: 'Consumer goods for Riyadh distribution',
+    bestPort: 'Dammam + Riyadh Dry Port',
+    why: 'Inland clearance close to the final Riyadh market',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    factor: 'Container terminals',
+    jeddah: 'Red Sea deep-sea handling',
+    dammam: 'Arabian Gulf deep-sea handling',
+    note: 'Operator and berth detail not enumerated — verify with Mawani',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Rail link to Riyadh',
+    jeddah: 'Not the primary Riyadh corridor',
+    dammam: 'Riyadh Dry Port rail/road corridor',
+    note: 'Dammam is the established inland route',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Oil & gas / project cargo',
+    jeddah: 'Limited / not the first choice',
+    dammam: 'Eastern Province energy heartland',
+    note: 'Verify heavy-lift and laydown capacity',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Religious cargo proximity',
+    jeddah: 'Close to Makkah / Madinah',
+    dammam: 'Cross-country from the east',
+    note: 'Jeddah wins the western pilgrimage corridor',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Reefer / general cargo',
+    jeddah: 'Typical commercial-port capability',
+    dammam: 'Typical commercial-port capability',
+    note: 'Confirm capacity and booking window',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'CFS / bonded storage',
+    jeddah: 'CFS for LCL importers',
+    dammam: 'CFS plus Riyadh Dry Port CFS',
+    note: 'Dammam adds an inland CFS option for Riyadh',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Hinterland',
+    jeddah: 'Western KSA plus Red Sea trade',
+    dammam: 'Eastern Province plus Riyadh / central KSA',
+    note: 'The deciding factor for most shipments',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC / port charges',
+    jeddah: 'Request Jeddah fee schedule',
+    dammam: 'Request Dammam fee schedule',
+    note: 'Not published in verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland leg',
+    jeddah: 'Short western trucking for Jeddah / Makkah / Madinah',
+    dammam: 'Rail or trucking to Riyadh if inland',
+    note: 'The inland leg is the main cost difference',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    jeddah: 'ZATCA / FASAH single window',
+    dammam: 'ZATCA / FASAH single window',
+    note: 'Same national regime at both gates',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'SABER PC / SC fees',
+    jeddah: 'Same SABER platform',
+    dammam: 'Same SABER platform',
+    note: 'Not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    jeddah: '5% of CIF value',
+    dammam: '5% of CIF value',
+    note: 'GCC Common External Tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    jeddah: '15% on CIF + duty',
+    dammam: '15% on CIF + duty',
+    note: 'Same nationwide VAT',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Excise tax (if applicable)',
+    jeddah: 'Same rates',
+    dammam: 'Same rates',
+    note: 'Tobacco 100%; energy / carbonated drinks 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage / detention',
+    jeddah: 'Terminal + carrier free-time rules',
+    dammam: 'Terminal + carrier free-time rules',
+    note: 'Free time and per-day rates vary',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which Saudi port should I use from China?',
+    a: 'Match the port to your consignee and final inland leg. Use Jeddah for western Saudi Arabia, Makkah, Madinah and Red Sea trade; use Dammam for the Eastern Province, and Dammam plus Riyadh Dry Port for Riyadh and central Saudi Arabia. Confirm the inland distance, cost and transit before choosing.',
+  },
+  {
+    q: 'Is Jeddah or Dammam closer to Riyadh?',
+    a: 'Geographically Jeddah is on the opposite coast, but the conventional freight corridor to Riyadh runs through Dammam and Riyadh Dry Port. Riyadh cargo is usually routed via Dammam because the eastern rail/road inland transfer is the established flow, even though both ports are hundreds of kilometres from the capital.',
+  },
+  {
+    q: 'Which port is better for Makkah and Madinah cargo?',
+    a: 'Jeddah. It is the nearest major container gateway to the two holy cities, so religious, Hajj/Umrah and western-KSA goods naturally route through the Red Sea gateway and keep the final trucking leg short.',
+  },
+  {
+    q: 'Which port should I use for oil and gas equipment?',
+    a: 'Usually Dammam. It sits inside the Eastern Province, Saudi Arabia’s oil and gas heartland, and is the conventional gateway for energy-sector, industrial and project cargo. Confirm lift capacity, laydown area and route clearances for oversized pieces before booking.',
+  },
+  {
+    q: 'Which port should I use for the Eastern Province?',
+    a: 'Dammam. Consignees in Dammam, Khobar, Jubail and the wider Eastern Province are directly inside the Arabian Gulf gateway’s hinterland, so a Dammam discharge keeps the final trucking leg short.',
+  },
+  {
+    q: 'Are Jeddah and Dammam transit times different?',
+    a: 'They are close. Indicative China port-to-port windows are about 18 days typical for Jeddah and about 20 days typical for Dammam, both with a 15–30 day planning range. The larger transit difference appears when cargo continues inland to Riyadh, where the full corridor is roughly 30–45 days.',
+  },
+  {
+    q: 'Is one port cheaper than the other?',
+    a: 'The duty, VAT and SABER obligations are the same at both gates. The real cost difference is the destination THC, terminal charges and, above all, the inland leg to the consignee. Compare all-in quotes that include the final delivery, not just the ocean rate.',
+  },
+  {
+    q: 'Does import duty or VAT differ between Jeddah and Dammam?',
+    a: 'No. The baseline import duty is 5% of CIF value and the import VAT is 15% nationwide, so the tax treatment is identical whichever gate you use. Excise tax also follows the same national rates.',
+  },
+  {
+    q: 'Do SABER rules differ between Jeddah and Dammam?',
+    a: 'No. Regulated goods need the Product Conformity Certificate (PC) per product and the Shipment Conformity Certificate (SC) per shipment at both gates. Since 1 January 2025 the SC must be obtained before cargo arrival or clearance fails, regardless of the port.',
+  },
+  {
+    q: 'What is Riyadh Dry Port’s role in the Jeddah vs Dammam decision?',
+    a: 'Riyadh Dry Port is the inland extension of the Dammam corridor. When the final consignee is in Riyadh or central Saudi Arabia, the usual flow is Dammam discharge plus rail/road transfer to Riyadh Dry Port for inland clearance and distribution. It is the main reason Dammam is the default answer for Riyadh cargo.',
+  },
+  {
+    q: 'Which port should I use for LCL shipments?',
+    a: 'It depends on the final consignee, not on the LCL itself. LCL to the west is deconsolidated through a Jeddah CFS; LCL to Riyadh is often deconsolidated through the Dammam flow and a Riyadh Dry Port CFS. Ask for the CFS location and destination charges before quoting.',
+  },
+  {
+    q: 'What are the common mistakes when choosing between Jeddah and Dammam?',
+    a: 'The most common mistakes are picking the cheaper ocean quote while ignoring the inland leg, assuming Jeddah is the natural Riyadh gateway, forgetting the dry-port handover point for Riyadh cargo, and deciding before the final consignee is known. Match the gate to the hinterland, then compare all-in costs.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Jeddah vs Dammam — Which Saudi Port Should Your China Freight Use? (August 2026)',
+      description:
+        'Jeddah vs Dammam port comparison for China freight: Red Sea vs Arabian Gulf location, transit windows, cost differences, hinterland decision framework, cargo fit, and SABER/VAT compliance.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Jeddah Islamic Port',
+      url: `${SITE_URL}/middleeast/jeddah-islamic-port/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Jeddah',
+        addressCountry: 'SA',
+      },
+      description:
+        'Jeddah Islamic Port is the principal Red Sea container gateway of Saudi Arabia, serving western Saudi Arabia, Makkah, Madinah and Red Sea trade.',
+    },
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'King Abdulaziz Port Dammam',
+      url: `${SITE_URL}/middleeast/king-abdulaziz-port-dammam/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dammam',
+        addressCountry: 'SA',
+      },
+      description:
+        'King Abdulaziz Port Dammam is the main Arabian Gulf gateway of Saudi Arabia, serving the Eastern Province, Riyadh through Riyadh Dry Port, and the oil & gas industrial hinterland.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Jeddah vs Dammam — Which Saudi Port Should Your China Freight Use? (August 2026)"
+  description="Jeddah vs Dammam port comparison for China freight: Red Sea vs Arabian Gulf location, transit windows, cost differences, hinterland decision framework, cargo fit, and SABER/VAT compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Jeddah vs Dammam' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Jeddah vs Dammam: which Saudi port should your China freight use?</h1>
+      <p class="lead">
+        The definitive China–Saudi port-routing guide. This page compares Jeddah Islamic Port on the
+        Red Sea with King Abdulaziz Port Dammam on the Arabian Gulf, then gives the hinterland
+        decision framework most forwarders skip: western-KSA cargo vs Eastern Province cargo vs
+        Riyadh cargo vs oil &amp; gas project cargo vs religious goods.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market and port snapshots. Treat
+        every LOW-confidence transit, facility and fee note as indicative, verify with Mawani or your
+        carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jeddah sea transit</span>
+          <span class="fact-value">~18 days typical <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Dammam sea transit</span>
+          <span class="fact-value">~20 days typical <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Riyadh via Dammam</span>
+          <span class="fact-value">30–45 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Mawani total</span>
+          <span class="fact-value">8.3M TEU (2025) <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why the Jeddah vs Dammam decision matters</h2>
+    <p>
+      Jeddah and Dammam are not competing on price the way two terminals in the same bay might.
+      They sit on opposite coasts, serve different hinterlands, and lead to very different inland
+      legs once the container is off the vessel. That is why the question “which Saudi port should I
+      use?” is almost always an <em>inland-leg decision</em> disguised as a routing question.
+    </p>
+    <p>
+      Jeddah Islamic Port is the Red Sea gateway for western Saudi Arabia: Jeddah city, Makkah,
+      Madinah, Tabuk and the religious and Red Sea trade that runs through them. King Abdulaziz Port
+      Dammam is the Arabian Gulf gateway for the Eastern Province — the country’s oil and gas
+      heartland — and the established entry point for Riyadh through the Riyadh Dry Port rail/road
+      corridor. Choosing the wrong coast does not just add distance; it adds an extra inland move,
+      another handover point, and often a demurrage or detention exposure if the documents are not
+      ready in time.
+    </p>
+    <p>
+      The verified research snapshot does not publish port-specific throughput for either Jeddah or
+      Dammam. It does confirm the Mawani total: Saudi ports handled <strong>8.3 million TEU in
+      2025</strong>, up 10.6% year-on-year. Port-specific berth, depth and TEU figures are therefore
+      marked LOW and attributed to the Saudi Ports Authority (Mawani) rather than invented.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Jeddah vs Dammam at a glance</h2>
+      <p>
+        Use this side-by-side table as the orientation before you get into the cargo-specific decision
+        framework below. The coastal position and hinterland are the rows that matter most; the
+        port-specific capacity rows stay empty of invented numbers because the verified snapshot did
+        not publish them.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'jeddah', label: 'Jeddah' },
+          { key: 'dammam', label: 'Dammam' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="Side-by-side comparison — verify berth, depth and per-port throughput with the Saudi Ports Authority (Mawani) before relying on these details."
+      />
+      <SourceList sources={portSources} title="Sources — Jeddah & Dammam port parameters" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Jeddah vs Dammam: transit windows</h2>
+    <p>
+      At the China end, the corridor is fed by some of the world’s largest export gateways: Shanghai
+      handled <strong>55.06 million TEU in 2025</strong> and Ningbo-Zhoushan handled
+      <strong>43 million TEU</strong>, both HIGH-confidence figures from port-authority reporting. In
+      practice, that means both Saudi gateways draw on deep, frequent sailing capacity from the main
+      Chinese load ports.
+    </p>
+    <p>
+      Transit to Jeddah and Dammam is close at the port-to-port level, and the real difference appears
+      when cargo continues inland. Treat the figures below as planning ranges, not promises, and
+      confirm the vessel, voyage, transhipment points and inland handover before committing a delivery
+      date.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'destination', label: 'Destination' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Jeddah / Dammam transit times" />
+
+    <div class="note mt-2">
+      <strong>Port-to-port vs Riyadh door:</strong> about 18–20 days typical for the ocean leg is not
+      the same as total door time to Riyadh. Add the Dammam discharge, rail/road transfer and final
+      trucking; Freightos and market context put the Shanghai–Riyadh corridor around 30–45 days.
+    </div>
+
+    <SourceList sources={chinaOriginSources} title="Sources — China origin-port context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The hinterland decision framework: which cargo goes where</h2>
+      <p>
+        This is the core of the page, and the part competitors usually leave out. Rather than asking
+        “which port is better”, ask “where is the consignee, and what kind of cargo is it?” The table
+        below converts that question into a routing rule, and the sub-sections that follow explain the
+        four cargo families in detail.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'cargo', label: 'Destination / cargo type' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Hinterland routing heuristics, not guaranteed carrier schedules. Confirm the inland leg and cost before choosing the discharge port."
+      />
+      <SourceList sources={decisionSources} title="Sources — Jeddah vs Dammam routing context" />
+
+      <h3 class="mt-3">Western-KSA and religious cargo → Jeddah</h3>
+      <p>
+        If the goods are destined for Jeddah city, Makkah, Madinah, Tabuk or the surrounding western
+        provinces, Jeddah is the obvious gate. It keeps the final trucking leg short and puts the
+        container inside the region it is meant to serve. The same logic applies to religious and
+        Hajj/Umrah-related freight: Jeddah is the nearest major container gateway to the two holy
+        cities, so pilgrimage-season cargo, mosque fixtures, hospitality supplies and consumer goods
+        for the western corridor all naturally lean to the Red Sea side.
+      </p>
+
+      <h3>Eastern Province cargo → Dammam</h3>
+      <p>
+        Dammam is inside the Eastern Province industrial corridor, close to Dammam, Khobar, Jubail and
+        the energy and petrochemical activity around them. A consignee in that region gains nothing by
+        routing through Jeddah and then trucking across the country; the Arabian Gulf discharge is the
+        shortest, cheapest and most operationally predictable flow for eastern-KSA deliveries.
+      </p>
+
+      <h3>Riyadh and central Saudi Arabia → Dammam + Riyadh Dry Port</h3>
+      <p>
+        Riyadh is the special case that surprises first-time shippers. Even though Jeddah is a major
+        gateway, the conventional freight corridor into the capital runs through Dammam and Riyadh Dry
+        Port. The container discharges at Dammam, moves inland by rail or road, and clears close to the
+        capital for final distribution. That inland flow is the reason the decision framework treats
+        “Riyadh” as a Dammam answer, not a Jeddah answer, unless a forwarder can demonstrate a better
+        door-to-door case on the western route.
+      </p>
+
+      <h3>Oil &amp; gas equipment and project cargo → Dammam</h3>
+      <p>
+        Oversized and heavy energy equipment belongs on the Arabian Gulf side. Dammam sits closest to
+        the Eastern Province oil and gas sites and project-cargo corridors, and it is the established
+        gateway for industrial machinery, drilling equipment, pipe and heavy breakbulk. For these
+        moves, lift capacity, laydown area and route clearances matter more than the container rate, so
+        confirm those before booking and treat any “one port is always better” claim with caution.
+      </p>
+
+      <h3 class="mt-3">Common mistakes that push cargo to the wrong gate</h3>
+      <ul>
+        <li>Choosing the cheaper ocean quote while ignoring the inland leg that follows discharge.</li>
+        <li>Assuming Jeddah is the natural Riyadh gateway because it is a larger Red Sea port.</li>
+        <li>Forgetting the Dammam → Riyadh Dry Port handover point and clearing location.</li>
+        <li>Deciding the port before the final consignee or final destination is confirmed.</li>
+        <li>Comparing a direct Jeddah call against a transhipped Dammam service as if they were equal.</li>
+      </ul>
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose Jeddah when...">
+          <ul>
+            <li>The consignee is in Jeddah, Makkah, Madinah, Tabuk or the western region.</li>
+            <li>The cargo serves pilgrimage, religious or Red Sea trade flows.</li>
+            <li>A shorter western inland leg beats a cross-country rail/road move.</li>
+            <li>You are comparing direct vs transhipped Red Sea service options.</li>
+          </ul>
+        </Card>
+        <Card title="Choose Dammam instead when...">
+          <ul>
+            <li>The consignee is in Dammam, Khobar, Jubail or the Eastern Province.</li>
+            <li>The cargo is oil &amp; gas, industrial, heavy or project freight.</li>
+            <li>The final destination is Riyadh and the Riyadh Dry Port corridor applies.</li>
+            <li>The eastern Arabian Gulf routing better matches your origin or carrier.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Facilities and hinterland compared</h2>
+    <p>
+      Both ports operate as commercial seaports with the usual mix of container, general cargo and
+      inland-connection functions, but their hinterlands point in different directions. The verified
+      snapshot does not enumerate a terminal-by-terminal operator list or specific berth counts, so
+      this list is an operational orientation marked LOW and should be confirmed against Mawani and
+      your forwarder.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'jeddah', label: 'Jeddah' },
+        { key: 'dammam', label: 'Dammam' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility and hinterland orientation, not a terminal directory. Confirm operator, berth and inland-transfer details with Mawani before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Jeddah & Dammam facilities and hinterland" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost differences: where Jeddah and Dammam actually diverge</h2>
+      <p>
+        The most important cost insight is that the <em>taxes</em> do not diverge. Import duty at 5%
+        of CIF value, import VAT at 15%, excise rates and the SABER conformity fees follow the same
+        national rules at both gates. What actually differs is the destination and inland stack: THC
+        and terminal charges at each port, clearance and brokerage, demurrage/detention exposure, and
+        — above all — the inland leg to the consignee.
+      </p>
+      <p>
+        That is why “Jeddah is cheaper than Dammam” is usually a misleading half-answer. A Jeddah
+        quote that ends at the port is not comparable with a Dammam quote that includes the
+        rail/road leg to Riyadh Dry Port. Always request an all-in quote that names the final place
+        of delivery, then compare the same scope.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'jeddah', label: 'Jeddah' },
+          { key: 'dammam', label: 'Dammam' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — Jeddah vs Dammam destination costs & customs" />
+
+      <div class="note mt-2">
+        <strong>Demurrage and detention:</strong> demurrage is charged by the terminal when the
+        container stays inside the port beyond free time; detention is charged by the ocean carrier
+        when the container stays outside beyond free time. Finish clearance and book the inland leg
+        before discharge to keep both off the invoice.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance is the same at both gates: SABER, VAT, duty and FASAH</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+        possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+        carbonated drinks where applicable. None of these rates change between Jeddah and Dammam.
+      </p>
+
+      <h3>SABER / SASO in the correct order</h3>
+      <ol>
+        <li>Register the importer and product on the SABER conformity platform.</li>
+        <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+        <li>Once the bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+        <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+        <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+      </ol>
+
+      <h3>Documents, classification and the inland handover</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list, certificate of
+        origin and the SABER conformity certificate for regulated goods. Classify goods with the
+        correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+        depend on it. Note that <strong>ISF</strong> is a United States requirement and does not apply
+        to Saudi Arabia; Saudi Arabia’s equivalent advance-filing step is the FASAH pre-arrival
+        declaration.
+      </p>
+      <p>
+        FASAH is the single window that connects importers, customs brokers, terminals and ZATCA, so
+        the pre-arrival declaration, duty/VAT assessment and clearance status all sit in one flow. For
+        Riyadh cargo, confirm whether clearance happens at Dammam or at Riyadh Dry Port, because that
+        changes the document timing and the inland handover point.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified
+      rates and rules are re-checked against ZATCA on the VAT/duty side; port-specific parameters and
+      terminal details are re-checked against Mawani. Figures that remain unpublished or unverifiable
+      stay at LOW confidence with a per-Mawani attribution instead of being filled with estimates.
+    </p>
+    <p>
+      If a berth, depth, throughput, inland transit or fee amount becomes available from Mawani,
+      ZATCA or the relevant operator, the table is updated, the confidence badge is raised, and the
+      modified date in the page metadata is changed. Subscribe to your forwarder’s schedule and the
+      Mawani/ZATCA notices for the shipment-level values that matter at booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in Jeddah or Dammam quote"
+      text="Tell us your origin, commodity, container or CBM and final Saudi destination, and we will connect you with providers who can quote ocean freight, the correct inland leg, SABER and destination fees together."
+    />
+  </section>
+</BaseLayout>
