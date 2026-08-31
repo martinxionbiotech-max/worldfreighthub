@@ -1,0 +1,799 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/uae-import-duty-vat/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const taxSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const timelineSources: Source[] = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const ddpSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  cargofromchinaUae,
+  docshipper,
+];
+const freeZoneSources: Source[] = [...sourcesByIds(['dubai-customs']), fta];
+const categorySources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+];
+
+const dutyRows = [
+  {
+    component: 'Baseline import duty',
+    who: 'Dubai Customs / Federal Customs Authority',
+    rate: '5% of CIF value',
+    basis: 'GCC Common External Tariff, ad valorem on CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    rate: '5%',
+    basis: 'Calculated on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Higher duty / protective treatments',
+    who: 'Dubai Customs / Federal Customs Authority',
+    rate: 'Higher rates possible on specific goods',
+    basis: 'Tobacco, alcohol, motor vehicles and other specific lines',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Excise tax (where applicable)',
+    who: 'UAE Federal Tax Authority',
+    rate: 'Product-specific — verify current treatment',
+    basis: 'Excise goods carry an additional tax on top of duty and VAT',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Customs brokerage / clearance fee',
+    who: 'UAE customs broker',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Service fee, not a statutory tax',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Mirsal 2 / e-processing charge',
+    who: 'Dubai Customs / service provider',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Electronic processing and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Storage, demurrage or detention',
+    who: 'Port / airport / carrier',
+    rate: 'Per-day after free time',
+    basis: 'Free time varies by operator',
+    confidence: 'LOW',
+  },
+];
+
+const calcTimelineRows = [
+  {
+    step: 'Classify the goods with the correct HS code',
+    when: 'Before quoting or booking',
+    basis: 'The code decides the duty band, VAT treatment, permits and excise exposure',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Establish the CIF value',
+    when: 'Before the declaration',
+    basis: 'Cost + insurance + freight; the value that duty and VAT are calculated on',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess customs duty',
+    when: 'At declaration',
+    basis: 'CIF value × duty rate; baseline 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Add duty to the VAT base',
+    when: 'At declaration',
+    basis: 'VAT base = CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess import VAT',
+    when: 'At declaration',
+    basis: '(CIF value + customs duty) × 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Apply excise or higher duty if the goods are taxable',
+    when: 'At declaration',
+    basis: 'Tobacco, alcohol, motor vehicles and excise goods — verify current rates',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay or account for duty and VAT',
+    when: 'Before release',
+    basis: 'Settled through Mirsal 2 or by the customs broker',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Release and deliver the cargo',
+    when: 'After payment and any inspection',
+    basis: 'Goods release once duties, taxes and documents are in order',
+    confidence: 'LOW',
+  },
+];
+
+const ddpVsSelfRows = [
+  {
+    factor: 'Who pays the duty and VAT',
+    selfPay: 'The importer settles with Dubai Customs / FTA at clearance',
+    ddp: 'The seller or forwarder pays and builds the cost into one price',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'VAT recovery',
+    selfPay: 'A VAT-registered importer may account for import VAT on its return where eligible',
+    ddp: 'Recovery depends on who is the importer of record — confirm the structure',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Tax visibility',
+    selfPay: 'Full line-item visibility on the Mirsal 2 duty and VAT assessment',
+    ddp: 'Taxes are embedded in one all-in price and should be itemised to verify',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and valuation risk',
+    selfPay: 'The importer owns classification and any audit exposure',
+    ddp: 'The forwarder handles filing, but a wrong HS code still changes the final cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cash-flow timing',
+    selfPay: 'Taxes are settled at clearance, after the goods arrive',
+    ddp: 'Taxes are included in the upfront delivered price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usually best for',
+    selfPay: 'VAT-registered importers and established buyers with a broker and HS discipline',
+    ddp: 'First-time importers, direct-to-consumer sellers and Amazon/Noon delivery',
+    confidence: 'LOW',
+  },
+];
+
+const freeZoneRows = [
+  {
+    factor: 'Import duty',
+    mainland: '5% of CIF payable at import',
+    freeZone: 'Duty can be suspended while goods remain in the zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Import VAT',
+    mainland: '5% on CIF + duty payable at import',
+    freeZone: 'VAT can be suspended within the designated free zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'When goods exit the zone',
+    mainland: 'N/A — goods are already in the mainland',
+    freeZone: 'Duty/VAT generally apply when goods exit to the mainland market',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Best-fit use case',
+    mainland: 'Direct sale to a mainland buyer or consumer',
+    freeZone: 'Re-export, storage, distribution and e-commerce fulfilment without entering the market',
+    confidence: 'LOW',
+  },
+];
+
+const landedCostRows = [
+  {
+    line: 'CIF value',
+    formula: 'Cost + insurance + freight',
+    example: '1,000.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Customs duty',
+    formula: 'CIF value × 5%',
+    example: '50.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'VAT base',
+    formula: 'CIF value + customs duty',
+    example: '1,050.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Import VAT',
+    formula: 'VAT base × 5%',
+    example: '52.50',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Total before operational fees',
+    formula: 'CIF value + duty + VAT',
+    example: '1,102.50',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Operational fees',
+    formula: 'Brokerage + Mirsal 2 + delivery + storage',
+    example: 'Request itemised schedule',
+    confidence: 'LOW',
+  },
+];
+
+const categoryRows = [
+  {
+    category: 'General merchandise at the GCC baseline',
+    duty: '5% of CIF',
+    vat: '5% on CIF + duty',
+    note: 'The default position for most goods without a special tariff line',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Tobacco products',
+    duty: 'Higher duty line possible',
+    vat: '5% on CIF + duty',
+    note: 'Excise tax can apply on top — verify the current treatment',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Alcoholic beverages',
+    duty: 'Higher duty line possible',
+    vat: '5% on CIF + duty',
+    note: 'Restricted/controlled import; verify licence and current rate',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Motor vehicles',
+    duty: 'Higher duty line possible',
+    vat: '5% on CIF + duty',
+    note: 'Vehicle import rules and duty treatment are product-specific',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Personal courier shipments ≤ AED 1,000',
+    duty: 'Secondary-source de minimis',
+    vat: 'Secondary-source treatment',
+    note: 'Some sources record AED 1,000 duty/tax free; gifts to AED 3,000 — confirm',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Goods held in a designated free zone',
+    duty: 'Suspended while in the zone',
+    vat: 'Suspended while in the zone',
+    note: 'Duty/VAT generally apply on exit to the mainland market',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Preferential / free-trade-eligible goods',
+    duty: 'Reduced or zero where eligible',
+    vat: '5% on CIF + duty',
+    note: 'Depends on origin, certificate of origin and the applicable arrangement',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the UAE import duty rate?',
+    a: 'The baseline import duty is 5% of the CIF value — cost, insurance and freight — under the GCC Common External Tariff. Specific goods such as tobacco, alcohol and motor vehicles can attract higher duty or excise treatment, so the baseline is not the final rate for every product. Treat the 5% figure as MEDIUM confidence and verify the line for your HS code with Dubai Customs.',
+  },
+  {
+    q: 'What is the UAE import VAT rate?',
+    a: 'UAE import VAT is 5%, effective since 1 January 2018. It is calculated on the CIF value plus customs duty, not on the CIF value alone.',
+  },
+  {
+    q: 'How is UAE import VAT calculated?',
+    a: 'The VAT base is the CIF value plus customs duty. For a baseline 5% duty, the stack is CIF × 1.05 × 1.05, which equals CIF × 1.1025. That means duty is added first, then VAT is charged on that higher amount.',
+  },
+  {
+    q: 'What is the combined landed-cost multiplier for UAE duty and VAT?',
+    a: 'For a baseline 5% duty and 5% VAT, the stack is CIF × 1.05 × 1.05, which equals CIF × 1.1025. A CIF value of 1,000 USD becomes 1,050.00 after duty and 1,102.50 after VAT — an effective 10.25% on the CIF value, not the 10% you would get by adding the two rates together.',
+  },
+  {
+    q: 'Can you show a worked example for a CIF 1,000 USD shipment?',
+    a: 'Yes: customs duty is 1,000 × 5% = 50. The VAT base is 1,000 + 50 = 1,050. Import VAT is 1,050 × 5% = 52.50. Total duty and VAT is 102.50, so the total before operational fees is 1,102.50. This is arithmetic based on the verified rates, not a binding assessment — rates are subject to change and should be verified with the FTA or Dubai Customs.',
+  },
+  {
+    q: 'Is VAT charged on the customs duty as well as the CIF value?',
+    a: 'Yes. The VAT base is CIF value plus customs duty, so VAT is calculated on the duty-inclusive amount. This is the detail that makes the effective tax slightly higher than a naive 5% + 5% total.',
+  },
+  {
+    q: 'What is the UAE import VAT reverse-charge mechanism?',
+    a: 'In practice, a VAT-registered importer may account for import VAT through its periodic VAT return — reporting the import VAT as both output and input where the goods are used for taxable supplies — instead of bearing it as a permanent cash cost at the border. The research snapshot does not document the full procedure, so treat the mechanics as LOW confidence and confirm the conditions, documentation and timing with the FTA or your tax advisor.',
+  },
+  {
+    q: 'Do free zone imports avoid UAE VAT?',
+    a: 'Not automatically. Goods can be held under duty/VAT suspension within a designated free zone, but duty and VAT generally apply when goods leave the zone for the mainland market. Tell your forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
+  },
+  {
+    q: 'How does the HS code affect UAE import duty and VAT?',
+    a: 'The HS code decides the duty line — baseline, higher, reduced or zero — and can drive permits and excise exposure. VAT is generally 5% on the duty-inclusive CIF base, but the duty component changes with the code. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
+  },
+  {
+    q: 'Are there any UAE import duty or VAT exemptions?',
+    a: 'The research snapshot records a secondary-source de minimis of AED 1,000 for personal courier shipments and AED 3,000 for gifts, plus potential zero-rated or exempt treatments for specific categories. Preferential duty treatment depends on origin and certificate of origin. Confirm all three with the FTA or Dubai Customs for the specific goods before relying on them.',
+  },
+  {
+    q: 'Is there a UAE de minimis threshold?',
+    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure, so confirm the current threshold with Dubai Customs or the FTA, especially for low-value e-commerce parcels.',
+  },
+  {
+    q: 'What is the difference between DDP and paying UAE duty and VAT myself?',
+    a: 'Self-payment keeps the importer as the taxpayer with full Mirsal 2 line-item visibility and, for a VAT-registered importer, the possibility of reverse-charge accounting. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying duty and VAT rates do not change — only who pays, how visible the tax is, and how the cash flow is structured.',
+  },
+  {
+    q: 'Does the UAE charge excise tax on imported goods?',
+    a: 'The UAE applies excise tax on specific goods in addition to the ordinary duty and VAT stack, but the verified research snapshot does not publish the UAE excise rates. Treat excise treatment as LOW confidence and confirm the current rates for your HS codes with the FTA before finalising a landed-cost quote.',
+  },
+  {
+    q: 'Where should I verify current UAE import duty and VAT rates?',
+    a: 'Verify against the UAE Federal Tax Authority (FTA) and the current Dubai Customs tariff lookup for your HS code. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'UAE Import Duty & VAT: The CIF × 1.05 × 1.05 Landed Cost (August 2026)',
+      description:
+        'How UAE import duty (5% CIF) and VAT (5% on CIF + duty) stack: the landed-cost formula, a CIF 1,000 USD worked example, VAT reverse charge, free zone vs mainland, HS codes and DDP vs self-payment.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="UAE Import Duty & VAT: The CIF × 1.05 × 1.05 Landed Cost (August 2026)"
+  description="How UAE import duty (5% CIF) and VAT (5% on CIF + duty) stack: the landed-cost formula, a CIF 1,000 USD worked example, VAT reverse charge, free zone vs mainland, HS codes and DDP vs self-payment."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'UAE import duty & VAT' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>UAE import duty &amp; VAT: the CIF × 1.05 × 1.05 landed-cost stack</h1>
+      <p class="lead">
+        The tax burden most shippers underestimate is not the 5% duty or the 5% VAT on their own —
+        it is the way they stack. Duty is charged on CIF, then VAT is charged on CIF plus duty, so a
+        baseline shipment lands at <strong>CIF × 1.1025</strong> before operational fees. This page
+        shows the formula, a worked example, the import-VAT reverse-charge mechanism, the free-zone
+        rule and the DDP-versus-self-paid decision.
+      </p>
+      <p class="small muted">
+        Confidence badges separate the verified 5% VAT and 5% CIF duty baseline from unquantified
+        operational fees and secondary-source exemptions. Rates are subject to change — verify with
+        the FTA or Dubai Customs before finalising a quote.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Combined multiplier</span>
+          <span class="fact-value">×1.1025 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT base</span>
+          <span class="fact-value">CIF + duty <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">De minimis</span>
+          <span class="fact-value">AED 1,000 <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT introduced</span>
+          <span class="fact-value">1 Jan 2018 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The UAE tax stack at a glance</h2>
+    <p>
+      UAE import tax is a two-line stack for most goods. The first line is the
+      <strong>5% customs duty</strong> on the CIF value under the GCC Common External Tariff. The
+      second line is <strong>5% import VAT</strong> on the CIF value <em>plus</em> that customs duty.
+      Because VAT is charged on the duty-inclusive base, the combined statutory effect is 10.25% of
+      CIF, not 10%.
+    </p>
+    <p>
+      That small compound is the point competitors skip and the point that makes landed-cost
+      estimates wrong. It is not a large amount on one parcel, but it is material across a year of
+      imports — and it is exactly the kind of error that compounds when a forwarder builds an all-in
+      DDP price on the wrong base.
+    </p>
+    <p>
+      The third line, where applicable, is the product-specific treatment: higher duty or excise on
+      goods such as tobacco, alcohol and motor vehicles. The verified research snapshot does not
+      publish the UAE rates for those lines, so this page keeps them LOW confidence and directs you
+      to the FTA and Dubai Customs for the current tariff line.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Duty, VAT and excise: what is actually known</h2>
+      <p>
+        Only the 5% duty baseline and the 5% VAT rate are verified. Higher duty, excise, brokerage
+        and processing amounts were not published in the verified snapshot, so the table keeps those
+        rows explicitly “not published” rather than inventing numbers.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'component', label: 'Tax / fee component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'rate', label: 'Indicative rate' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={dutyRows}
+        caption="Only baseline duty (5% CIF) and import VAT (5%) are verified. Higher-duty, excise and operational amounts are LOW confidence — request or verify the current schedule."
+      />
+      <SourceList sources={taxSources} title="Sources — UAE duty, VAT & excise" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The assessment timeline: from HS code to release</h2>
+    <p>
+      The order matters because each line feeds the next. Classify first, fix the CIF value, assess
+      duty, then assess VAT on the duty-inclusive base. Excise and higher duty are added only where
+      the product line triggers them.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When it happens' },
+        { key: 'basis', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={calcTimelineRows}
+      caption="Sequence is an operational orientation. Specific processing days and excise rates are LOW confidence and were not published in the research snapshot."
+    />
+    <SourceList sources={timelineSources} title="Sources — UAE assessment flow" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The import-VAT reverse-charge mechanism</h2>
+      <p>
+        This is the UAE detail that changes the real cost of the 5% VAT. For a VAT-registered
+        importer, import VAT is often not a simple cash payment that disappears at the border. In
+        practice the FTA applies a reverse-charge-style treatment: the importer reports the import
+        VAT on its periodic VAT return, and may simultaneously reclaim it as input VAT where the
+        goods are used for taxable supplies.
+      </p>
+      <p>
+        The commercial consequence is significant. For a business that can fully recover input VAT,
+        the 5% is a <em>cash-flow</em> item rather than a permanent cost; for an unregistered buyer
+        or a consumer, the 5% is a true cost. The exact documentation, timing and eligibility
+        conditions are not documented in the verified research snapshot, so treat the mechanics as
+        LOW confidence and confirm them with the FTA or your tax advisor before relying on the
+        recovery.
+      </p>
+      <div class="note mt-2">
+        <strong>Ask your forwarder or tax advisor:</strong> who is the importer of record, whether
+        import VAT is settled at the border or accounted on the VAT return, and whether the goods are
+        used for taxable supplies. That single question changes the true landed cost more than any
+        small duty variation.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Self-paid import taxes vs DDP</h2>
+    <p>
+      The underlying 5% duty and 5% VAT do not change between the two structures. What changes is
+      who pays, how visible the tax is, and how the cash flow is organised.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'selfPay', label: 'Self-paid (importer)' },
+        { key: 'ddp', label: 'DDP (seller/forwarder)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={ddpVsSelfRows}
+      caption="DDP vs self-payment is a responsibility and cash-flow choice, not a change to the statutory rates. Confirm the importer-of-record structure before choosing."
+    />
+    <SourceList sources={ddpSources} title="Sources — self-paid vs DDP" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Free zone vs mainland VAT treatment</h2>
+      <p>
+        The UAE is unusual because a large share of China–UAE freight lands in free zones such as
+        JAFZA and KIZAD. Goods held inside a designated free zone can remain under duty/VAT
+        suspension, while goods imported directly to the mainland pay both on entry.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'mainland', label: 'Mainland' },
+          { key: 'freeZone', label: 'Designated free zone' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={freeZoneRows}
+        caption="Free-zone suspension is the verified conceptual rule. Zone eligibility and exit treatment must be confirmed with Dubai Customs or the FTA."
+      />
+      <SourceList sources={freeZoneSources} title="Sources — free zone vs mainland" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Landed-cost structure and the CIF 1,000 worked example</h2>
+    <p>
+      The arithmetic below is the page’s central reference point. It uses the verified 5% duty and
+      5% VAT rates and deliberately keeps the operational fees as “request schedule”, because the
+      snapshot did not publish them.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Line item' },
+        { key: 'formula', label: 'Formula' },
+        { key: 'example', label: 'CIF 1,000 example' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example uses the verified 5% duty and 5% VAT rates. Rates are subject to change — verify with the FTA or Dubai Customs before relying on the result."
+    />
+    <SourceList sources={taxSources} title="Sources — landed-cost calculation" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Why it compounds">
+        <p>
+          VAT is charged on the duty-inclusive CIF base, so 5% applies to 1,050, not to 1,000. The
+          extra 2.50 in the example is the VAT-on-duty effect — small on one shipment, material
+          across a year of imports.
+        </p>
+      </Card>
+      <Card title="Why 5% + 5% is not 10%">
+        <p>
+          Adding the rates gives 10%, but the compound stack is 10.25%: 50.00 of duty plus 52.50 of
+          VAT on a 1,000 CIF base. That is the difference between an approximate quote and a
+          defensible landed-cost estimate.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance and
+      freight. An unrealistically low invoice value, missing freight or stripped insurance invites
+      revaluation, penalties and delay — and it breaks the very calculation this page exists to make
+      predictable.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Applicable categories: how the HS code changes the bill</h2>
+      <p>
+        The HS code is the lever that changes the duty component of the stack. VAT remains 5% on the
+        duty-inclusive CIF base in the standard case, but the duty line — baseline, higher,
+        preferential, suspended or excise-bearing — is product-specific.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'category', label: 'Product category / treatment' },
+          { key: 'duty', label: 'Duty treatment' },
+          { key: 'vat', label: 'VAT treatment' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={categoryRows}
+        caption="Category treatment is drawn from the verified duty/VAT snapshot. Higher-duty, excise, preferential and de minimis rows must be confirmed with the FTA or Dubai Customs."
+      />
+      <SourceList sources={categorySources} title="Sources — category & HS-code treatment" />
+
+      <div class="note mt-2">
+        <strong>Classification rule:</strong> resolve a borderline HS code before shipping. A change at
+        the border can move the duty line, trigger a permit requirement or invalidate a DDP quote built on
+        the wrong code.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Compliance points to keep in view</h2>
+
+    <h3>The compound, not the sum</h3>
+    <p>
+      Duty is 5% of CIF, then VAT is 5% of CIF plus duty. The effective statutory burden on the CIF
+      value is <strong>10.25%</strong> at baseline, not 10%. This compounding is the point competitors
+      skip and the point that makes landed-cost estimates wrong.
+    </p>
+
+    <h3>HS code first</h3>
+    <p>
+      Duty line, excise exposure, permit requirements and free-zone eligibility all flow from the HS
+      code. Classify with a broker or a written ruling before quoting, and keep the invoice
+      description specific enough to defend the code.
+    </p>
+
+    <h3>CIF valuation must be complete</h3>
+    <p>
+      Cost, insurance and freight are all part of the base. A low declared value or a missing freight
+      component creates revaluation risk, and the VAT-on-duty compounding means a small value correction
+      flows through both taxes.
+    </p>
+
+    <h3>Free zone is a status, not an automatic saving</h3>
+    <p>
+      Designated free zones can suspend duty and VAT while goods remain in the zone. When goods exit
+      to the mainland market, duty and VAT generally apply. Do not treat a free-zone address as a
+      permanent tax exemption without confirming the exit flow.
+    </p>
+
+    <h3>Reverse charge changes the real VAT cost</h3>
+    <p>
+      For a VAT-registered importer that can account for import VAT on its return and reclaim eligible
+      input VAT, the 5% may be a cash-flow item rather than a permanent cost. Confirm who the importer
+      of record is and whether recovery applies for your goods.
+    </p>
+
+    <h3>Higher-duty and excise goods are fact-specific</h3>
+    <p>
+      Tobacco, alcohol and motor vehicles can carry higher duty or excise on top of the ordinary stack.
+      The verified snapshot does not publish the UAE rates for these lines, so treat them as LOW
+      confidence and recheck the current treatment for your HS codes.
+    </p>
+
+    <h3>Rates are subject to change</h3>
+    <p>
+      The 5% VAT and 5% duty baseline are from a dated snapshot. Treat every figure here as a planning
+      input and verify the current duty line, VAT treatment, exemptions and excise with the FTA or
+      Dubai Customs before finalising a landed-cost quote.
+    </p>
+
+    <SourceList sources={taxSources} title="Sources — UAE customs, tax & valuation" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>11. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified rates
+      and rules are re-checked against the FTA on the VAT side and Dubai Customs on the duty side.
+      Higher-duty, excise and operational amounts that remain unpublished or unverifiable stay at LOW
+      confidence with a request-the-schedule attribution instead of being filled with estimates.
+    </p>
+    <p>
+      If a duty line, excise rate or fee amount becomes available from the FTA or Dubai Customs, the
+      table is updated, the confidence badge is raised, and the modified date in the page metadata is
+      changed. Subscribe to FTA and Dubai Customs notices for the shipment-level values that matter at
+      booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to UAE landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity type and whether you want DDP or self-paid taxes, and we will connect you with providers who can itemise duty, VAT and delivery."
+    />
+  </section>
+</BaseLayout>

@@ -1,0 +1,637 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/uae-customs-clearance/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const processSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  cargofromchinaUae,
+  docshipper,
+];
+const freeZoneSources: Source[] = [...sourcesByIds(['dubai-customs']), fta];
+const entrySources: Source[] = [
+  ...sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']),
+  cargofromchinaUae,
+];
+const documentSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  cargofromchinaUae,
+  docshipper,
+];
+const complianceSources: Source[] = [...sourcesByIds(['dubai-customs']), fta, numeral];
+
+const clearanceFeeRows = [
+  {
+    item: 'Customs duty',
+    who: 'Dubai Customs / Federal Customs Authority',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Customs brokerage / clearance fee',
+    who: 'UAE customs broker / clearing agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Mirsal 2 / electronic processing charge',
+    who: 'Dubai Customs / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inspection / re-inspection fee (if selected)',
+    who: 'Customs / inspection body',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Storage, demurrage or detention (after free time)',
+    who: 'Port / airport / carrier',
+    magnitude: 'Per-day charge; free time varies by operator',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Document attestation / translation',
+    who: 'Chamber / embassy / translator',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+];
+
+const clearanceStepRows = [
+  {
+    step: 'Classify goods with the correct HS code',
+    when: 'Before booking or quoting',
+    basis: 'Duty, VAT and any import restrictions all depend on the code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Confirm importer eligibility and product permits',
+    when: 'Before shipment',
+    basis: 'UAE trade licence, importer registration and product-specific permits where required',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Prepare commercial invoice, packing list, B/L and COO',
+    when: 'Before filing',
+    basis: 'All documents must agree line by line with the shipment',
+    confidence: 'LOW',
+  },
+  {
+    step: 'File the Mirsal 2 pre-arrival declaration',
+    when: 'Before cargo arrival',
+    basis: 'Dubai Customs electronic single-window clearance system',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pay duty and VAT',
+    when: 'Before release',
+    basis: 'Assessed on CIF value plus duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Complete inspection and obtain release',
+    when: 'After declaration and payment',
+    basis: 'Documentary or physical inspection if selected',
+    confidence: 'LOW',
+  },
+];
+
+const freeZoneVsMainlandRows = [
+  {
+    factor: 'Import duty',
+    mainland: '5% of CIF payable at import',
+    freeZone: 'Duty can be suspended while goods remain in the zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Import VAT',
+    mainland: '5% on CIF + duty payable at import',
+    freeZone: 'VAT can be suspended within the designated free zone',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'When goods exit the zone',
+    mainland: 'N/A — goods are already in the mainland',
+    freeZone: 'Duty/VAT generally apply when goods exit to the mainland market',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Clearance authority',
+    mainland: 'Dubai Customs / relevant emirate customs office',
+    freeZone: 'Zone authority plus customs; zone-specific systems apply',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Importer licence',
+    mainland: 'UAE mainland trade licence / registered importer',
+    freeZone: 'Free-zone entity licence tied to the designated zone',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Practical effect',
+    mainland: 'Duty and VAT are paid before delivery to the market',
+    freeZone: 'Goods can be stored or re-exported without entering the customs territory',
+    confidence: 'LOW',
+  },
+];
+
+const entryPointRows = [
+  {
+    entry: 'Jebel Ali Port',
+    type: 'Seaport',
+    region: 'Dubai — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'Khalifa Port Abu Dhabi',
+    type: 'Seaport',
+    region: 'Abu Dhabi — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'Port Khalid, Sharjah',
+    type: 'Seaport',
+    region: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'Dubai International Airport (DXB)',
+    type: 'Airport',
+    region: 'Dubai',
+    confidence: 'LOW',
+  },
+  {
+    entry: 'Al Maktoum International Airport (DWC)',
+    type: 'Airport',
+    region: 'Dubai South',
+    confidence: 'LOW',
+  },
+  {
+    entry: 'Abu Dhabi International Airport (AUH)',
+    type: 'Airport',
+    region: 'Abu Dhabi',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is UAE customs clearance?',
+    a: 'UAE customs clearance is the process of declaring an import through the relevant emirate customs system — for Dubai that is Mirsal 2 — paying the assessed duty and VAT, passing any documentary or physical inspection, and obtaining release of the goods. For regulated goods it also depends on the right HS code and any required import permit.',
+  },
+  {
+    q: 'What documents are required for UAE customs clearance?',
+    a: 'The standard set is the commercial invoice, packing list, bill of lading or air waybill, and certificate of origin. Classify the goods with the correct HS code first, because duty, VAT and any permit requirements all flow from it.',
+  },
+  {
+    q: 'What is Mirsal 2?',
+    a: 'Mirsal 2 is Dubai Customs’ electronic single-window clearance system used to submit import and export declarations, pay duties, and manage clearance status. The research snapshot names the system but does not document the full step-by-step workflow, so process details are marked LOW confidence — confirm current steps with Dubai Customs or your broker.',
+  },
+  {
+    q: 'Do I need a customs broker in the UAE?',
+    a: 'Not in every case, but most first-time importers use one. A broker can file Mirsal 2, coordinate HS classification, manage permit timing and handle inspection exceptions. Experienced importers with a UAE trade licence, staff and systems can self-clear; otherwise the brokerage fee usually buys meaningful risk reduction.',
+  },
+  {
+    q: 'What is the difference between free zone and mainland clearance?',
+    a: 'The core difference is whether the goods enter the UAE customs territory. A mainland consignment pays 5% duty on CIF and 5% VAT on CIF plus duty at import. Goods held inside a designated free zone can remain under duty/VAT suspension, but duty and VAT generally apply when they later exit the zone to the mainland market.',
+  },
+  {
+    q: 'Does a free zone delivery always avoid UAE duty and VAT?',
+    a: 'No. Suspension applies only while the goods remain in the designated free zone and the import is structured correctly. When goods leave the zone for the mainland, duty and VAT generally become payable. Confirm the zone status and exit treatment with Dubai Customs or your broker before assuming a saving.',
+  },
+  {
+    q: 'How much does UAE customs clearance cost?',
+    a: 'Duty is 5% of CIF value and VAT is 5% on CIF value plus duty. Brokerage, Mirsal 2 processing, inspection, storage and document fees were not quantified in the verified research snapshot, so request an itemised schedule from your broker. Treat any single “clearance fee” number as indicative, not binding.',
+  },
+  {
+    q: 'How long does UAE customs clearance take?',
+    a: 'The research snapshot does not publish a reliable hour or day figure for the UAE corridor. The effective lead time depends on HS accuracy, document consistency, whether inspection is selected, and port or airport free time. Complete pre-arrival work first; clearance itself is usually faster than fixing a wrong HS code or missing permit.',
+  },
+  {
+    q: 'What are the most common UAE clearance hold reasons?',
+    a: 'The most common failure modes are an incorrect HS code, invoice and packing-list mismatches, under-declared value, missing permits for restricted goods, and missing or inconsistent certificate-of-origin details. These are operational patterns, not a Dubai Customs policy list — review documents line by line before filing.',
+  },
+  {
+    q: 'Does the UAE require a pre-arrival declaration?',
+    a: 'Yes, in practice the Mirsal 2 flow is designed around advance filing so the shipment can be assessed before discharge. File early and resolve exceptions before free storage or demurrage time runs out.',
+  },
+  {
+    q: 'How is UAE import duty and VAT calculated?',
+    a: 'Duty is assessed on the CIF value (cost, insurance and freight) at a 5% baseline under the GCC Common External Tariff. VAT is 5% on the CIF value plus customs duty. Keep the invoice value, freight and insurance lines consistent across documents to avoid revaluation.',
+  },
+  {
+    q: 'Is there a de minimis exemption for UAE imports?',
+    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure, so confirm the current threshold with Dubai Customs or the FTA, especially for low-value e-commerce parcels.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'UAE Customs Clearance: Mirsal 2, Documents & Free Zone vs Mainland (August 2026)',
+      description:
+        'UAE customs clearance explained: Mirsal 2 electronic clearance, required documents, HS classification, free zone vs mainland treatment, common hold reasons and the 5% duty / 5% VAT basis.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="UAE Customs Clearance: Mirsal 2, Documents & Free Zone vs Mainland (August 2026)"
+  description="UAE customs clearance explained: Mirsal 2 electronic clearance, required documents, HS classification, free zone vs mainland treatment, common hold reasons and the 5% duty / 5% VAT basis."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'UAE customs clearance' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>UAE customs clearance: Mirsal 2, documents &amp; the free zone vs mainland divide</h1>
+      <p class="lead">
+        A practical, decision-first guide to clearing China-to-UAE imports. This page covers the
+        required documents, the Mirsal 2 electronic flow, HS classification, the free-zone-vs-mainland
+        difference that changes the entire duty/VAT treatment, and the failure modes that add storage,
+        demurrage and delay.
+      </p>
+      <p class="small muted">
+        Confidence badges separate the verified 5% VAT and 5% CIF duty baseline from unquantified
+        operational fees and process detail. Treat every LOW-confidence fee, timeline and process note
+        as indicative and verify with Dubai Customs or a licensed customs broker.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Clearance system</span>
+          <span class="fact-value">Mirsal 2 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Brokerage fee</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Inspection fee</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Free zone treatment</span>
+          <span class="fact-value">Suspension <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. UAE customs clearance at a glance</h2>
+    <p>
+      Dubai clears imports through <strong>Mirsal 2</strong>, its electronic single-window system
+      that links importers, customs brokers, terminals, airlines and Dubai Customs. Clearance is not
+      a single form submitted on arrival — it is a timeline that starts with HS classification and
+      importer eligibility before the cargo ships, and finishes with duty/VAT payment and release.
+    </p>
+    <p>
+      The practical consequence is that most clearance failures happen <em>before</em> arrival: a
+      wrong HS code, mismatched documents, an under-declared value, or a missing permit for a
+      restricted product. Treat clearance as a pre-arrival project rather than a destination
+      afterthought, and you remove most of the storage, demurrage and inspection delays.
+    </p>
+    <p>
+      The UAE has no single all-commodity conformity certificate like Saudi Arabia’s SABER. Instead,
+      the obligations are product-specific: the correct HS code, any import permit or conformity
+      evidence for regulated goods, and a consistent document set. That makes classification the
+      central risk, because the code decides the duty line and which permits are triggered.
+    </p>
+    <p class="small muted">
+      Mirsal 2 is confirmed in the research snapshot as Dubai Customs’ electronic clearance system,
+      but its step-by-step workflow is not fully documented in the verified sources. Process details
+      below are therefore marked <strong>per Dubai Customs</strong> at LOW confidence and should be
+      confirmed against the current Dubai Customs workflow.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. UAE customs clearance fees: what is actually known</h2>
+      <p>
+        Only the statutory duty and VAT are verified. Brokerage, Mirsal 2 processing, inspection,
+        storage and document amounts were not published in the verified research snapshot, so this
+        page refuses to invent a single “clearance fee” number. Request an itemised schedule from a
+        licensed broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={clearanceFeeRows}
+        caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — clearance fees & taxes" />
+
+      <div class="note mt-2">
+        <strong>Hidden fee check before booking:</strong> ask for the brokerage fee, Mirsal 2 or
+        e-processing charge, inspection or re-inspection fee, storage free time, demurrage/detention
+        rates and any document attestation or translation cost — in writing, on the same quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The clearance process: a pre-arrival timeline</h2>
+    <p>
+      The sequence below is the operational order that matters, not a day-by-day guarantee. There is
+      no SABER-style “certificate must arrive before cargo” rule to anchor the UAE flow; the practical
+      anchor is that filing through Mirsal 2 before discharge removes most of the demurrage and
+      detention risk.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When it must happen' },
+        { key: 'basis', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={clearanceStepRows}
+      caption="Sequence is an operational orientation. Specific processing days are LOW confidence and were not published in the research snapshot."
+    />
+    <SourceList sources={processSources} title="Sources — clearance process & Mirsal 2" />
+
+    <div class="note mt-2">
+      <strong>The pre-arrival rule in practice:</strong> file the Mirsal 2 declaration before the
+      vessel or aircraft arrives, keep the invoice, packing list and transport document consistent,
+      and have permits and the correct HS code ready. That turns clearance from a border event into
+      a release step.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Free zone vs mainland: the distinction that changes the duty/VAT answer</h2>
+      <p>
+        This is the UAE-specific detail competitors rarely explain. The legal question is whether the
+        goods enter the UAE customs territory at all. A <strong>mainland</strong> consignment pays
+        duty and VAT on import; goods held in a <strong>designated free zone</strong> can remain under
+        duty/VAT suspension while they stay in the zone. When they later exit to the mainland market,
+        duty and VAT generally apply.
+      </p>
+      <p>
+        In practice the difference is not a permanent tax saving — it is a cash-flow and supply-chain
+        choice. A free zone makes sense for re-export, storage, distribution and e-commerce fulfilment
+        where goods never enter the local market, while a mainland delivery is the correct structure
+        when the buyer is a mainland business or consumer.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'mainland', label: 'Mainland' },
+          { key: 'freeZone', label: 'Designated free zone' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={freeZoneVsMainlandRows}
+        caption="Free-zone suspension is the verified conceptual rule. The exact zone eligibility and exit treatment must be confirmed with Dubai Customs or the FTA for the specific consignment."
+      />
+      <SourceList sources={freeZoneSources} title="Sources — free zone vs mainland" />
+
+      <div class="note mt-2">
+        <strong>Ask this before quoting:</strong> is the final consignee a mainland address or a
+        free-zone entity, and will the goods enter the mainland after arrival? The answer changes the
+        duty/VAT line and the clearance authority used.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. UAE entry points for customs clearance</h2>
+    <p>
+      Match the entry point to the consignee and emirate. Jebel Ali dominates Dubai and the northern
+      emirates, Khalifa Port serves Abu Dhabi, and Port Khalid covers Sharjah. Air cargo clears at the
+      matching airport.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'entry', label: 'Entry point' },
+        { key: 'type', label: 'Type' },
+        { key: 'region', label: 'Region' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={entryPointRows}
+      caption="Seaport roles are secondary-source findings. Airport roles are LOW confidence operational context — confirm the clearance office with your broker."
+    />
+    <SourceList sources={entrySources} title="Sources — UAE entry points" />
+
+    <div class="note mt-2">
+      <strong>Match the entry point to the consignee:</strong> Jebel Ali for Dubai, Abu Dhabi’s
+      Khalifa Port for the capital and its free zones, and Port Khalid for Sharjah and the northern
+      emirates. Air cargo clears at DXB, DWC or AUH as appropriate.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Required documents and where mistakes creep in</h2>
+
+      <h3>The standard document set</h3>
+      <ul>
+        <li><strong>Commercial invoice</strong> — value, currency, incoterm, buyer/seller and HS-relevant description.</li>
+        <li><strong>Packing list</strong> — carton counts, weights, dimensions and marks that match the invoice and transport document.</li>
+        <li><strong>Bill of lading / air waybill</strong> — consignee and notify party must match the clearance authority.</li>
+        <li><strong>Certificate of origin (COO)</strong> — evidence of origin for duty and trade-policy treatment.</li>
+        <li><strong>Permits or conformity evidence</strong> — only where the HS code triggers them; not a universal UAE certificate.</li>
+      </ul>
+      <SourceList sources={documentSources} title="Sources — required documents" />
+
+      <h3 class="mt-3">Common failure modes</h3>
+      <ul>
+        <li><strong>HS code error:</strong> duty, VAT and permit requirements all change with the code; re-classification at the border adds inspection and delay.</li>
+        <li><strong>Document mismatch:</strong> invoice value, weight, carton count or marks that differ from the packing list or transport document trigger holds.</li>
+        <li><strong>Under-declared value:</strong> an unrealistically low invoice value invites revaluation, penalties and delay.</li>
+        <li><strong>Missing permit or restricted-goods evidence:</strong> regulated products need the right permit before release.</li>
+      </ul>
+
+      <div class="note mt-2">
+        <strong>Practical check:</strong> compare invoice, packing list and transport document line
+        by line before filing Mirsal 2, and confirm the HS code and any permit status in the same
+        review.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: VAT, duty, Mirsal 2 and HS codes</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, calculated on the CIF
+      value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong> under
+      the GCC Common External Tariff, with higher protective, anti-dumping or excise treatments
+      possible on specific goods such as tobacco, alcohol and motor vehicles.
+    </p>
+
+    <h3>Mirsal 2 and the single-window flow</h3>
+    <p>
+      Mirsal 2 is Dubai Customs’ electronic clearance system, and it is the practical place where the
+      declaration, duty/VAT assessment and release status meet. The research snapshot confirms the
+      system name but not the full click-by-click workflow, so treat the operational steps above as
+      indicative and confirm the current version with Dubai Customs or your broker.
+    </p>
+
+    <h3>HS code and classification</h3>
+    <p>
+      Classify goods with the correct <strong>HS code</strong> before quoting. The code drives the
+      duty rate, VAT treatment and any import licensing, so a borderline classification should be
+      resolved with the broker or a ruling before the cargo ships rather than at inspection.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE customs, VAT & ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified tax
+      and duty rules are re-checked against the FTA and Dubai Customs; the Mirsal 2 workflow and
+      free-zone rules are re-checked against Dubai Customs. Unquantified fees stay at LOW confidence
+      with a request-the-schedule attribution instead of being filled with estimates.
+    </p>
+    <p>
+      If a brokerage, processing, inspection or storage amount becomes available from Dubai Customs
+      or a published broker schedule, the table is updated, the confidence badge is raised, and the
+      modified date in the page metadata is changed. Subscribe to Dubai Customs and FTA notices for
+      the shipment-level values that matter at booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get UAE customs clearance support for your shipment"
+      text="Tell us your commodity, HS code if you have it, emirate and free-zone or mainland status, and we will connect you with providers who can quote clearance, duty, VAT and delivery together."
+    />
+  </section>
+</BaseLayout>

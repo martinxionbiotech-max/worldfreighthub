@@ -1,0 +1,749 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/jebel-ali-port/`;
+const port = gccPorts.find((item) => item.slug === 'jebel-ali');
+const unlocode = port?.unlocode ?? '—';
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const portSources = sourcesByIds(['dp-world']);
+const facilitySources = sourcesByIds(['dp-world', 'dubai-customs']);
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const routingSources: Source[] = [
+  ...sourcesByIds(['dp-world', 'abu-dhabi-ports']),
+  cargofromchinaUae,
+];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs', 'dp-world']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const decisionSources: Source[] = [
+  ...sourcesByIds(['dp-world', 'abu-dhabi-ports']),
+  cargofromchinaUae,
+  docshipper,
+];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'United Arab Emirates',
+    note: 'GCC member; anchor of the China–UAE corridor',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Emirate / coast',
+    value: 'Dubai — Arabian Gulf',
+    note: 'Serves Dubai, the northern emirates and Gulf transhipment',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port role',
+    value: "Middle East's largest container port; global top-10 container port",
+    note: 'DP World operated; deep-sea, transhipment and free-zone gateway',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    value: 'DP World',
+    note: 'Global port and logistics operator headquartered in Dubai',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    value: unlocode,
+    note: 'Seaport code used on the bill of lading',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'JAFZA integration',
+    value: 'Jebel Ali Free Zone adjoins the port',
+    note: 'Port + free zone + logistics function as one trade hub',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Berths',
+    value: 'Not published in verified snapshot',
+    note: 'Verify berth count and terminal allocation with DP World',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Maximum water depth',
+    value: 'Not published in verified snapshot',
+    note: 'Verify approach channel and alongside depth with DP World',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Annual throughput (port-specific)',
+    value: 'Not published per-port in snapshot',
+    note: 'Global top-10 role is verified; exact TEU figure is not in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Shipping-line connectivity',
+    value: '150+ connections widely cited',
+    note: 'Industry materials cite extensive global connections — verify with DP World',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai',
+    service: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    service: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    service: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'China → UAE corridor',
+    service: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → UAE corridor',
+    service: 'Air express (comparison)',
+    transit: '2–4 days',
+    basis: 'cargofromchina express snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'Dubai and northern-emirate consignees',
+    bestPort: 'Jebel Ali',
+    why: 'Shortest inland leg to Dubai and the strongest regional distribution',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Re-export, distribution or e-commerce fulfilment',
+    bestPort: 'Jebel Ali',
+    why: 'Port + JAFZA free zone + logistics capacity in one hub',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Transhipment and relay connections',
+    bestPort: 'Jebel Ali',
+    why: 'Gulf transhipment hub with broad global line connectivity',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Abu Dhabi mainland or Abu Dhabi free-zone consignees',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'Closer to the capital, KIZAD and Abu Dhabi hinterland',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Semi-automated deep-water container handling',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'CSP Abu Dhabi Terminal offers semi-automated capacity',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Sharjah and northern-emirate manufacturing/distribution',
+    bestPort: 'Port Khalid',
+    why: 'Sharjah gateway close to northern-emirate consignees',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'Container terminals',
+    function: 'Deep-sea container handling for direct and transhipped services',
+    note: 'Operator and berth detail not enumerated in snapshot — verify with DP World',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Jebel Ali Free Zone (JAFZA)',
+    function: 'Adjoining free zone for storage, distribution, light manufacturing and re-export',
+    note: 'Port + free zone integration is a verified Jebel Ali advantage',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'CFS and bonded areas',
+    function: 'LCL deconsolidation, examination and customs-controlled storage',
+    note: 'Useful for LCL importers; verify nominated CFS charges',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Reefer points',
+    function: 'Temperature-controlled container handling',
+    note: 'Capacity and booking window vary; confirm before booking',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Dubai, Abu Dhabi and the northern emirates',
+    note: 'Inland distance and rate are route-dependent',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Transhipment function',
+    function: 'Gulf relay and feeder connections',
+    note: 'Transhipment adds terminal handling; direct calls are usually faster',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Jebel Ali terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'UAE customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Mirsal 2 / electronic processing charge',
+    who: 'Dubai Customs / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking',
+    who: 'Trucking provider',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / Federal Customs Authority',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL ocean — market context',
+    who: 'Market snapshot (Dubai / Jebel Ali)',
+    magnitude: 'AED 880–980 per CBM',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight — market context',
+    who: 'Market snapshot (UAE corridor)',
+    magnitude: 'AED 20–23.5 per kg',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where is Jebel Ali Port located?',
+    a: 'Jebel Ali Port is on the Arabian Gulf coast of Dubai, in the United Arab Emirates. It is the Middle East’s largest container port and a global top-10 container port, operated by DP World.',
+  },
+  {
+    q: 'What is the UN/LOCODE for Jebel Ali port?',
+    a: 'The UN/LOCODE is AEJEA. Use it on the bill of lading and customs paperwork when the destination is Jebel Ali.',
+  },
+  {
+    q: 'Who operates Jebel Ali Port?',
+    a: 'DP World operates Jebel Ali Port. DP World is the Dubai-headquartered port and logistics operator, and the Jebel Ali Free Zone (JAFZA) adjoins the port to form one trade and logistics hub.',
+  },
+  {
+    q: 'How long does sea freight take from China to Jebel Ali?',
+    a: 'Indicative transit is about 21 days typical for Shanghai, Ningbo-Zhoushan and Shenzhen routes, with a 15–30 day planning range. A fast-direct guide window is 14–18 days. The route-data figure is MEDIUM confidence; the market window is LOW — verify the vessel schedule with your carrier.',
+  },
+  {
+    q: 'Why is Jebel Ali a transhipment hub for Gulf freight?',
+    a: 'Jebel Ali combines deep-water container capacity, DP World operations, the adjoining JAFZA free zone and broad shipping-line connectivity. That lets cargo be discharged, stored, consolidated or re-exported through the same complex — the reason it works as the region’s relay point.',
+  },
+  {
+    q: 'What is JAFZA and how does it connect to Jebel Ali?',
+    a: 'JAFZA is the Jebel Ali Free Zone, which adjoins Jebel Ali Port. Goods can move between the port and the free zone under duty/VAT suspension, supporting storage, distribution, light manufacturing and re-export without entering the UAE customs territory.',
+  },
+  {
+    q: 'Should I route Abu Dhabi cargo through Jebel Ali or Khalifa Port?',
+    a: 'Usually Khalifa Port Abu Dhabi is the better fit for Abu Dhabi mainland and Abu Dhabi free-zone consignees because it is closer to the capital and KIZAD. Jebel Ali is the default for Dubai and the northern emirates, and for transhipment and re-export flows.',
+  },
+  {
+    q: 'What import taxes apply at Jebel Ali?',
+    a: 'The baseline import duty is 5% of CIF value under the GCC Common External Tariff, and UAE import VAT is 5%, calculated on CIF value plus customs duty. Higher duty or excise can apply to specific goods such as tobacco, alcohol and motor vehicles.',
+  },
+  {
+    q: 'What documents are needed for customs clearance at Jebel Ali?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin. Classify the goods with the correct HS code and file the pre-arrival declaration through Mirsal 2, Dubai Customs’ electronic clearance system.',
+  },
+  {
+    q: 'What is Mirsal 2 and how does it apply at Jebel Ali?',
+    a: 'Mirsal 2 is Dubai Customs’ electronic single-window clearance system. The pre-arrival declaration, duty/VAT assessment and clearance status sit in one flow. Filing before the vessel arrives helps keep demurrage and detention off the final invoice.',
+  },
+  {
+    q: 'How do demurrage and detention work at Jebel Ali?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the carrier when the container stays outside the port beyond free time. Finish clearance and book trucking before discharge to avoid both.',
+  },
+  {
+    q: 'How should I compare Jebel Ali, Khalifa and Port Khalid?',
+    a: 'Match the discharge port to your consignee and final inland leg. Jebel Ali suits Dubai, the northern emirates and re-export/transhipment; Khalifa suits Abu Dhabi and its free zones; Port Khalid suits Sharjah. Always confirm the inland distance, cost and transit before choosing.',
+  },
+  {
+    q: 'Are the berth and throughput figures on this page verified?',
+    a: 'The verified facts are that Jebel Ali is the Middle East’s largest container port, a global top-10 container port, DP World operated, and JAFZA-integrated. Port-specific berth, depth and TEU figures were not published in the research snapshot, so they are marked LOW and attributed to DP World. Confirm the current figures with DP World before planning capacity-sensitive cargo.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Jebel Ali Port — China Shipping Guide: Routing, Transit & Dubai Clearance (August 2026)',
+      description:
+        'Jebel Ali Port intelligence for China freight: Middle East hub role, DP World operations, JAFZA integration, China transit windows, Jebel Ali vs Khalifa routing, facilities, post-arrival costs and 5% duty/VAT compliance.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Jebel Ali Port',
+      url: pageUrl,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dubai',
+        addressCountry: 'AE',
+      },
+      description:
+        'Jebel Ali is the largest container port in the Middle East and a global top-10 container port, operated by DP World in Dubai, UAE, with the JAFZA free zone adjoining the port.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Jebel Ali Port — China Shipping Guide: Routing, Transit & Dubai Clearance (August 2026)"
+  description="Jebel Ali Port intelligence for China freight: Middle East hub role, DP World operations, JAFZA integration, China transit windows, Jebel Ali vs Khalifa routing, facilities, post-arrival costs and 5% duty/VAT compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Jebel Ali Port' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Jebel Ali Port: China freight guide for the Middle East’s container hub</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight to Dubai and the wider Gulf. This
+        page explains what Jebel Ali is, why the port-plus-free-zone model wins re-export and
+        transhipment cargo, how long China ocean moves take, what the port costs after arrival, and
+        the Mirsal 2 / 5% duty / 5% VAT rules that apply at the gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market and port snapshots. Treat
+        every LOW-confidence transit, facility and fee note as indicative, verify with DP World or your
+        carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Port role</span>
+          <span class="fact-value">Middle East hub <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Operator</span>
+          <span class="fact-value">DP World <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{unlocode} <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">~21 days typical <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Jebel Ali matters for China freight</h2>
+    <p>
+      Jebel Ali Port is the anchor of the China–UAE ocean corridor. It is the
+      <strong>Middle East’s largest container port</strong> and a global top-10 container port,
+      operated by <strong>DP World</strong>. For China freight, it is the default discharge point
+      whenever the consignee is in Dubai or the northern emirates, and the natural relay point for
+      cargo that will be stored, consolidated, distributed or re-exported across the Gulf.
+    </p>
+    <p>
+      The commercial logic is the <strong>port + free zone + logistics integration</strong>. Jebel Ali
+      Port is physically adjoined by the JAFZA free zone, so a container can be discharged, moved into
+      a free-zone warehouse, and either stored under duty/VAT suspension or re-exported without ever
+      entering the UAE customs territory. That single-operator, single-campus flow is what makes
+      Jebel Ali a transhipment hub rather than just a gateway.
+    </p>
+    <p>
+      The verified research snapshot does not publish a port-specific TEU number for Jebel Ali. It does
+      confirm the port’s hub role, DP World operation and JAFZA integration at HIGH confidence. Berth,
+      depth and per-port throughput figures are therefore marked LOW and attributed to DP World in the
+      parameter table below rather than invented.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Jebel Ali Port parameters</h2>
+      <p>
+        Use this table as an orientation, not a capacity guarantee. Port-specific berth, depth and TEU
+        figures were not published in the verified research snapshot, so those rows stay deliberately
+        empty of invented numbers and point you to DP World for the current value.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Port parameters — verify berth, depth, per-port throughput and connectivity with DP World before relying on these details."
+      />
+      <SourceList sources={portSources} title="Sources — Jebel Ali port parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth
+        length, draft or crane capability, request the current terminal schedule and restrictions
+        from DP World or your forwarder before booking. The verified snapshot does not supply those
+        numbers.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Jebel Ali transit windows</h2>
+    <p>
+      Transit to Jebel Ali is usually quoted as a window, not a promise. The route-data figure is a
+      typical 21 days with a 15–30 day range; a fast direct-sailing guide gives 14–18 days. Both are
+      planning inputs — confirm the vessel, voyage and any transhipment points with the carrier before
+      you commit a delivery date.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Jebel Ali transit times" />
+
+    <div class="note mt-2">
+      <strong>Direct vs transhipped:</strong> a direct China–Jebel Ali call is usually faster but may be
+      less frequent. A transhipped routing adds a relay terminal but can offer more sailing options.
+      Ask for the full routing before comparing two quotes with very different transit promises.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Jebel Ali vs Khalifa vs Port Khalid: which UAE discharge port fits?</h2>
+      <p>
+        This is the decision that determines most of the destination cost and transit. Jebel Ali wins
+        Dubai, the northern emirates and re-export/transhipment; Khalifa wins Abu Dhabi; Port Khalid
+        wins Sharjah. The table gives the common scenarios, and the two cards summarise the rule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm the inland leg and cost before choosing the discharge port."
+      />
+      <SourceList sources={decisionSources} title="Sources — UAE port routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose Jebel Ali when...">
+          <ul>
+            <li>The consignee is in Dubai or the northern emirates.</li>
+            <li>The cargo serves re-export, distribution or e-commerce fulfilment.</li>
+            <li>You want the JAFZA port + free-zone integration in one hub.</li>
+            <li>You are comparing direct vs transhipped Gulf service options.</li>
+          </ul>
+        </Card>
+        <Card title="Choose Khalifa or Port Khalid instead when...">
+          <ul>
+            <li>The consignee is in Abu Dhabi, KIZAD or the capital’s hinterland.</li>
+            <li>You want the CSP Abu Dhabi semi-automated terminal at Khalifa.</li>
+            <li>The consignee is in Sharjah or a northern-emirate industrial zone.</li>
+            <li>A different Gulf routing better matches your origin or carrier.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Terminals, facilities and the JAFZA hinterland</h2>
+    <p>
+      Jebel Ali operates as a commercial seaport with the usual mix of container, free-zone and
+      inland-connection functions. The verified snapshot does not enumerate a terminal-by-terminal
+      operator list or specific berth counts, so this list is an operational orientation marked LOW
+      except for the JAFZA integration, which is verified, and should be confirmed against DP World
+      for the actual call.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation, not a terminal directory. Confirm operator, berth and CFS details with DP World before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Jebel Ali facilities & terminals" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Post-arrival cost composition at Jebel Ali</h2>
+      <p>
+        The ocean rate is only one line. Destination THC, clearance, Mirsal 2 processing, and the
+        per-day charges that appear when a container is not collected in time are the costs that
+        surprise first-time importers — and the reason “all-in” is the only useful comparison number.
+      </p>
+
+      <h3>Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond free time after discharge. <strong>Detention</strong> is charged by the ocean
+        carrier when the container stays outside the port beyond free time. Free-time allowances and
+        per-day rates differ by line and terminal and were not published in the verified snapshot, so
+        always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        Mirsal 2 pre-arrival declaration, keep documents ready, and book trucking before the
+        container is discharged.
+      </p>
+
+      <h3 class="mt-3">Full Jebel Ali destination cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (5%) and baseline duty (5% CIF) are verified. LCL/air benchmarks and unquantified fees are LOW confidence — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — Jebel Ali destination costs & customs" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance at Jebel Ali: Mirsal 2, VAT, duty and free zones</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on the
+      CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher duty or excise treatment possible on specific
+      goods such as tobacco, alcohol and motor vehicles.
+    </p>
+
+    <h3>Mirsal 2 in the correct order</h3>
+    <ol>
+      <li>Classify the goods with the correct HS code before booking.</li>
+      <li>Confirm importer eligibility and any product-specific permits.</li>
+      <li>Prepare the commercial invoice, packing list, bill of lading and certificate of origin so every line agrees.</li>
+      <li>File the pre-arrival declaration through <strong>Mirsal 2</strong>, Dubai Customs’ electronic single-window system.</li>
+      <li>Pay the assessed duty and VAT, and complete any inspection, to obtain release.</li>
+    </ol>
+
+    <h3>Documents, classification and free zones</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin. Classify goods with the correct <strong>HS code</strong> before quoting, because both
+      duty and any permit requirements depend on it. Note that <strong>ISF</strong> is a United States
+      requirement and does not apply to the UAE.
+    </p>
+    <p>
+      For goods destined to a free zone, confirm whether the consignee will hold the cargo inside the
+      zone under duty/VAT suspension or move it to the mainland. The answer changes the duty/VAT line
+      and the clearance authority used. Mirsal 2 connects importers, brokers, terminals and Dubai
+      Customs so the pre-arrival declaration, duty/VAT assessment and release status sit in one flow.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE customs, VAT & ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified port
+      facts are re-checked against DP World; tax and duty rules are re-checked against the FTA and
+      Dubai Customs. Port-specific parameters, connectivity and terminal details that remain
+      unpublished or unverifiable stay at LOW confidence with a per-DP-World attribution instead of
+      being filled with estimates.
+    </p>
+    <p>
+      If a berth, depth, throughput, connectivity or fee amount becomes available from DP World or
+      Dubai Customs, the table is updated, the confidence badge is raised, and the modified date in
+      the page metadata is changed. Subscribe to your forwarder’s schedule and the DP World/Dubai
+      Customs notices for the shipment-level values that matter at booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Jebel Ali quote"
+      text="Tell us your origin, commodity, container or CBM and final UAE destination, and we will connect you with providers who can quote ocean freight, duty, VAT and Jebel Ali destination fees together."
+    />
+  </section>
+</BaseLayout>

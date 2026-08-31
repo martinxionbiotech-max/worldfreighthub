@@ -1,0 +1,736 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/khalifa-port-abu-dhabi/`;
+const port = gccPorts.find((item) => item.slug === 'khalifa-port-abu-dhabi');
+const unlocode = port?.unlocode ?? '—';
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const portSources = sourcesByIds(['abu-dhabi-ports']);
+const facilitySources = sourcesByIds(['abu-dhabi-ports', 'dubai-customs']);
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const routingSources: Source[] = [
+  ...sourcesByIds(['abu-dhabi-ports', 'dp-world']),
+  cargofromchinaUae,
+];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs', 'abu-dhabi-ports']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const complianceSources = [...sourcesByIds(['dubai-customs', 'abu-dhabi-ports']), fta, numeral];
+const decisionSources: Source[] = [
+  ...sourcesByIds(['abu-dhabi-ports', 'dp-world']),
+  cargofromchinaUae,
+  docshipper,
+];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'United Arab Emirates',
+    note: 'GCC member; anchor of the Abu Dhabi freight corridor',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Emirate / coast',
+    value: 'Abu Dhabi — Arabian Gulf',
+    note: 'Serves the capital, Abu Dhabi hinterland and Abu Dhabi free zones',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port role',
+    value: "Abu Dhabi's main deep-water container gateway",
+    note: 'Deep-water commercial port integrated with KIZAD',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Terminal technology',
+    value: 'Semi-automated CSP Abu Dhabi Terminal',
+    note: 'Semi-automated container terminal operated by CSP Abu Dhabi',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    value: 'Abu Dhabi Ports (AD Ports Group)',
+    note: 'Port authority and operator for Khalifa Port',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    value: unlocode,
+    note: 'Seaport code used on the bill of lading',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'KIZAD integration',
+    value: 'Khalifa Industrial Zone Abu Dhabi adjoins the port',
+    note: 'Port + industrial/free-zone integration for manufacturing and distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Berths',
+    value: 'Not published in verified snapshot',
+    note: 'Verify berth count and terminal allocation with AD Ports',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Maximum water depth',
+    value: 'Not published in verified snapshot',
+    note: 'Verify approach channel and alongside depth with AD Ports',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Annual throughput (port-specific)',
+    value: 'Not published per-port in snapshot',
+    note: 'Exact TEU figure is not in the verified snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai → Khalifa',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Khalifa route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan → Khalifa',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Khalifa route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen → Khalifa',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Khalifa route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → UAE corridor',
+    service: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shanghai → Jebel Ali (context)',
+    service: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — relay context for Abu Dhabi',
+    confidence: 'MEDIUM',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'Abu Dhabi mainland consignees',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'Shortest inland leg to the capital and its hinterland',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'KIZAD manufacturing, warehousing and distribution',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'Port + KIZAD industrial/free-zone integration in one campus',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Semi-automated, deep-water container handling',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'CSP Abu Dhabi Terminal provides semi-automated capacity',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Dubai and northern-emirate consignees',
+    bestPort: 'Jebel Ali',
+    why: 'Closer to Dubai, the northern emirates and JAFZA distribution',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Re-export, transhipment and Gulf relay flows',
+    bestPort: 'Jebel Ali',
+    why: 'Broader line connectivity and the established transhipment hub role',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Sharjah and northern-emirate industrial zones',
+    bestPort: 'Port Khalid',
+    why: 'Sharjah gateway close to northern-emirate consignees',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'CSP Abu Dhabi Terminal',
+    function: 'Semi-automated deep-water container terminal',
+    note: 'Semi-automated operation is a verified Khalifa characteristic',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'KIZAD (Khalifa Industrial Zone Abu Dhabi)',
+    function: 'Adjoining industrial and free zone for manufacturing, warehousing and distribution',
+    note: 'Port + KIZAD integration is the Abu Dhabi equivalent of the Jebel Ali model',
+    confidence: 'MEDIUM',
+  },
+  {
+    facility: 'General cargo, RoRo and breakbulk',
+    function: 'Vehicles, rolling stock, project and mixed cargo',
+    note: 'Typical commercial-port capability; verify service availability',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'CFS and bonded areas',
+    function: 'LCL deconsolidation, examination and customs-controlled storage',
+    note: 'Useful for LCL importers; verify nominated CFS charges',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Reefer points',
+    function: 'Temperature-controlled container handling',
+    note: 'Capacity and booking window vary; confirm before booking',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Abu Dhabi city, KIZAD and the wider emirate',
+    note: 'Inland distance and rate are route-dependent',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Khalifa terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'Abu Dhabi customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Electronic clearance processing charge',
+    who: 'Abu Dhabi Customs / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking',
+    who: 'Trucking provider',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'UAE Federal Customs Authority',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where is Khalifa Port Abu Dhabi located?',
+    a: 'Khalifa Port is on the Arabian Gulf coast of Abu Dhabi, in the United Arab Emirates. It is Abu Dhabi’s main deep-water container gateway and is integrated with KIZAD, the Khalifa Industrial Zone Abu Dhabi.',
+  },
+  {
+    q: 'What is the UN/LOCODE for Khalifa Port?',
+    a: 'The UN/LOCODE is AEKHL. Use it on the bill of lading and customs paperwork when the destination is Khalifa Port Abu Dhabi.',
+  },
+  {
+    q: 'What is CSP Abu Dhabi Terminal?',
+    a: 'CSP Abu Dhabi Terminal is the semi-automated container terminal at Khalifa Port. The semi-automated operation is a verified characteristic of the port and distinguishes it from older fully manual Gulf terminals.',
+  },
+  {
+    q: 'Who operates Khalifa Port?',
+    a: 'Khalifa Port is operated by Abu Dhabi Ports, now known as AD Ports Group. The container terminal itself is run through the CSP Abu Dhabi joint venture.',
+  },
+  {
+    q: 'How long does sea freight take from China to Khalifa Port?',
+    a: 'The verified snapshot does not publish a direct China–Khalifa transit figure. For planning context, the fast China–UAE sea guide is 14–18 days and the Jebel Ali route-data benchmark is a typical 21 days with a 15–30 day range. Many Abu Dhabi routings relay through Jebel Ali, so request the actual vessel schedule from your carrier.',
+  },
+  {
+    q: 'Should I route Abu Dhabi cargo through Khalifa or Jebel Ali?',
+    a: 'Khalifa is usually the better fit for Abu Dhabi mainland and KIZAD consignees because it is closer to the capital and offers the semi-automated CSP terminal. Jebel Ali is the default for Dubai, the northern emirates and re-export/transhipment flows. Confirm the inland leg and cost before choosing.',
+  },
+  {
+    q: 'What is KIZAD and how does it connect to Khalifa Port?',
+    a: 'KIZAD is the Khalifa Industrial Zone Abu Dhabi, an industrial and free zone adjoining Khalifa Port. Goods can move between the port and the zone for manufacturing, warehousing and distribution, similar to the Jebel Ali–JAFZA model.',
+  },
+  {
+    q: 'What is the difference between Abu Dhabi and Dubai port routing?',
+    a: 'It is a hinterland decision. Dubai’s Jebel Ali wins on line connectivity, transhipment and Dubai/northern-emirate distribution. Abu Dhabi’s Khalifa wins when the consignee is in the capital or KIZAD and when semi-automated deep-water capacity matters. Match the discharge port to the final inland leg, not to the headline ocean rate alone.',
+  },
+  {
+    q: 'What import taxes apply at Khalifa Port?',
+    a: 'The baseline import duty is 5% of CIF value under the GCC Common External Tariff, and UAE import VAT is 5%, calculated on CIF value plus customs duty. Higher duty or excise can apply to specific goods such as tobacco, alcohol and motor vehicles.',
+  },
+  {
+    q: 'What documents are needed for customs clearance at Khalifa Port?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin. Classify the goods with the correct HS code and file the pre-arrival declaration through the Abu Dhabi customs authority. Confirm the current electronic system with AD Ports or your broker, because Dubai’s Mirsal 2 is specific to Dubai.',
+  },
+  {
+    q: 'How do demurrage and detention work at Khalifa Port?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the carrier when the container stays outside the port beyond free time. Finish clearance and book trucking before discharge to avoid both.',
+  },
+  {
+    q: 'How should I compare Khalifa, Jebel Ali and Port Khalid?',
+    a: 'Match the discharge port to your consignee and final inland leg. Khalifa suits Abu Dhabi and KIZAD; Jebel Ali suits Dubai, the northern emirates and re-export/transhipment; Port Khalid suits Sharjah. Always confirm the inland distance, cost and transit before choosing.',
+  },
+  {
+    q: 'Are the berth and throughput figures on this page verified?',
+    a: 'The verified facts are the semi-automated CSP Abu Dhabi Terminal and the port’s Abu Dhabi gateway role. Port-specific berth, depth and TEU figures were not published in the research snapshot, so they are marked LOW and attributed to Abu Dhabi Ports. Confirm the current figures with AD Ports before planning capacity-sensitive cargo.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Khalifa Port Abu Dhabi — China Shipping Guide: CSP Terminal, KIZAD & Routing (August 2026)',
+      description:
+        'Khalifa Port Abu Dhabi intelligence for China freight: semi-automated CSP Abu Dhabi Terminal, KIZAD integration, China transit, Abu Dhabi vs Dubai port division, facilities, post-arrival costs and 5% duty/VAT compliance.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Khalifa Port Abu Dhabi',
+      url: pageUrl,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Abu Dhabi',
+        addressCountry: 'AE',
+      },
+      description:
+        'Khalifa Port is Abu Dhabi’s main deep-water container gateway, featuring the semi-automated CSP Abu Dhabi Terminal and the adjoining KIZAD industrial and free zone.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Khalifa Port Abu Dhabi — China Shipping Guide: CSP Terminal, KIZAD & Routing (August 2026)"
+  description="Khalifa Port Abu Dhabi intelligence for China freight: semi-automated CSP Abu Dhabi Terminal, KIZAD integration, China transit, Abu Dhabi vs Dubai port division, facilities, post-arrival costs and 5% duty/VAT compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Khalifa Port Abu Dhabi' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Khalifa Port Abu Dhabi: China freight guide for the capital’s deep-water gateway</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight to Abu Dhabi. This page explains
+        what Khalifa Port is, why the semi-automated CSP Abu Dhabi Terminal and KIZAD integration make
+        it Abu Dhabi’s answer to Jebel Ali, how the Abu Dhabi-vs-Dubai port decision works, what the
+        port costs after arrival, and the 5% duty / 5% VAT clearance rules at the gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market and port snapshots. Treat
+        every LOW-confidence transit, facility and fee note as indicative, verify with Abu Dhabi Ports
+        or your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">CSP terminal</span>
+          <span class="fact-value">Semi-automated <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{unlocode} <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">KIZAD integration</span>
+          <span class="fact-value">Adjacent <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">Verify carrier <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Khalifa Port matters for China freight</h2>
+    <p>
+      Khalifa Port is Abu Dhabi’s main deep-water container gateway, and it is the natural discharge
+      point whenever the consignee is in the capital, in the Abu Dhabi hinterland, or in the KIZAD
+      industrial and free zone. Its defining feature is the <strong>semi-automated CSP Abu Dhabi
+      Terminal</strong>, which gives Abu Dhabi a modern container-handling capability that distinguishes
+      it from older fully manual Gulf terminals.
+    </p>
+    <p>
+      The commercial logic mirrors the Jebel Ali model but serves a different geography. Where Jebel
+      Ali pairs with JAFZA for Dubai re-export and transhipment, Khalifa pairs with
+      <strong>KIZAD</strong> — the Khalifa Industrial Zone Abu Dhabi — for manufacturing, warehousing
+      and distribution. A shipper to Abu Dhabi therefore gets the port-plus-zone integration without
+      the long Dubai-to-Abu Dhabi trucking leg.
+    </p>
+    <p>
+      The verified research snapshot does not publish a port-specific TEU number for Khalifa. It does
+      confirm the semi-automated CSP terminal at HIGH confidence and the port’s Abu Dhabi gateway role
+      at MEDIUM confidence. Berth, depth and per-port throughput figures are therefore marked LOW and
+      attributed to Abu Dhabi Ports in the parameter table below rather than invented.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Khalifa Port parameters</h2>
+      <p>
+        Use this table as an orientation, not a capacity guarantee. Port-specific berth, depth and TEU
+        figures were not published in the verified research snapshot, so those rows stay deliberately
+        empty of invented numbers and point you to Abu Dhabi Ports for the current value.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Port parameters — verify berth, depth and per-port throughput with Abu Dhabi Ports before relying on these details."
+      />
+      <SourceList sources={portSources} title="Sources — Khalifa port parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth
+        length, draft or crane capability, request the current terminal schedule and restrictions
+        from Abu Dhabi Ports or your forwarder before booking. The verified snapshot does not supply
+        those numbers.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Khalifa transit windows</h2>
+    <p>
+      The verified snapshot does not publish a direct China–Khalifa transit figure, so the honest
+      answer is “request the carrier schedule”. Many Abu Dhabi routings relay through Jebel Ali, which
+      means the effective Khalifa transit includes a relay or trucking leg on top of the ocean time.
+      Use the corridor benchmarks below as planning context only.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin / lane' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Direct China–Khalifa transit was not published in the verified snapshot. Treat the corridor figures as planning context and verify the actual vessel/routing with the carrier."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Khalifa transit context" />
+
+    <div class="note mt-2">
+      <strong>Direct vs relayed:</strong> a direct China–Khalifa call removes the Jebel Ali relay leg
+      but may be less frequent. A relayed routing uses Jebel Ali’s broad connectivity and then moves
+      cargo to Abu Dhabi. Ask whether the quoted transit includes the relay and the final Abu Dhabi
+      leg.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Khalifa vs Jebel Ali: the Abu Dhabi vs Dubai port division</h2>
+      <p>
+        This is the UAE-specific routing decision. Jebel Ali wins on line connectivity, transhipment
+        and Dubai/northern-emirate distribution; Khalifa wins on Abu Dhabi proximity and the
+        semi-automated CSP terminal. The table gives the common scenarios from the Abu Dhabi side.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm the inland leg and cost before choosing the discharge port."
+      />
+      <SourceList sources={decisionSources} title="Sources — Khalifa vs Jebel Ali routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose Khalifa when...">
+          <ul>
+            <li>The consignee is in Abu Dhabi city or the capital’s hinterland.</li>
+            <li>The cargo serves KIZAD manufacturing, warehousing or distribution.</li>
+            <li>Semi-automated deep-water handling matters for your service.</li>
+            <li>A direct or relayed Abu Dhabi call shortens the final inland leg.</li>
+          </ul>
+        </Card>
+        <Card title="Choose Jebel Ali instead when...">
+          <ul>
+            <li>The consignee is in Dubai or the northern emirates.</li>
+            <li>The cargo serves re-export, transhipment or JAFZA distribution.</li>
+            <li>You want the broadest line connectivity and sailing frequency.</li>
+            <li>The established Gulf relay pattern better matches your origin or carrier.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Terminals, facilities and the KIZAD hinterland</h2>
+    <p>
+      Khalifa operates as a commercial seaport with a semi-automated container terminal, an adjoining
+      industrial/free zone, and the usual general-cargo and inland-connection functions. The verified
+      snapshot does not enumerate every terminal detail, so most of this list is an operational
+      orientation marked LOW and should be confirmed against Abu Dhabi Ports for the actual call.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation, not a terminal directory. Confirm operator, berth and CFS details with Abu Dhabi Ports before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Khalifa facilities & terminals" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Post-arrival cost composition at Khalifa</h2>
+      <p>
+        The ocean rate is only one line. Destination THC, clearance, electronic processing, and the
+        per-day charges that appear when a container is not collected in time are the costs that
+        surprise first-time importers — and the reason “all-in” is the only useful comparison number.
+      </p>
+
+      <h3>Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond free time after discharge. <strong>Detention</strong> is charged by the ocean
+        carrier when the container stays outside the port beyond free time. Free-time allowances and
+        per-day rates differ by line and terminal and were not published in the verified snapshot, so
+        always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        pre-arrival declaration through the Abu Dhabi customs authority, keep documents ready, and
+        book trucking before the container is discharged.
+      </p>
+
+      <h3 class="mt-3">Full Khalifa destination cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — Khalifa destination costs & customs" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance at Khalifa: VAT, duty, free zones and Abu Dhabi clearance</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on the
+      CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher duty or excise treatment possible on specific
+      goods such as tobacco, alcohol and motor vehicles.
+    </p>
+
+    <h3>Clearance in the correct order</h3>
+    <ol>
+      <li>Classify the goods with the correct HS code before booking.</li>
+      <li>Confirm importer eligibility and any product-specific permits.</li>
+      <li>Prepare the commercial invoice, packing list, bill of lading and certificate of origin so every line agrees.</li>
+      <li>File the pre-arrival declaration through the Abu Dhabi customs authority — confirm the current electronic system with AD Ports or your broker, since Dubai’s Mirsal 2 is specific to Dubai.</li>
+      <li>Pay the assessed duty and VAT, and complete any inspection, to obtain release.</li>
+    </ol>
+
+    <h3>Documents, classification and KIZAD free zones</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin. Classify goods with the correct <strong>HS code</strong> before quoting, because both
+      duty and any permit requirements depend on it. Note that <strong>ISF</strong> is a United States
+      requirement and does not apply to the UAE.
+    </p>
+    <p>
+      For goods destined to KIZAD or another Abu Dhabi free zone, confirm whether the consignee will
+      hold the cargo inside the zone under duty/VAT suspension or move it to the mainland. The answer
+      changes the duty/VAT line and the clearance authority used.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE customs, VAT & Abu Dhabi ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified port
+      facts are re-checked against Abu Dhabi Ports; tax and duty rules are re-checked against the FTA
+      and Dubai Customs. Port-specific parameters, connectivity and terminal details that remain
+      unpublished or unverifiable stay at LOW confidence with a per-Abu Dhabi Ports attribution
+      instead of being filled with estimates.
+    </p>
+    <p>
+      If a berth, depth, throughput or fee amount becomes available from Abu Dhabi Ports or the
+      customs authority, the table is updated, the confidence badge is raised, and the modified date
+      in the page metadata is changed. Subscribe to your forwarder’s schedule and the AD Ports /
+      customs notices for the shipment-level values that matter at booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Khalifa Port quote"
+      text="Tell us your origin, commodity, container or CBM and final Abu Dhabi destination, and we will connect you with providers who can quote ocean freight, duty, VAT and Khalifa destination fees together."
+    />
+  </section>
+</BaseLayout>
