@@ -176,19 +176,26 @@
 
 ---
 
-## YYYY-MM-DD
+## 2026-09-01（Bahrain 簇收尾批次 — Ports + Cost/Transit）
 
-- **可用时间**：
-- **服务器资源**：
-- **Tasks**：
-- **Research**：
-- **Verification**：
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai）
+- **服务器资源**：远程正常；Codex 0.150.1 可用（`source ~/.profile` 后拿 `DEEPSEEK_API_KEY`）
+- **Tasks**：Bahrain 簇最后 2 页 —— Khalifa bin Salman 港口情报（`bahrain-ports`）+ Cost/Transit（`shipping-cost-transit-time-china-to-bahrain`）；并在 `middleeast/index.astro` 注册 2 张卡片（L283 / L288）
+- **Research**：复用已验证数据（GCC 统一关税 5% CIF、Bahrain VAT 10%、上海港 55.06M TEU、宁波舟山 43M TEU）；Bahrain 专属费率/港杂费/清关平台名均不在已验证快照 → 一律 LOW +「not published — verify / request schedule」
+- **Verification**：Khalifa bin Salman `BHKBS`（gcc-ports.ts HIGH）；routes.ts 上海/宁波/深圳 → typical 22 天（15–30，LOW）；Mina Salman / Hidd 不在数据集 → LOW/unverified；King Fahd Causeway 商业/清关细节全标 LOW/unverified
 - **Content**：
-- **Gap Analysis**：
-- **SEO / AIO / EEAT**：
-- **Engineering**：
-- **QA**：
-- **Build Result**：
-- **Git Commit**：
-- **Deployment**：
+  - `bahrain-ports.astro` —— **5,373 词**，9 模块齐全，FAQ 13（单港深潜 + Causeway 陆桥语境 + demurrage/detention 详解）
+  - `shipping-cost-transit-time-china-to-bahrain.astro` —— **5,795 词**，9 模块齐全，FAQ 14（landed cost CIF × 1.155 拆解 + 隐藏费用 + FCL/LCL crossover）
+  - 两页均打 Demurrage/Detention + Hidden Charges 高价值 Gap；「SABER/SASO 仅限沙特，Bahrain 不适用」显式标注
+- **Gap Analysis**：Demurrage vs Detention（两时钟两收款方）+ 隐藏目的地费用（THC/文件费/查验/港存/brokerage）写透；Bahrain 单港 + King Fahd Causeway 陆桥路由为差异化资产
+- **SEO / AIO / EEAT**：Article + FAQPage + BreadcrumbList + Organization schema；ConfidenceBadge 逐数据点；September 2026 updated；税率合成 CIF × 1.05 × 1.10 = **1.155** 显式
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card/Breadcrumb/ConfidenceBadge 组件，无新组件；未改任何 data 文件
+- **QA**：`npm run build` 131 页（+2）零 error；两页 FAQ 13/14 ≥8；词数 5,373 / 5,795（略超 5000 上限，源于 Demurrage/Hidden Charges Gap 深写，非凑数）；每个数据点有来源或标 LOW；费率/港杂费全部 request-quote 标记，零杜撰
+- **Build Result**：✅ 131 pages，clean（1.45s）
+- **Git Commit**：`e64b786 feat(middleeast): add Bahrain ports and cost/transit pages`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
 - **Remaining / Next Priority**：
+  1. **Day 36–50 收尾 ✅** —— 六国（Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）核心内容页全齐；下一步进入 STEP 18–20（Directory / Ad Slots / Quote Framework）+ STEP 21–25（SEO/AIO/EEAT 终审）
+  2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
+  3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+  4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
