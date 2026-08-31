@@ -1,0 +1,792 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/kuwait-ports/`;
+
+const shuwaikhPort = gccPorts.find((item) => item.slug === 'shuwaikh');
+const shuaibaPort = gccPorts.find((item) => item.slug === 'shuaiba');
+const shuwaikhUnlocode = shuwaikhPort?.unlocode ?? '—';
+const shuaibaUnlocode = shuaibaPort?.unlocode ?? '—';
+
+const wfhRouteData: Source = {
+  id: 'wfh-kuwait-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Shuwaikh (typical 24 days, range 15–30; LOW confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-kuwait-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const kuwaitCustomsSources = sourcesByIds(['kuwait-customs']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const portFactSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData];
+const decisionSources: Source[] = [wfhRouteData, ...kuwaitCustomsSources];
+const facilitySources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+const costSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'Kuwait',
+    note: 'GCC member; compact, oil-led, high-income market',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Ports covered',
+    value: 'Shuwaikh and Shuaiba',
+    note: 'The two Kuwait seaports in the WorldFreightHub port data',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Port type',
+    value: 'Seaport (both)',
+    note: 'Ocean gateways on the Arabian Gulf',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Coast / region',
+    value: 'Arabian Gulf, Kuwait',
+    note: 'Shuwaikh sits near Kuwait City; Shuaiba lies to the south',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Shuwaikh role',
+    value: 'General, commercial and container gateway near Kuwait City',
+    note: 'Commonly quoted for general containerised China imports; verify on booking',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Shuaiba role',
+    value: 'Industrial, petrochemical, bulk and project gateway to the south',
+    note: 'Commonly linked to the southern industrial corridor; verify on booking',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Shuwaikh UN/LOCODE',
+    value: shuwaikhUnlocode,
+    note: 'Use on the bill of lading for Shuwaikh discharge',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Shuaiba UN/LOCODE',
+    value: shuaibaUnlocode,
+    note: 'Use on the bill of lading for Shuaiba discharge',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    value: 'Kuwait Ports Authority / terminal operators',
+    note: 'Specific operator and terminal allocation not published in the verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Berths, draft, cranes and throughput',
+    value: 'Not published in verified snapshot',
+    note: 'Request the current capability from the port authority or carrier',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'China sea transit to Shuwaikh',
+    value: 'Typical 24 days (range 15–30)',
+    note: 'Route-level estimate from the WorldFreightHub data layer',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'China sea transit to Shuaiba',
+    value: 'Not published in verified snapshot',
+    note: 'Request a carrier-specific transit rather than borrowing the Shuwaikh figure',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Baseline import duty',
+    value: '5% of CIF value',
+    note: 'GCC Common External Tariff baseline',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'General VAT',
+    value: 'None',
+    note: 'Kuwait has no general VAT in the current framework',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai',
+    service: 'Sea port-to-port to Shuwaikh',
+    transit: 'Typical 24 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    service: 'Sea port-to-port to Shuwaikh',
+    transit: 'Typical 24 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    service: 'Sea port-to-port to Shuwaikh',
+    transit: 'Typical 24 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Kuwait corridor',
+    service: 'Sea port-to-port to Shuaiba',
+    transit: 'Not published in verified snapshot — request carrier transit',
+    basis: 'No verified Shuaiba-specific sea transit in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Kuwait corridor',
+    service: 'Air freight',
+    transit: 'Not published in verified snapshot — request routing quote',
+    basis: 'No verified Kuwait air transit in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Kuwait door',
+    service: 'Door-to-door after sea or air',
+    transit: 'Not published in verified snapshot — request door quote',
+    basis: 'Adds discharge, Kuwait clearance, inspection and last-mile trucking',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'General containerised imports, consumer goods and retail replenishment for Kuwait City',
+    bestChoice: 'Shuwaikh',
+    why: 'Commonly quoted as the commercial/container gateway nearest to the main demand base',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Industrial, petrochemical, bulk or project cargo in the southern corridor',
+    bestChoice: 'Shuaiba',
+    why: 'Commonly linked to industrial and project-linked discharge south of Kuwait City',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Time-critical, light or high-value cargo',
+    bestChoice: 'Kuwait International Airport / air freight',
+    why: 'Air compresses the main carriage but is an air routing decision, not a seaport choice',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'LCL or FCL general imports where the port has not been fixed by the receiver',
+    bestChoice: 'Confirm Shuwaikh first',
+    why: 'Use Shuwaikh as the planning default, then confirm terminal allocation with the carrier',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Re-export, free-zone or zone-linked logistics',
+    bestChoice: 'Verify the specific zone and discharge point',
+    why: 'Kuwait free-zone treatment is not published in the verified snapshot — do not assume a UAE pattern',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Liquid bulk, refined products or heavy industrial inputs',
+    bestChoice: 'Shuaiba planning default',
+    why: 'The industrial and petrochemical cluster is the commonly cited fit; verify berth and product handling',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'Container handling',
+    function: 'Deep-sea container discharge for China imports',
+    note: 'Shuwaikh is the commonly quoted container gateway; specific capacity not published',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'General and breakbulk cargo',
+    function: 'Machinery, project pieces, steel and general commercial cargo',
+    note: 'Commonly associated with Shuwaikh; verify the terminal and gear with the carrier',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Industrial and petrochemical terminals',
+    function: 'Bulk, refined products and petrochemical-linked handling',
+    note: 'Commonly associated with Shuaiba and the southern industrial corridor; not published',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Bulk and liquid berths',
+    function: 'Heavy industrial and liquid-bulk discharge',
+    note: 'A Shuaiba-style cargo fit; confirm berth, draft and product compatibility',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Customs inspection',
+    function: 'Kuwait Customs screening and release at the port',
+    note: 'Specific inspection capacity and fee schedule are not published in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Kuwait City and the southern industrial areas',
+    note: 'Final delivery distance depends on the chosen port and site; request a destination quote',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Air gateway',
+    function: 'Kuwait International Airport for air cargo',
+    note: 'Not a seaport facility; relevant only when the shipment is routed by air',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Shuwaikh / Shuaiba terminal and port operator',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Kuwait Customs clearance and brokerage',
+    who: 'Kuwait General Administration of Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Kuwait General Administration of Customs',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'General VAT',
+    who: 'Kuwait tax framework',
+    magnitude: 'No general VAT in the current Kuwait framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to Kuwait City / southern sites',
+    who: 'Local trucking operator',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Vessel routing and transshipment',
+    effect: 'A direct loop saves time; a transshipped box adds a handling point',
+    direction: 'Transit and handling variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Port choice and cargo fit',
+    effect: 'Shuwaikh suits general/commercial cargo; Shuaiba suits industrial/project-linked cargo',
+    direction: 'Routing and inland variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Kuwait market size',
+    effect: 'Smaller volume than Dubai or Jeddah raises per-shipment cost absorption',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Documents and HS-code readiness',
+    effect: 'Late or wrong documents delay Kuwait Customs clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Restricted commodity screen',
+    effect: 'Kuwait-specific permits and inspection can add clearance time',
+    direction: 'Clearance risk up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Free-time discipline',
+    effect: 'Demurrage and detention apply after free time',
+    direction: 'Cost up after free days',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where are Kuwait’s main ports located?',
+    a: 'Kuwait has two main seaports in the WorldFreightHub port data. Shuwaikh is the commonly used commercial and container gateway near Kuwait City, while Shuaiba lies to the south and is commonly associated with industrial, petrochemical, bulk and project cargo. Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
+  },
+  {
+    q: 'What are the UN/LOCODEs for Shuwaikh and Shuaiba?',
+    a: 'The UN/LOCODE for Shuwaikh is KWSWK and the UN/LOCODE for Shuaiba is KWSHB. Use the correct code on the bill of lading and customs paperwork to avoid the cargo being routed to the wrong Kuwait gateway.',
+  },
+  {
+    q: 'What is the difference between Shuwaikh and Shuaiba ports?',
+    a: 'Shuwaikh (KWSWK) is the commonly quoted commercial and container gateway for Kuwait City, while Shuaiba (KWSHB) is commonly linked to the industrial and petrochemical corridor south of Kuwait City. The exact terminal capabilities and cargo mix are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
+  },
+  {
+    q: 'Who operates Kuwait’s ports?',
+    a: 'Kuwait’s ports are overseen by the Kuwait Ports Authority, with terminal operations and services handled by port operators and service providers. The verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput, so request the current operational details from the port authority or your forwarder.',
+  },
+  {
+    q: 'How long does sea freight take from China to Shuwaikh?',
+    a: 'WorldFreightHub route data records a typical 24 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Shuwaikh (LOW confidence, because the route data is an estimate). Verify the transit with your carrier before relying on the figure.',
+  },
+  {
+    q: 'How long does sea freight take from China to Shuaiba?',
+    a: 'No verified Shuaiba-specific sea transit is published in the research snapshot. Request a carrier-specific transit rather than assuming the Shuwaikh 24-day estimate automatically applies to Shuaiba.',
+  },
+  {
+    q: 'What import duty and VAT apply at Kuwait ports?',
+    a: 'The baseline import duty is 5% of CIF value under the GCC Common External Tariff. Kuwait has no general VAT in the current framework, so the main statutory import charge is the 5% duty. Specific HS-code duty lines can differ, so classify the goods before quoting.',
+  },
+  {
+    q: 'What documents are needed for clearance at Shuwaikh or Shuaiba?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
+  },
+  {
+    q: 'How do demurrage and detention work at Kuwait ports?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Kuwait free-day allowances and per-diem amounts were not published in the snapshot, so request the fee schedule and book trucking before discharge.',
+  },
+  {
+    q: 'Is there a free zone at Shuwaikh or Shuaiba?',
+    a: 'Kuwait has free-zone and logistics-linked activity, but the verified research snapshot does not publish which free-zone treatment attaches to a specific Shuwaikh or Shuaiba consignment. Do not assume a UAE or Qatar free-zone pattern; confirm the zone rules and discharge point with Kuwait Customs and the relevant authority.',
+  },
+  {
+    q: 'Is SABER or SASO required for shipments to Kuwait?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Kuwait import. Kuwait may have its own standards or inspection requirements for certain products, but those are not published in the verified snapshot — confirm the applicable process with Kuwait Customs and the relevant Kuwait authority.',
+  },
+  {
+    q: 'Which Kuwait port should I use for China imports?',
+    a: 'Use Shuwaikh as the planning default for general containerised and commercial cargo bound for Kuwait City. Consider Shuaiba when the cargo is industrial, petrochemical, bulk or project-linked and the southern corridor is a better fit. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Kuwait Ports — Shuwaikh & Shuaiba Intelligence: China Routing, Transit & Clearance (September 2026)',
+      description:
+        'Kuwait ports intelligence for China freight: Shuwaikh (KWSWK) vs Shuaiba (KWSHB), port roles, China transit windows, 5% duty clearance and the two-port routing decision.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Kuwait Ports — Shuwaikh & Shuaiba Intelligence: China Routing, Transit & Clearance (September 2026)"
+  description="Kuwait ports intelligence for China freight: Shuwaikh (KWSWK) vs Shuaiba (KWSHB), port roles, China transit windows, 5% duty clearance and the two-port routing decision."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Kuwait Ports' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Kuwait Ports: Shuwaikh &amp; Shuaiba intelligence for China freight</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight into Kuwait. This page explains
+        the Shuwaikh-vs-Shuaiba decision, the two UN/LOCODEs, the port roles and hinterland logic,
+        how long China ocean moves take, what the destination cost stack looks like, and the 5% duty
+        clearance rules that apply at the Kuwait gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified port codes and the GCC duty/VAT baseline from indicative
+        routing and fee notes. Treat every LOW-confidence port, transit and fee note as a planning
+        guide, and verify with the Kuwait port authority or your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Ports</span>
+          <span class="fact-value">Shuwaikh / Shuaiba <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{shuwaikhUnlocode} / {shuaibaUnlocode} <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Port type</span>
+          <span class="fact-value">Seaports <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">Typical 24 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">General VAT</span>
+          <span class="fact-value">None <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Kuwait’s two-port map matters for China freight</h2>
+    <p>
+      Kuwait is a compact, oil-led GCC economy, but it does not have the single-gateway simplicity of
+      Qatar’s Hamad Port or the concentrated volume of Dubai’s Jebel Ali. Before any China-to-Kuwait
+      consignment is booked, the importer faces a genuine routing question:
+      <strong>Shuwaikh or Shuaiba?</strong> The choice changes the inland distance, the type of cargo
+      the port is best known for, and the destination-fee exposure, so it belongs in the quote before
+      the first container moves.
+    </p>
+    <p>
+      The commonly quoted commercial gateway is <strong>Shuwaikh</strong>, close to Kuwait City, while
+      <strong>Shuaiba</strong> is the port to consider for industrial, petrochemical, bulk and
+      project-linked cargo in the southern corridor. Both are real Kuwait seaports in this site’s
+      port data with their own UN/LOCODEs, but the verified research snapshot does not publish their
+      berths, draft, cranes, throughput, operators or fee schedules. That gap is a planning signal,
+      not a licence to guess: route the container to the logical gateway, then request the
+      operational facts from the Kuwait port authority and carrier.
+    </p>
+    <p>
+      The statutory side is simpler than the port side. Kuwait uses the GCC Common External Tariff
+      baseline of <strong>5% customs duty on CIF value</strong>, with no general VAT in the current
+      framework. That makes the tax arithmetic a single layer, but it also means the real landed-cost
+      variance comes from port choice, terminal charges, clearance discipline and demurrage/detention
+      — the exact areas this page keeps visible.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Kuwait port parameters</h2>
+      <p>
+        Use this table as an orientation, not a terminal directory. The country, port codes and GCC
+        duty/VAT baseline are the verified anchors; the role split, operator, berths and throughput
+        are marked LOW because the verified snapshot does not publish Kuwait port-authority details.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Kuwait port parameters — UN/LOCODEs and the GCC duty/VAT baseline are the HIGH/MEDIUM anchors; operational and role details are LOW confidence and require port-authority confirmation."
+      />
+      <SourceList sources={portFactSources} title="Sources — Kuwait port parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth,
+        draft, crane capability, heavy-lift availability, terminal window or product-handling class,
+        request the current schedule and restrictions from the Kuwait port authority or your
+        forwarder before booking. The verified snapshot does not supply berth-by-berth constraints.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Kuwait port transit windows</h2>
+    <p>
+      Transit into Kuwait is a planning range, not a promise. The route data places Shuwaikh near the
+      slower end of the China-to-GCC corridor: a typical 24 days with a 15–30 day planning range,
+      LOW confidence because the dataset is an estimate and carrier routings vary. Shuaiba-specific
+      sea transit and a verified Kuwait air transit are not published in the snapshot, so the table
+      keeps those lines explicit instead of borrowing a number from another corridor.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Kuwait port transit times" />
+
+    <div class="note mt-2">
+      <strong>Port-to-port vs Kuwait door:</strong> a typical 24-day ocean move to Shuwaikh is not
+      total door time to a Kuwait City address. Add discharge, Kuwait Customs clearance, any
+      inspection and last-mile trucking before committing a delivery date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Shuwaikh vs Shuaiba: the routing decision</h2>
+      <p>
+        The Shuwaikh/Shuaiba question is the Kuwait equivalent of the Jeddah-vs-Dammam choice in Saudi
+        Arabia. It is a cargo-fit and inland-distance decision, not a cosmetic naming difference.
+        Shuwaikh is the planning default for general commercial and containerised cargo near Kuwait
+        City, while Shuaiba is the planning default for industrial, petrochemical, bulk and project
+        cargo in the southern corridor. Confirm the final discharge point with the carrier and
+        receiver before the bill of lading is cut.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestChoice', label: 'Best-fit gateway' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm terminal allocation and the inland leg before choosing the discharge gateway."
+      />
+      <SourceList sources={decisionSources} title="Sources — Shuwaikh vs Shuaiba routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Book Shuwaikh when...">
+          <ul>
+            <li>The cargo is general containerised or commercial freight for Kuwait City.</li>
+            <li>The importer wants the commonly quoted commercial/container gateway.</li>
+            <li>The final delivery point is close to the capital and its distribution network.</li>
+            <li>You have not been instructed by the receiver to use a southern industrial berth.</li>
+          </ul>
+        </Card>
+        <Card title="Consider Shuaiba when...">
+          <ul>
+            <li>The cargo is industrial, petrochemical, bulk, liquid or project-linked.</li>
+            <li>The final site is in the southern industrial corridor.</li>
+            <li>The product needs a specific bulk or heavy-lift berth.</li>
+            <li>The receiver or carrier names Shuaiba as the discharge point.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Terminals, facilities and the Kuwait hinterland</h2>
+    <p>
+      Kuwait’s two-port structure is best understood as a commercial/container gateway and an
+      industrial gateway rather than two identical terminals. The verified snapshot does not publish
+      facility capacities, so the table below records the commonly understood cargo fit and marks
+      every operational detail LOW. Use it to frame the question to the carrier, not to assume a
+      berth or crane is available.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation from common Kuwait port usage, not a terminal directory. Confirm operator, berth and cargo-fit details with the port authority before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Kuwait port facilities & terminals" />
+
+    <div class="note mt-2">
+      <strong>Do not assume a UAE or Saudi facility pattern:</strong> Kuwait’s terminal mix is
+      different from Jebel Ali, Jeddah or Dammam. Ask for the specific berth, draft, gear and
+      product-handling capability for your shipment rather than applying another GCC port’s profile.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Post-arrival cost composition at Shuwaikh and Shuaiba</h2>
+      <p>
+        The verified snapshot quantifies the statutory 5% duty and the no-general-VAT position, but it
+        does not publish Kuwait destination THC, brokerage, demurrage or inland trucking amounts.
+        Treat the operational lines as LOW confidence and request an itemised fee schedule before
+        booking.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only baseline duty (5% CIF) and no general VAT are stated from verified/secondary sources. Unquantified Kuwait fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — Kuwait destination costs & customs" />
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged
+        by the ocean carrier when the container stays outside the port beyond the free time allowed
+        after collection. Free-time allowances and per-day rates differ by line and terminal and were
+        not published in the research snapshot, so always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        Kuwait import declaration early, keep the HS code and documents ready, screen restricted
+        goods, and book trucking before the container is discharged.
+      </p>
+
+      <h3 class="mt-3">What changes the cost and the clock</h3>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional factors, not quantified figures. Document and restricted-commodity effects are MEDIUM-confidence regulatory effects; routing, market-size and free-time effects are LOW."
+      />
+      <SourceList sources={[...costSources, ...facilitySources]} title="Sources — Kuwait cost & transit factors" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance at Kuwait ports: duty, documents and restricted goods</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Kuwait’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common External
+      Tariff, with no general VAT on imports in the current framework. That makes the statutory stack
+      simpler than Saudi Arabia or the UAE: for most goods the duty-only landed cost is
+      <code>CIF × 1.05</code>. Specific products can still attract different tariff lines, so the HS
+      code remains the first cost decision.
+    </p>
+
+    <h3>Clearance in the correct order</h3>
+    <ol>
+      <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
+      <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
+      <li>Prepare the commercial invoice, bill of lading, packing list and certificate of origin.</li>
+      <li>File the Kuwait import declaration through the Kuwait Customs electronic clearance system.</li>
+      <li>Pay the assessed 5% duty on CIF, pass inspection if selected, and release the container.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin, with the correct HS codes and country-of-origin information. Restricted goods may
+      require an import licence or permit. Note that <strong>ISF</strong> is a United States
+      requirement and does not apply to Kuwait; Kuwait’s filing step is the import declaration
+      through the Kuwait Customs system.
+    </p>
+
+    <h3>No SABER or SASO requirement for Kuwait</h3>
+    <p>
+      SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a
+      Kuwait import. Kuwait may have its own standards or inspection requirements for certain goods,
+      but those are not published in the verified snapshot — confirm the applicable conformity
+      process with Kuwait Customs and the relevant Kuwait authority for your product.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Kuwait customs & port compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Port codes,
+      the GCC 5% duty baseline and the no-general-VAT position are re-checked against the Kuwait
+      General Administration of Customs and the shared GCC framework; China transit figures are
+      re-checked against the WorldFreightHub route data each month.
+    </p>
+    <p>
+      If a Shuwaikh or Shuaiba berth, depth, throughput, terminal allocation, destination fee amount
+      or free-time schedule becomes available from the Kuwait port authority or a carrier, the table
+      is updated, the confidence badge is raised, and the modified date in the page metadata is
+      changed. Until then, unquantified fees and port parameters stay LOW confidence with a
+      request-the-schedule note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Shuwaikh or Shuaiba quote"
+      text="Tell us your origin, commodity, container or CBM, HS code and final Kuwait destination, and we will connect you with providers who can quote ocean freight, Kuwait clearance, 5% duty and destination fees together."
+    />
+  </section>
+</BaseLayout>
