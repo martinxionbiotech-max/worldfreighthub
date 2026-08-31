@@ -1,0 +1,743 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/saudi-arabia-import-duty-vat/`;
+
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia customs guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const tariffdutycalculator: Source = {
+  id: 'tariffdutycalculator',
+  name: 'Tariff Duty Calculator — Saudi Arabia import duty',
+  url: 'https://tariffdutycalculator.com/country/saudi-arabia/',
+  type: 'industry',
+};
+
+const taxSources: Source[] = [
+  ...sourcesByIds(['zatca']),
+  commenda,
+  tariffdutycalculator,
+  cargofromchina,
+];
+
+const dutyRows = [
+  {
+    component: 'Baseline import duty',
+    who: 'ZATCA',
+    rate: '5% of CIF value',
+    basis: 'GCC Common External Tariff, ad valorem on CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Import VAT',
+    who: 'ZATCA',
+    rate: '15%',
+    basis: 'Calculated on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    component: 'Protective / anti-dumping duty',
+    who: 'ZATCA / Saudi Customs',
+    rate: '15–25% possible',
+    basis: 'Specific goods under protective tariffs',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Excise tax — tobacco',
+    who: 'ZATCA',
+    rate: '100%',
+    basis: 'Applied on top of VAT where taxable',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Excise tax — energy drinks',
+    who: 'ZATCA',
+    rate: '50%',
+    basis: 'Applied on top of VAT where taxable',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Excise tax — carbonated drinks',
+    who: 'ZATCA',
+    rate: '50%',
+    basis: 'Applied on top of VAT where taxable',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Customs brokerage / clearance fee',
+    who: 'Saudi customs broker',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Service fee, not a statutory tax',
+    confidence: 'LOW',
+  },
+  {
+    component: 'FASAH / e-processing charge',
+    who: 'ZATCA / service provider',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Electronic processing and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Storage, demurrage or detention',
+    who: 'Terminal / airport / carrier',
+    rate: 'Per-day after free time',
+    basis: 'Free time varies by operator',
+    confidence: 'LOW',
+  },
+];
+
+const calcTimelineRows = [
+  {
+    step: 'Classify the goods with the correct HS code',
+    when: 'Before quoting or booking',
+    basis: 'The code decides the duty band, VAT treatment, SABER scope and licensing',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Establish the CIF value',
+    when: 'Before the declaration',
+    basis: 'Cost + insurance + freight; the value that duty and VAT are calculated on',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess customs duty',
+    when: 'At declaration',
+    basis: 'CIF value × duty rate; baseline 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Add duty to the VAT base',
+    when: 'At declaration',
+    basis: 'VAT base = CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    step: 'Assess import VAT',
+    when: 'At declaration',
+    basis: '(CIF value + customs duty) × 15%',
+    confidence: 'HIGH',
+  },
+  {
+    step: 'Apply excise tax if the goods are taxable',
+    when: 'At declaration',
+    basis: 'Tobacco 100%; energy drinks 50%; carbonated drinks 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pay duty, VAT and any excise',
+    when: 'Before release',
+    basis: 'Settled through FASAH or by the customs broker',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Release and deliver the cargo',
+    when: 'After payment and any inspection',
+    basis: 'Goods release once duties, taxes and documents are in order',
+    confidence: 'LOW',
+  },
+];
+
+const ddpVsSelfRows = [
+  {
+    factor: 'Who pays the duty and VAT',
+    selfPay: 'The importer pays ZATCA directly at clearance',
+    ddp: 'The seller or forwarder pays and builds the cost into one price',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'VAT recovery',
+    selfPay: 'A VAT-registered importer may reclaim import VAT where eligible',
+    ddp: 'Recovery depends on who is the importer of record — confirm the structure',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Tax visibility',
+    selfPay: 'Full line-item visibility on the FASAH duty and VAT assessment',
+    ddp: 'Taxes are embedded in one all-in price and should be itemised to verify',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and valuation risk',
+    selfPay: 'The importer owns classification and any audit exposure',
+    ddp: 'The forwarder handles filing, but a wrong HS code still changes the final cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cash-flow timing',
+    selfPay: 'Taxes are settled at clearance, after the goods arrive',
+    ddp: 'Taxes are included in the upfront delivered price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usually best for',
+    selfPay: 'VAT-registered importers, established buyers with a broker and HS discipline',
+    ddp: 'First-time importers, direct-to-consumer sellers and Amazon/Noon delivery',
+    confidence: 'LOW',
+  },
+];
+
+const categoryRows = [
+  {
+    category: 'General merchandise at the GCC baseline',
+    duty: '5% of CIF',
+    vat: '15% on CIF + duty',
+    note: 'The default position for most goods without a special tariff line',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Protective / anti-dumping goods',
+    duty: '15–25% possible',
+    vat: '15% on CIF + duty',
+    note: 'Specific products subject to protective or anti-dumping duties',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Personal courier shipments ≤ SAR 1,000',
+    duty: 'Disputed de minimis',
+    vat: 'Disputed treatment',
+    note: 'Some sources say duty-free; another says no exemption — confirm with ZATCA',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Tobacco',
+    duty: 'Duty line + 100% excise',
+    vat: '15% on CIF + duty',
+    note: 'Excise is additional to the ordinary duty and VAT stack',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Energy drinks',
+    duty: 'Duty line + 50% excise',
+    vat: '15% on CIF + duty',
+    note: 'Excise is additional to the ordinary duty and VAT stack',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Carbonated drinks',
+    duty: 'Duty line + 50% excise',
+    vat: '15% on CIF + duty',
+    note: 'Excise is additional to the ordinary duty and VAT stack',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Preferential / free-trade-eligible goods',
+    duty: 'Reduced or zero where eligible',
+    vat: '15% on CIF + duty',
+    note: 'Depends on origin, certificate of origin and the applicable arrangement',
+    confidence: 'LOW',
+  },
+  {
+    category: 'SABER-regulated products',
+    duty: 'Same duty line for the HS code',
+    vat: '15% on CIF + duty',
+    note: 'Tax and conformity are separate tracks — SABER does not remove duty or VAT',
+    confidence: 'LOW',
+  },
+];
+
+const landedCostRows = [
+  {
+    line: 'CIF value',
+    formula: 'Cost + insurance + freight',
+    example: '1,000.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Customs duty',
+    formula: 'CIF value × 5%',
+    example: '50.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'VAT base',
+    formula: 'CIF value + customs duty',
+    example: '1,050.00',
+    confidence: 'HIGH',
+  },
+  {
+    line: 'Import VAT',
+    formula: 'VAT base × 15%',
+    example: '157.50',
+    confidence: 'HIGH',
+  },
+  {
+    line: 'Total before operational fees',
+    formula: 'CIF value + duty + VAT',
+    example: '1,207.50',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Operational fees',
+    formula: 'Brokerage + FASAH + SABER + delivery + storage',
+    example: 'Request itemised schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the Saudi Arabia import duty rate?',
+    a: 'The baseline import duty is 5% of the CIF value — cost, insurance and freight — under the GCC Common External Tariff. Specific goods can attract protective or anti-dumping duties of 15–25%, so the baseline is not the final rate for every product. Treat the 5% figure as MEDIUM confidence and verify the line for your HS code with ZATCA or Saudi Customs.',
+  },
+  {
+    q: 'How is Saudi import VAT calculated?',
+    a: 'Saudi import VAT is 15%, calculated on the CIF value plus customs duty. That ordering matters: you do not simply add 5% and 15%. Duty is added to the CIF base first, then VAT is charged on that higher amount.',
+  },
+  {
+    q: 'What is the combined landed-cost multiplier for duty and VAT?',
+    a: 'For a baseline 5% duty and 15% VAT, the stack is CIF × 1.05 × 1.15, which equals CIF × 1.2075. A CIF value of 1,000 USD becomes 1,050.00 after duty and 1,207.50 after VAT — an effective 20.75% on the CIF value, not the 20% you would get by adding the two rates together.',
+  },
+  {
+    q: 'Can you show a worked example for a CIF 1,000 USD shipment?',
+    a: 'Yes: customs duty is 1,000 × 5% = 50. The VAT base is 1,000 + 50 = 1,050. Import VAT is 1,050 × 15% = 157.50. Total duty and VAT is 207.50, so the total before operational fees is 1,207.50. This is arithmetic based on the verified rates, not a binding assessment — rates are subject to change and should be verified with ZATCA or Saudi Customs.',
+  },
+  {
+    q: 'Is VAT charged on the customs duty as well as the CIF value?',
+    a: 'Yes. The VAT base is CIF value plus customs duty, so VAT is calculated on the duty-inclusive amount. This is the detail that makes the effective tax slightly higher than a naive 5% + 15% total.',
+  },
+  {
+    q: 'How does the HS code affect Saudi import duty and VAT?',
+    a: 'The HS code decides the duty line — baseline, protective/anti-dumping, reduced or zero — and can also drive SABER conformity scope and licensing. VAT is generally 15% on the duty-inclusive CIF base, but the duty component changes with the code. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
+  },
+  {
+    q: 'Are there any Saudi import duty or VAT exemptions?',
+    a: 'The research snapshot records a possible SAR 1,000 de minimis exemption for personal courier shipments in some secondary sources, but Commenda states Saudi Arabia has no low-value exemption. Treat that point as unresolved and confirm with ZATCA. Preferential or free-trade treatment may reduce duty for eligible goods, but it depends on origin and certificate of origin.',
+  },
+  {
+    q: 'Is there a Saudi de minimis threshold?',
+    a: 'This is an explicit discrepancy in the verified research: some secondary sources state a SAR 1,000 exemption for personal courier shipments, while another source states there is no low-value exemption. Do not rely on either figure for a low-value import without confirming the current position with ZATCA.',
+  },
+  {
+    q: 'What is the difference between DDP and paying Saudi duty and VAT myself?',
+    a: 'Self-payment keeps the importer as the taxpayer with full FASAH line-item visibility and, for a VAT-registered importer, the possibility of reclaiming eligible input VAT. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying duty and VAT rates do not change — only who pays, how visible the tax is, and how the cash flow is structured.',
+  },
+  {
+    q: 'Does Saudi Arabia charge excise tax on imported goods?',
+    a: 'Yes, where the goods are taxable. The verified snapshot records 100% on tobacco, 50% on energy drinks and 50% on carbonated drinks, applied on top of the ordinary duty and VAT stack. These are MEDIUM-confidence secondary figures — confirm the current excise treatment for your HS codes with ZATCA.',
+  },
+  {
+    q: 'Can a registered importer reclaim Saudi import VAT?',
+    a: 'Potentially yes, for VAT-registered importers that meet ZATCA input-VAT recovery conditions. The research snapshot does not document the full recovery procedure, so treat the reclaim mechanics as LOW confidence and confirm the documentation and timing with ZATCA or your tax advisor before relying on the cash-flow benefit.',
+  },
+  {
+    q: 'Where should I verify current Saudi import duty and VAT rates?',
+    a: 'Verify against ZATCA (Saudi Customs and Tax Authority) and the current Saudi Customs tariff lookup for your HS code. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Saudi Arabia Import Duty & VAT: CIF × 1.05 × 1.15 Landed Cost (August 2026)',
+      description:
+        'How Saudi Arabia import duty (5% CIF) and VAT (15% on CIF + duty) stack: the landed-cost formula, a CIF 1,000 USD worked example, HS codes, exemptions, DDP vs self-payment and excise tax.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Saudi Arabia Import Duty & VAT: CIF × 1.05 × 1.15 Landed Cost (August 2026)"
+  description="How Saudi Arabia import duty (5% CIF) and VAT (15% on CIF + duty) stack: the landed-cost formula, a CIF 1,000 USD worked example, HS codes, exemptions, DDP vs self-payment and excise tax."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Saudi Arabia import duty & VAT' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Saudi Arabia import duty &amp; VAT: the CIF × 1.05 × 1.15 landed-cost stack</h1>
+      <p class="lead">
+        The tax burden most shippers underestimate is not the 5% duty or the 15% VAT on their own —
+        it is the way they stack. Duty is charged on CIF, then VAT is charged on CIF plus duty, so a
+        baseline shipment lands at <strong>CIF × 1.2075</strong> before operational fees. This page
+        shows the formula, a worked example, the HS-code levers, exemptions and the DDP-versus-self-paid
+        decision.
+      </p>
+      <p class="small muted">
+        Confidence badges separate the verified 15% VAT (HIGH) and 5% CIF duty baseline (MEDIUM) from
+        unquantified operational fees and disputed exemptions. Rates are subject to change — verify
+        with ZATCA or Saudi Customs before finalising a quote.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Combined multiplier</span>
+          <span class="fact-value">× 1.2075 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">CIF 1,000 example</span>
+          <span class="fact-value">1,207.50 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Protective duty</span>
+          <span class="fact-value">15–25% possible <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Operational fees</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The tax stack at a glance</h2>
+    <p>
+      Saudi Arabia levies two separate charges on most imports: a customs duty and a value-added tax.
+      The duty baseline is <strong>5% of CIF value</strong> under the GCC Common External Tariff, and
+      VAT is <strong>15%</strong>, applied to the <strong>CIF value plus customs duty</strong>. Because
+      the VAT base already includes the duty, the two rates compound rather than simply add.
+    </p>
+    <p>
+      In shorthand, a baseline shipment lands at:
+    </p>
+    <div class="note">
+      <strong>Total before operational fees = CIF × 1.05 × 1.15 = CIF × 1.2075.</strong><br />
+      A CIF value of 1,000 USD becomes 1,050.00 after duty and 1,207.50 after VAT — an effective
+      20.75% on CIF, not the 20% that many shippers assume when they add 5% + 15%.
+    </div>
+    <p class="mt-2">
+      This compounding is the single most valuable point on this page: if you quote a landed cost as
+      “CIF + 20%” you are understating the statutory burden, and if you forget that VAT applies to the
+      duty-inclusive base, your commercial margin shrinks by the difference. The worked example in
+      section 5 keeps that arithmetic visible.
+    </p>
+    <p class="small muted">
+      The 15% VAT rate is HIGH confidence in the research snapshot; the 5% CIF duty baseline is MEDIUM
+      confidence because it is drawn from secondary aggregators. The combined multiplier is arithmetic
+      derived from those rates — verify the current rates and your HS-code duty line with ZATCA or
+      Saudi Customs before committing.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Duty, VAT and excise: what is actually known</h2>
+      <p>
+        Only the statutory rates are verified. Brokerage, FASAH processing, inspection and storage
+        amounts were not published in the verified research snapshot, so this page refuses to invent
+        a single “customs fee” number. Request an itemised schedule for the operational lines from a
+        licensed broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'component', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'rate', label: 'Rate or amount' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={dutyRows}
+        caption="Only VAT (15%) and the baseline duty (5% CIF) are verified. Excise rates are MEDIUM confidence secondary findings; operational fees are LOW and must be requested as an itemised schedule."
+      />
+      <SourceList sources={taxSources} title="Sources — Saudi import duty, VAT & excise" />
+
+      <div class="note mt-2">
+        <strong>Tax checklist before booking:</strong> ask for the HS-code duty line, the CIF valuation
+        used, the VAT calculation, any applicable excise, plus brokerage, FASAH, inspection, SABER and
+        storage-free-time charges — in writing, on the same quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The assessment timeline: from HS code to release</h2>
+    <p>
+      Duty and VAT are not a single percentage charged on arrival; they are an ordered calculation that
+      starts with classification and valuation. If the first two steps are wrong, every later step is
+      wrong — and the correction happens under time pressure at the border.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When' },
+        { key: 'basis', label: 'What it depends on' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={calcTimelineRows}
+      caption="Statutory duty and VAT order is anchored on the verified rates; operational steps such as FASAH payment and inspection are LOW confidence and should be confirmed with ZATCA or a broker."
+    />
+    <SourceList sources={taxSources} title="Sources — assessment & payment timeline" />
+
+    <div class="note mt-2">
+      <strong>The order to remember:</strong> classify → value on CIF → duty → VAT on CIF + duty →
+      excise if applicable → pay → release. Skipping classification and valuation is how a “5% + 15%”
+      estimate turns into an unexpected duty line or a border hold.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Self-paid import taxes vs DDP</h2>
+      <p>
+        DDP does not remove Saudi duty or VAT; it changes who pays and how visible the tax is. The
+        choice is therefore about cash flow, VAT recovery, compliance ownership and transparency, not
+        about paying less statutory tax.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'selfPay', label: 'Self-paid taxes' },
+          { key: 'ddp', label: 'DDP all-in' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpVsSelfRows}
+        caption="The statutory rates are unchanged in either structure; only the payer, visibility, recovery route and cash-flow timing differ."
+      />
+      <SourceList sources={taxSources} title="Sources — self-paid vs DDP tax handling" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Self-pay is usually better when...">
+          <ul>
+            <li>You are VAT-registered in Saudi Arabia and can reclaim eligible input VAT.</li>
+            <li>You already have a broker, HS-code discipline and FASAH access.</li>
+            <li>You want line-item visibility of duty, VAT and operational fees.</li>
+            <li>Your volume is high enough to justify internal clearance work.</li>
+          </ul>
+        </Card>
+        <Card title="DDP is usually better when...">
+          <ul>
+            <li>The buyer wants one all-in price and one provider to chase.</li>
+            <li>You are not established with Saudi customs or a local broker.</li>
+            <li>You sell direct to consumers or deliver to Amazon/Noon warehouses.</li>
+            <li>You want the forwarder to manage duty, VAT and SABER timing together.</li>
+          </ul>
+        </Card>
+      </div>
+
+      <p class="mt-2">
+        The commercial test is the same as elsewhere in the GCC corridor: compare the same landed-cost
+        stack for both options, then add your own time, compliance risk and any VAT-recovery benefit to
+        the self-pay route. A DDP provider with weak tax or SABER discipline can be more expensive after
+        demurrage than a well-run self-pay shipment.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed-cost structure and the CIF 1,000 worked example</h2>
+    <p>
+      Build the landed cost in this order: CIF value, duty, VAT, then operational fees. The table below
+      uses a <strong>1,000 USD CIF</strong> example only to keep the arithmetic transparent — it is not
+      a market rate or a binding assessment.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Cost line' },
+        { key: 'formula', label: 'Formula' },
+        { key: 'example', label: 'Example (USD)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example uses CIF 1,000 USD purely to show the calculation. Rates are subject to change — verify with ZATCA or Saudi Customs."
+    />
+    <SourceList sources={taxSources} title="Sources — landed-cost formula" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="The formula in one line">
+        <p class="lead">
+          <strong>CIF × (1 + duty rate) × (1 + VAT rate)</strong>
+        </p>
+        <p>
+          Baseline: CIF × 1.05 × 1.15 = CIF × 1.2075. Add excise, brokerage, FASAH, SABER, delivery
+          and any storage beyond free time on top of that statutory figure.
+        </p>
+      </Card>
+      <Card title="Why 5% + 15% is not 20%">
+        <p>
+          VAT is charged on the duty-inclusive CIF base, so 15% applies to 1,050, not to 1,000. The
+          extra 7.50 in the example is the VAT-on-duty effect — small on one shipment, material across
+          a year of imports.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance and
+      freight. An unrealistically low invoice value, missing freight or stripped insurance invites
+      revaluation, penalties and delay — and it breaks the very calculation this page exists to make
+      predictable.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Applicable categories: how the HS code changes the bill</h2>
+      <p>
+        The HS code is the lever that changes the duty component of the stack. VAT remains 15% on the
+        duty-inclusive CIF base in the standard case, but the duty line — baseline, protective,
+        preferential or excise-bearing — is product-specific.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'category', label: 'Product category / treatment' },
+          { key: 'duty', label: 'Duty treatment' },
+          { key: 'vat', label: 'VAT treatment' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={categoryRows}
+        caption="Category treatment is drawn from the verified duty/VAT snapshot. Preferential eligibility and the disputed de minimis threshold must be confirmed with ZATCA for the specific goods."
+      />
+      <SourceList sources={taxSources} title="Sources — category & HS-code treatment" />
+
+      <div class="note mt-2">
+        <strong>Classification rule:</strong> resolve a borderline HS code before shipping. A change at
+        the border can move the duty line, trigger a SABER requirement or invalidate a DDP quote built on
+        the wrong code.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points to keep in view</h2>
+
+    <h3>The compound, not the sum</h3>
+    <p>
+      Duty is 5% of CIF, then VAT is 15% of CIF plus duty. The effective statutory burden on the CIF
+      value is <strong>20.75%</strong> at baseline, not 20%. This compounding is the point competitors
+      skip and the point that makes landed-cost estimates wrong.
+    </p>
+
+    <h3>HS code first</h3>
+    <p>
+      Duty line, excise exposure, SABER scope and licensing all flow from the HS code. Classify with a
+      broker or a written ruling before quoting, and keep the invoice description specific enough to
+      defend the code.
+    </p>
+
+    <h3>CIF valuation must be complete</h3>
+    <p>
+      Cost, insurance and freight are all part of the base. A low declared value or a missing freight
+      component creates revaluation risk, and the VAT-on-duty compounding means a small value correction
+      flows through both taxes.
+    </p>
+
+    <h3>Exemptions and preferences are fact-specific</h3>
+    <p>
+      The SAR 1,000 personal-courier de minimis is disputed in the research snapshot, and preferential
+      duty treatment depends on origin and certificate-of-origin eligibility. Do not assume either;
+      confirm with ZATCA for the goods in question.
+    </p>
+
+    <h3>Excise is additional, not alternative</h3>
+    <p>
+      Tobacco, energy drinks and carbonated drinks can attract excise of 100%, 50% and 50% respectively
+      on top of the ordinary duty and VAT stack. These rates are MEDIUM-confidence secondary findings —
+      recheck the current treatment for your HS codes.
+    </p>
+
+    <h3>VAT recovery changes the real cost</h3>
+    <p>
+      For a VAT-registered importer that can reclaim eligible input VAT, the 15% is a cash-flow item
+      rather than a permanent cost. The research snapshot does not document the recovery procedure, so
+      confirm the conditions and timing with ZATCA or a tax advisor.
+    </p>
+
+    <h3>Rates are subject to change</h3>
+    <p>
+      The 15% VAT and 5% duty baseline are from a dated snapshot. Treat every figure here as a planning
+      input and verify the current duty line, VAT treatment, exemptions and excise with ZATCA or Saudi
+      Customs before finalising a landed-cost quote.
+    </p>
+
+    <SourceList sources={taxSources} title="Sources — Saudi customs, tax & valuation" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Saudi landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity type and whether you want DDP or self-paid taxes, and we will connect you with providers who can itemise duty, VAT, SABER and delivery."
+    />
+  </section>
+</BaseLayout>

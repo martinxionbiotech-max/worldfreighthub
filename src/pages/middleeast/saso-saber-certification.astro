@@ -1,0 +1,732 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/saso-saber-certification/`;
+
+const saso: Source = {
+  id: 'saso',
+  name: 'SASO — Saudi Standards, Metrology and Quality Organization',
+  url: 'https://www.saso.gov.sa',
+  type: 'government',
+};
+const saber: Source = {
+  id: 'saber',
+  name: 'SABER — Saudi Product Safety Program platform',
+  url: 'https://saber.sa',
+  type: 'government',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT & conformity context',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia customs & SABER context',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const complianceSources: Source[] = [
+  saso,
+  saber,
+  fuxinCcpt,
+  sasoInfo,
+  commenda,
+  cargofromchina,
+];
+const ruleSources: Source[] = [fuxinCcpt, sasoInfo, saso, saber];
+const feeSources: Source[] = [saso, saber, fuxinCcpt, sasoInfo];
+const scopeSources: Source[] = [saso, saber, sasoInfo, commenda, cargofromchina];
+const processSources: Source[] = [
+  ...sourcesByIds(['zatca']),
+  saso,
+  saber,
+  fuxinCcpt,
+  sasoInfo,
+  cargofromchina,
+];
+
+const certFeeRows = [
+  {
+    item: 'SABER platform / product registration',
+    who: 'SASO / SABER platform',
+    magnitude: 'Not published in verified snapshot — request quote',
+    note: 'Per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Product laboratory testing',
+    who: 'Accredited testing laboratory',
+    magnitude: 'Varies by product, standard and number of tests',
+    note: 'Per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    item: 'PC — Product Conformity Certificate',
+    who: 'SABER / conformity body',
+    magnitude: 'Per product; ~1 year validity',
+    note: 'Fee not published in verified snapshot — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SC — Shipment Conformity Certificate',
+    who: 'SABER platform',
+    magnitude: 'Per shipment / per consignment',
+    note: 'Fee not published in verified snapshot — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Pre-shipment inspection / re-inspection',
+    who: 'Inspection body',
+    magnitude: 'Not published in verified snapshot — request quote',
+    note: 'Charged where inspection is required or selected',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Document amendment / re-issue',
+    who: 'SABER platform / service provider',
+    magnitude: 'Not published in verified snapshot — request quote',
+    note: 'Depends on the change and processing path',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Agent / consultancy service fee',
+    who: 'SABER agent or broker',
+    magnitude: 'Not published — request itemised schedule',
+    note: 'Scope and retainer vary by provider',
+    confidence: 'LOW',
+  },
+];
+
+const certTimelineRows = [
+  {
+    step: 'Confirm the product is in SABER scope',
+    when: 'Before any purchase order',
+    basis: 'Check the regulated product list against the product family and HS code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Register the importer and product on SABER',
+    when: 'Before shipment',
+    basis: 'SABER platform product registration',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Test the product to the applicable SASO standard',
+    when: 'Before the PC application',
+    basis: 'Accredited laboratory testing per the relevant standard',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Obtain the PC (Product Conformity Certificate)',
+    when: 'Before shipment',
+    basis: 'Product testing, then pre-shipment inspection; ~1 year validity, once per product',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Ship the goods and receive the B/L or AWB',
+    when: 'After shipment',
+    basis: 'The transport document is needed to confirm in-transit status',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Apply for the SC (Shipment Conformity Certificate)',
+    when: 'As soon as the B/L or AWB is issued',
+    basis: 'One SC per shipment / per consignment',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Receive the SC before cargo arrival',
+    when: 'Before arrival — mandatory since 1 Jan 2025',
+    basis: 'An SC applied after arrival is void and clearance fails',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the FASAH pre-arrival declaration with the SC',
+    when: 'Before discharge',
+    basis: 'Saudi single-window declaration with the SC attached',
+    confidence: 'LOW',
+  },
+];
+
+const pcVsScRows = [
+  {
+    factor: 'What it certifies',
+    pc: 'The product model or SKU',
+    sc: 'One specific shipment or consignment',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Issued per',
+    pc: 'Product — once per product/model while valid',
+    sc: 'Shipment — once per consignment',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Validity',
+    pc: 'About one year',
+    sc: 'Tied to the shipment; not reusable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Trigger document',
+    pc: 'Product test report and inspection',
+    sc: 'Bill of lading or air waybill',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'When it must be in place',
+    pc: 'Before shipment',
+    sc: 'Before cargo arrival',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Reuse across shipments',
+    pc: 'Yes, while valid',
+    sc: 'No — a new SC is needed for each shipment',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Cost',
+    pc: 'Per product — request quote',
+    sc: 'Per shipment — request quote',
+    confidence: 'LOW',
+  },
+];
+
+const productScopeRows = [
+  {
+    category: 'Electrical and electronic products',
+    examples: 'Cables, chargers, lighting, adapters, small appliances',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Toys and children’s products',
+    examples: 'Playthings, riding toys, safety-relevant children’s items',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Textiles, apparel and footwear',
+    examples: 'Garments, home textiles, shoes',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Cosmetics and personal care',
+    examples: 'Skincare, haircare, cosmetics, perfumes',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Food and beverage contact materials',
+    examples: 'Packaging, food-contact utensils and containers',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Building materials and ceramics',
+    examples: 'Tiles, sanitary ware, cement products, fittings',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Household appliances',
+    examples: 'Kitchen and home appliances within regulated scope',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Mechanical, automotive and safety components',
+    examples: 'Spare parts and safety-relevant components',
+    note: 'Illustrative family — confirm exact scope per SASO/SABER official guidance',
+    confidence: 'LOW',
+  },
+];
+
+const certCostRows = [
+  {
+    layer: 'Product setup',
+    component: 'Laboratory testing + PC',
+    nature: 'Fixed, once per product; renewed about yearly',
+    driver: 'Standards applied, number of tests, product complexity',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Shipment compliance',
+    component: 'SC per shipment',
+    nature: 'Variable, once per consignment',
+    driver: 'Each B/L or AWB creates a new SC requirement',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Inspection',
+    component: 'Pre-shipment or re-inspection',
+    nature: 'Variable, charged when required',
+    driver: 'Product risk profile and whether inspection is selected',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Agent support',
+    component: 'SABER agent or consultancy fee',
+    nature: 'Variable; per filing or retainer',
+    driver: 'Service scope and provider pricing',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Delay cost',
+    component: 'Storage, demurrage or detention after a missed SC',
+    nature: 'Variable and avoidable',
+    driver: 'Late SC, missing documents or a rejected application',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between SASO and SABER?',
+    a: 'SASO is the Saudi Standards, Metrology and Quality Organization — the standards and conformity body. SABER is the online conformity platform used to register products and issue the certificates. In practical terms, SASO sets the technical requirements and SABER is the system you work through to prove the product meets them.',
+  },
+  {
+    q: 'What is a SABER PC certificate?',
+    a: 'PC stands for Product Conformity Certificate. It is issued once per product model after testing and, where required, pre-shipment inspection, and is valid for about one year. It proves the product itself conforms to the applicable SASO standard.',
+  },
+  {
+    q: 'What is a SABER SC certificate?',
+    a: 'SC stands for Shipment Conformity Certificate. It is issued per shipment or per consignment and ties a specific bill of lading or air waybill to a valid PC. Each new shipment needs its own SC.',
+  },
+  {
+    q: 'Do I need both a PC and an SC?',
+    a: 'For regulated products, yes. The PC covers the product and is reusable while valid; the SC covers each shipment and is not reusable. You normally need the PC in place before shipment and the SC before the cargo arrives.',
+  },
+  {
+    q: 'What changed on 1 January 2025 for SABER?',
+    a: 'The SC must now be obtained before cargo arrival. An SC applied after the cargo has arrived is treated as void, which means clearance fails. This changed the practical timeline: the SC is a pre-arrival task, not something you can fix at the destination after discharge.',
+  },
+  {
+    q: 'When should I apply for the SABER SC?',
+    a: 'Apply as soon as the bill of lading or air waybill is issued, because the SC is shipment-specific and the transport document is needed to confirm in-transit status. Finish the PC product work before shipment, then apply for the SC immediately after the transport document exists and receive it before arrival.',
+  },
+  {
+    q: 'What happens if the SC is not obtained before arrival?',
+    a: 'Clearance fails. Since 1 January 2025, an SC applied after arrival is void, so the shipment cannot clear until the conformity issue is resolved — which typically means storage, demurrage and delay. This is the single most important operational point for Saudi-bound regulated goods.',
+  },
+  {
+    q: 'Which products require SABER certification?',
+    a: 'The verified research snapshot does not contain an authoritative, complete product list, so this page gives illustrative product families only and marks them LOW confidence: electrical and electronic products, toys, textiles, cosmetics, food-contact materials, building materials, household appliances and certain safety components. Confirm your exact product against the official SABER scope before ordering.',
+  },
+  {
+    q: 'How long is a SABER PC valid?',
+    a: 'About one year, according to the verified research snapshot. Because validity is about one year and the PC is issued once per product, keep track of expiry before a repeat order ships — an expired PC blocks the SC application for the new shipment.',
+  },
+  {
+    q: 'How much does SASO/SABER certification cost?',
+    a: 'The verified research snapshot does not publish specific amounts for registration, testing, PC, SC or inspection, so this page refuses to invent a single “SABER fee” number. Treat the cost structure as LOW confidence and request an itemised written quote from your SABER/SASO provider for your product and shipment volume.',
+  },
+  {
+    q: 'Can a freight forwarder handle SABER for me?',
+    a: 'In practice many forwarders coordinate PC and SC work through local partners, but the arrangement must be explicit. Confirm in writing who is responsible for product registration, testing, PC validity and the pre-arrival SC filing — especially because a missed SC after 1 January 2025 blocks clearance.',
+  },
+  {
+    q: 'What are the most common SABER rejection or failure reasons?',
+    a: 'The most common operational failure patterns are a missing or expired PC, an SC applied after arrival, a test report from a non-accredited laboratory or one that does not match the applicable standard, a model or SKU mismatch between the PC and the shipment invoice, a wrong HS code, and missing or mismatched B/L and consignee details. These are practical patterns from the research snapshot, not an official SASO/SABER rejection list — confirm the current submission requirements with SABER.',
+  },
+  {
+    q: 'Is SASO the same as the GCC G-Mark?',
+    a: 'No, they are separate conformity marks. The research snapshot covers SASO/SABER for Saudi Arabia and does not document the GCC G-Mark requirements, so treat any G-Mark comparison as outside this page’s verified scope and confirm the specific mark required for your product with the relevant authority.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'SASO & SABER Certification Saudi Arabia: PC vs SC, Fees & the 2025 Pre-Arrival Rule (August 2026)',
+      description:
+        'SASO vs SABER explained: Product Conformity Certificate (PC) vs Shipment Conformity Certificate (SC), which products need SABER, the registration process, the SC-before-arrival rule from 1 Jan 2025, fees and common rejections.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="SASO & SABER Certification Saudi Arabia: PC vs SC, Fees & the 2025 Pre-Arrival Rule (August 2026)"
+  description="SASO vs SABER explained: Product Conformity Certificate (PC) vs Shipment Conformity Certificate (SC), which products need SABER, the registration process, the SC-before-arrival rule from 1 Jan 2025, fees and common rejections."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'SASO & SABER certification' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>SASO &amp; SABER certification: PC vs SC and the 2025 pre-arrival rule</h1>
+      <p class="lead">
+        Saudi product compliance has two names that shippers often confuse: <strong>SASO</strong> sets
+        the standards, while <strong>SABER</strong> is the online platform where you prove conformity.
+        Regulated goods need a <strong>PC</strong> per product and an <strong>SC</strong> per shipment —
+        and since 1 January 2025, the SC must be obtained <strong>before cargo arrival</strong> or
+        clearance fails.
+      </p>
+      <p class="small muted">
+        The SC-before-arrival rule is MEDIUM confidence in the verified research snapshot. Certification
+        fees, the exact product scope and processing-day details were not quantified, so they are marked
+        LOW and attributed to SASO/SABER official guidance — request current figures for your product.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">SASO role</span>
+          <span class="fact-value">Standards body <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER role</span>
+          <span class="fact-value">Conformity platform <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">PC validity</span>
+          <span class="fact-value">~1 year <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">PC / SC fees</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Processing days</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. SASO vs SABER: one sets the rules, the other proves you meet them</h2>
+    <p>
+      <strong>SASO</strong> — the Saudi Standards, Metrology and Quality Organization — is the
+      standards and conformity authority that defines the technical requirements for regulated goods.
+      <strong>SABER</strong> is the Saudi Product Safety Program platform where importers and
+      manufacturers register products, manage conformity work and obtain the certificates that customs
+      checks at clearance.
+    </p>
+    <p>
+      The practical consequence is that “getting SASO” is really a two-track job: make sure the product
+      meets the applicable SASO standard, then complete the SABER platform workflow — product
+      registration, testing evidence, the <strong>PC</strong> for the product and the <strong>SC</strong>
+      for the shipment. The certification is not a single stamp; it is a sequence that must finish
+      before the cargo reaches the Saudi border.
+    </p>
+    <p class="small muted">
+      The SASO/SABER division is operational context from the research snapshot and is marked LOW
+      confidence for the finer platform details — verify the current workflow against SASO and SABER
+      official guidance.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Certification fees: what the verified snapshot actually supports</h2>
+      <p>
+        The research snapshot confirms the structure — registration, testing, PC per product and SC per
+        shipment — but does not publish specific amounts. This page therefore refuses to invent a single
+        “SABER certification cost” number. Request an itemised schedule for your product.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Fee component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={certFeeRows}
+        caption="All fees are LOW confidence because the verified research snapshot did not publish specific amounts. Request a written, itemised quote per SASO/SABER official guidance."
+      />
+      <SourceList sources={feeSources} title="Sources — SABER/SASO fees" />
+
+      <div class="note mt-2">
+        <strong>Ask for these on one quote:</strong> product registration, laboratory testing, PC
+        issuance and validity, SC per shipment, any inspection or re-inspection, amendment charges, and
+        the agent or consultancy fee — plus who pays if a re-test or re-inspection is required.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The certification timeline that must finish before arrival</h2>
+    <p>
+      The 1 January 2025 rule changes where the compliance work happens. Before that date, a shipper
+      could still be tempted to sort out the SC at destination; now the SC must be in hand before the
+      cargo arrives. The timeline below therefore runs backwards from the arrival date.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When' },
+        { key: 'basis', label: 'What it depends on' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={certTimelineRows}
+      caption="The SC-before-arrival rule and the B/L/AWB trigger are MEDIUM confidence from the research snapshot. Exact processing days and platform details are LOW confidence — confirm with SABER early."
+    />
+    <SourceList sources={processSources} title="Sources — certification & clearance timeline" />
+
+    <div class="note mt-2">
+      <strong>Plan backwards, not forwards:</strong> fix the PC and product testing before shipment,
+      apply for the SC as soon as the bill of lading or air waybill exists, and leave buffer for an
+      inspection or document correction before the cargo arrives. The ocean leg is not free time for
+      paperwork — it is the SC deadline.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. PC vs SC: the two certificates in one comparison</h2>
+      <p>
+        PC and SC are not interchangeable. The PC proves the product conforms; the SC proves this
+        specific shipment is covered by a valid PC. Confusing the two is the most common way to arrive
+        with a valid-looking product certificate and still fail clearance.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'pc', label: 'PC — Product Conformity' },
+          { key: 'sc', label: 'SC — Shipment Conformity' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={pcVsScRows}
+        caption="PC = product, about one year, reusable. SC = shipment, single use, tied to the B/L/AWB and required before arrival."
+      />
+      <SourceList sources={ruleSources} title="Sources — PC vs SC" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="PC is the product-side asset">
+          <ul>
+            <li>One per product model or SKU.</li>
+            <li>Valid about one year; check expiry before a repeat order.</li>
+            <li>Built from accredited testing, then pre-shipment inspection.</li>
+            <li>Reused across shipments while still valid.</li>
+          </ul>
+        </Card>
+        <Card title="SC is the shipment-side event">
+          <ul>
+            <li>One per shipment or per consignment.</li>
+            <li>Tied to a specific bill of lading or air waybill.</li>
+            <li>Applied for after the transport document is issued.</li>
+            <li>Must be received before arrival — never reusable.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Which products are typically in scope</h2>
+    <p>
+      The verified research snapshot does not contain an authoritative, complete product list, so the
+      table below is illustrative only. Treat every family as LOW confidence and confirm the exact
+      product scope against the current SABER regulated-product list before ordering.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'category', label: 'Product family' },
+        { key: 'examples', label: 'Typical examples' },
+        { key: 'note', label: 'Confirmation requirement' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={productScopeRows}
+      caption="Illustrative product families, not an authoritative SABER scope list. Confirm exact coverage per SASO/SABER official guidance."
+    />
+    <SourceList sources={scopeSources} title="Sources — regulated product scope" />
+
+    <div class="note mt-2">
+      <strong>Scope check before quoting:</strong> send the HS code, product model, intended use and
+      technical specifications to your SABER service provider and ask whether the product is regulated,
+      which SASO standard applies and whether testing or inspection is required.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost structure: fixed product setup plus per-shipment compliance</h2>
+      <p>
+        The certification cost is not one number; it is a stack with a fixed product-side layer and a
+        variable shipment-side layer. The table below separates the layers so you can forecast a repeat
+        import without being surprised by a new SC on every consignment.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'layer', label: 'Cost layer' },
+          { key: 'component', label: 'Component' },
+          { key: 'nature', label: 'Fixed or variable' },
+          { key: 'driver', label: 'What drives it' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={certCostRows}
+        caption="Cost structure is LOW confidence because the research snapshot did not publish amounts. Use it to organise a written quote, not to forecast a specific price."
+      />
+      <SourceList sources={feeSources} title="Sources — certification cost structure" />
+
+      <div class="note mt-2">
+        <strong>The hidden cost is delay, not the certificate.</strong> A missed SC or a rejected
+        application stops clearance at the terminal, where storage, demurrage or detention accrues per
+        day. The cheapest certification path is the one that completes before arrival, not the one with
+        the lowest filing fee.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points to keep in view</h2>
+
+    <h3>SASO and SABER are not the same thing</h3>
+    <p>
+      SASO defines the technical standards; SABER is the conformity platform. Keep the distinction in
+      mind when a provider says “SASO approval” — the operational output you need at clearance is the
+      SABER PC and SC.
+    </p>
+
+    <h3>The SC is a pre-arrival task since 1 January 2025</h3>
+    <p>
+      An SC applied after cargo arrival is void and clearance fails. This is the compliance point
+      competitors rarely cover and the reason the SC application must be driven by the bill of lading or
+      air waybill date, not the arrival date.
+    </p>
+
+    <h3>PC validity drives repeat orders</h3>
+    <p>
+      A PC is valid about one year and is issued once per product. Before a repeat shipment, confirm the
+      PC is still in force; an expired PC blocks the SC and therefore blocks clearance.
+    </p>
+
+    <h3>The transport document is a trigger, not a formality</h3>
+    <p>
+      The SC is shipment-specific and needs the bill of lading or air waybill to confirm in-transit
+      status. Send the transport document to the SABER handler immediately, not after the sailing.
+    </p>
+
+    <h3>Common failure modes</h3>
+    <ul>
+      <li>Missing or expired PC.</li>
+      <li>SC applied after arrival.</li>
+      <li>Test report from a non-accredited laboratory, or one that does not match the applicable standard.</li>
+      <li>Model or SKU mismatch between the PC and the shipment invoice.</li>
+      <li>Wrong HS code or missing/mismatched B/L and consignee details.</li>
+    </ul>
+    <p class="small muted">
+      These are operational patterns from the research snapshot, not an official SASO/SABER rejection
+      list. Confirm current submission requirements with SABER.
+    </p>
+
+    <h3>FASAH is where conformity meets customs</h3>
+    <p>
+      The pre-arrival customs declaration is filed through FASAH with the SC attached. Conformity and
+      customs are separate tracks that converge at release: both must be complete before the cargo can
+      leave the terminal.
+    </p>
+
+    <h3>Fees are LOW confidence — get them in writing</h3>
+    <p>
+      Registration, testing, PC, SC, inspection and amendment fees were not quantified in the verified
+      snapshot. Treat any single “SABER fee” figure as indicative and ask for an itemised written
+      schedule per SASO/SABER official guidance.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — SABER/SASO compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get SABER PC & SC support for your Saudi shipment"
+      text="Tell us your product, HS code, testing status and planned shipping date, and we will connect you with providers who can quote the PC, SC and pre-arrival filing together."
+    />
+  </section>
+</BaseLayout>
