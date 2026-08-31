@@ -34,6 +34,8 @@ const wfhMethodology: Source = {
 
 const kuwaitCustomsSources = sourcesByIds(['kuwait-customs']);
 const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
 const portFactSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
 const transitSources: Source[] = [wfhRouteData];
 const decisionSources: Source[] = [wfhRouteData, ...kuwaitCustomsSources];
@@ -341,6 +343,87 @@ const factorRows = [
   },
 ];
 
+const rateRows = [
+  {
+    service: 'LCL ocean — China to Shuwaikh / Shuaiba',
+    benchmark: 'Not published in verified snapshot — request an all-in per-CBM quote',
+    basis: 'No verified Kuwait LCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ to Shuwaikh or Shuaiba',
+    benchmark: 'Not published in verified snapshot — request an all-in container quote',
+    basis: 'No verified Kuwait FCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const fclLclRows = [
+  {
+    factor: 'Pricing unit',
+    fcl: 'Per container (20GP / 40GP / 40HQ)',
+    lcl: 'Per CBM, with a minimum charge on small volumes',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Indicative cost',
+    fcl: 'Not published in the Kuwait snapshot — request an all-in quote',
+    lcl: 'Not published in the Kuwait snapshot — request an all-in per-CBM quote',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling',
+    fcl: 'One sealed box with less CFS touch',
+    lcl: 'Extra consolidation and deconsolidation handling',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit',
+    fcl: 'Typical 24-day Shuwaikh estimate (LOW); carrier routing decides',
+    lcl: 'Same ocean window plus consolidation; no separate LCL transit published',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usually best for',
+    fcl: 'Full or near-full containers and homogeneous heavy loads',
+    lcl: 'Small, mixed-SKU consignments and low-volume buyers',
+    confidence: 'LOW',
+  },
+];
+
+const chinaOriginRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; world #1 by cargo tonnage',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named in China→GCC freight guides',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Qingdao (CNTAO) / Tianjin (CNTSN) / Xiamen (CNXMN)',
+    throughput: 'Not published in snapshot',
+    note: 'Additional northern and Fujian origins on the corridor',
+    confidence: 'LOW',
+  },
+];
+
 const faqs = [
   {
     q: 'Where are Kuwait’s main ports located?',
@@ -508,28 +591,22 @@ const schema = [
   <section class="section container">
     <h2>1. Why Kuwait’s two-port map matters for China freight</h2>
     <p>
-      Kuwait is a compact, oil-led GCC economy, but it does not have the single-gateway simplicity of
-      Qatar’s Hamad Port or the concentrated volume of Dubai’s Jebel Ali. Before any China-to-Kuwait
-      consignment is booked, the importer faces a genuine routing question:
-      <strong>Shuwaikh or Shuaiba?</strong> The choice changes the inland distance, the type of cargo
-      the port is best known for, and the destination-fee exposure, so it belongs in the quote before
-      the first container moves.
+      Kuwait is a compact, oil-led GCC economy, but it lacks the single-gateway simplicity of Qatar’s
+      Hamad Port or the volume of Dubai’s Jebel Ali. Before any China-to-Kuwait consignment is booked,
+      the importer faces a genuine routing question: <strong>Shuwaikh or Shuaiba?</strong> The choice
+      changes inland distance, cargo fit and destination-fee exposure.
     </p>
     <p>
       The commonly quoted commercial gateway is <strong>Shuwaikh</strong>, close to Kuwait City, while
       <strong>Shuaiba</strong> is the port to consider for industrial, petrochemical, bulk and
-      project-linked cargo in the southern corridor. Both are real Kuwait seaports in this site’s
-      port data with their own UN/LOCODEs, but the verified research snapshot does not publish their
-      berths, draft, cranes, throughput, operators or fee schedules. That gap is a planning signal,
-      not a licence to guess: route the container to the logical gateway, then request the
-      operational facts from the Kuwait port authority and carrier.
+      project-linked cargo in the south. Both have their own UN/LOCODEs, but the verified snapshot
+      does not publish their berths, draft, cranes, throughput, operators or fees. Route logically,
+      then request the operational facts from the port authority and carrier.
     </p>
     <p>
-      The statutory side is simpler than the port side. Kuwait uses the GCC Common External Tariff
-      baseline of <strong>5% customs duty on CIF value</strong>, with no general VAT in the current
-      framework. That makes the tax arithmetic a single layer, but it also means the real landed-cost
-      variance comes from port choice, terminal charges, clearance discipline and demurrage/detention
-      — the exact areas this page keeps visible.
+      The statutory side is simpler: Kuwait uses the GCC <strong>5% customs duty on CIF value</strong>
+      baseline, with no general VAT. The real landed-cost variance therefore comes from port choice,
+      terminal charges, clearance discipline and demurrage/detention — the areas this page keeps visible.
     </p>
   </section>
 
@@ -566,11 +643,10 @@ const schema = [
   <section class="section container">
     <h2>3. China to Kuwait port transit windows</h2>
     <p>
-      Transit into Kuwait is a planning range, not a promise. The route data places Shuwaikh near the
-      slower end of the China-to-GCC corridor: a typical 24 days with a 15–30 day planning range,
-      LOW confidence because the dataset is an estimate and carrier routings vary. Shuaiba-specific
-      sea transit and a verified Kuwait air transit are not published in the snapshot, so the table
-      keeps those lines explicit instead of borrowing a number from another corridor.
+      Transit into Kuwait is a planning range, not a promise. The route data gives Shuwaikh a typical
+      24 days with a 15–30 day range, LOW confidence. Shuaiba sea transit and Kuwait air transit are
+      not published, so the table keeps those lines explicit instead of borrowing another corridor’s
+      figure.
     </p>
 
     <DataTable
@@ -595,7 +671,78 @@ const schema = [
 
   <section class="section section--alt">
     <div class="container">
-      <h2>4. Shuwaikh vs Shuaiba: the routing decision</h2>
+      <h2>4. FCL / LCL rate benchmarks and the volume decision</h2>
+      <p>
+        Kuwait FCL and LCL rates are not published in the verified snapshot, so the table below shows
+        “request an all-in quote” rather than a guessed dollar range. The only corridor figure is the
+        typical 24-day Shuwaikh sea estimate, LOW confidence.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Kuwait FCL/LCL rates were not published in the verified snapshot — request an all-in quote rather than using a guessed benchmark."
+      />
+      <SourceList sources={rateSources} title="Sources — Kuwait FCL/LCL rates" />
+
+      <h3 class="mt-3">FCL vs LCL guidance</h3>
+      <p>
+        The crossover is directional because neither rate is published. FCL becomes the usual choice
+        as the shipment approaches a meaningful share of a container; LCL suits small volumes that
+        would not fill a box. Request both all-in quotes at the same destination point before deciding.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Decision factor' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclLclRows}
+        caption="FCL vs LCL guidance is directional; Kuwait FCL and LCL benchmarks are not published in the verified snapshot."
+      />
+      <SourceList sources={modeSources} title="Sources — FCL vs LCL guidance" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <div class="container">
+      <h2>5. China origins and the Kuwait destination map</h2>
+      <p>
+        Shanghai and Ningbo-Zhoushan anchor the East China ocean services; Shenzhen and Guangzhou cover
+        South China, while Qingdao, Tianjin and Xiamen serve northern and Fujian suppliers. On the
+        Kuwait side, the destination map has two seaports — Shuwaikh (KWSWK) and Shuaiba (KWSHB) —
+        plus Kuwait International Airport for air cargo.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China origin port' },
+          { key: 'throughput', label: 'Throughput' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaOriginRows}
+        caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence; other origins are named on the corridor but their throughput is not stated in the snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+      <div class="note mt-2">
+        <strong>Kuwait destination codes:</strong> Shuwaikh is {shuwaikhUnlocode} and Shuaiba is
+        {shuaibaUnlocode}. Use the exact UN/LOCODE on the bill of lading so the cargo does not land
+        on the wrong side of the two-port choice.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Shuwaikh vs Shuaiba: the routing decision</h2>
       <p>
         The Shuwaikh/Shuaiba question is the Kuwait equivalent of the Jeddah-vs-Dammam choice in Saudi
         Arabia. It is a cargo-fit and inland-distance decision, not a cosmetic naming difference.
@@ -639,7 +786,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>5. Terminals, facilities and the Kuwait hinterland</h2>
+    <h2>7. Terminals, facilities and the Kuwait hinterland</h2>
     <p>
       Kuwait’s two-port structure is best understood as a commercial/container gateway and an
       industrial gateway rather than two identical terminals. The verified snapshot does not publish
@@ -669,12 +816,11 @@ const schema = [
 
   <section class="section section--alt">
     <div class="container">
-      <h2>6. Post-arrival cost composition at Shuwaikh and Shuaiba</h2>
+      <h2>8. Post-arrival cost composition at Shuwaikh and Shuaiba</h2>
       <p>
-        The verified snapshot quantifies the statutory 5% duty and the no-general-VAT position, but it
-        does not publish Kuwait destination THC, brokerage, demurrage or inland trucking amounts.
-        Treat the operational lines as LOW confidence and request an itemised fee schedule before
-        booking.
+        The verified snapshot quantifies the 5% duty and the no-general-VAT position, but not Kuwait
+        destination THC, brokerage, demurrage or inland trucking amounts. Treat operational lines as
+        LOW confidence and request an itemised fee schedule.
       </p>
 
       <DataTable
@@ -719,7 +865,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>7. Compliance at Kuwait ports: duty, documents and restricted goods</h2>
+    <h2>9. Compliance at Kuwait ports: duty, documents and restricted goods</h2>
 
     <h3>Tax and duty</h3>
     <p>
@@ -761,13 +907,13 @@ const schema = [
 
   <section class="section section--alt">
     <div class="container">
-      <h2>8. Frequently asked questions</h2>
+      <h2>10. Frequently asked questions</h2>
       <FaqBlock items={faqs} />
     </div>
   </section>
 
   <section class="section container">
-    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <h2>11. Data freshness &amp; monthly update cadence</h2>
     <p>
       This page is marked <span class="badge badge--amber">September 2026 updated</span>. Port codes,
       the GCC 5% duty baseline and the no-general-VAT position are re-checked against the Kuwait
