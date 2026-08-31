@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-08-30 04:30 (Asia/Shanghai)
+> 最后更新：2026-09-01 01:15 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -53,8 +53,8 @@
 - [x] STEP 8 Keyword Map（`docs/keyword-map.md`）
 - [x] STEP 9 Firecrawl 竞品/中文/Primary Sources Research（`docs/research-notes-2026-08-30.md`）
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
-- [ ] STEP 13–15 Codex 架构审查 + 修复
-- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote
+- [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
+- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅；Directory/Ad/Quote 未开始）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
 
 ## 关键交付物（已入库 docs/）
@@ -83,7 +83,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. STEP 13–15：Codex 独立架构审查 + 修复（data model / routing / schema / 性能）
+1. Day 36–50：继续其它 GCC —— 下一批 Kuwait（Route Pillar + Shuwaikh/Shuaiba 港口 + Customs + Duty），随后 Oman / Bahrain
 2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
-3. 解决 Saudi de minimis 冲突
-4. Day 8 起：Saudi Arabia Route Pillar（差异化内容：Demurrage/Detention、Hidden Charges、SABER SC 新规）
+3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档

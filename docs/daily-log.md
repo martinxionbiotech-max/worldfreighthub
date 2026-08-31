@@ -45,6 +45,33 @@
 
 ---
 
+
+---
+
+## 2026-09-01（夜间，Day 21–35 UAE 收尾）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai）
+- **服务器资源**：远程 load 正常 ✅
+- **Tasks**：Codex 写 UAE 收尾两页 —— Sharjah Port（Port Khalid）+ Amazon FBA UAE & noon；并在 `middleeast/index.astro` 注册两张卡片
+- **Research**：复用 2026-08-30 已验证数据（UAE VAT 5%、进口关税 5% CIF、de minimis Dhs 1,000、CN→UAE 海运 14–18 天、UAE 6 港清单含 Sharjah、上海港 55.06M TEU）
+- **Verification**：港口泊位/水深/吞吐量、FBA/noon FC 地址与费用、demurrage/detention 单日费率等未在已验证快照中 → 一律标 LOW +「not published — verify」，不杜撰
+- **Content**：
+  - `sharjah-port.astro` —— 3,983 词，9 模块齐全，FAQ 14 条
+  - `amazon-fba-uae-noon.astro` —— 3,869 词，9 模块齐全，FAQ 14 条
+  - 两页均含 Sharjah vs Jebel Ali vs Khalifa 路由对比 / FBA vs noon 差异 + 隐藏成本栈
+- **Gap Analysis**：继续打 Demurrage/Detention + Hidden Charges 高价值 Gap（Sharjah 页 destination cost stack、FBA 页 factory-to-FC 隐藏费用）
+- **SEO / AIO / EEAT**：Article + FAQPage + Organization schema + Breadcrumb 组件 BreadcrumbList；ConfidenceBadge 数据点全标注
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card 组件，无新组件
+- **QA**：`npm run build` 119 页零 error；两页各 50+ LOW 标注，无杜撰数字
+- **Build Result**：✅ 119 pages，clean
+- **Git Commit**：`82e2b53 feat(middleeast): add Sharjah Port and Amazon FBA UAE/noon pages`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. UAE 全部 12 页 + 3 工具已收官 ✅
+  2. 下一批：Qatar 已 4 页（Route Pillar / Hamad Port / Customs / Cost-Transit）；继续 Day 36–50 Kuwait（Route Pillar + Shuwaikh/Shuaiba + Customs + Duty）
+  3. Cloudflare Pages 部署 + 子站 subdomain 规划
+  4. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+
 （模板）
 ## YYYY-MM-DD
 
