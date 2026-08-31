@@ -1,0 +1,805 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/hamad-port/`;
+const port = gccPorts.find((item) => item.slug === 'hamad');
+const unlocode = port?.unlocode ?? '—';
+
+const mwani: Source = {
+  id: 'mwani-hamad',
+  name: 'Mwani Qatar — Hamad Port',
+  url: 'https://www.mwani.com.qa/English/ports/hamadport/Pages/default.aspx',
+  type: 'port-authority',
+};
+const meed: Source = {
+  id: 'meed-hamad-opening',
+  name: 'MEED — Doha’s Hamad Port to open on 1 December',
+  url: 'https://www.meed.com/dohas-hamad-port-to-open-on-1-december/',
+  type: 'industry',
+};
+const constructionweek: Source = {
+  id: 'constructionweek-hamad',
+  name: 'Construction Week — Hamad Port container traffic transition',
+  url: 'https://www.constructionweekonline.com/projects-tenders/dohas-hamad-port-to-open-on-1-december',
+  type: 'industry',
+};
+const peninsula: Source = {
+  id: 'peninsula-qatar-ports',
+  name: 'The Peninsula — Qatar ports container throughput hit 1.46 million TEUs in 2025',
+  url: 'http://s.thepeninsula.qa/article/05/01/2026/qatars-ports-container-throughput-hit-146-million-teus-in-2025',
+  type: 'industry',
+};
+const chinabestfreight: Source = {
+  id: 'chinabestfreight-qatar',
+  name: 'China Best Freight — Shipping from China to Qatar',
+  url: 'https://www.chinabestfreight.com/region/middle-east/shipping-to-qatar.html',
+  type: 'industry',
+};
+const presou: Source = {
+  id: 'presou-qatar',
+  name: 'Presou — How much does it cost to ship from China to Qatar',
+  url: 'https://presou.com/how-much-does-it-cost-to-ship-from-china-to-qatar/',
+  type: 'industry',
+};
+const traddal: Source = {
+  id: 'traddal-qatar',
+  name: 'Traddal — Calculate duties and taxes for imports to Qatar',
+  url: 'https://traddal.com/resources/calculate-duties-taxes-imports-qatar',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-qatar-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port (typical 22 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const portSources = sourcesByIds(['qatar-customs']);
+const portFactSources: Source[] = [mwani, meed, constructionweek];
+const transitSources: Source[] = [wfhRouteData, chinabestfreight];
+const decisionSources: Source[] = [mwani, meed, chinabestfreight];
+const facilitySources: Source[] = [mwani, meed, peninsula];
+const costSources: Source[] = [...sourcesByIds(['qatar-customs']), traddal, presou];
+const complianceSources: Source[] = [...sourcesByIds(['qatar-customs']), traddal];
+const throughputSources: Source[] = [peninsula, mwani];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'Qatar',
+    note: 'GCC member; small, high-income market anchored by oil and gas',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Coast / region',
+    value: 'Arabian Gulf, south of Doha',
+    note: 'Purpose-built deep-water port complex',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port role',
+    value: 'Qatar’s primary commercial seaport',
+    note: 'Took over commercial cargo from the legacy Doha Port',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    value: 'Mwani Qatar',
+    note: 'Managed under the Ministry of Transport',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    value: unlocode,
+    note: 'Seaport code used on the bill of lading',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Operations / official inauguration',
+    value: 'Operations from December 2016; officially inaugurated 5 September 2017',
+    note: 'Modern replacement for Doha Port commercial traffic',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Port area',
+    value: '29 sq km',
+    note: 'Large port and logistics footprint on the Qatar coast',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Container terminals',
+    value: 'Three planned; two operational at an optimum capacity of 5M TEU/year',
+    note: 'Long-term capacity eventually above 7.5M TEU/year',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'General cargo capacity',
+    value: '7M tonnes',
+    note: 'Breakbulk and general cargo capability',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Grain capacity',
+    value: '1M tonnes',
+    note: 'Bulk grain handling at the port complex',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Vehicle terminal capacity',
+    value: '~500,000 vehicles/year',
+    note: 'RoRo and vehicle-handling capability',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Customs inspection capacity',
+    value: '5,600 containers/day',
+    note: 'Rapid inspection area in the port zone',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: '2025 Qatar ports total',
+    value: '~1.46M TEUs',
+    note: 'Hamad share and transshipment split are trade-press figures — verify with Mwani Qatar',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai',
+    service: 'Sea port-to-port',
+    transit: 'Typical 22 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    service: 'Sea port-to-port',
+    transit: 'Typical 22 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    service: 'Sea port-to-port',
+    transit: 'Typical 22 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'China → Qatar corridor',
+    service: 'Sea market bracket',
+    transit: '22–28 days',
+    basis: 'China Best Freight Qatar sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Qatar corridor',
+    service: 'Air freight',
+    transit: '2–4 days',
+    basis: 'China Best Freight Qatar air snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'Containerised China imports for Doha and Qatar',
+    bestChoice: 'Hamad Port',
+    why: 'Modern container and general-cargo gateway; commercial traffic moved from Doha Port',
+    confidence: 'HIGH',
+  },
+  {
+    scenario: 'Cruise passengers or legacy waterfront development',
+    bestChoice: 'Doha Port',
+    why: 'Redeveloped as a cruise terminal after container traffic left',
+    confidence: 'HIGH',
+  },
+  {
+    scenario: 'Time-critical, light or high-value cargo',
+    bestChoice: 'Doha airport / air freight',
+    why: '2–4 days by air, but not a seaport routing decision',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Project cargo, vehicles, grain or general cargo',
+    bestChoice: 'Hamad Port',
+    why: 'Dedicated general cargo, bulk and vehicle-handling capacity',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Re-export or free-zone-linked logistics',
+    bestChoice: 'Hamad Port + adjacent free zone',
+    why: 'Port area includes an adjacent free zone for logistics activity',
+    confidence: 'MEDIUM',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'Container terminals',
+    function: 'Deep-sea container handling on the Qatar gateway',
+    note: 'Two terminals currently operational; optimum capacity 5M TEU/year',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'General cargo terminal',
+    function: 'Breakbulk and general cargo handling',
+    note: 'Capacity 7M tonnes',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'Bulk grain handling',
+    function: 'Grain imports and bulk discharge',
+    note: 'Capacity 1M tonnes',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'Vehicle terminal',
+    function: 'RoRo and vehicle-handling capability',
+    note: 'Capacity about 500,000 vehicles per year',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'Customs inspection area',
+    function: 'Rapid customs screening and clearance in the port zone',
+    note: 'Capacity 5,600 containers/day',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'Adjacent free zone',
+    function: 'Logistics, re-export and industrial activity connected to the port',
+    note: 'Free-zone treatment depends on the specific zone rules',
+    confidence: 'MEDIUM',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Doha and across Qatar',
+    note: 'Qatar is compact; most final deliveries are within a short inland leg',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Hamad Port terminal / Mwani Qatar',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'General Authority of Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'General Authority of Customs',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'General VAT',
+    who: 'Qatar tax framework',
+    magnitude: 'No general VAT on imports in the current framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to Doha / Qatar',
+    who: 'Local trucking operator',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Vessel routing and transshipment',
+    effect: 'A direct loop saves time; a transshipped box adds a handling point',
+    direction: 'Transit and handling variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Qatar market size',
+    effect: 'Smaller volume than Dubai or the Saudi Eastern Province raises per-shipment cost',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Single commercial gateway',
+    effect: 'Hamad Port concentration gives focus but reduces port-choice flexibility',
+    direction: 'Routing fixed',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Documents and Al-Nadeeb readiness',
+    effect: 'Late or wrong documents delay clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Restricted commodity screen',
+    effect: 'Permit requirements can add inspection time',
+    direction: 'Clearance risk up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Port free-time discipline',
+    effect: 'Demurrage/detention apply after free time',
+    note: 'Book trucking before discharge',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where is Hamad Port located?',
+    a: 'Hamad Port is on the Arabian Gulf coast of Qatar, south of Doha. It is the country’s primary commercial seaport and the destination for containerised and general cargo moving into Qatar.',
+  },
+  {
+    q: 'What is the UN/LOCODE for Hamad Port?',
+    a: 'The UN/LOCODE is QAHMD. Use it on the bill of lading and customs paperwork when the destination is Hamad Port.',
+  },
+  {
+    q: 'When did Hamad Port open?',
+    a: 'Operations began in December 2016, and the port was officially inaugurated on 5 September 2017. It was built to replace the commercial role of the old Doha Port.',
+  },
+  {
+    q: 'Who operates Hamad Port?',
+    a: 'Mwani Qatar manages Hamad Port under the Ministry of Transport. The port is the anchor of Qatar’s modern commercial port system.',
+  },
+  {
+    q: 'How big is Hamad Port?',
+    a: 'The port covers an area of 29 square kilometres. It has general cargo capacity of 7 million tonnes, grain capacity of 1 million tonnes and a vehicle terminal of about 500,000 vehicles per year.',
+  },
+  {
+    q: 'What is Hamad Port’s container capacity?',
+    a: 'Hamad Port has three planned container terminals, with two currently operational at an optimum capacity of 5 million TEU per year. Its long-term capacity is planned above 7.5 million TEU per year.',
+  },
+  {
+    q: 'What is the difference between Hamad Port and Doha Port?',
+    a: 'Doha Port was Qatar’s legacy commercial port. Container and general cargo traffic moved to the new Hamad Port, and Doha Port has since been redeveloped for cruise and waterfront use. New China container consignments should be booked to Hamad Port.',
+  },
+  {
+    q: 'How long does sea freight take from China to Hamad Port?',
+    a: 'WorldFreightHub route data records a typical 22 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Hamad Port (MEDIUM confidence). A secondary market guide gives a wider 22–28-day Qatar sea bracket (LOW). Verify with your carrier before relying on the figure.',
+  },
+  {
+    q: 'What is Hamad Port’s 2025 throughput?',
+    a: 'A trade-press report puts total Qatar ports container throughput at about 1.46 million TEUs in 2025, with Hamad Port transshipment reported at nearly half of the country’s container volume. The port-specific split is a secondary figure, so verify the current statistics with Mwani Qatar.',
+  },
+  {
+    q: 'What import taxes apply at Hamad Port?',
+    a: 'The baseline import duty is 5% of CIF value under the GCC Common External Tariff. Qatar has no general VAT on imports in the current framework. Specific goods may have different duty lines, and tobacco/alcohol can be heavily restricted.',
+  },
+  {
+    q: 'What documents are needed for customs clearance at Hamad Port?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS code and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
+  },
+  {
+    q: 'How do demurrage and detention work at Hamad Port?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the carrier when the container stays outside the port beyond free time. Finish Al-Nadeeb clearance and book trucking before discharge to avoid both.',
+  },
+  {
+    q: 'Is there a free zone at Hamad Port?',
+    a: 'Yes, Hamad Port has an adjacent free zone connected to the port area. Free-zone treatment depends on the specific zone rules and the commercial activity, so confirm the conditions with Mwani Qatar and the relevant authority before assuming a duty or regulatory benefit.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Hamad Port Qatar — China Shipping Guide: Modern Gateway, Transit Times & Clearance (September 2026)',
+      description:
+        'Hamad Port intelligence for China freight: Qatar’s modern commercial gateway, Mwani Qatar operation, Doha Port replacement, China transit windows, port facilities and 5% duty clearance.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Hamad Port',
+      url: pageUrl,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Doha',
+        addressCountry: 'QA',
+      },
+      description:
+        'Hamad Port is Qatar’s primary commercial seaport, located south of Doha on the Arabian Gulf coast. Managed by Mwani Qatar, it replaced Doha Port as the country’s main container and general cargo gateway.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Hamad Port Qatar — China Shipping Guide: Modern Gateway, Transit Times & Clearance (September 2026)"
+  description="Hamad Port intelligence for China freight: Qatar’s modern commercial gateway, Mwani Qatar operation, Doha Port replacement, China transit windows, port facilities and 5% duty clearance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Hamad Port' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Hamad Port: China freight guide for Qatar’s modern commercial gateway</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight to Qatar. This page explains what
+        Hamad Port is, why it replaced Doha Port for commercial traffic, how the port is run by Mwani
+        Qatar, how long China ocean moves take, what the destination cost stack looks like, and the
+        5% duty clearance rules that apply at the gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified port facts from indicative market and throughput figures.
+        Treat every LOW-confidence transit, fee and throughput note as indicative, and verify with
+        Mwani Qatar or your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Port role</span>
+          <span class="fact-value">Primary seaport <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Operator</span>
+          <span class="fact-value">Mwani Qatar <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{unlocode} <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Opened</span>
+          <span class="fact-value">2017 inaugurated <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">Typical 22 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Hamad Port matters for China freight</h2>
+    <p>
+      Hamad Port is the anchor of Qatar’s modern maritime trade. It was purpose-built as a deep-water
+      port complex south of Doha and took over the commercial cargo role from the old Doha Port,
+      which was later repositioned for cruise and waterfront use. For China-to-Qatar ocean freight,
+      that transition removes the old routing ambiguity: Hamad Port is the destination, and Doha Port
+      is not a valid container discharge point for new commercial consignments.
+    </p>
+    <p>
+      The strategic logic is both port modernisation and market fit. Qatar is a compact, high-income
+      economy with strong energy-driven demand for project cargo, machinery, spare parts, vehicles,
+      grain and consumer goods. Hamad Port concentrates that demand in one modern gateway with
+      dedicated container, general cargo, bulk and vehicle capacity, plus a customs inspection area
+      designed for rapid container screening. The port’s adjacent free zone extends that gateway into
+      logistics, re-export and light industrial activity.
+    </p>
+    <p>
+      The verified research snapshot does not provide a clean Hamad-specific 2025 container split.
+      It does confirm a trade-press total of about <strong>1.46 million TEUs across Qatar ports in
+      2025</strong>, with Hamad transshipment reported at nearly half of the country’s container
+      volume. That number is secondary and marked LOW in the parameters table; Mwani Qatar is the
+      authoritative source for the current port-specific figure.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Hamad Port parameters</h2>
+      <p>
+        Use this table as an orientation, not a capacity guarantee. The opening date, operator, port
+        area and facility capacities are HIGH-confidence port-authority facts; the 2025 Qatar
+        throughput total is a trade-press figure marked LOW until Mwani Qatar confirms the
+        port-specific split.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Port parameters — operational and capacity facts are sourced from Mwani Qatar; the 2025 throughput total is a trade-press figure to verify with Mwani Qatar."
+      />
+      <SourceList sources={portFactSources} title="Sources — Hamad Port parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth,
+        draft, crane capability, heavy-lift availability or terminal window, request the current
+        schedule and restrictions from Mwani Qatar or your forwarder before booking. The verified
+        snapshot does not supply berth-by-berth operational constraints.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Hamad Port transit windows</h2>
+    <p>
+      Transit to Hamad is usually quoted as a window, not a promise. The route data places Hamad
+      slightly behind Jebel Ali on the China-to-GCC corridor: a typical 22 days with a 15–30 day
+      planning range. The port-to-port figure should not be confused with door-to-door time to Doha,
+      which adds discharge, clearance and final trucking.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Hamad Port transit times" />
+
+    <div class="note mt-2">
+      <strong>Port-to-port vs Doha door:</strong> typical 22 days for the ocean leg is not total door
+      time. Add Hamad discharge, Al-Nadeeb clearance, any inspection and last-mile trucking before
+      committing a delivery date to a Qatar consignee.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Hamad Port vs Doha Port: the modern replacement</h2>
+      <p>
+        The Hamad/Doha transition is the key decision context for Qatar freight. Hamad Port is the
+        modern commercial gateway; Doha Port is the legacy name that still appears in some older
+        freight material. The table below gives the common scenarios, and the two cards summarise
+        the rule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestChoice', label: 'Best-fit gateway' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm the inland leg and service before choosing the discharge gateway."
+      />
+      <SourceList sources={decisionSources} title="Sources — Hamad vs Doha routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Book Hamad Port when...">
+          <ul>
+            <li>The consignment is containerised, general cargo, project freight, vehicles or grain.</li>
+            <li>You are importing from China to Doha or any Qatar destination.</li>
+            <li>You want the modern Mwani Qatar commercial gateway and its hinterland link.</li>
+            <li>You want the port’s rapid inspection and free-zone-adjacent capability.</li>
+          </ul>
+        </Card>
+        <Card title="Do not book Doha Port for commercial containers when...">
+          <ul>
+            <li>The shipment is a new containerised China import.</li>
+            <li>Your forwarder still shows an old “Port of Doha” routing in the quote.</li>
+            <li>You need a container terminal and customs inspection capacity.</li>
+            <li>You want a discharge point that reflects the post-2017 Qatar port structure.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Terminals, facilities and the Doha hinterland</h2>
+    <p>
+      Hamad Port is a multi-cargo complex rather than a single terminal. The port-authority figures
+      cover container, general cargo, bulk grain and vehicle handling, while the adjacent free zone
+      extends the gateway into logistics and re-export activity. Confirm the specific terminal
+      allocation and service availability with Mwani Qatar for the actual call.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation from Mwani Qatar, not a terminal directory. Confirm operator, berth and inland-transfer details with Mwani Qatar before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Hamad Port facilities & terminals" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Post-arrival cost composition at Hamad Port</h2>
+      <p>
+        The verified snapshot quantifies the statutory 5% duty and the no-general-VAT position, but it
+        does not publish Hamad destination THC, brokerage, demurrage or inland trucking amounts. Treat
+        the operational lines as LOW confidence and request an itemised fee schedule before booking.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only baseline duty (5% CIF) and no general VAT are stated from verified/secondary sources. Unquantified fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — Hamad destination costs & customs" />
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged by
+        the ocean carrier when the container stays outside the port beyond the free time allowed after
+        collection. Free-time allowances and per-day rates differ by line and terminal and were not
+        published in the research snapshot, so always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        Al-Nadeeb declaration early, keep the HS code and documents ready, screen restricted goods,
+        and book trucking before the container is discharged.
+      </p>
+
+      <h3 class="mt-3">What changes the cost and the clock</h3>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional factors, not quantified figures. Single-gateway and document-readiness effects are MEDIUM confidence; routing and surcharges are LOW."
+      />
+      <SourceList sources={[...costSources, ...facilitySources]} title="Sources — Hamad cost & transit factors" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance at Hamad Port: Al-Nadeeb, duty and restricted goods</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Qatar’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common External
+      Tariff, with no general VAT on imports in the current framework. That makes the statutory stack
+      simpler than Saudi Arabia or the UAE: for most goods the duty-only landed cost is
+      <code>CIF × 1.05</code>. Specific products can still attract different tariff lines, and
+      tobacco or alcohol imports are heavily restricted and may carry much higher treatment where
+      permitted.
+    </p>
+
+    <h3>Al-Nadeeb in the correct order</h3>
+    <ol>
+      <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
+      <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
+      <li>Prepare the commercial invoice, bill of lading, packing list and certificate of origin.</li>
+      <li>File the <strong>Al-Nadeeb</strong> electronic customs declaration before or upon arrival.</li>
+      <li>Pay the assessed 5% duty on CIF, pass inspection if selected, and release the container.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin, with the correct HS codes and country-of-origin information. Restricted goods may
+      require an import licence or permit. Note that <strong>ISF</strong> is a United States
+      requirement and does not apply to Qatar; Qatar’s advance-filing step is the Al-Nadeeb
+      declaration through the General Authority of Customs.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Qatar customs & port compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Port
+      parameters, opening facts and facility capacities are re-checked against Mwani Qatar; the
+      2025 throughput total is re-checked against trade-press and Mwani Qatar releases. China
+      transit figures are re-checked against the WorldFreightHub route data each month.
+    </p>
+    <p>
+      If a Hamad-specific berth, terminal throughput, destination fee amount or free-time schedule
+      becomes available from Mwani Qatar or a carrier, the table is updated, the confidence badge is
+      raised, and the modified date in the page metadata is changed. Until then, unquantified fees
+      stay LOW confidence with a request-the-schedule note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Hamad Port quote"
+      text="Tell us your origin, commodity, container or CBM and final Qatar destination, and we will connect you with providers who can quote ocean freight, Al-Nadeeb clearance, 5% duty and Hamad destination fees together."
+    />
+  </section>
+</BaseLayout>

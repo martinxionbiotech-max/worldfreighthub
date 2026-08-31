@@ -1,0 +1,718 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/qatar-customs-duty/`;
+
+const traddal: Source = {
+  id: 'traddal-qatar',
+  name: 'Traddal — Calculate duties and taxes for imports to Qatar',
+  url: 'https://traddal.com/resources/calculate-duties-taxes-imports-qatar',
+  type: 'organization',
+};
+const goodsacrossborders: Source = {
+  id: 'goodsacrossborders-qatar',
+  name: 'Goods Across Borders — Qatar import duty and tax guide',
+  url: 'https://goodsacrossborders.com/countries/qatar',
+  type: 'organization',
+};
+const rateships: Source = {
+  id: 'rateships-qatar',
+  name: 'RateShips — Qatar customs clearance and import duty',
+  url: 'https://www.rateships.com/qatar/',
+  type: 'industry',
+};
+
+const qatarCustomsSources = sourcesByIds(['qatar-customs']);
+const taxSources: Source[] = [...qatarCustomsSources, traddal, goodsacrossborders, rateships];
+const timelineSources: Source[] = [...qatarCustomsSources, traddal];
+const restrictedSources: Source[] = [...qatarCustomsSources, traddal, goodsacrossborders];
+
+const dutyRows = [
+  {
+    component: 'Baseline import duty',
+    who: 'General Authority of Customs',
+    rate: '5% of CIF value',
+    basis: 'GCC Common External Tariff, ad valorem on CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'General VAT',
+    who: 'Qatar tax framework',
+    rate: 'No general VAT on imports',
+    basis: 'Qatar has not introduced a general VAT on imports in the current framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Food staples / exempt goods',
+    who: 'General Authority of Customs',
+    rate: '0% for certain essential food items',
+    basis: 'Specific HS-code exemptions',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Tobacco',
+    who: 'General Authority of Customs',
+    rate: '100%',
+    basis: 'High tariff line and strict control',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Alcohol',
+    who: 'General Authority of Customs',
+    rate: '100% where import is permitted',
+    basis: 'Heavily restricted; personal/commercial import is not routine',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Customs brokerage / clearance fee',
+    who: 'Licensed Qatar customs broker',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Service fee, not a statutory tax',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Al-Nadeeb / e-processing charge',
+    who: 'General Authority of Customs / service provider',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Electronic processing and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Storage, demurrage or detention',
+    who: 'Terminal / airport / carrier',
+    rate: 'Per-day after free time',
+    basis: 'Free time varies by operator',
+    confidence: 'LOW',
+  },
+];
+
+const calcTimelineRows = [
+  {
+    step: 'Classify the goods with the correct HS code',
+    when: 'Before quoting or booking',
+    basis: 'The code decides the duty line, permits and prohibited/restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Establish the CIF value',
+    when: 'Before the declaration',
+    basis: 'Cost + insurance + freight; the base for Qatar customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Screen for prohibited, restricted or permit goods',
+    when: 'Before shipment',
+    basis: 'Alcohol, tobacco, pork, narcotics, weapons and religious-sensitive items are strict',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess customs duty',
+    when: 'At declaration',
+    basis: 'CIF value × duty rate; baseline 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Apply any general VAT layer',
+    when: 'At declaration',
+    basis: 'No general VAT on imports in the current Qatar framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Al-Nadeeb declaration',
+    when: 'Before release',
+    basis: 'Electronic declaration with invoice, packing list, B/L or AWB and certificate of origin',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pay duty and service charges',
+    when: 'Before release',
+    basis: 'Duty is statutory; brokerage and processing fees are separate',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Release and deliver the cargo',
+    when: 'After payment and any inspection',
+    basis: 'Goods release once duty, documents and permit checks are complete',
+    confidence: 'LOW',
+  },
+];
+
+const ddpVsSelfRows = [
+  {
+    factor: 'Who pays the 5% duty',
+    selfPay: 'The importer pays the General Authority of Customs directly at clearance',
+    ddp: 'The seller or forwarder pays and builds the cost into one price',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Tax visibility',
+    selfPay: 'Full line-item visibility on the Al-Nadeeb duty assessment',
+    ddp: 'Duty and service fees are embedded in one all-in price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and valuation risk',
+    selfPay: 'The importer owns classification and any audit exposure',
+    ddp: 'The forwarder handles filing, but a wrong HS code still changes the final cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cash-flow timing',
+    selfPay: 'Duty is settled at clearance, after the goods arrive',
+    ddp: 'Duty is included in the upfront delivered price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Restricted-goods responsibility',
+    selfPay: 'The importer owns permits and prohibited/restricted screening',
+    ddp: 'The forwarder can manage it, but the legal responsibility still follows the importer',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Usually best for',
+    selfPay: 'Established Qatar importers with a broker and HS-code discipline',
+    ddp: 'First-time importers, small parcels and buyers who want one provider',
+    confidence: 'LOW',
+  },
+];
+
+const categoryRows = [
+  {
+    category: 'General merchandise at the GCC baseline',
+    duty: '5% of CIF',
+    vat: 'No general VAT',
+    note: 'The default position for most goods without a special tariff line',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Certain food staples',
+    duty: '0%',
+    vat: 'No general VAT',
+    note: 'Specific essential food lines may be exempt — confirm the HS code',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Tobacco',
+    duty: '100%',
+    vat: 'No general VAT',
+    note: 'High tariff and strict control',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Alcohol',
+    duty: '100% where permitted',
+    vat: 'No general VAT',
+    note: 'Heavily restricted; not a routine import',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Prohibited / restricted goods',
+    duty: 'N/A if entry is refused',
+    vat: 'N/A',
+    note: 'Narcotics, weapons, counterfeit goods, pork and religious-sensitive items',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Permit-dependent goods',
+    duty: 'Same duty line for the HS code',
+    vat: 'No general VAT',
+    note: 'Import licence or agency approval may be required before arrival',
+    confidence: 'LOW',
+  },
+];
+
+const landedCostRows = [
+  {
+    line: 'CIF value',
+    formula: 'Cost + insurance + freight',
+    example: '1,000.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Customs duty',
+    formula: 'CIF value × 5%',
+    example: '50.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'General VAT',
+    formula: 'No general VAT on imports',
+    example: '0.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Total before operational fees',
+    formula: 'CIF value + customs duty',
+    example: '1,050.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Operational fees',
+    formula: 'Brokerage + Al-Nadeeb + inspection + delivery + storage',
+    example: 'Request itemised schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the Qatar import duty rate?',
+    a: 'The baseline import duty is 5% of the CIF value — cost, insurance and freight — under the GCC Common External Tariff. Specific goods can have higher tariff lines, including 100% for tobacco and alcohol where permitted, so the baseline is not the final rate for every product. Treat the 5% figure as MEDIUM confidence and verify the line for your HS code with the General Authority of Customs.',
+  },
+  {
+    q: 'Does Qatar charge VAT on imports?',
+    a: 'No general VAT applies to imports in the current Qatar framework. The main statutory charge is the 5% customs duty on CIF value. This is a MEDIUM-confidence current-state finding — verify the current position with the General Authority of Customs or your broker before finalising a landed-cost quote.',
+  },
+  {
+    q: 'How is Qatar customs duty calculated?',
+    a: 'For most goods, customs duty is calculated as CIF value × 5%. CIF is the cost of the goods plus insurance plus freight. Unlike Saudi Arabia or the UAE, there is no separate general VAT layer on top of that duty in the current framework.',
+  },
+  {
+    q: 'What is the combined landed-cost multiplier for Qatar duty?',
+    a: 'At the 5% baseline, the statutory landed cost is CIF × 1.05. A CIF value of 1,000 USD becomes 1,050 before operational fees. This is arithmetic based on the verified rate, not a binding assessment — rates are subject to change and should be verified with the General Authority of Customs.',
+  },
+  {
+    q: 'Can you show a worked example for a CIF 1,000 USD shipment?',
+    a: 'Yes: customs duty is 1,000 × 5% = 50. No general VAT is applied, so the total before operational fees is 1,050. Operational fees such as brokerage, Al-Nadeeb processing, inspection and delivery sit on top and should be requested as an itemised schedule.',
+  },
+  {
+    q: 'How does the HS code affect Qatar import duty?',
+    a: 'The HS code decides the duty line — 5% baseline, 0% for certain essential foods, 100% for tobacco or alcohol, or a prohibited/restricted classification. It also drives permit requirements and the prohibited-goods screen. Classify before quoting, because a reclassification at the border changes the duty and any all-in price built on the wrong code.',
+  },
+  {
+    q: 'What goods are prohibited or restricted in Qatar?',
+    a: 'Qatar strictly controls alcohol, tobacco, pork and any goods that conflict with Islamic values. Narcotics, weapons, counterfeit goods, hazardous materials and certain animal/plant products are also prohibited or tightly controlled. Some regulated products require an import licence or approval before arrival.',
+  },
+  {
+    q: 'What is Al-Nadeeb?',
+    a: 'Al-Nadeeb is Qatar’s electronic customs clearance system. The importer or broker submits the import declaration through Al-Nadeeb, attaches the required documents, pays the assessed 5% duty on CIF, and receives the release after any inspection or permit checks are completed.',
+  },
+  {
+    q: 'What documents are needed for Qatar customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods.',
+  },
+  {
+    q: 'What is the difference between DDP and paying Qatar duty myself?',
+    a: 'Self-payment keeps the importer as the taxpayer with full Al-Nadeeb line-item visibility. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying 5% duty does not change — only who pays, how visible the duty is, and how the cash flow is structured.',
+  },
+  {
+    q: 'Is there a de minimis threshold for Qatar imports?',
+    a: 'The research snapshot does not establish a reliable low-value exemption for Qatar. Do not assume a de minimis threshold for personal courier shipments without confirming the current position with the General Authority of Customs.',
+  },
+  {
+    q: 'Do I need an import licence to clear goods in Qatar?',
+    a: 'Not for all goods, but regulated and restricted products may require an import licence or approval from the relevant Qatari agency. Confirm the permit requirement for your HS code and commodity before shipment rather than waiting until arrival.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Qatar Customs Duty & Clearance: The CIF × 1.05 Landed-Cost Stack (September 2026)',
+      description:
+        'Qatar customs clearance and import duty guide: 5% CIF baseline duty, no general VAT, Al-Nadeeb filing, required documents, HS code treatment, restricted goods and the CIF × 1.05 landed-cost example.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Qatar Customs Duty & Clearance: The CIF × 1.05 Landed-Cost Stack (September 2026)"
+  description="Qatar customs clearance and import duty guide: 5% CIF baseline duty, no general VAT, Al-Nadeeb filing, required documents, HS code treatment, restricted goods and the CIF × 1.05 landed-cost example."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Qatar customs & import duty' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Qatar customs clearance &amp; import duty: the CIF × 1.05 landed-cost stack</h1>
+      <p class="lead">
+        A customs-first brief for China-to-Qatar imports: the 5% CIF duty baseline, the absence of a
+        general VAT layer, Al-Nadeeb electronic filing, the document set, HS-code treatment, strict
+        prohibited/restricted goods, and the arithmetic that turns a CIF value into a statutory
+        landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative operational fees. The 5% duty and
+        no-general-VAT position are MEDIUM confidence; brokerage, processing and storage amounts were
+        not published in the verified snapshot and must be requested as an itemised schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">General VAT</span>
+          <span class="fact-value">None <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Clearance system</span>
+          <span class="fact-value">Al-Nadeeb <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Authority</span>
+          <span class="fact-value">General Authority of Customs <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Tobacco / alcohol</span>
+          <span class="fact-value">100% / strict <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.05 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The Qatar tax stack at a glance</h2>
+    <p>
+      Qatar’s import tax position is simpler than the neighbouring GCC duty-plus-VAT stacks. The main
+      statutory charge on most goods is a <strong>5% customs duty on the CIF value</strong>, and the
+      current framework has no general VAT on imports. That means the baseline statutory landed cost
+      is:
+    </p>
+    <div class="note">
+      <strong>Total before operational fees = CIF × 1.05.</strong><br />
+      A CIF value of 1,000 USD becomes 1,050 after the 5% duty. There is no additional general VAT
+      layer in the current Qatar framework.
+    </div>
+    <p class="mt-2">
+      The operational reality is that “simple tax” is not the same as “simple clearance”. Qatar has
+      strict prohibited/restricted goods rules and a single-window electronic flow through
+      <strong>Al-Nadeeb</strong>, so the risk is concentrated in commodity screening, HS-code
+      classification and document readiness rather than in a complex VAT calculation.
+    </p>
+    <p class="small muted">
+      The 5% CIF duty baseline and no-general-VAT position are MEDIUM confidence in the research
+      snapshot. Treat them as current-state planning inputs and verify the duty line for your HS code
+      with the General Authority of Customs before committing.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Duty, no VAT and the known tariff lines</h2>
+      <p>
+        Only the statutory rates are known. Brokerage, Al-Nadeeb processing, inspection and storage
+        amounts were not published in the verified research snapshot, so this page refuses to invent a
+        single “customs fee” number. Request an itemised schedule for the operational lines from a
+        licensed broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'component', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'rate', label: 'Rate or amount' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={dutyRows}
+        caption="Only the 5% CIF duty and no-general-VAT position are stated. Tariff exceptions are MEDIUM confidence secondary findings; operational fees are LOW and must be requested as an itemised schedule."
+      />
+      <SourceList sources={taxSources} title="Sources — Qatar import duty & no VAT" />
+
+      <div class="note mt-2">
+        <strong>Tax checklist before booking:</strong> ask for the HS-code duty line, the CIF valuation
+        used, any restricted-goods permit, plus brokerage, Al-Nadeeb, inspection and storage-free-time
+        charges — in writing, on the same quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The assessment timeline: from HS code to release</h2>
+    <p>
+      Qatar duty is not a single percentage charged on arrival; it is an ordered calculation that
+      starts with classification and commodity screening. If the first two steps are wrong, the
+      clearance can stall at the border — and unlike a VAT-heavy market, the correction is more about
+      permits and classification than about a complex tax arithmetic.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When' },
+        { key: 'basis', label: 'What it depends on' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={calcTimelineRows}
+      caption="Statutory duty order is anchored on the verified 5% CIF rate; operational steps such as Al-Nadeeb payment and inspection are LOW confidence and should be confirmed with a broker."
+    />
+    <SourceList sources={timelineSources} title="Sources — assessment & payment timeline" />
+
+    <div class="note mt-2">
+      <strong>The order to remember:</strong> classify → screen restricted goods → value on CIF →
+      duty at 5% → confirm no general VAT → file Al-Nadeeb → pay → release. Skipping commodity
+      screening or HS classification is how a straightforward “5%” estimate turns into a border hold.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Self-paid duty vs DDP</h2>
+      <p>
+        DDP does not remove Qatar’s 5% duty; it changes who pays and how visible the duty is. The
+        choice is about cash flow, compliance ownership and transparency, not about paying less
+        statutory duty.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'selfPay', label: 'Self-paid duty' },
+          { key: 'ddp', label: 'DDP all-in' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpVsSelfRows}
+        caption="The statutory 5% duty is unchanged in either structure; only the payer, visibility, responsibility and cash-flow timing differ."
+      />
+      <SourceList sources={taxSources} title="Sources — self-paid vs DDP duty handling" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Self-pay is usually better when...">
+          <ul>
+            <li>You are an established Qatar importer with a licensed broker.</li>
+            <li>You want line-item visibility of duty, Al-Nadeeb and operational fees.</li>
+            <li>You already have HS-code discipline and permit readiness.</li>
+            <li>Your volume is high enough to justify internal clearance work.</li>
+          </ul>
+        </Card>
+        <Card title="DDP is usually better when...">
+          <ul>
+            <li>The buyer wants one all-in price and one provider to chase.</li>
+            <li>You are not established with Qatar customs or a local broker.</li>
+            <li>You sell small parcels or want the forwarder to manage clearance.</li>
+            <li>You want the forwarder to manage duty and restricted-goods timing together.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed-cost structure and the CIF 1,000 worked example</h2>
+    <p>
+      Build the landed cost in this order: CIF value, duty, no general VAT, then operational fees.
+      The table below uses a <strong>1,000 USD CIF</strong> example only to keep the arithmetic
+      transparent — it is not a market rate or a binding assessment.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Cost line' },
+        { key: 'formula', label: 'Formula' },
+        { key: 'example', label: 'Example (USD)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example uses CIF 1,000 USD purely to show the calculation. Rates are subject to change — verify with the General Authority of Customs."
+    />
+    <SourceList sources={taxSources} title="Sources — landed-cost formula" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="The formula in one line">
+        <p class="lead">
+          <strong>CIF × (1 + duty rate)</strong>
+        </p>
+        <p>
+          Baseline: CIF × 1.05. Add brokerage, Al-Nadeeb processing, inspection, delivery and any
+          storage beyond free time on top of that statutory figure.
+        </p>
+      </Card>
+      <Card title="Why Qatar differs from Saudi and UAE">
+        <p>
+          Saudi Arabia compounds 5% duty with 15% VAT, and the UAE compounds 5% duty with 5% VAT.
+          Qatar currently stops at the 5% duty layer for general VAT purposes, which makes the
+          statutory stack simpler — but the commodity screen is still strict.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
+      and freight. An unrealistically low invoice value or missing freight component invites
+      revaluation, penalties and delay.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Applicable categories: how the HS code changes the bill</h2>
+      <p>
+        The HS code is the lever that changes the duty component of the stack and drives the
+        prohibited/restricted screen. The 5% CIF baseline is the default, but specific goods sit on
+        different tariff lines.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'category', label: 'Product category / treatment' },
+          { key: 'duty', label: 'Duty treatment' },
+          { key: 'vat', label: 'General VAT treatment' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={categoryRows}
+        caption="Category treatment is drawn from the verified duty/no-VAT snapshot. Preferential eligibility and restricted-goods status must be confirmed with the General Authority of Customs for the specific goods."
+      />
+      <SourceList sources={taxSources} title="Sources — category & HS-code treatment" />
+
+      <div class="note mt-2">
+        <strong>Classification rule:</strong> resolve a borderline HS code before shipping. A change at
+        the border can move the duty line, trigger a permit or turn a normal consignment into a
+        prohibited one.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points to keep in view</h2>
+
+    <h3>The stack is duty-only for general VAT purposes</h3>
+    <p>
+      For most goods, the statutory landed cost is <strong>CIF × 1.05</strong>. Unlike Saudi Arabia’s
+      CIF × 1.05 × 1.15 or the UAE’s CIF × 1.05 × 1.05, Qatar does not add a general VAT layer on
+      top of duty in the current framework. Do not copy a Saudi or UAE calculator into a Qatar quote.
+    </p>
+
+    <h3>HS code first</h3>
+    <p>
+      Duty line, permit requirements and prohibited/restricted exposure all flow from the HS code.
+      Classify with a broker or a written ruling before quoting, and keep the invoice description
+      specific enough to defend the code.
+    </p>
+
+    <h3>CIF valuation must be complete</h3>
+    <p>
+      Cost, insurance and freight are all part of the base. A low declared value or a missing freight
+      component creates revaluation risk, and any value correction flows through the 5% duty.
+    </p>
+
+    <h3>Restricted goods are a border risk, not a tax detail</h3>
+    <p>
+      Alcohol, tobacco, pork, narcotics, weapons, counterfeit goods and religious-sensitive items are
+      strictly controlled or prohibited. Confirm the commodity status before shipment; a post-arrival
+      surprise can mean refusal, destruction, permit delay or severe demurrage.
+    </p>
+
+    <h3>Al-Nadeeb needs the documents ready</h3>
+    <p>
+      The electronic declaration is only as good as the underlying invoice, packing list, bill of
+      lading or air waybill, certificate of origin and HS-code data. Prepare the set before arrival
+      so the declaration can be filed and the free-time clock does not start.
+    </p>
+
+    <h3>No general VAT does not mean no service fees</h3>
+    <p>
+      Brokerage, Al-Nadeeb processing, inspection, delivery, demurrage and detention remain separate
+      operational costs. The research snapshot does not publish their amounts, so request an itemised
+      schedule rather than assuming “no VAT” makes the shipment fee-free.
+    </p>
+
+    <h3>Rates are subject to change</h3>
+    <p>
+      The 5% duty baseline and no-general-VAT position are from a dated snapshot. Treat every figure
+      here as a planning input and verify the current duty line, exemptions and restricted-goods
+      rules with the General Authority of Customs before finalising a landed-cost quote.
+    </p>
+
+    <SourceList sources={restrictedSources} title="Sources — Qatar customs, duty & valuation" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      statutory lines (5% CIF duty and no general VAT) are re-checked against the General Authority
+      of Customs and secondary Qatar import guides; the restricted-goods and permit notes are
+      re-checked against Qatar customs notices.
+    </p>
+    <p>
+      If a brokerage amount, Al-Nadeeb processing fee, free-time schedule or a change to the Qatar VAT
+      position becomes available from the General Authority of Customs or a licensed broker, the table
+      is updated, the confidence badge is raised, and the modified date in the page metadata is
+      changed. Until then, unquantified fees stay LOW confidence with a request-the-schedule note
+      rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Qatar landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity type and whether you want DDP or self-paid duty, and we will connect you with providers who can itemise 5% duty, Al-Nadeeb clearance and delivery."
+    />
+  </section>
+</BaseLayout>

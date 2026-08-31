@@ -1,0 +1,857 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-from-china-to-qatar/`;
+
+const hamadPort = gccPorts.find((item) => item.slug === 'hamad');
+const unlocode = hamadPort?.unlocode ?? '—';
+
+const mwani: Source = {
+  id: 'mwani-hamad',
+  name: 'Mwani Qatar — Hamad Port',
+  url: 'https://www.mwani.com.qa/English/ports/hamadport/Pages/default.aspx',
+  type: 'port-authority',
+};
+const meed: Source = {
+  id: 'meed-hamad-opening',
+  name: 'MEED — Doha’s Hamad Port to open on 1 December',
+  url: 'https://www.meed.com/dohas-hamad-port-to-open-on-1-december/',
+  type: 'industry',
+};
+const traddal: Source = {
+  id: 'traddal-qatar',
+  name: 'Traddal — Calculate duties and taxes for imports to Qatar',
+  url: 'https://traddal.com/resources/calculate-duties-taxes-imports-qatar',
+  type: 'organization',
+};
+const goodsacrossborders: Source = {
+  id: 'goodsacrossborders-qatar',
+  name: 'Goods Across Borders — Qatar import duty and tax guide',
+  url: 'https://goodsacrossborders.com/countries/qatar',
+  type: 'organization',
+};
+const presou: Source = {
+  id: 'presou-qatar',
+  name: 'Presou — How much does it cost to ship from China to Qatar',
+  url: 'https://presou.com/how-much-does-it-cost-to-ship-from-china-to-qatar/',
+  type: 'industry',
+};
+const chinabestfreight: Source = {
+  id: 'chinabestfreight-qatar',
+  name: 'China Best Freight — Shipping from China to Qatar',
+  url: 'https://www.chinabestfreight.com/region/middle-east/shipping-to-qatar.html',
+  type: 'industry',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-qatar-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port (typical 22 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const qatarCustomsSources = sourcesByIds(['qatar-customs']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const qatarPortSources: Source[] = [mwani, ...qatarCustomsSources];
+const rateSources: Source[] = [presou, chinabestfreight];
+const transitSources: Source[] = [wfhRouteData, chinabestfreight];
+const modeSources: Source[] = [chinabestfreight, presou];
+const costSources: Source[] = [
+  ...qatarCustomsSources,
+  traddal,
+  goodsacrossborders,
+  presou,
+  chinabestfreight,
+];
+const complianceSources: Source[] = [...qatarCustomsSources, traddal, goodsacrossborders];
+const marketSources: Source[] = [mwani, meed];
+
+const rateRows = [
+  {
+    service: 'LCL ocean — China to Hamad Port / Doha',
+    benchmark: 'USD 70–155 per CBM',
+    basis: 'Presou China→Qatar LCL market snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — China to Hamad International Airport (Doha)',
+    benchmark: 'USD 4.5–7.5 per kg',
+    basis: 'Presou China→Qatar air market snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ to Hamad Port',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified Qatar FCL rate appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier — China to Qatar',
+    benchmark: 'Not published in verified snapshot — request a per-kg quote',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door — China to Qatar',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'DDP embeds freight, clearance, duty and delivery',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    destination: 'Hamad Port (Doha)',
+    mode: 'Sea',
+    transit: 'Typical 22 days (range 15–30)',
+    basis: 'WorldFreightHub route data for Shanghai / Ningbo-Zhoushan / Shenzhen to Hamad',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'Qatar corridor',
+    mode: 'Sea',
+    transit: '22–28 days',
+    basis: 'China Best Freight China→Qatar sea market snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Qatar corridor',
+    mode: 'Air freight',
+    transit: '2–4 days',
+    basis: 'China Best Freight China→Qatar air market snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Doha door-to-door',
+    mode: 'DDP air',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Final delivery time depends on clearance and address zone',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea (FCL / LCL)',
+    bestFor: 'Large, heavy, low-cost-density or project cargo into Hamad Port',
+    indicativeTime: '22–28 days (LOW); Shanghai→Hamad typical 22 days (MEDIUM)',
+    indicativeCost: 'LCL USD 70–155/CBM; FCL by all-in quote (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo into Doha',
+    indicativeTime: '2–4 days (LOW)',
+    indicativeCost: 'USD 4.5–7.5/kg (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: '2–4 days (LOW)',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across Qatar freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const qatarPortRows = [
+  {
+    factor: 'Port role',
+    hamad: 'Qatar’s primary commercial seaport since 2017',
+    doha: 'Retired from commercial container traffic; cruise/legacy role',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'UN/LOCODE',
+    hamad: unlocode,
+    doha: 'Not used as the commercial container destination on the bill of lading',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Operator',
+    hamad: 'Mwani Qatar under the Ministry of Transport',
+    doha: 'Historical commercial port, redeveloped for cruise use',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'China import use case',
+    hamad: 'Default discharge port for FCL/LCL cargo serving Doha and Qatar',
+    doha: 'Not the destination for new container consignments',
+    confidence: 'MEDIUM',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'High-volume, non-urgent machinery, construction materials or furniture',
+    bestChoice: 'Sea FCL / LCL to Hamad Port',
+    why: 'Lowest unit cost when the typical 22-day sea window fits the delivery plan',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Time-critical electronics, spare parts or retail replenishment',
+    bestChoice: 'Air freight to Doha',
+    why: '2–4 days beats a 22-day ocean move when stockout cost exceeds freight cost',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Small samples, documents or urgent parcels',
+    bestChoice: 'Express courier',
+    why: 'Door-level convenience and speed for low-weight, high-urgency items',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Importer wants one price and one provider for customs plus delivery',
+    bestChoice: 'DDP door-to-door',
+    why: 'Duty, clearance and last mile are bundled into a single quote',
+    confidence: 'LOW',
+  },
+];
+
+const processRows = [
+  {
+    step: 'Confirm the product and HS code',
+    who: 'Shipper / forwarder',
+    note: 'The code drives Qatar duty, permits and prohibited/restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Book origin collection and China export clearance',
+    who: 'Forwarder / supplier',
+    note: 'From Shanghai, Ningbo-Zhoushan, Shenzhen or the named China origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Move cargo to the load port and issue the export documents',
+    who: 'Forwarder / carrier',
+    note: 'Commercial invoice, packing list and bill of lading are the core set',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Run the ocean or air main carriage',
+    who: 'Carrier',
+    note: 'Sea typical 22 days to Hamad; air 2–4 days to Doha',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Discharge at Hamad Port or Doha airport',
+    who: 'Terminal / handler',
+    note: 'Hamad is the container gateway; Doha International for air freight',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Qatar import declaration through Al-Nadeeb',
+    who: 'Importer / customs broker',
+    note: 'Attach invoice, packing list, B/L or AWB, certificate of origin and HS codes',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pay the 5% customs duty on CIF',
+    who: 'Importer / broker',
+    note: 'No general VAT is applied on top in the current Qatar framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pass inspection and clear any restricted/permit goods',
+    who: 'General Authority of Customs / agencies',
+    note: 'Alcohol, tobacco, pork, narcotics and religious-sensitive items are strict',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Collect the container or deconsolidate LCL',
+    who: 'Importer / haulier',
+    note: 'Keep demurrage and detention free time in view',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Deliver the last mile to Doha or another Qatar site',
+    who: 'Local trucker',
+    note: 'Confirm the delivery address, equipment and any site access restrictions',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean or air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'See rate table',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC and port charges',
+    who: 'Hamad Port terminal / Mwani Qatar',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Qatar customs clearance and brokerage',
+    who: 'General Authority of Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'General Authority of Customs',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'General VAT',
+    who: 'Qatar tax framework',
+    magnitude: 'No general VAT on imports in the current framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Peak season / general rate increases',
+    effect: 'Higher ocean and air rates; tighter space into Hamad and Doha',
+    direction: 'Cost up, transit risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Fuel / bunker adjustment factor',
+    effect: 'Adds a variable surcharge to the base freight rate',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'LCL consolidation and CFS handling',
+    effect: 'Extra origin/destination warehouse handling vs FCL',
+    direction: 'Transit up vs FCL',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Direct vs transshipment service',
+    effect: 'A transshipped box adds another terminal handling point',
+    direction: 'Transit and handling variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Documents and HS code readiness',
+    effect: 'Late or wrong documents delay Al-Nadeeb clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Prohibited / restricted commodity screen',
+    effect: 'Alcohol, tobacco, pork and religious-sensitive goods require permits or cannot enter',
+    direction: 'Clearance risk up',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to Qatar take?',
+    a: 'WorldFreightHub route data records a typical 22 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Hamad Port (MEDIUM confidence). A secondary freight guide gives a Qatar-corridor sea window of 22–28 days and air freight of 2–4 days (LOW). All figures are indicative — verify with your carrier before relying on them.',
+  },
+  {
+    q: 'How much does shipping from China to Qatar cost?',
+    a: 'The market snapshot used on this page records LCL ocean around USD 70–155 per CBM and air freight around USD 4.5–7.5 per kg, both LOW-confidence figures. Verified Qatar FCL and courier rates were not published in the snapshot, so request an all-in quote. These are collected public figures, not carrier quotes — confirm with a forwarder before booking.',
+  },
+  {
+    q: 'Which port should I use when shipping from China to Qatar?',
+    a: 'Hamad Port, south of Doha, is Qatar’s primary commercial seaport and the default discharge point for containerised China cargo. The old Doha Port no longer handles commercial container traffic and has been repositioned for cruise use, so use Hamad Port on the bill of lading.',
+  },
+  {
+    q: 'Is Qatar part of the GCC common customs area?',
+    a: 'Yes. Qatar is a Gulf Cooperation Council member and applies the GCC Common External Tariff framework, which gives a 5% customs duty baseline on most imported goods. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
+  },
+  {
+    q: 'Does Qatar charge VAT on imports?',
+    a: 'The current Qatar import framework has no general VAT. The main statutory import charge is the 5% customs duty on CIF value. This is a MEDIUM-confidence current-state finding and should be verified with the General Authority of Customs or your broker before finalising a landed-cost quote.',
+  },
+  {
+    q: 'What is the difference between Hamad Port and Doha Port?',
+    a: 'Doha Port was Qatar’s legacy commercial port. Container traffic moved to the new Hamad Port after it opened, and Doha Port has since been redeveloped as a cruise terminal. For China freight, Hamad Port is the modern commercial gateway and Doha Port is not the destination for new container consignments.',
+  },
+  {
+    q: 'What documents do I need to ship from China to Qatar?',
+    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods, so confirm the specific requirement before shipping.',
+  },
+  {
+    q: 'What is Al-Nadeeb and how does Qatar customs clearance work?',
+    a: 'Al-Nadeeb is Qatar’s electronic customs clearance system. The importer or broker submits the import declaration through Al-Nadeeb, attaches the required documents, pays the assessed 5% duty on CIF, and receives the release after any inspection or permit checks are completed.',
+  },
+  {
+    q: 'What goods are restricted or prohibited in Qatar?',
+    a: 'Qatar is strict on alcohol, tobacco, pork and any goods that conflict with Islamic values. Narcotics, weapons, counterfeit goods, hazardous materials and certain animal/plant products are also tightly controlled or prohibited. Check the commodity against the General Authority of Customs before booking.',
+  },
+  {
+    q: 'How does door-to-door shipping from China to Qatar work?',
+    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Hamad Port or Doha, files the Qatar import declaration, pays the 5% duty on CIF, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to Qatar: Hamad Port Routing, Rates, Transit Times & Duty (September 2026)',
+      description:
+        'China to Qatar freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port, typical 22-day sea transit, indicative LCL/air rates, 5% duty with no general VAT, and the sea/air decision.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to Qatar: Hamad Port Routing, Rates, Transit Times & Duty (September 2026)"
+  description="China to Qatar freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port, typical 22-day sea transit, indicative LCL/air rates, 5% duty with no general VAT, and the sea/air decision."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shipping from China to Qatar' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping from China to Qatar: Hamad Port routing, rates, transit times &amp; duty</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        or Guangzhou to Hamad Port and Doha — with indicative LCL/air rates, the typical 22-day sea
+        window, the sea/air/express decision, and the 5% duty with no general VAT that shapes the
+        Qatar landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate and transit number as an indicative figure to verify with your carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Qatar import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">General VAT</span>
+          <span class="fact-value">None <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">QAR <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Main port</span>
+          <span class="fact-value">Hamad Port <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">Typical 22 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">2–4 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Qatar deserves its own China routing lens</h2>
+    <p>
+      Qatar is a small but high-income Gulf market with an outsized import profile. The country’s
+      oil and gas economy creates steady demand for industrial equipment, spare parts and project
+      cargo, while the post-World Cup infrastructure cycle continues to pull in construction
+      materials, MEP components, furniture and fit-out products for stadiums, hospitality, transport
+      and urban development. That means a China route pillar for Qatar should not simply copy the
+      UAE or Saudi playbook: the market is smaller, the port system is newer, and the statutory stack
+      is simpler — 5% duty with no general VAT — but strict goods screening means compliance work is
+      front-loaded.
+    </p>
+    <p>
+      The commercial gateway is Hamad Port, which opened as Qatar’s modern deep-water container and
+      general cargo hub and took over from the legacy Doha Port. For shippers, that transition is
+      useful context: the route is no longer about the old Doha Port name, but about booking Hamad
+      Port as the discharge point and planning the inland leg from there to Doha and the wider Qatar
+      market. Qatar’s compact geography keeps most final deliveries close to the port, but the
+      per-shipment handling cost can still be high because the market is smaller than Dubai or the
+      Saudi Eastern Province.
+    </p>
+    <p>
+      This page keeps that Qatar-specific logic explicit. It separates the verified duty and
+      no-general-VAT position from the LOW-confidence freight benchmarks, and it treats the typical
+      22-day sea transit as a planning figure, not a promised delivery date.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight rates from China to Qatar</h2>
+      <p>
+        Qatar is a lower-volume corridor than the UAE, so headline market rates can be wider and more
+        volatile than the larger Dubai trade. The figures below are deliberately labelled LOW
+        confidence because they are collected public snapshots, not carrier quotes. The research
+        snapshot quantified a LCL bracket and an air bracket; FCL, express and DDP lines are shown as
+        “request a quote” rather than being filled with invented numbers.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Indicative market snapshots, not carrier quotes. FCL, express and DDP rates were not published in the verified snapshot — request an all-in quote."
+      />
+      <SourceList sources={rateSources} title="Sources — Qatar rates" />
+
+      <div class="note mt-2">
+        <strong>Why FCL is shown as “request a quote”:</strong> the research snapshot published LCL
+        and air benchmarks but no verified Qatar FCL container rate. Never back into a container
+        price from the LCL figure — request the equipment type, surcharges and Hamad destination
+        fees itemised in writing.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit times by port and mode</h2>
+    <p>
+      The China-to-Qatar clock is usually quoted as a window, not a promise. Sea transit to Hamad
+      Port sits slightly behind the Dubai corridor in the WorldFreightHub route dataset: a typical
+      22 days with a 15–30 day planning range. Air freight compresses the main carriage to roughly
+      2–4 days, but the door-to-door time still depends on clearance, permits and final trucking in
+      Doha.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'destination', label: 'Destination' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Qatar transit times" />
+
+    <div class="note mt-2">
+      <strong>Port-to-port vs door-to-door:</strong> a typical 22-day ocean move to Hamad is not the
+      same as total door time to a Doha address. Add discharge, Al-Nadeeb clearance, any inspection
+      and last-mile trucking to the carrier figure before committing a delivery date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Sea vs air vs express: which should you book?</h2>
+      <p>
+        The decision is the same arithmetic used across the GCC, but Qatar’s smaller market changes
+        the emphasis. Sea freight wins on unit cost for heavy or bulky goods, while air freight wins
+        when a stockout is more expensive than the premium. For small parcels, express is the
+        convenient default.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'mode', label: 'Mode' },
+          { key: 'bestFor', label: 'Best for' },
+          { key: 'indicativeTime', label: 'Indicative time' },
+          { key: 'indicativeCost', label: 'Indicative cost' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={modeRows}
+        caption="Decision support, not a rate card. Air and LCL figures are LOW confidence; verify with a forwarder."
+      />
+      <SourceList sources={modeSources} title="Sources — sea vs air vs express" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose sea when...">
+          <ul>
+            <li>The cargo is heavy, bulky, palletised or containerised.</li>
+            <li>Your planning window can absorb the typical 22-day ocean move.</li>
+            <li>The landed cost matters more than the final delivery speed.</li>
+            <li>The consignment is destined for Doha or any Qatar site close to Hamad.</li>
+          </ul>
+        </Card>
+        <Card title="Choose air or express when...">
+          <ul>
+            <li>The goods are high-value, light, perishable or time-critical.</li>
+            <li>A production line or customer order cannot wait for ocean transit.</li>
+            <li>The shipment is small enough for courier or airport-to-airport handling.</li>
+            <li>The speed premium is lower than the cost of delay.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports: Shanghai, Ningbo-Zhoushan, Shenzhen &amp; Guangzhou to Hamad</h2>
+    <p>
+      The origin side is the familiar China port hierarchy. Shanghai and Ningbo-Zhoushan anchor the
+      East China ocean services; Shenzhen and Guangzhou cover South China. On the Qatar side, Hamad
+      Port is the only commercial container destination you should book for a new China consignment.
+    </p>
+
+    <h3>China origin ports</h3>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence; Shenzhen and Guangzhou throughput is not stated in the snapshot."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+    <h3 class="mt-3">Qatar destination port</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'hamad', label: 'Hamad Port' },
+        { key: 'doha', label: 'Doha Port (legacy)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={qatarPortRows}
+      caption="Hamad Port is the modern commercial destination. Doha Port has been repositioned for cruise traffic, not new container consignments."
+    />
+    <SourceList sources={qatarPortSources} title="Sources — Qatar destination port" />
+
+    <h3 class="mt-3">Door-to-door process from China to Qatar</h3>
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'who', label: 'Who owns it' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={processRows}
+      caption="The operational chain is directional; statutory steps are MEDIUM confidence and operational fee/timing steps are LOW confidence."
+    />
+    <SourceList sources={[...costSources, ...qatarPortSources]} title="Sources — Qatar door-to-door chain" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Landed cost and the factors that move it</h2>
+      <p>
+        Qatar’s statutory stack is simpler than Saudi Arabia’s duty-plus-VAT compound or the UAE’s
+        duty-plus-VAT stack. The main statutory line is <strong>5% customs duty on CIF</strong>, with
+        no general VAT currently applied. That means the baseline statutory landed cost for most
+        goods is <code>CIF × 1.05</code>. The commercial caveat is that Qatar’s smaller volume and
+        single commercial gateway can raise the operational cost per shipment — destination handling,
+        brokerage and inland fees are not absorbed by the same scale as Dubai.
+      </p>
+
+      <div class="note">
+        <strong>Baseline statutory landed cost = CIF × 1.05.</strong><br />
+        For example, a USD 10,000 CIF shipment attracts USD 500 duty, giving USD 10,500 before
+        destination fees. Rates are subject to change — verify the current duty line for your HS
+        code with the General Authority of Customs.
+      </div>
+
+      <h3 class="mt-3">Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only the 5% duty and no-general-VAT position are stated from verified/secondary sources. Unquantified fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">What changes the cost and the clock</h3>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional factors, not quantified figures. Document readiness and restricted-commodity exposure are MEDIUM-confidence regulatory effects; surcharges and routing are LOW."
+      />
+      <SourceList sources={[...costSources, ...qatarPortSources]} title="Sources — cost & transit factors" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: Qatar duty, no general VAT, documents &amp; restricted goods</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Qatar applies the GCC Common External Tariff baseline of <strong>5% customs duty on the CIF
+      value</strong> for most imported goods. The current framework has no general VAT on imports.
+      That means the statutory calculation is a single 5% layer, not the duty-plus-VAT compound used
+      in Saudi Arabia or the UAE. Specific goods can still carry different duty lines — including
+      0% for some food staples and 100% for tobacco and alcohol where import is permitted — so the
+      HS code remains the first compliance decision.
+    </p>
+
+    <h3>Documents and classification</h3>
+    <p>
+      The standard document set is a commercial invoice, bill of lading or air waybill, packing list
+      and certificate of origin. Classify goods with the correct <strong>HS code</strong> before
+      quoting, because the duty line, permit requirements and prohibited/restricted screening all
+      flow from the code. Qatar’s electronic clearance is handled through <strong>Al-Nadeeb</strong>,
+      so the pre-arrival declaration should be filed with the documents ready and the HS codes
+      correctly declared.
+    </p>
+
+    <h3>Restricted and prohibited goods</h3>
+    <p>
+      Qatar is stricter than many neighbouring GCC markets on alcohol, tobacco, pork and goods that
+      conflict with Islamic values. Narcotics, weapons, counterfeit goods, hazardous materials and
+      certain animal/plant products are prohibited or tightly controlled. Regulated products may
+      need an import licence or approval before arrival, so screen the commodity against the General
+      Authority of Customs before booking rather than discovering the restriction at the border.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Qatar customs, duty & restricted goods" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      statutory lines (5% CIF duty and no general VAT) are re-checked against the General Authority
+      of Customs and secondary Qatar import guides; the freight benchmarks are re-checked monthly
+      because they move with capacity, fuel and season.
+    </p>
+    <p>
+      If a Hamad destination fee amount, FCL rate, demurrage schedule or a change to the Qatar VAT
+      position becomes available from Mwani Qatar, a carrier or the General Authority of Customs, the
+      table is updated, the confidence badge is raised, and the modified date in the page metadata is
+      changed. Until then, unquantified fees stay LOW confidence with a request-the-schedule note
+      rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Qatar quote"
+      text="Tell us your origin, commodity, container or CBM, HS code and final Qatar destination, and we will connect you with providers who can quote ocean/air freight, 5% duty, Al-Nadeeb clearance and Hamad destination fees together."
+    />
+  </section>
+</BaseLayout>
