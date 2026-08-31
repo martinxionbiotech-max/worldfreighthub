@@ -72,6 +72,32 @@
   3. Cloudflare Pages 部署 + 子站 subdomain 规划
   4. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
 
+
+---
+
+## 2026-09-01（夜间，Day 36–50 其它 GCC — Kuwait 首批）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai，实际执行 ~02:14 CST）
+- **服务器资源**：远程 load 正常 ✅
+- **Tasks**：Codex 写 Kuwait 首批两页 —— Route Pillar（shipping-from-china-to-kuwait）+ Kuwait Customs & Import Duty（kuwait-customs-duty）；并在 `middleeast/index.astro` 注册两张卡片
+- **Research**：复用 2026-08-30 已验证数据（GCC 统一关税基线 5% CIF 计征、沙特 VAT 15% / 阿联酋 VAT 5% / 上海港 55.06M TEU）；Kuwait 专属费率/时效/港口参数未在已验证快照中 → 一律标 LOW +「not published — verify」，不杜撰
+- **Verification**：Kuwait 无一般 VAT（gcc-countries.ts vatRate=null）；Shuwaikh UN/LOCODE KWSWK、Shuaiba KWSHB；routes.ts 上海/宁波/深圳 → Shuwaikh typical 24 天（range 15–30，LOW）；Kuwait Customs 官方源 `kuwait-customs`（customs.gov.kw）
+- **Content**：
+  - `shipping-from-china-to-kuwait.astro` —— 约 4,048 词，9 模块齐全，FAQ 11 条
+  - `kuwait-customs-duty.astro` —— 约 3,254 词，9 模块齐全，FAQ 13 条
+  - 两页均含 Shuwaikh vs Shuaiba 分流对比 + 隐藏成本栈（THC/港口服务费/查验/demurrage/detention）
+- **Gap Analysis**：继续打 Demurrage/Detention + Hidden Charges 高价值 Gap；明确标注「SABER/SASO 仅限沙特，Kuwait 不适用」避免用户误套沙特合规步骤
+- **SEO / AIO / EEAT**：Article + FAQPage + BreadcrumbList + Organization schema；ConfidenceBadge 数据点全标注；月度更新标记「August 2026 updated」
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card/Breadcrumb 组件，无新组件
+- **QA**：`npm run build` 121 页零 error；两页 FAQ ≥11 条、词数 ≥2500、每个数据点有来源或标 LOW，无杜撰数字
+- **Build Result**：✅ 121 pages，clean
+- **Git Commit**：`316a020` `feat(middleeast): add Kuwait route pillar and customs/duty pages`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. Kuwait 已 2 页 ✅（Route Pillar + Customs/Duty）；后续补 Shuwaikh/Shuaiba 港口情报页 + Shipping Cost/Transit 页
+  2. 下一批：Oman（Route Pillar + Sohar/Salalah + Customs + 5% VAT）→ Bahrain（Route Pillar + Khalifa bin Salman + Customs + 10% VAT）
+  3. Cloudflare Pages 部署 + 子站 subdomain 规划
+  4. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
 （模板）
 ## YYYY-MM-DD
 

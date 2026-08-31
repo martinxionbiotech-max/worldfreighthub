@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 01:15 (Asia/Shanghai)
+> 最后更新：2026-09-01 02:20 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -54,7 +54,7 @@
 - [x] STEP 9 Firecrawl 竞品/中文/Primary Sources Research（`docs/research-notes-2026-08-30.md`）
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
-- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅；Directory/Ad/Quote 未开始）
+- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅ / Kuwait 2 页 ✅；Directory/Ad/Quote 未开始）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
 
 ## 关键交付物（已入库 docs/）
@@ -64,6 +64,7 @@
 - `research-notes-2026-08-30.md` — Firecrawl 已验证数据 + 竞品矩阵 + 失败记录
 - `competitor-gap.md` — Competitor Content Matrix + Gap Matrix（§16/§17 分类 + §19 评分）
 - `content-roadmap.md` — Phase 1 约 50 页序列（Day 1–90）
+- `daily-log.md` — 每夜生产日志
 
 ## 已验证核心数据（content 可用，标注 confidence）
 
@@ -83,7 +84,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. Day 36–50：继续其它 GCC —— 下一批 Kuwait（Route Pillar + Shuwaikh/Shuaiba 港口 + Customs + Duty），随后 Oman / Bahrain
+1. Day 36–50：继续其它 GCC —— Kuwait 已 2 页（Route Pillar + Customs/Duty）；补 Shuwaikh/Shuaiba 港口情报页 + Shipping Cost/Transit 页；随后 Oman（Route Pillar + Sohar/Salalah + Customs + 5% VAT）→ Bahrain（Route Pillar + Khalifa bin Salman + Customs + 10% VAT）
 2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
 3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
 4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
