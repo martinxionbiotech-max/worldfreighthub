@@ -1,0 +1,831 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/lcl-shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, sinoShipping];
+const lclRateSources: Source[] = [freightos];
+const transitSources: Source[] = [freightos, cargofromchina, ddpchain, chinaddpshipping];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  sasoInfo,
+  freightos,
+];
+
+const lclRows = [
+  {
+    volume: 'LCL 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / CBM',
+    note: 'Minimum-charge territory: unit cost is highest at the floor volume',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / CBM',
+    note: 'Unit cost falls as fixed consolidation charges are spread',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / CBM',
+    note: 'Approaching the planning zone where FCL comparison matters',
+    confidence: 'LOW',
+  },
+];
+
+const fclComparisonRows = [
+  {
+    container: 'FCL 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    note: 'Roughly 33 CBM nominal capacity — compare against ~15–25 CBM of actual cargo',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    note: 'Roughly 67 CBM nominal capacity — the usual full-load benchmark',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'Not published',
+    note: 'High cube for volume, not weight',
+    confidence: 'LOW',
+  },
+];
+
+const lclTransitRows = [
+  {
+    destination: 'Jeddah',
+    service: 'Sea LCL',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days average (Shenzhen–Jeddah); ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Dammam / Riyadh Dry Port',
+    service: 'Sea LCL',
+    transit: '32–45 days',
+    basis: 'Freightos Shanghai–Riyadh LCL route data',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Riyadh (Shanghai origin)',
+    service: 'Sea FCL (comparison)',
+    transit: '30–40 days',
+    basis: 'Freightos Shanghai–Riyadh FCL route data',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Jeddah & Dammam',
+    service: 'Air (comparison)',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days; ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const lclVsFclRows = [
+  {
+    factor: 'Best-fit volume',
+    lcl: 'Small shipments, commonly below ~15 CBM (planning heuristic)',
+    fcl: 'Most of a container — 20GP ~33 CBM, 40GP ~67 CBM nominal',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Pricing basis',
+    lcl: 'Per CBM or per chargeable weight, with a minimum charge',
+    fcl: 'Per container, regardless of how full it is',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit & handling',
+    lcl: 'Slower because of origin consolidation and destination CFS deconsolidation',
+    fcl: 'Usually faster and simpler; one unit moves as a single consignment',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Damage / security risk',
+    lcl: 'Higher: cargo shares space and is handled at two CFS points',
+    fcl: 'Lower: the unit is sealed and not opened at the CFS',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Clearance entry',
+    lcl: 'Usually one house bill with multiple consignees sharing the master bill',
+    fcl: 'One container, one consignee, one clearance entry',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for',
+    lcl: 'Market testing, slow restocking, low-volume e-commerce and mixed SKUs',
+    fcl: 'Established volumes, dense goods, fragile or high-value cargo',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port; major origin CFS market for Saudi consolidations',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; dense schedule depth into Red Sea / Gulf services',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin CFS option',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named in several China→Saudi LCL/DDP benchmarks',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'Coast / region',
+    jeddah: 'Red Sea, western Saudi Arabia',
+    dammam: 'Arabian Gulf, eastern Saudi Arabia',
+    riyadh: 'Inland (served by coastal ports)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'LCL destination CFS role',
+    jeddah: 'Deconsolidation hub for western and central Saudi consignees',
+    dammam: 'Deconsolidation hub for Riyadh + Eastern/Central provinces',
+    riyadh: 'Inland dry port for Riyadh metro distribution',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Typical LCL use case',
+    jeddah: 'Western/Central Saudi door deliveries',
+    dammam: 'Riyadh + Eastern Province door deliveries',
+    riyadh: 'Last-mile distribution around Riyadh',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight (LCL)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'See LCL rate table — per CBM with a minimum charge',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin CFS receiving & consolidation',
+    who: 'China forwarder / warehouse',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination CFS deconsolidation / handling',
+    who: 'Jeddah / Dammam CFS operator',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC & port charges',
+    who: 'Jeddah / Dammam terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    who: 'Saudi customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Final-mile delivery',
+    who: 'Local trucking partner',
+    magnitude: 'Not published in verified snapshot — quoted per destination address',
+    confidence: 'LOW',
+  },
+  {
+    item: 'CFS storage after free time',
+    who: 'Destination CFS / terminal',
+    magnitude: 'Per-day charge; free time varies — request policy',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER / SASO conformity fees',
+    who: 'SASO / SABER platform + laboratories',
+    magnitude: 'PC per product + SC per shipment; not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'ZATCA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'ZATCA',
+    magnitude: '15% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Excise tax (if applicable)',
+    who: 'ZATCA',
+    magnitude: 'Tobacco 100%; energy drinks 50%; carbonated drinks 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is LCL shipping and when should I use it?',
+    a: 'LCL (Less than Container Load) is ocean freight where your cargo shares a container with other importers. It is usually the right starting point for small volumes — commonly below about 15 CBM as a planning heuristic — because you pay only for the space you use instead of a whole container. The 15 CBM figure is a LOW-confidence planning rule, not a verified break-even point: always compare an LCL quote against an FCL quote at your actual volume.',
+  },
+  {
+    q: 'How is LCL priced from China to Saudi Arabia?',
+    a: 'LCL is normally quoted per cubic metre (CBM), with the higher of volume and chargeable weight used as the billing unit, plus a minimum charge on very small shipments. Indicative Freightos Shanghai–Riyadh market data shows about $716–$955 for 1 CBM, $1,650–$2,200 for 5 CBM and $2,669–$3,559 for 10 CBM — roughly $267–$955 per CBM. These are LOW-confidence snapshots, not carrier quotes; verify with your forwarder.',
+  },
+  {
+    q: 'How much does LCL shipping cost from China to Saudi Arabia?',
+    a: 'Indicative August 2026 market data puts LCL at roughly $267–$955 per CBM depending on volume, with the per-CBM rate falling as the shipment grows. The ocean rate is only part of the landed cost: origin CFS, destination CFS deconsolidation, THC, clearance, SABER, delivery and possible storage all sit on top. Request an itemised all-in quote.',
+  },
+  {
+    q: 'How long does LCL take from China to Saudi Arabia?',
+    a: 'Indicative windows are 32–45 days for LCL Shanghai–Riyadh, roughly 20–35 days to Jeddah, and 30–45 days to Dammam/Riyadh Dry Port. LCL is usually slower than FCL because cargo is consolidated at the origin CFS and deconsolidated at the destination CFS. These are LOW-confidence research findings, verify with the carrier.',
+  },
+  {
+    q: 'LCL or FCL — which is cheaper?',
+    a: 'There is no fixed verified break-even CBM in the research snapshot. As volume rises, FCL usually becomes cheaper per CBM because you stop paying consolidation handling and avoid paying for unused space in a shared box. A common planning heuristic is to compare FCL once cargo approaches roughly 15 CBM, but treat that as LOW confidence and ask for both quotes.',
+  },
+  {
+    q: 'What are the hidden fees on an LCL shipment?',
+    a: 'The classic LCL traps are the minimum charge, origin CFS receiving, destination CFS deconsolidation/handling, THC and other port charges, customs clearance, final-mile delivery, and storage after the CFS free time expires. Specific amounts were not published in the verified snapshot, so ask the forwarder to itemise each fee in writing before booking.',
+  },
+  {
+    q: 'Does LCL have demurrage and detention like FCL?',
+    a: 'The mechanics differ. FCL demurrage/detention applies to a specific container, while LCL cargo usually incurs storage at the destination CFS after a free-time allowance and can also be affected by the master container’s port charges. Free-time policies and per-day charges were not published in the verified snapshot — request the CFS and terminal schedule.',
+  },
+  {
+    q: 'What is the risk of damage, delay or mixed cargo in LCL?',
+    a: 'LCL cargo is handled at two CFS points and shares a container with other importers, so damage risk and delay risk are higher than in a sealed FCL unit. One delayed consignee or a customs hold on another shipment can slow the whole consolidated box. Use strong export packaging, clear marks and cargo insurance, and confirm whether the consolidation is direct or transhipped.',
+  },
+  {
+    q: 'What should I know about CBM and chargeable weight for LCL?',
+    a: 'LCL billing is usually based on the greater of volume (CBM) and volumetric weight, so dense cargo can be charged by weight rather than cube and light, bulky cargo by cube. Measure and weigh the actual packed cargo before quoting, and confirm the forwarder’s volume-to-weight ratio, because it changes the unit price.',
+  },
+  {
+    q: 'Do I need SABER certificates for an LCL shipment?',
+    a: 'Yes, if your goods are regulated. Obtain the Product Conformity Certificate (PC) per product, then the Shipment Conformity Certificate (SC) per shipment. Since 1 January 2025 the SC must be obtained before cargo arrival or clearance fails; in an LCL move this is more urgent because a hold can affect the whole consolidated container.',
+  },
+  {
+    q: 'Which Saudi port should I use for LCL?',
+    a: 'Jeddah is the principal Red Sea gateway and suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and suits Riyadh and Eastern Province, with Riyadh Dry Port for the inland leg. Ask your forwarder which destination CFS the LCL quote assumes and compare the final delivery cost.',
+  },
+  {
+    q: 'What documents do I need for an LCL import into Saudi Arabia?',
+    a: 'The standard set is a commercial invoice, house bill of lading, packing list, certificate of origin, and a SABER conformity certificate for regulated goods. The correct HS code matters because duty and conformity requirements depend on it, and the FASAH single window is used for the pre-arrival declaration.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'LCL Shipping from China to Saudi Arabia: Rates, CFS Fees & FCL vs LCL (August 2026)',
+      description:
+        'LCL shipping from China to Saudi Arabia explained: indicative per-CBM rates, CFS consolidation and hidden fees, LCL vs FCL decision table, transit times, SABER SC rules and 15% VAT.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="LCL Shipping from China to Saudi Arabia: Rates, CFS Fees & FCL vs LCL (August 2026)"
+  description="LCL shipping from China to Saudi Arabia: indicative per-CBM rates, CFS consolidation and hidden fees, LCL vs FCL decision table, transit times, SABER SC rules and 15% VAT."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'LCL shipping from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>LCL shipping from China to Saudi Arabia: CBM pricing, CFS fees &amp; FCL vs LCL</h1>
+      <p class="lead">
+        Less than Container Load lets you pay for only the space your cargo uses — but the CFS
+        handling and destination fees decide whether it is actually cheap. This page covers indicative
+        per-CBM rates, LCL transit, when LCL beats FCL, the hidden-fee traps at both CFS points, and
+        the SABER/SASO rules that can hold a whole consolidated container.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and fee note as indicative, verify with carrier before relying
+        on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL sea transit</span>
+          <span class="fact-value">32–45 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL unit rate</span>
+          <span class="fact-value">$267–$955 / CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. What LCL is and when it is worth booking</h2>
+    <p>
+      In LCL, your cargo is received at an origin CFS (container freight station) in China,
+      consolidated with other importers’ cargo into one container, shipped to Saudi Arabia, then
+      deconsolidated at the destination CFS for clearance and delivery. You pay for the space and
+      weight you use rather than reserving a whole box.
+    </p>
+    <p>
+      A widely used planning heuristic is to consider LCL while your shipment is <strong>below about
+      15 CBM</strong> and to compare FCL once volume approaches that level. That threshold is LOW
+      confidence — there is no verified universal break-even in the research snapshot — because the
+      crossover depends on the route, surcharges, CFS fees and destination costs. The useful test is
+      always: <em>LCL all-in landed cost versus an FCL all-in landed cost at your actual CBM</em>.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="LCL is usually the right lens when...">
+        <ul>
+          <li>Your shipment is small and well below a full container.</li>
+          <li>You want to avoid paying for unused container space.</li>
+          <li>You are testing the Saudi market or restocking with mixed SKUs.</li>
+          <li>You can absorb extra consolidation/deconsolidation time.</li>
+        </ul>
+      </Card>
+      <Card title="Move to an FCL comparison when...">
+        <ul>
+          <li>Volume approaches roughly 15 CBM (planning heuristic, LOW).</li>
+          <li>Goods are dense, fragile, high-value or cannot share space.</li>
+          <li>Transit predictability matters more than the unit rate.</li>
+          <li>Destination CFS and delivery fees start to stack up.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative LCL rates from China to Saudi Arabia</h2>
+      <p>
+        LCL is priced per CBM, so the headline number changes with volume. The Freightos
+        Shanghai–Riyadh snapshot below is a market figure collected on a specific route and date and
+        is deliberately labelled LOW confidence; ocean pricing moves weekly and should always be
+        re-quoted with an itemised schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'volume', label: 'Volume' },
+          { key: 'total', label: 'Total (Freightos · Shanghai–Riyadh)' },
+          { key: 'perCbm', label: 'Indicative per CBM' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={lclRows}
+        caption="Indicative LCL market snapshots, not carrier quotes. Verify with your forwarder before relying on these figures."
+      />
+      <SourceList sources={lclRateSources} title="Sources — LCL rates" />
+
+      <h3 class="mt-3">FCL benchmarks for your crossover check</h3>
+      <DataTable
+        columns={[
+          { key: 'container', label: 'Container' },
+          { key: 'freightos', label: 'Freightos · Shanghai–Riyadh' },
+          { key: 'sino', label: 'Sino-shipping · China–Saudi (Aug 2026)' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclComparisonRows}
+        caption="Compare the all-in LCL landed cost for your CBM against these indicative FCL snapshots. Both are LOW confidence."
+      />
+      <SourceList sources={rateSources} title="Sources — FCL comparison rates" />
+
+      <div class="note mt-2">
+        <strong>Why small LCL shipments look expensive:</strong> fixed consolidation and minimum
+        charges dominate at 1 CBM. As CBM grows, those fixed costs are spread, which is why the unit
+        rate drops from roughly $716–$955/CBM at 1 CBM to roughly $267–$356/CBM at 10 CBM in the
+        snapshot — indicative, verify with carrier.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. LCL transit times from China to Saudi Arabia</h2>
+    <p>
+      LCL is structurally slower than FCL on the same corridor because the box is not sealed with
+      your cargo alone: it stops for consolidation in China and for deconsolidation at the Saudi CFS.
+      The figures below are corridor-level research findings, not schedule guarantees.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'destination', label: 'Destination' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclTransitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — LCL transit times" />
+
+    <div class="note mt-2">
+      <strong>Direct vs transhipped consolidation:</strong> ask whether the forwarder runs a direct
+      or transhipped consolidation. A transhipped LCL box adds another terminal handling point, which
+      can widen the 20–45 day range. All transit figures are LOW confidence, verify with carrier.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. LCL vs FCL decision table</h2>
+      <p>
+        The commercial question is not “which is cheaper per CBM” in isolation; it is which service
+        has the lower landed cost and the right delivery risk for the goods. Use this table as a
+        checklist, then request both quotes at your actual volume.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={lclVsFclRows}
+        caption="Planning factors are heuristic and LOW confidence; the crossover depends on route, surcharges and destination fees. Verify with your forwarder."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports and CFS network: China origins to Jeddah, Dammam &amp; Riyadh Dry Port</h2>
+    <p>
+      LCL consolidation normally happens at a CFS near the origin port. Shanghai, Ningbo-Zhoushan,
+      Shenzhen and Guangzhou are the main origin points in the research snapshot; at the Saudi end,
+      Jeddah and Dammam host the destination CFS activity, with Riyadh Dry Port serving the inland
+      metro.
+    </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'LCL note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={primaryPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">Saudi destination ports and CFS roles</h3>
+      <p>
+        Mawani-operated Saudi ports handled <strong>8.3 million TEU in 2025</strong> (+10.6% year on
+        year), a MEDIUM-confidence figure from trade press because mawani.gov.sa was unavailable
+        during research. For LCL, the destination CFS role matters as much as the port name because
+        deconsolidation, storage and delivery fees are incurred there.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jeddah', label: 'Jeddah' },
+          { key: 'dammam', label: 'Dammam' },
+          { key: 'riyadh', label: 'Riyadh Dry Port' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="Port roles are secondary-source findings; verify the destination CFS and final delivery leg with your forwarder."
+      />
+      <SourceList
+        sources={[...primaryPortSources, worldcargonews]}
+        title="Sources — Saudi ports"
+      />
+
+      <div class="note mt-2">
+        <strong>LCL routing in one line:</strong> ask which destination CFS the LCL quote assumes.
+        Jeddah suits western and central Saudi consignees; Dammam, then Riyadh Dry Port, suits Riyadh
+        and Eastern Province. A cheaper ocean rate at the wrong CFS can become more expensive after
+        long-haul trucking.
+      </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. LCL landed cost: the hidden-fee traps competitors skip</h2>
+      <p>
+        The per-CBM ocean rate is only one line of an LCL landed cost. The traps are at both CFS
+        points and at the Saudi terminal: origin receiving, destination deconsolidation, THC, cargo
+        service fees, minimum charges, delivery and storage. None of those fee amounts were published
+        in the verified research snapshot, so the correct comparison number is an itemised all-in
+        quote — not a headline $/CBM.
+      </p>
+
+      <h3>The classic LCL traps</h3>
+      <div class="grid grid--2 mt-2">
+        <Card title="Destination CFS deconsolidation">
+          <ul>
+            <li>Charged for breaking down the consolidated box in Saudi Arabia.</li>
+            <li>Often added after the ocean quote; always ask for it in writing.</li>
+            <li>Specific amount not published in snapshot — request fee schedule.</li>
+          </ul>
+        </Card>
+        <Card title="Minimum charge and THCs">
+          <ul>
+            <li>Very small LCL shipments can be pulled up to a minimum.</li>
+            <li>THC is levied at both ends for terminal handling.</li>
+            <li>Amounts were not published in snapshot — request fee schedule.</li>
+          </ul>
+        </Card>
+        <Card title="Storage after free time">
+          <ul>
+            <li>Destination CFS free time is finite; days beyond it are chargeable.</li>
+            <li>A customs hold on one consignee can delay the whole box.</li>
+            <li>Confirm free-time and per-day policy before booking.</li>
+          </ul>
+        </Card>
+        <Card title="Delivery and clearance add-ons">
+          <ul>
+            <li>Final-mile delivery is quoted per Saudi address and access type.</li>
+            <li>Inspection handling and brokerage sit on top of the ocean rate.</li>
+            <li>Ask whether the quote covers remote-area or apartment delivery.</li>
+          </ul>
+        </Card>
+      </div>
+
+      <h3 class="mt-3">Full LCL cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — LCL cost & customs" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. LCL risk: damage, delays and mixed cargo</h2>
+    <p>
+      LCL is not simply “cheaper FCL”. The cargo is handled at two CFS points and shares a container,
+      so the risk profile changes. Strong packaging and a realistic schedule matter more than
+      squeezing the last dollar off the ocean rate.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Damage and mixing risk">
+        <ul>
+          <li>Multiple handling events increase crushing and marking risk.</li>
+          <li>Heavy goods can be stowed next to fragile goods in the same box.</li>
+          <li>Use export cartons, pallets and clear shipping marks.</li>
+          <li>Insure at commercial value, not just the invoice line.</li>
+        </ul>
+      </Card>
+      <Card title="Delay risk">
+        <ul>
+          <li>Consolidation waits for enough cargo to fill the box.</li>
+          <li>Destination deconsolidation adds handling after discharge.</li>
+          <li>A customs hold on another consignee can delay your cargo too.</li>
+          <li>Ask for direct vs transhipped consolidation before booking.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      The SABER SC rule raises the stakes for LCL specifically: a missing or late SC does not just
+      delay your shipment, it can sit the whole consolidated container at the CFS and push storage
+      charges across the group. Complete PC and SC work before the vessel arrives.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance: VAT, duty, SABER/SASO, FASAH &amp; HS codes</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+        possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+        carbonated drinks where applicable.
+      </p>
+      <p>
+        One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+        de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+        such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+      </p>
+
+      <h3>SABER / SASO in the correct order</h3>
+      <ol>
+        <li>Register the importer and product on the SABER conformity platform.</li>
+        <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+        <li>Once the bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+        <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+        <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+      </ol>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, house bill of lading, packing list, certificate
+        of origin and the SABER conformity certificate for regulated goods. Classify goods with the
+        correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+        depend on it. Note that <strong>ISF</strong> is a United States requirement and does not apply
+        to Saudi Arabia; Saudi Arabia’s equivalent advance-filing step is the FASAH pre-arrival
+        declaration.
+      </p>
+      <p>
+        FASAH is the single window that connects importers, customs brokers, terminals and ZATCA. For
+        LCL, completing the SC and FASAH declaration before arrival is the most effective way to keep
+        destination CFS storage and group-delay risk off the final invoice.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Saudi Arabia LCL quote"
+      text="Tell us your origin, destination, packed CBM and weight, commodity and delivery address, and we will connect you with providers who can quote ocean freight, CFS fees and SABER together."
+    />
+  </section>
+</BaseLayout>
