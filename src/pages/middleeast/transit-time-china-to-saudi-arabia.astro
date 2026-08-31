@@ -1,0 +1,744 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { routes } from '../../data/routes';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/transit-time-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const seaTransitSources: Source[] = [freightos, cargofromchina, ddpchain, chinaddpshipping];
+const airTransitSources: Source[] = [freightos, ddpchain, cargofromchina, chinaddpshipping, sinoShipping];
+const comparisonSources: Source[] = [freightos, ddpchain, cargofromchina];
+const factorSources: Source[] = [
+  ...sourcesByIds(['mawani', 'zatca']),
+  cargofromchina,
+  ddpchain,
+  freightos,
+  fuxinCcpt,
+];
+
+const seaTransitRows = [
+  {
+    destination: 'Jeddah',
+    service: 'Sea port-to-port',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days average (Shenzhen–Jeddah); ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Dammam / Riyadh Dry Port',
+    service: 'Sea port-to-port',
+    transit: '30–45 days',
+    basis: 'Freightos Shanghai–Riyadh corridor',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Riyadh (Shanghai origin)',
+    service: 'FCL',
+    transit: '30–40 days',
+    basis: 'Freightos Shanghai–Riyadh FCL route data',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Riyadh (Shanghai origin)',
+    service: 'LCL',
+    transit: '32–45 days',
+    basis: 'Freightos Shanghai–Riyadh LCL route data',
+    confidence: 'LOW',
+  },
+];
+
+const planningRows = routes
+  .filter((route) => route.country === 'saudi-arabia')
+  .map((route) => ({
+    origin: route.originPort,
+    destination: route.destPort,
+    typical: `${route.transitDays.typical} days`,
+    range: `${route.transitDays.range[0]}–${route.transitDays.range[1]} days`,
+    note: route.note,
+    confidence: route.confidence,
+  }));
+
+const airTransitRows = [
+  {
+    lane: 'Shanghai → Riyadh',
+    service: 'Air airport-to-airport',
+    transit: '6–10 days',
+    basis: 'Freightos Shanghai–Riyadh air route data',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (route examples)',
+    service: 'Air airport-to-airport',
+    transit: '6–10 days',
+    basis: 'ddpchain route examples',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (market brackets)',
+    service: 'Air freight',
+    transit: '2–5 business days',
+    basis: 'cargofromchina air freight guide',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (planning shorthand)',
+    service: 'Air airport-to-airport',
+    transit: '3–7 days',
+    basis: 'Planning range for direct airport-to-airport moves; verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (DDP air)',
+    service: 'Door-to-door DDP air',
+    transit: '10–15 days',
+    basis: 'chinaddpshipping DDP air benchmark',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Express courier',
+    service: 'Door delivery',
+    transit: '3–6 working days',
+    basis: 'ddpchain DHL example; Freightos express 3–6 days; Sino express 3–5 days',
+    confidence: 'LOW',
+  },
+];
+
+const seaVsAirRows = [
+  {
+    factor: 'Indicative transit',
+    sea: '18–45 days port-to-port across planning and research ranges',
+    air: '2–10 days airport-to-airport (full research range)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Time variability',
+    sea: 'Wider range; schedule, transhipment and congestion stretch the clock',
+    air: 'Narrower range, but clearance and SABER still gate release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Unit basis',
+    sea: 'Per container (FCL) or per CBM / chargeable weight (LCL)',
+    air: 'Per chargeable kilogram',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for',
+    sea: 'Non-urgent, high-volume, stable-demand cargo',
+    air: 'Urgent, perishable, fragile, high-value or stockout-critical cargo',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Compliance gate',
+    sea: 'SABER PC/SC and FASAH pre-arrival declaration required',
+    air: 'Same rules apply; air shortens transport, not paperwork',
+    confidence: 'MEDIUM',
+  },
+];
+
+const stageRows = [
+  {
+    stage: 'Origin pick-up and China export clearance',
+    effect: 'Adds time before the vessel or aircraft departs',
+    note: 'Timing depends on origin gateway and documentation readiness',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Vessel / flight cut-off and loading',
+    effect: 'Cargo waits for the scheduled departure',
+    note: 'Fewer sailings or flights means more dwell',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'International transit',
+    effect: 'Jeddah ~20–35 days; Dammam/Riyadh ~30–45 days by sea',
+    note: 'Air is 2–10 days by comparison',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Transhipment (if applicable)',
+    effect: 'Adds terminal handling and waiting at the hub',
+    note: 'Direct services are usually faster but less frequent',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Discharge and terminal availability',
+    effect: 'Container or cargo becomes available after discharge',
+    note: 'Terminal congestion can extend this step',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Saudi customs release',
+    effect: 'FASAH pre-arrival declaration plus SABER SC',
+    note: 'A late SC or document hold stops the clock at the border',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'Inland delivery',
+    effect: 'Trucking from Jeddah/Dammam to the final address',
+    note: 'Riyadh cargo may transfer through Riyadh Dry Port',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Sailing / flight schedule and frequency',
+    effect: 'Fewer departures create longer dwell at origin or hub',
+    note: 'Confirm the actual vessel, voyage and cut-off',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Direct vs transhipped routing',
+    effect: 'Transhipment adds handling and waiting time',
+    note: 'Direct loops are faster but less frequent',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Peak season and capacity',
+    effect: 'Congestion and space pressure extend both sea and air',
+    note: 'Book earlier during peak windows',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Port congestion',
+    effect: 'Jeddah/Dammam throughput pressure can delay discharge',
+    note: 'Mawani ports handled 8.3m TEU in 2025',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Red Sea security situation',
+    effect: 'Routing changes have at times extended transit',
+    note: 'Confirmed by the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Customs and SABER readiness',
+    effect: 'A late SABER SC, HS error or missing document holds cargo',
+    note: 'Obtain the SC before arrival; file FASAH early',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Inland leg to final destination',
+    effect: 'Dammam/Riyadh and inland delivery add time after discharge',
+    note: 'Match the discharge port to the consignee',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to Saudi Arabia take?',
+    a: 'Indicative planning windows are roughly 20–45 days by sea and 2–10 days by air. Jeddah sea freight is usually around 20–35 days, while Dammam and Riyadh Dry Port are around 30–45 days. These are LOW-confidence research findings, not schedule guarantees — verify with the carrier and check for transhipment.',
+  },
+  {
+    q: 'What is the sea freight transit time to Jeddah?',
+    a: 'Research snapshots put Jeddah sea freight at roughly 20–35 days, with one source averaging about 20 days on a Shenzhen–Jeddah example. Treat that as an indicative port-to-port window and confirm the vessel, voyage and any transhipment points before booking.',
+  },
+  {
+    q: 'How long does sea freight take to Dammam or Riyadh?',
+    a: 'Indicative windows are 30–45 days to Dammam / Riyadh Dry Port. Freightos shows FCL Shanghai–Riyadh at 30–40 days and LCL at 32–45 days. Riyadh cargo often discharges at Dammam and then moves inland by rail or road, so the final delivery point matters.',
+  },
+  {
+    q: 'How fast is air freight from China to Saudi Arabia?',
+    a: 'Airport-to-airport air freight is usually 3–7 days as a planning shorthand, with published ranges of 2–5 business days and 6–10 days depending on the source and route. Door-to-door DDP air adds time and is often quoted at 10–15 days.',
+  },
+  {
+    q: 'Is FCL faster than LCL from China to Saudi Arabia?',
+    a: 'Yes, in most cases FCL is faster because the sealed container moves as one consignment. Freightos shows FCL Shanghai–Riyadh at 30–40 days versus LCL at 32–45 days. LCL adds consolidation and deconsolidation handling, which can also add scheduling risk.',
+  },
+  {
+    q: 'Why is there a gap between vessel arrival and cargo release?',
+    a: 'Arrival is not release. After discharge the container must be made available, then the FASAH pre-arrival declaration and SABER SC must be accepted, duty/VAT settled, and any inspection completed before release. A late SABER SC, HS-code issue or missing document turns a day gap into a multi-day hold.',
+  },
+  {
+    q: 'What most often delays a China to Saudi shipment?',
+    a: 'The common causes are transhipment waits, peak-season congestion, Red Sea routing changes, port congestion at Jeddah or Dammam, and clearance holds from a late SABER SC or incorrect documents. Planning the compliance work before arrival removes the controllable part of the delay.',
+  },
+  {
+    q: 'How can I shorten transit time from China to Saudi Arabia?',
+    a: 'Choose a direct service over transhipment, obtain the SABER SC before arrival, file the FASAH pre-arrival declaration early, classify the HS code correctly, book trucking before discharge, and use air freight only when the time saving is worth the premium.',
+  },
+  {
+    q: 'What is the difference between port-to-port and door-to-door transit time?',
+    a: 'Port-to-port stops at the Saudi terminal and leaves pre-carriage, Saudi clearance and delivery to you, so the quoted time is shorter but incomplete. Door-to-door includes the whole chain to the final address and is the only timing that matters for when your buyer actually receives the goods.',
+  },
+  {
+    q: 'Does SABER slow down my shipment?',
+    a: 'Only if it is handled late. The Shipment Conformity Certificate (SC) must be obtained before cargo arrival — since 1 January 2025 an SC applied after arrival is void. If the PC and SC are done correctly before arrival, SABER is part of the clearance flow rather than a delay.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Transit Time from China to Saudi Arabia: Sea, Air & Door-to-Door (August 2026)',
+      description:
+        'Transit time from China to Saudi Arabia explained: Jeddah vs Dammam sea windows, FCL vs LCL differences, air and express transit, port-to-port vs door-to-door, and the delays that stretch the clock.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Transit Time from China to Saudi Arabia: Sea, Air & Door-to-Door (August 2026)"
+  description="Transit time from China to Saudi Arabia: Jeddah vs Dammam sea windows, FCL vs LCL differences, air and express transit, port-to-port vs door-to-door, and the delays that stretch the clock."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Transit time from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Transit time from China to Saudi Arabia: sea, air and door-to-door</h1>
+      <p class="lead">
+        A single “20 days” number hides three different clocks: the sailing schedule, the actual
+        arrival, and the customs release that lets your buyer take delivery. This page separates
+        Jeddah from Dammam, FCL from LCL, and port-to-port from door-to-door.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence transit window as indicative, verify with carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">20–45 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">2–10 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jeddah by sea</span>
+          <span class="fact-value">20–35 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Dammam / Riyadh</span>
+          <span class="fact-value">30–45 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Three clocks, not one</h2>
+    <p>
+      The headline transit time is usually the <strong>schedule clock</strong>: the published port-to-port
+      sailing or flying time. The <strong>arrival clock</strong> is when the cargo actually reaches
+      the Saudi terminal or airport after schedule changes, transhipment and congestion. The
+      <strong>release clock</strong> is when Saudi customs releases the goods after FASAH processing,
+      SABER verification, duty/VAT settlement and any inspection.
+    </p>
+    <p>
+      Shippers usually plan against the first clock and get surprised by the third. That gap between
+      arrival and release is the hidden water in every transit quote, and it is why a port-to-port
+      number is not the same as a delivery promise.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Sea transit windows: Jeddah vs Dammam / Riyadh</h2>
+      <p>
+        Saudi transit times vary more than a single average suggests. Jeddah is reached from the Red
+        Sea side, while Dammam and Riyadh Dry Port sit on the Gulf side and add inland handling for
+        Riyadh deliveries. Use these windows for planning, then confirm the vessel schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'destination', label: 'Destination' },
+          { key: 'service', label: 'Service' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="Indicative sea transit windows only — verify with the relevant carrier before relying on these figures."
+      />
+      <SourceList sources={seaTransitSources} title="Sources — sea transit times" />
+
+      <h3 class="mt-3">WorldFreightHub planning dataset</h3>
+      <p>
+        The site’s internal route dataset keeps a simpler planning shorthand: Shanghai, Ningbo-Zhoushan
+        and Shenzhen origins mapped to Jeddah and Dammam. These figures are planning estimates, not
+        schedule guarantees, and are deliberately narrower than the wider research ranges above.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'typical', label: 'Typical' },
+          { key: 'range', label: 'Planning range' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={planningRows}
+        caption="Internal planning estimates from src/data/routes.ts. Treat as LOW-confidence planning shorthand and verify with the relevant carrier."
+      />
+      <SourceList sources={primaryPortSources} title="Sources — planning dataset origins" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Air and express transit windows</h2>
+    <p>
+      Air freight shortens the transport clock but not the compliance clock. Airport-to-airport
+      windows are measured in days, but the same FASAH declaration, SABER SC and HS classification
+      still apply before release.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="Indicative air and express windows on different route/date bases. Verify with a forwarder before relying on these figures."
+    />
+    <SourceList sources={airTransitSources} title="Sources — air & express transit" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Sea vs air: the time decision</h2>
+      <p>
+        Sea is usually slower but far cheaper per unit; air is faster but expensive. The right test
+        is not “air is always faster” — it is whether the inventory, cash and risk cost of waiting
+        18–45 days exceeds the air premium for your specific cargo.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaVsAirRows}
+        caption="Decision factors are heuristic; transit figures are LOW confidence. Verify with your forwarder for the actual shipment."
+      />
+      <SourceList sources={comparisonSources} title="Sources — sea vs air" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose air freight when...">
+          <ul>
+            <li>The goods are urgent, perishable or stockout-critical.</li>
+            <li>Value per kilogram is high and damage risk matters.</li>
+            <li>A 3–7 day arrival cycle is worth the premium.</li>
+            <li>The shipment is small and sea minimum charges are wasteful.</li>
+          </ul>
+        </Card>
+        <Card title="Choose sea freight when...">
+          <ul>
+            <li>Cargo is large, dense, heavy or stable-demand.</li>
+            <li>Unit cost matters more than transit time.</li>
+            <li>The shipment fills a meaningful share of a container.</li>
+            <li>The consignee can absorb an 18–45 day window.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Port-to-port vs door-to-door: which clock are you buying?</h2>
+    <p>
+      Port-to-port stops at the Saudi terminal and leaves pre-carriage, Saudi clearance and delivery
+      to you. Door-to-door bundles the whole chain into one provider and one price. The quoted number
+      means different things in each case, so always confirm where the clock starts and stops.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'portToPort', label: 'Port-to-port' },
+        { key: 'doorToDoor', label: 'Door-to-door' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={[
+        {
+          factor: 'Service scope',
+          portToPort: 'Ocean terminal to ocean terminal (or airport to airport)',
+          doorToDoor: 'Origin warehouse to Saudi destination address',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'What the time includes',
+          portToPort: 'Main carriage only; pre-carriage and on-carriage are separate',
+          doorToDoor: 'Pick-up, export, transit, Saudi import and final delivery bundled',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Timing visibility',
+          portToPort: 'Cleaner comparison, but the real delivery date is incomplete',
+          doorToDoor: 'One end-to-end window, but inclusions must be confirmed in writing',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Incoterm context',
+          portToPort: 'Fits FOB / CFR / CIF negotiations',
+          doorToDoor: 'Fits DAP / DDP arrangements',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Best for',
+          portToPort: 'Established importers with a Saudi broker and trucker',
+          doorToDoor: 'Sellers who want one provider and are not established locally',
+          confidence: 'LOW',
+        },
+      ]}
+      caption="Service-scope comparison is heuristic. Confirm exactly where the clock starts and stops on every quote."
+    />
+
+    <h3 class="mt-3">The stage-by-stage clock</h3>
+    <p>
+      Breaking the move into stages makes the hidden time visible. Stage-level day counts were not
+      published in the verified research snapshot, so the table below shows where time is added
+      rather than inventing per-stage numbers.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'stage', label: 'Stage' },
+        { key: 'effect', label: 'Effect on total time' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={stageRows}
+      caption="Stage-level timing is LOW confidence because the research snapshot did not publish per-stage day counts — request a milestone schedule from your forwarder."
+    />
+    <SourceList sources={[...seaTransitSources, ...factorSources]} title="Sources — transit stages" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. What stretches the clock: the hidden water</h2>
+      <p>
+        The gap between a sailing schedule and the day your buyer receives the goods comes from a
+        small number of controllable and uncontrollable factors. Control the documents and SABER
+        timing; plan around the schedule, season and security variables.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect on transit' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Transit factors are operational context. Only the SABER pre-arrival rule and the 8.3m TEU port figure are higher-confidence; the rest is LOW confidence and shipment-specific."
+      />
+      <SourceList sources={factorSources} title="Sources — transit factors" />
+
+      <div class="note mt-2">
+        <strong>The controllable half:</strong> obtain the SABER SC before arrival, file the FASAH
+        pre-arrival declaration early, classify the HS code correctly and book trucking before
+        discharge. Those steps remove the clearance hold that turns a routine arrival into a delayed
+        delivery.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points that gate the clock</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+      the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+      possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+      carbonated drinks where applicable.
+    </p>
+    <p>
+      One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+      de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+      such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+    </p>
+
+    <h3>SABER / SASO in the correct order</h3>
+    <ol>
+      <li>Register the importer and product on the SABER conformity platform.</li>
+      <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+      <li>Once the bill of lading or air waybill is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+      <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+      <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading or air waybill, packing list,
+      certificate of origin and the SABER conformity certificate for regulated goods. Classify goods
+      with the correct <strong>HS code</strong> before shipping, because both duty and conformity
+      requirements depend on it. Note that <strong>ISF</strong> is a United States requirement and
+      does not apply to Saudi Arabia; the equivalent advance-filing step is the FASAH pre-arrival
+      declaration.
+    </p>
+    <p>
+      Air shortens the transport clock, not the compliance clock. A late SABER SC or HS-code error
+      can wipe out the time advantage by holding cargo at the airport or port, so complete PC/SC work
+      before arrival and file the FASAH declaration early.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+  </section>
+
+  <section class="section container">
+    <h2>8. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The SABER
+      pre-arrival rule and the statutory duty/VAT rates are re-checked against ZATCA and the SABER
+      notice; the sea and air transit windows are market snapshots re-checked monthly because
+      sailing frequency, congestion and the Red Sea security situation change them.
+    </p>
+    <p>
+      If a carrier publishes a fixed schedule, a terminal publishes current discharge times, or
+      Mawani/ZATCA publishes stage-level milestones, the tables are updated, the confidence badge is
+      raised, and the modified date in the page metadata is changed. Until then, stage-level timing
+      stays LOW confidence with a request-the-schedule note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a China to Saudi transit-time estimate"
+      text="Tell us your origin, destination, commodity, container or CBM and delivery deadline, and we will connect you with providers who can quote the route, transit window and SABER timing together."
+    />
+  </section>
+</BaseLayout>

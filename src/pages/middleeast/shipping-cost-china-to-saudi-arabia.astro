@@ -1,0 +1,922 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-cost-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const tariffdutycalculator: Source = {
+  id: 'tariffdutycalculator',
+  name: 'Tariff Duty Calculator — Saudi Arabia import duty',
+  url: 'https://tariffdutycalculator.com/country/saudi-arabia/',
+  type: 'industry',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, sinoShipping, cargofromchina, ddpchain];
+const airRateSources: Source[] = [freightos, ddpchain, cargofromchina];
+const taxSources: Source[] = [
+  ...sourcesByIds(['zatca']),
+  commenda,
+  tariffdutycalculator,
+  cargofromchina,
+];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  tariffdutycalculator,
+  fuxinCcpt,
+  sasoInfo,
+  freightos,
+  sinoShipping,
+];
+
+const seaRateRows = [
+  {
+    mode: 'FCL 20GP · Shanghai–Riyadh',
+    benchmark: '$3,333–$4,443',
+    basis: 'Freightos',
+    note: 'Lower published band; Riyadh routing usually via Dammam',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'FCL 20GP · China–Saudi (Aug 2026)',
+    benchmark: '$5,085–$6,215',
+    basis: 'Sino-shipping snapshot',
+    note: 'Higher published band; different route/date basis',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'FCL 40GP · Shanghai–Riyadh',
+    benchmark: '$4,623–$6,164',
+    basis: 'Freightos',
+    note: 'The volume benchmark for established importers',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'FCL 40GP · China–Saudi (Aug 2026)',
+    benchmark: '$6,615–$8,085',
+    basis: 'Sino-shipping snapshot',
+    note: 'Higher published band; different route/date basis',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'FCL 40HQ · Shanghai–Riyadh',
+    benchmark: '$4,623–$6,164',
+    basis: 'Freightos',
+    note: 'High cube for volume, not weight',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'LCL 1 CBM · Shanghai–Riyadh',
+    benchmark: '$716–$955',
+    basis: 'Freightos',
+    note: 'Minimum-charge territory',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'LCL 5 CBM · Shanghai–Riyadh',
+    benchmark: '$1,650–$2,200',
+    basis: 'Freightos',
+    note: '≈ $330–$440 per CBM',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'LCL 10 CBM · Shanghai–Riyadh',
+    benchmark: '$2,669–$3,559',
+    basis: 'Freightos',
+    note: '≈ $267–$356 per CBM; approaching FCL comparison zone',
+    confidence: 'LOW',
+  },
+];
+
+const airRateRows = [
+  {
+    mode: 'Air freight · Shanghai–Riyadh',
+    benchmark: '$917–$1,223 per 100 kg',
+    basis: 'Freightos',
+    note: '≈ $9.17–$12.23 / kg',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight · China–Saudi by route',
+    benchmark: '$880–$1,350 per 100 kg',
+    basis: 'ddpchain',
+    note: '≈ $8.80–$13.50 / kg',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight · Shenzhen–Riyadh sample',
+    benchmark: '$920–$1,250 per 100 kg',
+    basis: 'ddpchain',
+    note: 'Route-specific example',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight · Saudi market brackets',
+    benchmark: 'SAR 26.5–30.5 / kg',
+    basis: 'cargofromchina',
+    note: '22kg+ / 101kg+ brackets',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express · DHL 1 kg sample',
+    benchmark: '$76.36 / kg at 1 kg',
+    basis: 'ddpchain',
+    note: 'Courier pricing; falls at higher weight',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express · China–Saudi (Aug 2026)',
+    benchmark: '≈ $6.90 / kg',
+    basis: 'Sino-shipping snippet',
+    note: '3–5 day express bracket',
+    confidence: 'LOW',
+  },
+];
+
+const cifRows = [
+  {
+    layer: 'Goods / invoice value',
+    calc: 'From the supplier invoice',
+    amount: 'Use the actual declared value',
+    note: 'The starting point for duty and VAT',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Freight (sea or air)',
+    calc: 'Carrier / forwarder quote',
+    amount: 'See rate tables',
+    note: 'Ocean or air line item',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Insurance',
+    calc: 'Insurer or forwarder quote',
+    amount: 'Not published in snapshot',
+    note: 'Usually a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'CIF value',
+    calc: 'Goods + freight + insurance',
+    amount: 'Total of the three lines above',
+    note: 'The statutory base for Saudi duty and VAT',
+    confidence: 'MEDIUM',
+  },
+];
+
+const landedCostRows = [
+  {
+    layer: 'CIF value (illustrative)',
+    calc: 'Goods + freight + insurance',
+    amount: '$10,000.00',
+    note: 'Illustrative round figure; replace with your CIF',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Customs duty (baseline)',
+    calc: 'CIF × 5%',
+    amount: '$500.00',
+    note: 'GCC Common External Tariff, ad valorem on CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Duty-inclusive VAT base',
+    calc: 'CIF + customs duty',
+    amount: '$10,500.00',
+    note: 'VAT is calculated on the duty-inclusive amount',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Import VAT',
+    calc: 'VAT base × 15%',
+    amount: '$1,575.00',
+    note: '15% standard rate, effective 1 July 2020',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Statutory landed cost',
+    calc: 'CIF × 1.05 × 1.15',
+    amount: '$12,075.00',
+    note: '= 1.2075 × CIF at baseline duty and standard VAT',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Destination fees',
+    calc: 'THC + docs + clearance + SABER + inland + demurrage/detention',
+    amount: 'Not published — request schedule',
+    note: 'Added on top of the statutory stack',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Total landed cost',
+    calc: 'Statutory landed cost + destination fees',
+    amount: '$12,075.00 + destination fees',
+    note: 'The all-in figure to benchmark quotes against',
+    confidence: 'MEDIUM',
+  },
+];
+
+const byModeRows = [
+  {
+    lane: 'Sea FCL · Shanghai to Jeddah',
+    service: 'Full container 20GP / 40GP / 40HQ',
+    benchmark: '$3,333–$8,085 per box across snapshots',
+    note: 'Use your exact container size and destination',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea FCL · Shanghai to Riyadh (Dammam)',
+    service: 'Freightos Shanghai–Riyadh corridor',
+    benchmark: '$3,333–$6,164 per box',
+    note: 'Riyadh cargo usually discharges at Dammam',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea LCL · Shanghai to Riyadh',
+    service: 'Shared container by CBM',
+    benchmark: '$267–$955 per CBM by volume',
+    note: 'Minimum charge applies on small volumes',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Air freight · China to Jeddah / Riyadh',
+    service: 'Airport-to-airport by chargeable kg',
+    benchmark: '$880–$1,350 per 100 kg',
+    note: '≈ $8.80–$13.50 per kg',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Express courier · China to Saudi Arabia',
+    service: 'Door delivery for small parcels',
+    benchmark: '≈ $6.90–$76.36 per kg by weight',
+    note: 'Rate falls as weight and urgency change',
+    confidence: 'LOW',
+  },
+];
+
+const fclVsLclRows = [
+  {
+    factor: 'Pricing unit',
+    fcl: 'Per container (20GP / 40GP / 40HQ)',
+    lcl: 'Per CBM, with a minimum charge on small volumes',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Indicative cost at small volume',
+    fcl: 'High fixed cost even if the box is not full',
+    lcl: '$716–$955 for 1 CBM (Freightos Shanghai–Riyadh)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Indicative cost at 10 CBM',
+    fcl: '$3,333–$6,215 for a 20GP (two snapshots)',
+    lcl: '$2,669–$3,559 total (≈ $267–$356 / CBM)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Hidden destination cost',
+    fcl: 'THC, port charges, demurrage/detention if free time is missed',
+    lcl: 'THC, CFS deconsolidation, minimum charge, storage after free time',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Speed and handling',
+    fcl: 'Simpler sealed move, usually faster to release',
+    lcl: 'Adds consolidation and deconsolidation handling',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Planning rule',
+    fcl: 'Stronger as cargo approaches a meaningful share of a box',
+    lcl: 'Stronger for small, low-volume shipments',
+    confidence: 'LOW',
+  },
+];
+
+const nodeRows = [
+  {
+    node: 'Shanghai',
+    role: 'Top China container origin; 55.06M TEU (2025)',
+    note: 'Origin terminal and export documentation',
+    confidence: 'HIGH',
+  },
+  {
+    node: 'Ningbo-Zhoushan',
+    role: '#3 container port; 43M TEU (2025)',
+    note: 'Alternative East China origin',
+    confidence: 'HIGH',
+  },
+  {
+    node: 'Shenzhen (Yantian / Shekou)',
+    role: 'South China gateway',
+    note: 'Throughput not stated in research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    node: 'Jeddah Islamic Port',
+    role: 'Principal Red Sea container gateway',
+    note: 'Western / central Saudi consignees',
+    confidence: 'MEDIUM',
+  },
+  {
+    node: 'King Abdulaziz Port Dammam',
+    role: 'Main Arabian Gulf port',
+    note: 'Riyadh and Eastern Province consignees',
+    confidence: 'MEDIUM',
+  },
+  {
+    node: 'Riyadh Dry Port',
+    role: 'Inland container depot',
+    note: 'Served by rail/road from coastal ports',
+    confidence: 'MEDIUM',
+  },
+  {
+    node: 'JED / RUH airports',
+    role: 'Air gateways for Jeddah and Riyadh',
+    note: 'Airport-to-airport air freight',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Fuel, bunker and surcharges',
+    effect: 'BAF / CAF / peak-season surcharges are added to the base rate',
+    note: 'Request the full surcharge schedule, not just the headline rate',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Season and capacity',
+    effect: 'Peak season, holidays and tight capacity raise rates',
+    note: 'Timing is a major cost lever',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Red Sea security situation',
+    effect: 'Routing changes have at times extended transit and raised rates',
+    note: 'Confirmed by the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Commodity and HS code',
+    effect: 'Changes the duty line, excise and SABER scope',
+    note: 'Classify before quoting',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Destination inland distance',
+    effect: 'Jeddah/Dammam to final Saudi address adds trucking',
+    note: 'Door-to-door quotes should state the delivery point',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Free-time discipline',
+    effect: 'Demurrage and detention apply after free time',
+    note: 'Pre-clear to avoid per-day charges',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much does shipping cost from China to Saudi Arabia?',
+    a: 'Indicative August 2026 market snapshots put sea FCL 20GP around $3,333–$5,085, FCL 40GP around $4,623–$8,085, LCL roughly $267–$955 per CBM depending on volume, and air freight around $880–$1,350 per 100 kg. These are LOW-confidence marketplace figures on different route/date bases, not carrier quotes — verify with a forwarder before booking.',
+  },
+  {
+    q: 'What is the real landed cost formula for a Saudi import?',
+    a: 'Build CIF first: goods value + freight + insurance. Then apply duty at 5% of CIF, add it to the CIF, and apply VAT at 15% to that duty-inclusive base. At baseline rates the statutory stack is CIF × 1.05 × 1.15, or 1.2075 × CIF. Destination fees (THC, documents, clearance, SABER, inland and any demurrage/detention) sit on top of that statutory subtotal.',
+  },
+  {
+    q: 'Why do I keep underestimating the total import cost?',
+    a: 'Because the ocean rate is only one line. Importers often forget the compound VAT-on-duty effect, SABER PC/SC fees, destination THC, documentation, brokerage, inland trucking and demurrage/detention. Request an all-in itemised quote that separates the statutory stack from the destination fee stack.',
+  },
+  {
+    q: 'How do Saudi duty and VAT stack?',
+    a: 'Duty is 5% of CIF under the GCC Common External Tariff. VAT is 15% and is calculated on CIF plus duty — not just on CIF. On a CIF value of $10,000 the baseline duty is $500 and the VAT is 15% of $10,500, or $1,575, for a statutory subtotal of $12,075.',
+  },
+  {
+    q: 'Is FCL or LCL cheaper from China to Saudi Arabia?',
+    a: 'There is no single answer. LCL is usually cheaper for small volumes because you pay only for the space used, but it adds CFS deconsolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. Run both all-in quotes because the crossover changes by route and destination fees.',
+  },
+  {
+    q: 'What hidden fees should I expect on a Saudi shipment?',
+    a: 'Beyond the freight rate, expect origin charges, destination THC and port charges, documentation fees, customs brokerage, SABER PC/SC conformity fees, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) and VAT (15% on CIF plus duty) are statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+  },
+  {
+    q: 'How much is SABER certification?',
+    a: 'SABER has two costs: the PC (Product Conformity Certificate) is once per product and involves testing and, where applicable, inspection; the SC (Shipment Conformity Certificate) is per shipment. The research snapshot did not publish specific fee amounts, so request a SABER quote for your HS code and shipment value.',
+  },
+  {
+    q: 'Does the 15% VAT apply to the freight as well?',
+    a: 'Yes, in the standard structure. VAT is calculated on CIF plus customs duty, and CIF includes freight and insurance. That means a higher freight cost also raises the VAT base. Treat the rate as subject to change and confirm treatment with ZATCA for the goods in question.',
+  },
+  {
+    q: 'What is the cheapest way to ship from China to Saudi Arabia?',
+    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+  },
+  {
+    q: 'How can I reduce the landed cost on this route?',
+    a: 'Consolidate into fewer, fuller containers; compare FCL and LCL all-in quotes; classify the HS code correctly before booking; obtain the SABER SC before arrival; file the FASAH pre-arrival declaration early; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping Cost from China to Saudi Arabia: Complete Landed Cost Breakdown (August 2026)',
+      description:
+        'Shipping cost from China to Saudi Arabia explained: sea and air freight benchmarks, THC, documentation, clearance, SABER fees, 5% duty and 15% VAT, plus the CIF × 1.05 × 1.15 landed-cost formula.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Cost from China to Saudi Arabia: Complete Landed Cost Breakdown (August 2026)"
+  description="Shipping cost from China to Saudi Arabia: sea/air freight, THC, documentation, clearance, SABER fees, 5% duty and 15% VAT, plus the CIF × 1.05 × 1.15 landed-cost formula."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shipping cost from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Shipping cost from China to Saudi Arabia: the complete landed-cost breakdown</h1>
+      <p class="lead">
+        The headline freight rate is only the first line. This page separates ocean and air freight
+        from THC, documentation, clearance, SABER fees, inland transport and the Saudi duty/VAT
+        stack, then shows how the layers compound into a true landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative market snapshots. Treat every
+        LOW-confidence rate and fee note as indicative, verify with carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.2075 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea FCL 20GP</span>
+          <span class="fact-value">$3,333–$6,215 <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air per 100 kg</span>
+          <span class="fact-value">$880–$1,350 <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. What “shipping cost” actually includes</h2>
+    <p>
+      “Shipping cost from China to Saudi Arabia” is usually quoted as a single freight line, but the
+      amount you actually pay is the sum of three groups. <strong>Group one</strong> is the
+      international move: ocean freight for FCL/LCL or air freight by chargeable weight.
+      <strong>Group two</strong> is the statutory stack: customs duty of 5% on the CIF value, then
+      import VAT of 15% on CIF plus duty. <strong>Group three</strong> is the destination fee stack:
+      THC, documentation, customs brokerage, SABER conformity fees, inland transport and, if free
+      time is exceeded, demurrage or detention.
+    </p>
+    <p>
+      The common mistake is to compare only group one. Two quotes can look identical on the ocean
+      rate and differ materially once SABER, THC and inland delivery are included, which is why
+      “all-in” is the only useful comparison number.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight benchmarks from China to Saudi Arabia</h2>
+      <p>
+        Freight rates move weekly with capacity, fuel, peak season and the Red Sea security
+        situation, so every rate below is deliberately labelled LOW confidence. The sources use
+        different route and date bases and should not be averaged together.
+      </p>
+
+      <h3>Sea freight</h3>
+      <DataTable
+        columns={[
+          { key: 'mode', label: 'Mode / lane' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Source basis' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaRateRows}
+        caption="Indicative market snapshots, not carrier quotes. Verify with a forwarder before relying on these figures."
+      />
+      <SourceList sources={rateSources} title="Sources — sea freight rates" />
+
+      <h3 class="mt-3">Air and express freight</h3>
+      <DataTable
+        columns={[
+          { key: 'mode', label: 'Mode / lane' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Source basis' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airRateRows}
+        caption="Air and express figures are LOW confidence and vary with chargeable weight, urgency and route. Verify with a forwarder."
+      />
+      <SourceList sources={airRateSources} title="Sources — air & express rates" />
+
+      <div class="note mt-2">
+        <strong>Headline rate vs landed cost:</strong> the freight line is only one component.
+        Surcharges, origin charges, destination THC, SABER and duty/VAT all sit on top, so request
+        an all-in itemised quote for a realistic comparison.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The landed-cost formula: build CIF, then compound the taxes</h2>
+    <p>
+      Saudi duty and VAT are calculated on CIF, so the first step is to build the CIF value
+      correctly. CIF means cost of the goods, insurance and freight; if you start from the supplier
+      invoice alone you are understating the base.
+    </p>
+
+    <h3>Step 1 — Build the CIF value</h3>
+    <DataTable
+      columns={[
+        { key: 'layer', label: 'Component' },
+        { key: 'calc', label: 'How to obtain it' },
+        { key: 'amount', label: 'Amount' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={cifRows}
+      caption="The CIF value is the statutory base for duty and VAT. If freight or insurance is omitted, the declaration is incomplete."
+    />
+    <SourceList sources={taxSources} title="Sources — CIF valuation & duty/VAT" />
+
+    <h3 class="mt-3">Step 2 — Layer duty, then VAT, then destination fees</h3>
+    <DataTable
+      columns={[
+        { key: 'layer', label: 'Layer' },
+        { key: 'calc', label: 'Calculation' },
+        { key: 'amount', label: 'Illustrative amount' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example on a $10,000 CIF value. The tax rates are real (5% duty, 15% VAT); the $10,000 CIF and destination fees are illustrative. Rates subject to change — confirm with ZATCA."
+    />
+    <SourceList sources={costSources} title="Sources — landed cost layers" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="The formula in one line">
+        <p>
+          Statutory landed cost = <strong>CIF × 1.05 × 1.15</strong>, which equals
+          <strong>CIF × 1.2075</strong> at baseline duty and standard VAT. Total landed cost adds
+          destination fees on top of that statutory subtotal.
+        </p>
+      </Card>
+      <Card title="Why 5% + 15% is not 20%">
+        <p>
+          VAT is charged on the duty-inclusive CIF base, so 15% applies to 1,050, not 1,000. The
+          extra 7.50 in the example is VAT-on-duty — small on one shipment, material across a year
+          of imports.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
+      and freight. An unrealistically low invoice value, missing freight or stripped insurance
+      invites revaluation, penalties and delay — and it breaks the calculation this page exists to
+      make predictable.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost by mode and port</h2>
+      <p>
+        The same corridor can be bought several ways, and each way has a different unit basis. Use
+        this table as the planning layer, then request a quote for the exact container, CBM or
+        chargeable weight.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={byModeRows}
+        caption="Indicative market snapshots on different route/date bases. Jeddah, Dammam and Riyadh Dry Port are the main Saudi nodes; verify with your forwarder."
+      />
+      <SourceList sources={[...rateSources, ...primaryPortSources]} title="Sources — mode & port benchmarks" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. FCL vs LCL: the cost crossover</h2>
+    <p>
+      FCL and LCL are not the same product at different sizes; they have different fee structures.
+      LCL charges by CBM with a minimum and adds CFS deconsolidation at destination, while FCL
+      charges per box and exposes you to terminal free-time rules. The crossover is a landed-cost
+      calculation, not a fixed CBM threshold.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclVsLclRows}
+      caption="Comparison is heuristic; unit-cost figures are LOW confidence. Run both all-in quotes before choosing."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL vs LCL" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>Cargo fills a meaningful share of a 20GP or 40GP.</li>
+          <li>You want one sealed consignment with less handling.</li>
+          <li>Demurrage/detention free time is manageable for your clearance speed.</li>
+          <li>Unit cost per CBM beats LCL once all destination fees are added.</li>
+        </ul>
+      </Card>
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>Volume is small and a full container is wasteful.</li>
+          <li>You can accept CFS consolidation and deconsolidation.</li>
+          <li>The all-in per-CBM quote is lower than the FCL alternative.</li>
+          <li>You do not need the fastest release path.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Ports and handlers in the cost chain</h2>
+      <p>
+        Every node below can add a line to the invoice. Shanghai and Ningbo-Zhoushan anchor the
+        China side, Jeddah and Dammam are the two Saudi seaports, Riyadh Dry Port handles inland
+        distribution, and JED/RUH are the air gateways.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'node', label: 'Node' },
+          { key: 'role', label: 'Role' },
+          { key: 'note', label: 'Cost note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={nodeRows}
+        caption="China throughput figures are verified; Saudi node roles are secondary-source findings. Confirm routing and fees with your forwarder."
+      />
+      <SourceList sources={[...primaryPortSources, worldcargonews]} title="Sources — ports & handlers" />
+
+      <div class="note mt-2">
+        <strong>Pick the discharge port with the inland leg in mind:</strong> Jeddah suits western
+        and central Saudi consignees; Dammam then Riyadh Dry Port suits Riyadh and Eastern Province
+        consignees. The cheapest ocean lane is not always the cheapest door-to-door move.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Hidden fees and what moves the price</h2>
+    <p>
+      The costs that surprise first-time importers are the ones never shown in a headline rate:
+      destination THC, documentation, brokerage, SABER fees, inland trucking, and demurrage or
+      detention after free time. The table below groups the main levers and the fee risks.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'effect', label: 'Effect on cost' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={factorRows}
+      caption="Cost factors are operational context. Only VAT (15%) and baseline duty (5% CIF) are verified — unquantified fees are LOW confidence and require a fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — cost factors & hidden fees" />
+
+    <h3 class="mt-3">Demurrage and detention</h3>
+    <p>
+      <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+      the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged by
+      the ocean carrier when the container stays outside the port beyond the free time allowed after
+      collection. Free-time allowances and per-day rates differ by line and terminal and were not
+      published in the research snapshot, so always request the fee schedule before booking.
+    </p>
+    <p>
+      The practical way to avoid both is to finish clearance before the vessel arrives: submit the
+      FASAH pre-arrival declaration, obtain the SABER SC before arrival (mandatory since 1 January
+      2025), keep documents ready, and book trucking before the container is discharged.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance points that change the bill</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+        possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+        carbonated drinks where applicable.
+      </p>
+      <p>
+        One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+        de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+        such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+      </p>
+
+      <h3>SABER / SASO in the correct order</h3>
+      <ol>
+        <li>Register the importer and product on the SABER conformity platform.</li>
+        <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+        <li>Once the bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+        <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+        <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+      </ol>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, bill of lading, packing list, certificate of
+        origin and the SABER conformity certificate for regulated goods. Classify goods with the
+        correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+        depend on it. Note that <strong>ISF</strong> is a United States requirement and does not apply
+        to Saudi Arabia; Saudi Arabia’s equivalent advance-filing step is the FASAH pre-arrival
+        declaration.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>10. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The statutory
+      lines (15% VAT, 5% duty and the SABER pre-arrival rule) are re-checked against ZATCA and the
+      SABER notice; the freight benchmarks are market snapshots that are re-checked monthly because
+      they move with capacity, fuel and the Red Sea security situation.
+    </p>
+    <p>
+      If a destination fee amount, demurrage/detention schedule or SABER fee becomes available from
+      a carrier, terminal, Mawani or ZATCA, the table is updated, the confidence badge is raised, and
+      the modified date in the page metadata is changed. Until then, unquantified fees stay LOW
+      confidence with a request-the-schedule note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Saudi landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity, container or CBM and final Saudi destination, and we will connect you with providers who can itemise freight, SABER, duty, VAT and delivery."
+    />
+  </section>
+</BaseLayout>
