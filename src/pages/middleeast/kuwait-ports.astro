@@ -312,12 +312,6 @@ const factorRows = [
     confidence: 'LOW',
   },
   {
-    factor: 'Port choice and cargo fit',
-    effect: 'Shuwaikh suits general/commercial cargo; Shuaiba suits industrial/project-linked cargo',
-    direction: 'Routing and inland variable',
-    confidence: 'LOW',
-  },
-  {
     factor: 'Kuwait market size',
     effect: 'Smaller volume than Dubai or Jeddah raises per-shipment cost absorption',
     direction: 'Cost up',
@@ -835,6 +829,13 @@ const schema = [
       />
       <SourceList sources={costSources} title="Sources — Kuwait destination costs & customs" />
 
+      <p>
+        In addition to THC, ask the provider to itemise <strong>documentation / bill of lading
+        fees</strong>, <strong>customs inspection</strong> if selected, and <strong>port storage</strong>.
+        Each amount is not published in the verified snapshot, so treat these lines as LOW confidence
+        and request the current fee from the terminal, carrier or broker.
+      </p>
+
       <h3 class="mt-3">Demurrage and detention</h3>
       <p>
         <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
@@ -870,10 +871,8 @@ const schema = [
     <h3>Tax and duty</h3>
     <p>
       Kuwait’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common External
-      Tariff, with no general VAT on imports in the current framework. That makes the statutory stack
-      simpler than Saudi Arabia or the UAE: for most goods the duty-only landed cost is
-      <code>CIF × 1.05</code>. Specific products can still attract different tariff lines, so the HS
-      code remains the first cost decision.
+      Tariff, with no general VAT, so the duty-only landed cost is <code>CIF × 1.05</code>. Specific
+      goods can still attract different tariff lines, so the HS code remains the first cost decision.
     </p>
 
     <h3>Clearance in the correct order</h3>
@@ -888,18 +887,15 @@ const schema = [
     <h3>Documents and classification</h3>
     <p>
       Standard documents are the commercial invoice, bill of lading, packing list and certificate of
-      origin, with the correct HS codes and country-of-origin information. Restricted goods may
-      require an import licence or permit. Note that <strong>ISF</strong> is a United States
-      requirement and does not apply to Kuwait; Kuwait’s filing step is the import declaration
-      through the Kuwait Customs system.
+      origin, with the correct HS codes. Restricted goods may need a permit. <strong>ISF</strong> is a
+      United States requirement and does not apply to Kuwait.
     </p>
 
     <h3>No SABER or SASO requirement for Kuwait</h3>
     <p>
-      SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a
-      Kuwait import. Kuwait may have its own standards or inspection requirements for certain goods,
-      but those are not published in the verified snapshot — confirm the applicable conformity
-      process with Kuwait Customs and the relevant Kuwait authority for your product.
+      SABER and SASO are Saudi-only conformity systems, so do not copy them into a Kuwait import.
+      Kuwait may have its own standards or inspection requirements, but those are not published in
+      the verified snapshot — confirm the applicable process with Kuwait Customs.
     </p>
 
     <SourceList sources={complianceSources} title="Sources — Kuwait customs & port compliance" />
