@@ -99,6 +99,30 @@
   3. Cloudflare Pages 部署 + 子站 subdomain 规划
   4. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
 （模板）
+## 2026-09-01（夜间，Day 36–50 其它 GCC — Kuwait 收尾批次）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai，实际执行 ~03:10 CST）
+- **服务器资源**：远程 load 正常 ✅（Codex 0.150.1，deepseek-v4-pro；注意：非交互 SSH 需先 `source ~/.profile` 才能加载 `DEEPSEEK_API_KEY`，否则 codex 报 `Missing DEEPSEEK_API_KEY`）
+- **Tasks**：Codex 写 Kuwait 收尾两页 —— 港口情报页（`kuwait-ports`，Shuwaikh KWSWK + Shuaiba KWSHB）+ Shipping Cost & Transit 页（`shipping-cost-transit-time-china-to-kuwait`）；并在 `middleeast/index.astro` 注册两张卡片。至此 **Kuwait 簇 4 页齐**（Route Pillar + Customs/Duty + Ports + Cost/Transit），对齐 Qatar 的 4 页结构。
+- **Research**：复用 2026-08-30 已验证数据（GCC 统一关税 5% CIF、Kuwait 无一般 VAT、上海港 55.06M TEU、宁波舟山 43M TEU）；Kuwait 专属费率/时效/港杂费均不在已验证快照 → 一律 LOW +「not published — verify」
+- **Verification**：Shuwaikh `KWSWK` / Shuaiba `KWSHB`（gcc-ports.ts）；routes.ts 上海/宁波/深圳 → Shuwaikh typical 24 天（15–30，LOW）；Shuaiba 无已验证时效；Kuwait Customs 官方源 customs.gov.kw
+- **Content**：
+  - `kuwait-ports.astro` —— **4,966 词**，9 模块齐全，FAQ 12 条
+  - `shipping-cost-transit-time-china-to-kuwait.astro` —— **4,996 词**，9 模块齐全，FAQ 12 条
+  - 两页均含 Shuwaikh vs Shuaiba 分流对比 + 隐藏成本栈（THC/文件费/查验/港存/demurrage/detention）+ demurrage vs detention 详解
+- **Gap Analysis**：继续打 Demurrage/Detention + Hidden Charges 高价值 Gap；明确标注「SABER/SASO 仅限沙特，Kuwait 不适用」
+- **SEO / AIO / EEAT**：Article + FAQPage + BreadcrumbList + Organization schema；ConfidenceBadge 全标注；月度更新标记「September 2026 updated」（进入 9 月，对齐 hamad-port 先例）
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card/Breadcrumb/ConfidenceBadge 组件，无新组件；未改任何 data 文件
+- **QA**：`npm run build` 123 页零 error；两页 FAQ 12 条、词数 ≥2500、每个数据点有来源或标 LOW；唯一的「$10,000 CIF → $500 duty → $10,500」为基于已验证 5% 关税的说明性算例，已显式标注
+- **Build Result**：✅ 123 pages，clean
+- **Git Commit**：`e043c0a feat(middleeast): add Kuwait ports and shipping cost/transit pages` + `7a81929 refine(middleeast): ensure Kuwait ports page covers all nine modules`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. Kuwait 簇已 4 页 ✅ 完成；下一批 **Oman**（Route Pillar `shipping-from-china-to-oman` + Oman Customs & 5% VAT + Sohar/Salalah 港口 + Cost/Transit）→ Bahrain（Route Pillar + Khalifa bin Salman + Customs + 10% VAT）
+  2. Cloudflare Pages 部署 + 子站 subdomain 规划
+  3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+  4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
+
 ## YYYY-MM-DD
 
 - **可用时间**：
