@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 03:43 (Asia/Shanghai)
+> 最后更新：2026-09-01 05:12 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -54,7 +54,7 @@
 - [x] STEP 9 Firecrawl 竞品/中文/Primary Sources Research（`docs/research-notes-2026-08-30.md`）
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
-- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅ / Kuwait 4 页 ✅ / Oman 4 页 ✅；Directory/Ad/Quote 未开始）
+- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅ / Kuwait 4 页 ✅ / Oman 4 页 ✅ / Bahrain 2/4 页 ✅（Route Pillar + Customs/Duty；Ports + Cost/Transit 待写）；Directory/Ad/Quote 未开始）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
 
 ## 关键交付物（已入库 docs/）
@@ -84,7 +84,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. Day 36–50：继续其它 GCC —— Kuwait 已 4 页 ✅（Route Pillar + Customs/Duty + Ports + Cost/Transit）；下一批 **Oman**（Route Pillar `shipping-from-china-to-oman` + Oman Customs & 5% VAT + Sohar/Salalah 港口 + Cost/Transit）→ Bahrain（Route Pillar + Khalifa bin Salman + Customs + 10% VAT）
+1. Day 36–50 收尾：Bahrain 簇已完成 2/4 页（Route Pillar `shipping-from-china-to-bahrain` + Customs & 10% VAT `bahrain-customs-duty`）；下一批 **Khalifa bin Salman 港口情报（`bahrain-ports`）+ Cost/Transit（`shipping-cost-transit-time-china-to-bahrain`）** → 完成后六国（Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）全齐
 2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
 3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
 4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档

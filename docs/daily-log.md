@@ -149,6 +149,33 @@
   3. STEP 18–20：Directory / Ad Slots / Quote Framework 尚未开始
   4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档
 
+## 2026-09-01（Bahrain 簇第一批次 — Route Pillar + Customs/Duty）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai）
+- **服务器资源**：远程正常；Codex 0.150.1 可用。注意：非交互 SSH shell 默认不加载 `~/.profile`/`~/.bashrc`，需先 `source ~/.profile` 才能拿到 `DEEPSEEK_API_KEY`（首次调用因缺 key 失败，修复后重跑成功）
+- **Tasks**：Bahrain 簇前 2 页 —— Route Pillar（`shipping-from-china-to-bahrain`）+ Customs & 10% VAT（`bahrain-customs-duty`）；并在 `middleeast/index.astro` 注册 2 张卡片（L273 / L278）
+- **Research**：复用已验证数据（GCC 统一关税 5% CIF、Bahrain VAT 10%、上海港 55.06M TEU、宁波舟山 43M TEU）；Bahrain 专属费率/时效/港杂费均不在已验证快照 → 一律 LOW +「not published — verify」
+- **Verification**：Khalifa bin Salman `BHKBS`（gcc-ports.ts HIGH）；routes.ts 上海/宁波/深圳 → Khalifa bin Salman typical 22 天（15–30，LOW）；Bahrain Customs 官方源 bahraincustoms.gov.bh；Mina Salman / Hidd 无数据 → 均标 LOW/unverified
+- **Content**：
+  - `shipping-from-china-to-bahrain.astro` —— **4,999 词**，9 模块齐全，FAQ 10
+  - `bahrain-customs-duty.astro` —— **4,232 词**，9 模块齐全，FAQ 14
+  - 两页均含隐藏成本栈（THC/文件费/查验/港存/demurrage/detention）+ demurrage vs detention 详解 + King Fahd Causeway 语境
+- **Gap Analysis**：继续打 Demurrage/Detention + Hidden Charges 高价值 Gap；明确标注「SABER/SASO 仅限沙特，Bahrain 不适用」
+- **SEO / AIO / EEAT**：Article + FAQPage + BreadcrumbList + Organization schema；ConfidenceBadge 每数据点标注；月度更新标记 September 2026 updated；税率合成系数 CIF × 1.05 × 1.10 = **1.155** 已显式标注
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card/Breadcrumb/ConfidenceBadge 组件，无新组件；未改任何 data 文件
+- **QA**：`npm run build` 129 页（+2）零 error；两页 FAQ ≥10、词数 ≥4200；每个数据点有来源或标 LOW；5% 关税 + 10% VAT 合成 CIF × 1.155 已显式标注
+- **Build Result**：✅ 129 pages，clean（1.40s）
+- **Git Commit**：`4253734 feat(middleeast): add Bahrain route pillar and customs/duty pages`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. Bahrain 簇还差 2 页：Khalifa bin Salman 港口情报（`bahrain-ports`）+ Cost/Transit（`shipping-cost-transit-time-china-to-bahrain`）→ 完成后 Day 36–50 六国全部齐
+  2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
+  3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+  4. STEP 18–20：Directory / Ad Slots / Quote Framework 尚未开始
+  5. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档
+
+---
+
 ## YYYY-MM-DD
 
 - **可用时间**：
