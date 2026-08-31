@@ -1,0 +1,172 @@
+---
+import { getStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { directoryProviders, type DirectoryProvider } from '../../data/directory';
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
+
+export function getStaticPaths() {
+  return directoryProviders.map((provider) => ({
+    params: { slug: provider.slug },
+    props: { provider },
+  }));
+}
+
+const { provider } = Astro.props as { provider: DirectoryProvider };
+
+const countryLabels: Record<string, string> = {
+  'saudi-arabia': 'Saudi Arabia',
+  'united-arab-emirates': 'United Arab Emirates',
+  kuwait: 'Kuwait',
+  qatar: 'Qatar',
+  oman: 'Oman',
+  yemen: 'Yemen',
+};
+
+const countryName = (slug: string) => countryLabels[slug] ?? slug;
+
+const verificationExplanations: Record<DirectoryProvider['verification'], string> = {
+  verified: 'Contact and claims have been independently confirmed by WorldFreightHub.',
+  unverified:
+    'This provider was found in research, but its identity, contact details and service claims have not yet been independently confirmed.',
+  claimed: 'The business has confirmed its own listing; self-reported details remain labelled until independently verified.',
+  sponsored: 'This is a paid placement, always labelled as sponsored.',
+};
+
+const tableColumns = [
+  { key: 'serviceCountries', label: 'Service countries' },
+  { key: 'methods', label: 'Methods' },
+  { key: 'platformFocus', label: 'Platform focus' },
+  { key: 'verification', label: 'Verification' },
+  { key: 'lastVerified', label: 'Last verified' },
+  { key: 'source', label: 'Source', type: 'link' as const },
+];
+
+const tableRows = [
+  {
+    serviceCountries: provider.serviceCountries.map(countryName).join(', '),
+    methods: provider.methods.join(', '),
+    platformFocus:
+      provider.platformFocus && provider.platformFocus.length > 0
+        ? provider.platformFocus.join(', ')
+        : 'Not stated',
+    verification: provider.verification,
+    lastVerified: provider.lastVerified,
+    source: {
+      href: provider.source,
+      label: provider.sourceName,
+    },
+  },
+];
+
+const schema = [
+  {
+    type: 'LocalBusiness',
+    data: {
+      name: provider.name,
+      ...(provider.website ? { url: provider.website } : {}),
+      description: provider.description,
+      areaServed: provider.serviceCountries.map(countryName),
+    },
+  },
+  {
+    type: 'WebSite',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${provider.name} — Freight Provider Directory`}
+  description={provider.description}
+  canonical={`${SITE_URL}/directory/${provider.slug}/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Directory', href: '/directory/' },
+          { label: provider.name },
+        ]}
+      />
+      <h1>{provider.name}</h1>
+      {provider.nameZh && <p class="lead">{provider.nameZh}</p>}
+      <p class="muted">{provider.description}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">Verification status</span>
+        <span class="fact-value">{provider.verification}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Headquarters</span>
+        <span class="fact-value">{provider.hqCountry}</span>
+      </div>
+    </div>
+    <div class="note mt-3">
+      <strong>What this status means:</strong>{' '}
+      {verificationExplanations[provider.verification]}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Listing summary</h2>
+    <DataTable
+      columns={tableColumns}
+      rows={tableRows}
+      caption="Service scope and claims reflect the published source and are labelled where unverified."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Self-reported claims</h2>
+      <p>
+        These statements come from the provider or a marketplace listing. They
+        are self-reported and are <strong>not independently verified</strong>.
+      </p>
+      {provider.selfReportedClaims && provider.selfReportedClaims.length > 0 ? (
+        <ul>
+          {provider.selfReportedClaims.map((claim) => (
+            <li>{claim}</li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No self-reported claims have been recorded yet.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Contact & verification</h2>
+    <div class="note">
+      <strong>No verified contact details are published for this provider.</strong>{' '}
+      {provider.contactNote}
+    </div>
+    <p>
+      Before listing contact information, WorldFreightHub confirms it directly
+      with the provider and cross-checks the business name, website, service
+      area and claims against the source of record. Until then, the listing
+      remains a documented research lead only.
+    </p>
+    <p class="mt-2">
+      <a class="btn btn-secondary" href="/contact/">
+        Report an incorrect or outdated listing
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

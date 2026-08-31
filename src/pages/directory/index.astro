@@ -1,30 +1,212 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
-import { SITE_URL } from '../../site';
+import Card from '../../components/Card.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { directoryProviders } from '../../data/directory';
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
+
+const countryLabels: Record<string, string> = {
+  'saudi-arabia': 'Saudi Arabia',
+  'united-arab-emirates': 'United Arab Emirates',
+  kuwait: 'Kuwait',
+  qatar: 'Qatar',
+  oman: 'Oman',
+  yemen: 'Yemen',
+};
+
+const countryName = (slug: string) => countryLabels[slug] ?? slug;
+
+const verificationStatuses = [
+  {
+    status: 'Verified',
+    description: 'Contact and claims independently confirmed.',
+  },
+  {
+    status: 'Unverified',
+    description: 'Found in research, not yet independently confirmed.',
+  },
+  {
+    status: 'Claimed',
+    description: 'Business confirmed its own listing.',
+  },
+  {
+    status: 'Sponsored',
+    description: 'Paid placement, always labelled. Currently none.',
+  },
+];
+
+const providerCountrySlugs = [
+  ...new Set(directoryProviders.flatMap((provider) => provider.serviceCountries)),
+];
+
+const providerGroups = providerCountrySlugs
+  .map((slug) => ({
+    slug,
+    label: countryName(slug),
+    providers: directoryProviders.filter((provider) => provider.serviceCountries.includes(slug)),
+  }))
+  .filter((group) => group.providers.length > 0);
+
+const faqs = [
+  {
+    q: 'Is it free to be listed?',
+    a: 'Yes. A standard directory listing is free. We do not require payment for a business to be considered for inclusion, and paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.',
+  },
+  {
+    q: 'How do you verify providers?',
+    a: 'We start with public research sources and then work to confirm each provider directly, including its identity, website, service scope and contact details. No detail is published as verified until it has been independently checked.',
+  },
+  {
+    q: 'What does "unverified" mean?',
+    a: 'It means the provider was found in our research and is described only from that source, but we have not yet independently confirmed its identity, contact details or service claims. Treat its listing as a research lead, not an endorsement.',
+  },
+  {
+    q: 'Can a business claim its listing?',
+    a: 'Yes. A provider can contact us to claim its listing and supply supporting information. Claimed listings are marked as such, and any self-reported material remains labelled until independently verified.',
+  },
+  {
+    q: 'Do you accept paid placements?',
+    a: 'There are currently no paid placements in the directory. If advertising or sponsored listings are introduced later, they will be labelled clearly and will never be mixed with editorial rankings.',
+  },
+  {
+    q: 'How do I report an incorrect listing?',
+    a: 'Use the contact page and include the provider name, the incorrect detail and a source or correction. We review reports before updating published information.',
+  },
+  {
+    q: 'Why are there so few listings right now?',
+    a: 'We only publish providers that have a documented research source. Right now that means two unverified entries from our 2026 research pass; we are actively verifying more rather than padding the directory with unconfirmed businesses.',
+  },
+  {
+    q: 'How do you decide who to list?',
+    a: 'We list providers relevant to the China to GCC freight corridor when they appear in a source we can document. We do not rank by payment, and we prefer slower, source-backed listings over volume.',
+  },
+  {
+    q: 'Does "unverified" mean the provider is unsafe?',
+    a: 'No. It means we have not yet confirmed enough to vouch for the listing. Always perform your own due diligence and confirm licences, insurance, references and contract terms before shipping.',
+  },
+];
+
+const schema = [
+  {
+    type: 'Organization',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/og.png`,
+      },
+      sameAs: [SITE_URL],
+    },
+  },
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Freight Provider Directory',
+      itemListElement: directoryProviders.map((provider) => ({
+        '@type': 'Organization',
+        name: provider.name,
+        url: `${SITE_URL}/directory/${provider.slug}/`,
+        areaServed: provider.serviceCountries.map(countryName),
+      })),
+    },
+  },
+  {
+    type: 'WebSite',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+  },
+];
 ---
 
 <BaseLayout
-  title="Freight Provider Directory"
-  description="A directory framework for trusted freight forwarders, customs brokers and logistics providers on the China–GCC corridor."
+  title="Freight Provider Directory — China to GCC"
+  description="A no-paid-rankings, verification-first directory of freight forwarders and customs brokers on the China to GCC corridor."
   canonical={`${SITE_URL}/directory/`}
+  ogType="website"
+  schema={schema}
 >
   <div class="page-header">
     <div class="container">
       <Breadcrumb items={[{ label: 'Directory' }]} />
       <h1>Freight provider directory</h1>
       <p class="lead">
-        A structured directory of freight forwarders, customs brokers and
-        logistics providers.
+        A no-paid-rankings, verification-first directory of freight forwarders
+        and customs brokers on the China to GCC corridor.
       </p>
     </div>
   </div>
 
   <section class="section container">
-    <div class="note">
-      <strong>Coming soon:</strong> the directory framework is under development.
-      Providers will be listed with verified contact details and no paid
-      rankings. No provider entries are published until verification is complete.
+    <h2>Verification status</h2>
+    <p class="lead">
+      Every listing carries a status so you know how much independent
+      confirmation sits behind it.
+    </p>
+    <div class="grid grid--2 mt-2">
+      {verificationStatuses.map((item) => (
+        <Card title={item.status} description={item.description} />
+      ))}
     </div>
+    <div class="note mt-3">
+      <strong>Directory status:</strong> only 2 providers are listed right now,
+      and both are marked unverified. We are actively verifying more providers
+      and never fabricate entries or contact details.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Providers by GCC service country</h2>
+      <p>
+        Jump to:
+        {providerGroups.map((group, index) => (
+          <>
+            {index > 0 && ' · '}
+            <a href={`#${group.slug}`}>{group.label}</a>
+          </>
+        ))}
+      </p>
+
+      {providerGroups.map((group) => (
+        <div class="mb-3">
+          <h3 id={group.slug}>{group.label}</h3>
+          <div class="grid grid--2 mt-2">
+            {group.providers.map((provider) => (
+              <div>
+                <p class="mb-1">
+                  <span class="badge badge--amber">{provider.verification}</span>
+                </p>
+                <Card
+                  title={provider.name}
+                  description={provider.description}
+                  href={`/directory/${provider.slug}/`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <p class="muted small">
+        Directory data last reviewed September 2026. Service-country groupings
+        reflect each provider's self-reported scope unless otherwise noted.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Directory FAQ</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta />
   </section>
 </BaseLayout>
