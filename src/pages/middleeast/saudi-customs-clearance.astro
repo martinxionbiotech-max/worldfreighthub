@@ -1,0 +1,641 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/saudi-customs-clearance/`;
+
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia customs guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const tariffdutycalculator: Source = {
+  id: 'tariffdutycalculator',
+  name: 'Tariff Duty Calculator — Saudi Arabia import duty',
+  url: 'https://tariffdutycalculator.com/country/saudi-arabia/',
+  type: 'industry',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+const gaca: Source = {
+  id: 'gaca',
+  name: 'General Authority of Civil Aviation (GACA) — Saudi airports',
+  url: 'https://gaca.gov.sa',
+  type: 'government',
+};
+
+const primaryPortSources = sourcesByIds(['mawani']);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const documentSources: Source[] = [commenda, cargofromchina, fuxinCcpt, sasoInfo];
+const processSources: Source[] = [
+  ...sourcesByIds(['zatca']),
+  commenda,
+  cargofromchina,
+  fuxinCcpt,
+];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  sasoInfo,
+];
+const entrySources: Source[] = [
+  ...sourcesByIds(['mawani']),
+  gaca,
+];
+
+const clearanceFeeRows = [
+  {
+    item: 'Customs duty',
+    who: 'ZATCA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'ZATCA',
+    magnitude: '15% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Customs brokerage / clearance fee',
+    who: 'Saudi customs broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'FASAH / electronic processing charge',
+    who: 'ZATCA / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inspection / re-inspection fee (if selected)',
+    who: 'ZATCA / inspection body',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER / SASO conformity fees',
+    who: 'SASO / SABER platform + laboratories',
+    magnitude: 'PC per product + SC per shipment; not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Storage, demurrage or detention (after free time)',
+    who: 'Terminal / airport / carrier',
+    magnitude: 'Per-day charge; free time varies by operator',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Document translation / legalisation',
+    who: 'Translator / chamber / embassy',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+];
+
+const clearanceStepRows = [
+  {
+    step: 'Classify goods with the correct HS code',
+    when: 'Before booking or quoting',
+    basis: 'Duty, VAT and conformity requirements all depend on the code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Register importer and product on SABER',
+    when: 'Before shipment',
+    basis: 'SABER platform product registration',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Obtain the SABER PC (Product Conformity Certificate)',
+    when: 'Before shipment',
+    basis: 'Product testing, then pre-shipment inspection; ~1 year validity',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Apply for the SABER SC (Shipment Conformity Certificate)',
+    when: 'After B/L or AWB is issued',
+    basis: 'Shipment-specific certificate, one per consignment',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Receive the SC before cargo arrival',
+    when: 'Before arrival (mandatory since 1 Jan 2025)',
+    basis: 'An SC applied after arrival is void and clearance fails',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the FASAH pre-arrival declaration',
+    when: 'Before cargo arrival',
+    basis: 'Saudi single-window system; per Saudi Customs (ZATCA)',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay duty and VAT',
+    when: 'Before release',
+    basis: 'Assessed on CIF value plus duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Complete inspection and release the cargo',
+    when: 'After declaration and payment',
+    basis: 'Physical or documentary inspection if selected',
+    confidence: 'LOW',
+  },
+];
+
+const diyVsBrokerRows = [
+  {
+    factor: 'FASAH and customs access',
+    diy: 'You manage your own registration and filings',
+    broker: 'Broker files under its licence and handles the workflow',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'SABER PC/SC management',
+    diy: 'You track PC validity and SC timing yourself',
+    broker: 'Broker can coordinate the SC application window',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and duty risk',
+    diy: 'Errors are your liability and can delay release',
+    broker: 'Experience reduces — but does not remove — classification risk',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost visibility',
+    diy: 'Fewer intermediary fees, more of your own time',
+    broker: 'A brokerage fee is added; confirm it in writing',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for',
+    diy: 'Experienced importers with Saudi registration and staff',
+    broker: 'First-time importers, high-value or regulated goods, tight deadlines',
+    confidence: 'LOW',
+  },
+];
+
+const entryPointRows = [
+  {
+    entry: 'Jeddah Islamic Port',
+    type: 'Seaport',
+    region: 'Red Sea, western Saudi Arabia',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'King Abdulaziz Port, Dammam',
+    type: 'Seaport',
+    region: 'Arabian Gulf, eastern Saudi Arabia',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'Riyadh Dry Port',
+    type: 'Dry port / inland',
+    region: 'Central Saudi Arabia',
+    confidence: 'MEDIUM',
+  },
+  {
+    entry: 'King Abdulaziz International Airport, Jeddah (JED)',
+    type: 'Airport',
+    region: 'Western Saudi Arabia',
+    confidence: 'LOW',
+  },
+  {
+    entry: 'King Khalid International Airport, Riyadh (RUH)',
+    type: 'Airport',
+    region: 'Central Saudi Arabia',
+    confidence: 'LOW',
+  },
+  {
+    entry: 'King Fahd International Airport, Dammam (DMM)',
+    type: 'Airport',
+    region: 'Eastern Saudi Arabia',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is Saudi Arabia customs clearance?',
+    a: 'Saudi customs clearance is the process of declaring an import to ZATCA through the FASAH single-window system, paying the assessed duty and VAT, passing any documentary or physical inspection, and obtaining release of the goods for local delivery. For regulated goods, it also depends on a valid SABER conformity certificate being in place before arrival.',
+  },
+  {
+    q: 'What documents are required for Saudi customs clearance?',
+    a: 'The standard set is the commercial invoice, packing list, bill of lading or air waybill, certificate of origin, and the SABER conformity certificate for regulated goods. Classify the goods with the correct HS code first, because duty, VAT and conformity requirements all flow from it.',
+  },
+  {
+    q: 'What is FASAH?',
+    a: 'FASAH is Saudi Arabia’s single-window electronic system that connects importers, customs brokers, terminals, airlines and ZATCA in one flow for pre-arrival declarations, duty and VAT assessment, and clearance status. The research snapshot names the system but does not document the full process, so process details are marked per Saudi Customs (ZATCA) at LOW confidence — confirm current steps with ZATCA or your broker.',
+  },
+  {
+    q: 'Do I need a customs broker in Saudi Arabia?',
+    a: 'Not in every case, but most first-time importers use one. A broker can file FASAH, coordinate SABER SC timing, manage HS classification risk and handle inspection exceptions. If you are an experienced importer with Saudi registration, staff and systems, self-clearance is possible; otherwise the brokerage fee usually buys meaningful risk reduction.',
+  },
+  {
+    q: 'What is SABER and how does it connect to clearance?',
+    a: 'SABER is the Saudi conformity platform. Regulated products need a PC (Product Conformity Certificate) per product, valid about one year, and an SC (Shipment Conformity Certificate) per shipment. The SC must be obtained before cargo arrival — since 1 January 2025, an SC applied after arrival is void and clearance fails.',
+  },
+  {
+    q: 'When should I apply for the SABER SC?',
+    a: 'Apply once the bill of lading or air waybill is issued, because the SC is shipment-specific. The practical rule is to finish PC product work before shipment, apply for the SC as soon as the transport document exists, and receive the SC before the cargo arrives. Treat the exact processing days as LOW confidence — confirm with your SASO/SABER service provider early.',
+  },
+  {
+    q: 'How much does Saudi customs clearance cost?',
+    a: 'Duty is 5% of CIF value and VAT is 15% on CIF value plus duty. Brokerage, FASAH processing, inspection, SABER PC/SC and storage fees were not quantified in the verified research snapshot, so they must be requested from your broker or provider as an itemised schedule. Treat any single “clearance fee” number as indicative, not binding.',
+  },
+  {
+    q: 'How long does Saudi customs clearance take?',
+    a: 'The research snapshot does not publish a reliable hour or day figure for the Saudi corridor. The effective lead time depends on SABER SC readiness, HS code accuracy, document consistency, whether inspection is selected, and terminal or airport free time. Complete pre-arrival work first; the clearance itself is usually faster than fixing a missing SC or HS error.',
+  },
+  {
+    q: 'What are the most common Saudi clearance delays?',
+    a: 'The most common failure modes are an incorrect HS code, invoice or packing-list mismatches, a missing or expired SABER certificate, applying for the SC after arrival, and incomplete certificate-of-origin or legalisation details. These are operational patterns, not a ZATCA policy list — review documents line by line before filing.',
+  },
+  {
+    q: 'Does Saudi Arabia require a pre-arrival declaration?',
+    a: 'Yes, in practice the FASAH single-window flow is designed around advance filing so the shipment can be assessed before discharge. File the pre-arrival declaration early, attach the SABER SC, and resolve exceptions before free storage or demurrage time runs out.',
+  },
+  {
+    q: 'How is Saudi import duty and VAT calculated?',
+    a: 'Duty is assessed on the CIF value (cost, insurance and freight), with a 5% baseline under the GCC Common External Tariff and higher protective or anti-dumping rates possible. VAT is 15% on the CIF value plus customs duty. Keep the invoice value, freight and insurance lines consistent across documents.',
+  },
+  {
+    q: 'Is there a de minimis exemption for Saudi imports?',
+    a: 'This is unresolved in the research snapshot: some secondary sources state a SAR 1,000 exemption for personal courier shipments, while Commenda states Saudi Arabia has no low-value exemption. Confirm the current position with ZATCA before relying on either figure for a low-value import.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Saudi Arabia Customs Clearance: FASAH, SABER SC & Documents (August 2026)',
+      description:
+        'Saudi Arabia customs clearance explained: FASAH single window, required documents, SABER PC vs SC timing, self-clearance vs broker, fees, common delays and the 15% VAT / 5% CIF duty basis.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Saudi Arabia Customs Clearance: FASAH, SABER SC & Documents (August 2026)"
+  description="Saudi Arabia customs clearance explained: FASAH single window, required documents, SABER PC vs SC timing, self-clearance vs broker, fees, common delays and the 15% VAT / 5% CIF duty basis."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Saudi Arabia customs clearance' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Saudi Arabia customs clearance: FASAH, SABER SC &amp; the documents you need</h1>
+      <p class="lead">
+        A practical, decision-first guide to clearing China-to-Saudi imports through FASAH. This
+        page covers the required documents, the SABER PC-to-SC timeline that must finish before
+        arrival, whether to self-clear or use a broker, and the fees and failure modes that add
+        storage, demurrage and delay.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified tax and duty figures from unquantified operational fees
+        and process detail. Treat every LOW-confidence fee, timeline and process note as indicative
+        and verify with ZATCA or a licensed customs broker.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Clearance system</span>
+          <span class="fact-value">FASAH <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Brokerage fee</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Inspection fee</span>
+          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Saudi customs clearance at a glance</h2>
+    <p>
+      Saudi Arabia clears imports through <strong>FASAH</strong>, the single-window electronic
+      system that links importers, customs brokers, terminals, airlines and ZATCA. Clearance is not
+      a single form submitted on arrival — it is a timeline that starts with HS classification and
+      SABER conformity before the cargo ships, and finishes with duty/VAT payment and release.
+    </p>
+    <p>
+      The practical consequence is that most clearance failures happen <em>before</em> arrival: a
+      wrong HS code, mismatched documents, or a SABER SC that was applied after the cargo arrived.
+      Treat clearance as a pre-arrival project rather than a destination afterthought, and you
+      remove most of the storage, demurrage and inspection delays.
+    </p>
+    <p class="small muted">
+      FASAH is confirmed in the research snapshot as the Saudi single-window system, but its
+      step-by-step process is not fully documented in the verified sources. Process details below
+      are therefore marked <strong>per Saudi Customs (ZATCA)</strong> at LOW confidence and should
+      be confirmed against the current ZATCA workflow.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Saudi customs clearance fees: what is actually known</h2>
+      <p>
+        Only the statutory duty and VAT are verified. Brokerage, FASAH processing, inspection,
+        SABER PC/SC and storage amounts were not published in the verified research snapshot, so
+        this page refuses to invent a single “clearance fee” number. Request an itemised schedule
+        from a licensed broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={clearanceFeeRows}
+        caption="Only VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — clearance fees & taxes" />
+
+      <div class="note mt-2">
+        <strong>Hidden fee check before booking:</strong> ask for the brokerage fee, FASAH or
+        e-processing charge, inspection or re-inspection fee, SABER PC/SC fee, storage free time,
+        demurrage/detention rates and any document legalisation cost — in writing, on the same
+        quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The clearance process: a pre-arrival timeline</h2>
+    <p>
+      The sequence below is the operational order that matters, not a day-by-day guarantee. The
+      verified SABER rule gives the only hard timing constraint: the SC must be received before
+      cargo arrival. Everything else is a planning step that moves earlier or later with your
+      product and provider.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When it must happen' },
+        { key: 'basis', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={clearanceStepRows}
+      caption="Sequence and SABER SC timing are the verified anchors. Specific processing days are LOW confidence and were not published in the research snapshot."
+    />
+    <SourceList sources={processSources} title="Sources — clearance process & SABER" />
+
+    <div class="note mt-2">
+      <strong>The SABER SC window is the differentiator:</strong> PC product work happens before
+      shipment, the SC application opens once the B/L or AWB exists, and the SC must be in hand
+      before arrival. Starting this sequence after the cargo lands is exactly the failure mode the
+      January 2025 rule eliminated.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Self-clearance vs a Saudi customs broker</h2>
+      <p>
+        The decision is about who owns FASAH filings, SABER SC timing, classification risk and
+        exception handling. A broker adds a fee but usually removes friction; self-clearance removes
+        the intermediary fee but keeps every compliance risk with you.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'diy', label: 'Self-clearance' },
+          { key: 'broker', label: 'Licensed customs broker' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={diyVsBrokerRows}
+        caption="Decision guidance, not legal advice. Confirm broker licence, fees and responsibilities in writing before engagement."
+      />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Self-clearance is usually viable when...">
+          <ul>
+            <li>You have a Saudi commercial registration and FASAH access.</li>
+            <li>You can track SABER PC validity and SC timing yourself.</li>
+            <li>Your HS classification is stable and well understood.</li>
+            <li>You have staff to handle inspections and exceptions.</li>
+          </ul>
+        </Card>
+        <Card title="Hire a broker when...">
+          <ul>
+            <li>You are a first-time or infrequent Saudi importer.</li>
+            <li>Goods are regulated, high-value or HS-sensitive.</li>
+            <li>The delivery deadline is tight and free time is finite.</li>
+            <li>You want one accountable party for FASAH, SABER and release.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Saudi entry points for customs clearance</h2>
+    <p>
+      Clearance happens at the port, dry port or airport where the cargo arrives. Jeddah, Dammam
+      and Riyadh Dry Port are the seaports that matter for most ocean imports; Jeddah, Riyadh and
+      Dammam are the matching air gateways.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'entry', label: 'Entry point' },
+        { key: 'type', label: 'Type' },
+        { key: 'region', label: 'Region' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={entryPointRows}
+      caption="Seaport roles are secondary-source findings. Airport roles are LOW confidence operational context — confirm the clearance office with your broker."
+    />
+    <SourceList sources={entrySources} title="Sources — Saudi entry points" />
+
+    <div class="note mt-2">
+      <strong>Match the entry point to the consignee:</strong> Jeddah for western Saudi Arabia,
+      Riyadh Dry Port for the central metro, and Dammam for Eastern Province. Air cargo clears at
+      the matching JED, RUH or DMM airport.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Required documents and where mistakes creep in</h2>
+
+      <h3>The standard document set</h3>
+      <ul>
+        <li><strong>Commercial invoice</strong> — value, currency, incoterm, buyer/seller and HS-relevant description.</li>
+        <li><strong>Packing list</strong> — carton counts, weights, dimensions and marks that match the invoice and transport document.</li>
+        <li><strong>Bill of lading / air waybill</strong> — consignee and notify party must match clearance authority.</li>
+        <li><strong>Certificate of origin (COO)</strong> — evidence of origin for duty and trade-policy treatment.</li>
+        <li><strong>SABER certificate</strong> — PC for the product and SC for the shipment, with SC received before arrival.</li>
+      </ul>
+      <SourceList sources={documentSources} title="Sources — required documents" />
+
+      <h3 class="mt-3">Common failure modes</h3>
+      <ul>
+        <li><strong>HS code error:</strong> duty, VAT and SABER requirements all change with the code; re-classification at the border adds inspection and delay.</li>
+        <li><strong>Document mismatch:</strong> invoice value, weight, carton count or marks that differ from the packing list or transport document trigger holds.</li>
+        <li><strong>Missing or expired SABER:</strong> no PC, an expired PC, or an SC applied after arrival blocks release.</li>
+        <li><strong>Incomplete COO or legalisation:</strong> missing chamber or embassy attestation where the receiving authority expects it.</li>
+      </ul>
+
+      <div class="note mt-2">
+        <strong>Practical check:</strong> compare invoice, packing list and transport document line
+        by line before filing FASAH, and confirm the HS code, PC validity and SC status in the same
+        review.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: VAT, duty, SABER and the pre-arrival rule</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, calculated on the CIF
+      value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong> under
+      the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25% possible on
+      specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on carbonated
+      drinks where applicable.
+    </p>
+    <p>
+      One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+      de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+      such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+    </p>
+
+    <h3>The SABER SC rule in plain terms</h3>
+    <p>
+      Regulated goods need two certificates: the <strong>PC</strong>, issued once per product after
+      testing and pre-shipment inspection and valid about one year, and the <strong>SC</strong>,
+      issued per shipment. Since <strong>1 January 2025</strong>, the SC must be obtained
+      <strong>before cargo arrival</strong>; an SC applied after arrival is void and clearance
+      fails. This is the compliance point competitors rarely explain and the reason clearance
+      planning must start at the shipping date, not the arrival date.
+    </p>
+
+    <h3>HS code and classification</h3>
+    <p>
+      Classify goods with the correct <strong>HS code</strong> before quoting. The code drives duty
+      rate, SABER conformity scope and any import licensing, so a borderline classification should
+      be resolved with the broker or a ruling before the cargo ships rather than at inspection.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get Saudi customs clearance support for your shipment"
+      text="Tell us your commodity, HS code if you have it, entry point and SABER status, and we will connect you with providers who can quote clearance, SABER SC timing and delivery together."
+    />
+  </section>
+</BaseLayout>

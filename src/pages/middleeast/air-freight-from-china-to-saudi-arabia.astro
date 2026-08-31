@@ -1,0 +1,762 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/air-freight-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh air route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia air freight examples',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia air freight guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP air freight China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, ddpchain, cargofromchina];
+const transitSources: Source[] = [freightos, ddpchain, cargofromchina, chinaddpshipping];
+const comparisonSources: Source[] = [freightos, ddpchain, cargofromchina];
+const airportSources: Source[] = [
+  iata,
+  ...sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']),
+];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  sasoInfo,
+  freightos,
+];
+
+const airRateRows = [
+  {
+    service: 'Air freight · Shanghai–Riyadh',
+    benchmark: '$917–$1,223 per 100 kg',
+    perKg: '≈ $9.17–$12.23 / kg',
+    transit: '6–10 days',
+    basis: 'Freightos air route data',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · China–Saudi by route',
+    benchmark: '$880–$1,350 per 100 kg',
+    perKg: '≈ $8.80–$13.50 / kg',
+    transit: '6–10 days',
+    basis: 'ddpchain route examples',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · Shenzhen–Riyadh sample',
+    benchmark: '$920–$1,250 per 100 kg',
+    perKg: '≈ $9.20–$12.50 / kg',
+    transit: 'By route',
+    basis: 'ddpchain Shenzhen→Riyadh example',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · Saudi market brackets',
+    benchmark: 'SAR 26.5–30.5 / kg',
+    perKg: 'SAR 26.5–30.5 / kg',
+    transit: '2–5 business days',
+    basis: 'cargofromchina (22kg+ / 101kg+ brackets)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier · 1 kg sample',
+    benchmark: '$76.36 / kg at 1 kg',
+    perKg: '$76.36 / kg',
+    transit: '3–6 working days (DHL)',
+    basis: 'ddpchain express example',
+    confidence: 'LOW',
+  },
+];
+
+const airTransitRows = [
+  {
+    lane: 'Shanghai → Riyadh',
+    service: 'Air airport-to-airport',
+    transit: '6–10 days',
+    basis: 'Freightos Shanghai–Riyadh air route data',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (route examples)',
+    service: 'Air airport-to-airport',
+    transit: '6–10 days',
+    basis: 'ddpchain route examples',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (market brackets)',
+    service: 'Air freight',
+    transit: '2–5 business days',
+    basis: 'cargofromchina air freight guide',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (planning shorthand)',
+    service: 'Air airport-to-airport',
+    transit: '3–7 days',
+    basis: 'Planning range for direct airport-to-airport moves; verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Saudi Arabia (door-to-door DDP air)',
+    service: 'DDP air door-to-door',
+    transit: '10–15 days',
+    basis: 'chinaddpshipping DDP air benchmark',
+    confidence: 'LOW',
+  },
+];
+
+const airVsSeaRows = [
+  {
+    factor: 'Indicative transit',
+    air: '3–7 days airport-to-airport (full research range 2–10 days)',
+    sea: '18–25 days port-to-port planning range (full research range 20–45 days)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Unit basis',
+    air: 'Per chargeable kilogram (actual weight or volumetric weight, whichever is higher)',
+    sea: 'Per container for FCL; per CBM or chargeable weight for LCL',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost pattern',
+    air: 'High unit cost that rises with weight and urgency',
+    sea: 'Lowest unit cost for high-volume, heavy cargo',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best cargo',
+    air: 'Urgent, high-value, perishable, fragile or small goods',
+    sea: 'Large, dense, low-value, stable-demand goods',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Inventory & cash cycle',
+    air: 'Faster arrival can shorten stockout and working-capital cost',
+    sea: 'Slower but materially cheaper per unit for bulk cargo',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Saudi clearance & SABER',
+    air: 'SABER PC/SC and FASAH pre-arrival declaration still apply',
+    sea: 'Same compliance applies; sea does not remove paperwork',
+    confidence: 'MEDIUM',
+  },
+];
+
+const originGatewayRows = [
+  {
+    gateway: 'Shanghai (PVG)',
+    role: 'Major East China air cargo gateway; Shanghai seaport is 55.06M TEU (2025)',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Hong Kong (HKG)',
+    role: 'Major Asia air cargo transhipment hub',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Guangzhou Baiyun (CAN)',
+    role: 'South China manufacturing gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Shenzhen Bao’an (SZX)',
+    role: 'South China electronics and e-commerce gateway',
+    confidence: 'LOW',
+  },
+];
+
+const saudiGatewayRows = [
+  {
+    gateway: 'King Abdulaziz International Airport, Jeddah (JED)',
+    region: 'Western Saudi Arabia / Red Sea',
+    role: 'Primary air gateway for western consignees',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'King Khalid International Airport, Riyadh (RUH)',
+    region: 'Central Saudi Arabia',
+    role: 'Primary air gateway for the Riyadh metro',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'King Fahd International Airport, Dammam (DMM)',
+    region: 'Eastern Saudi Arabia / Arabian Gulf',
+    role: 'Air gateway for Eastern Province',
+    confidence: 'LOW',
+  },
+];
+
+const volumetricRows = [
+  {
+    example: 'Light carton',
+    actualWeight: '12 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '20 kg',
+    note: 'You pay for 20 kg, not 12 kg',
+  },
+  {
+    example: 'Dense carton',
+    actualWeight: '30 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '30 kg',
+    note: 'You pay for actual weight because it is higher',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Air freight (chargeable weight)',
+    who: 'Airline / forwarder',
+    magnitude: 'See rate table',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Fuel, security & peak-season surcharges',
+    who: 'Airline / forwarder',
+    magnitude: 'Commonly added; amounts not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin terminal & handling',
+    who: 'Forwarder / origin terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal & airline handling',
+    who: 'Saudi ground handler / forwarder',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    who: 'Saudi customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER / SASO conformity fees',
+    who: 'SASO / SABER platform + laboratories',
+    magnitude: 'PC per product + SC per shipment; not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Airport storage (after free time)',
+    who: 'Airline / ground handler',
+    magnitude: 'Per-day charge; free time varies by handler',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty',
+    who: 'ZATCA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'ZATCA',
+    magnitude: '15% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; typically a small percentage of cargo value',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is air freight from China to Saudi Arabia?',
+    a: 'Air freight is airport-to-airport transport of goods on scheduled or chartered aircraft from a Chinese origin airport to a Saudi destination airport such as Jeddah, Riyadh or Dammam. It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.',
+  },
+  {
+    q: 'How long does air freight take from China to Saudi Arabia?',
+    a: 'Indicative windows are 6–10 days for Shanghai–Riyadh (Freightos) and 2–5 business days in the cargofromchina market guide, with a practical planning shorthand of 3–7 days airport-to-airport. Door-to-door DDP air is commonly reported around 10–15 days. All are LOW-confidence research findings, not schedule guarantees — verify with the airline and forwarder.',
+  },
+  {
+    q: 'How much does air freight cost from China to Saudi Arabia?',
+    a: 'Indicative August 2026 market snapshots put general air freight around $880–$1,350 per 100 kg (roughly $8.80–$13.50 per kg), Freightos Shanghai–Riyadh at $917–$1,223 per 100 kg, and cargofromchina at SAR 26.5–30.5 per kg in higher weight brackets. These are LOW-confidence marketplace figures on different bases, not carrier quotes — verify before booking.',
+  },
+  {
+    q: 'How is air freight charged — actual weight or volumetric weight?',
+    a: 'Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is usually L × W × H in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.',
+  },
+  {
+    q: 'How do I calculate volumetric weight for air freight?',
+    a: 'Measure the packed carton in centimetres, multiply length × width × height, then divide by 6,000. For example, a 60 × 50 × 40 cm carton is 120,000 cm³ ÷ 6,000 = 20 kg volumetric. If its actual weight is 12 kg, you pay for 20 kg. Confirm the carrier’s divisor because some services use 5,000.',
+  },
+  {
+    q: 'Air freight or sea freight — which should I choose?',
+    a: 'Use a three-way test: time sensitivity, cargo value/density, and total landed cost. Air is justified for urgent, high-value, perishable, fragile or small goods that need roughly 3–7 days. Sea is usually cheaper for large, heavy, stable-demand cargo that can wait 18–45 days. SABER compliance applies to both, so air saves time, not paperwork.',
+  },
+  {
+    q: 'What cargo should go by air freight?',
+    a: 'The strongest air candidates are high-value-per-kilogram goods, perishables with short shelf life, fragile items where handling risk matters, small shipments where sea minimums are wasteful, and stockout-critical replenishment. Bulk commodities, dense machinery and stable-demand consumer goods usually belong on sea freight.',
+  },
+  {
+    q: 'Do SABER and FASAH apply to air freight?',
+    a: 'Yes. Regulated goods still need a SABER Product Conformity Certificate (PC) and a shipment-specific SC before cargo arrival, and the pre-arrival declaration is still filed through FASAH. Air shortens transit but does not remove Saudi conformity or customs steps, so complete PC/SC work before the cargo lands.',
+  },
+  {
+    q: 'Which airports are used for China to Saudi Arabia air freight?',
+    a: 'Common China gateways include Shanghai Pudong (PVG), Hong Kong (HKG), Guangzhou Baiyun (CAN) and Shenzhen Bao’an (SZX). Saudi arrival airports are typically Jeddah (JED), Riyadh (RUH) and Dammam (DMM). Airline and routing specifics were not published in the research snapshot — confirm the airport pair and transit point with the carrier.',
+  },
+  {
+    q: 'What documents do I need for air freight to Saudi Arabia?',
+    a: 'The standard set is the air waybill (AWB), commercial invoice, packing list, certificate of origin and, for regulated goods, the SABER conformity certificate. Classify the goods with the correct HS code before quoting, because duty and conformity requirements depend on it.',
+  },
+  {
+    q: 'What hidden fees should I expect on air freight?',
+    a: 'Beyond the per-kg rate, expect fuel and security surcharges, origin and destination terminal/handling charges, customs clearance and brokerage, SABER PC/SC fees, airport storage after free time, import duty of 5% CIF and VAT of 15% on CIF plus duty. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
+  },
+  {
+    q: 'Is express courier the same as air freight?',
+    a: 'No. Express courier is a door-to-door service with a much higher per-kg price, simpler billing and often a lower weight threshold; the research snapshot records a DHL example around $76.36/kg at 1 kg and 3–6 working days. Air freight is usually airport-to-airport, billed on chargeable weight in larger consignments, and requires separate Saudi clearance.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Air Freight from China to Saudi Arabia: Rates, Transit & Chargeable Weight (August 2026)',
+      description:
+        'Air freight from China to Saudi Arabia explained: chargeable vs volumetric weight, indicative $/kg rate benchmarks, 3–7 day transit planning, air vs sea decision framework, airports and cost breakdown.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Air Freight from China to Saudi Arabia: Rates, Transit & Chargeable Weight (August 2026)"
+  description="Air freight from China to Saudi Arabia: chargeable vs volumetric weight, indicative $/kg rate benchmarks, 3–7 day transit planning, air vs sea decision framework, airports and cost breakdown."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Air freight from China to Saudi Arabia' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Air freight from China to Saudi Arabia: rates, transit &amp; chargeable weight</h1>
+      <p class="lead">
+        A decision-first guide to flying goods from China to Jeddah, Riyadh and Dammam. This page
+        explains how airlines actually bill you — chargeable weight, not just actual weight — then
+        gives indicative rate and transit windows, the air-versus-sea trade-off, and the airports
+        and cost stack that make up a realistic landed-cost budget.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and routing note as indicative, verify with carrier before
+        relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Saudi import VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air planning transit</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea comparison transit</span>
+          <span class="fact-value">18–25 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Volumetric divisor</span>
+          <span class="fact-value">L×W×H/6000 <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The billing rule most shippers miss: chargeable weight</h2>
+    <p>
+      Air freight is not billed on actual weight alone. Airlines bill on <strong>chargeable
+      weight</strong>, which is the higher of the actual gross weight and the volumetric weight of
+      the packed shipment. Light, bulky goods are charged for the space they occupy, and that is the
+      single most common reason a first-time air shipper is surprised by the final invoice.
+    </p>
+    <p>
+      The standard IATA volumetric formula is <strong>L × W × H (cm) ÷ 6,000</strong>. Some express
+      or dense-cargo services use a divisor of 5,000, which makes the volumetric result even larger,
+      so always confirm the divisor with the airline or forwarder before comparing quotes.
+    </p>
+
+    <h3>Worked examples</h3>
+    <DataTable
+      columns={[
+        { key: 'example', label: 'Shipment' },
+        { key: 'actualWeight', label: 'Actual weight' },
+        { key: 'dimensions', label: 'Dimensions' },
+        { key: 'volumetricWeight', label: 'Volumetric weight' },
+        { key: 'chargeableWeight', label: 'Chargeable weight' },
+        { key: 'note', label: 'What it means' },
+      ]}
+      rows={volumetricRows}
+      caption="Volumetric weight uses the IATA 6,000 divisor. Chargeable weight is the higher of actual and volumetric weight."
+    />
+    <SourceList sources={[iata]} title="Sources — chargeable weight" />
+
+    <div class="note mt-2">
+      <strong>The comparison trap:</strong> never compare two air quotes on $/kg of actual weight.
+      Compute the chargeable weight for each quote using the same divisor, then compare the total
+      chargeable kilograms and the all-in line items.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative air freight rates from China to Saudi Arabia</h2>
+      <p>
+        Air rates change weekly with fuel, capacity, season and airport pairing, so these market
+        snapshots are deliberately labelled LOW confidence. The sources use different weight
+        brackets, route and date bases, so do not average them together.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Air service' },
+          { key: 'benchmark', label: 'Published benchmark' },
+          { key: 'perKg', label: 'Indicative per kg' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airRateRows}
+        caption="Indicative market snapshots, not carrier quotes. Per-kg figures are arithmetic conversions from published 100 kg brackets where relevant. Verify with a forwarder before relying on these figures."
+      />
+      <SourceList sources={rateSources} title="Sources — air freight rates" />
+
+      <div class="note mt-2">
+        <strong>Headline rate vs landed cost:</strong> the per-kg rate is only one line. Fuel and
+        security surcharges, terminal handling, Saudi clearance, SABER and duty/VAT all sit on top,
+        so request an all-in itemised quote for a realistic comparison.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Typical air transit windows from China to Saudi Arabia</h2>
+    <p>
+      Air transit depends on the airport pair, direct versus transhipped routing, and how quickly
+      Saudi clearance finishes after landing. Use these windows for planning, then confirm the
+      flight routing and the clearance lead time.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="Indicative transit windows only — verify with the relevant airline or forwarder before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — air transit times" />
+
+    <p class="small muted mt-2">
+      The 3–7 day planning shorthand is a tighter airport-to-airport view for direct moves; the
+      full research snapshot is broader at 2–10 days depending on service. Door-to-door DDP air is
+      longer because it adds clearance and final delivery.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Air vs sea: when the speed is worth the premium</h2>
+      <p>
+        Sea is usually cheaper per unit, but air wins when time sensitivity, shelf life or value
+        density dominate. The correct test is not “air is always expensive” — it is whether the
+        inventory, cash and risk costs of a slower sea move exceed the air premium.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airVsSeaRows}
+        caption="Decision factors are heuristic; unit-cost and transit figures are LOW confidence. Verify with your forwarder for the actual shipment."
+      />
+      <SourceList sources={comparisonSources} title="Sources — air vs sea" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose air freight when...">
+          <ul>
+            <li>The goods are urgent, perishable or stockout-critical.</li>
+            <li>Value per kilogram is high and damage risk matters.</li>
+            <li>The shipment is small and sea minimum charges are wasteful.</li>
+            <li>A 3–7 day arrival cycle is worth the premium.</li>
+          </ul>
+        </Card>
+        <Card title="Choose sea freight when...">
+          <ul>
+            <li>Cargo is large, dense, heavy or stable-demand.</li>
+            <li>Unit cost matters more than transit time.</li>
+            <li>The shipment fills a meaningful share of a container.</li>
+            <li>The consignee can absorb an 18–45 day window.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Airports and major routings from China to Saudi Arabia</h2>
+    <p>
+      Shanghai anchors the corridor’s export volume, while Hong Kong, Guangzhou and Shenzhen are
+      the main South China air alternatives. At the Saudi end, Jeddah, Riyadh and Dammam are the
+      three airports that matter for most imports.
+    </p>
+
+    <h3>China origin gateways</h3>
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={originGatewayRows}
+      caption="Shanghai seaport throughput is verified; airport roles and IATA codes are operational routing context not published in the research snapshot."
+    />
+    <SourceList sources={airportSources} title="Sources — China gateways" />
+
+    <h3 class="mt-3">Saudi arrival airports</h3>
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'region', label: 'Region' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={saudiGatewayRows}
+      caption="Saudi airport roles are LOW confidence operational context. Confirm the destination airport and clearance office with your forwarder."
+    />
+    <SourceList sources={[iata, ...complianceSources]} title="Sources — Saudi airports & customs" />
+
+    <div class="note mt-2">
+      <strong>Match the airport to the consignee:</strong> Jeddah for western Saudi Arabia, Riyadh
+      for the central metro, and Dammam for Eastern Province. Confirm the final trucking leg before
+      you choose the arrival airport.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Air freight cost composition: the fees competitors skip</h2>
+      <p>
+        The per-kg rate is only one line of the landed cost. Surcharges, terminal handling,
+        clearance, SABER conformity fees and airport storage are the costs that surprise first-time
+        importers — and the reason “all-in” is the only useful comparison number.
+      </p>
+
+      <h3>Airport storage and free time</h3>
+      <p>
+        Import air cargo typically gets a limited free-storage period at the Saudi arrival airport;
+        days beyond that become chargeable. Free-time allowances and per-day storage rates differ by
+        airline and ground handler and were not published in the verified research snapshot, so
+        request the storage schedule before booking. Clear before the free window ends to keep
+        storage charges off the final air freight invoice.
+      </p>
+
+      <h3 class="mt-3">Full air freight cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (15%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — air freight cost & customs" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: VAT, duty, SABER/SASO, FASAH &amp; HS codes</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Saudi import VAT is <strong>15%</strong>, effective since 1 July 2020, and is calculated on
+      the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with protective or anti-dumping tariffs of 15–25%
+      possible on specific goods. Excise tax adds 100% on tobacco, 50% on energy drinks and 50% on
+      carbonated drinks where applicable.
+    </p>
+    <p>
+      One discrepancy is flagged rather than hidden: some secondary sources state a SAR 1,000
+      de minimis exemption for personal courier shipments, while another says Saudi Arabia has no
+      such exemption. Treat that point as unresolved and confirm with ZATCA for low-value imports.
+    </p>
+
+    <h3>SABER / SASO in the correct order</h3>
+    <ol>
+      <li>Register the importer and product on the SABER conformity platform.</li>
+      <li>Obtain the <strong>PC (Product Conformity Certificate)</strong> — product testing first, then pre-shipment inspection; validity is about one year and it is issued once per product.</li>
+      <li>Once the air waybill / bill of lading is available, apply for the <strong>SC (Shipment Conformity Certificate)</strong> for that specific shipment.</li>
+      <li>Receive the SC <strong>before cargo arrival</strong> — since 1 January 2025, an SC applied after arrival is void and clearance fails.</li>
+      <li>Submit the pre-arrival customs declaration through <strong>FASAH</strong>, Saudi Arabia’s single-window system, with the SC attached.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the air waybill, commercial invoice, packing list, certificate of
+      origin and the SABER conformity certificate for regulated goods. Classify goods with the
+      correct <strong>HS code</strong> before quoting, because both duty and conformity requirements
+      depend on it. Note that <strong>ISF</strong> is a United States requirement and does not apply
+      to Saudi Arabia; Saudi Arabia’s equivalent advance-filing step is the FASAH pre-arrival
+      declaration.
+    </p>
+    <p>
+      Air shortens the transit clock, not the compliance clock. A late SABER SC or HS code error can
+      wipe out the time advantage by holding cargo at the airport, so complete PC/SC work before the
+      aircraft lands and file the FASAH pre-arrival declaration early.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Saudi customs & ports" />
+  </section>
+
+  <section class="section container">
+    <h2>8. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Saudi Arabia air freight quote"
+      text="Tell us your origin and destination airports, chargeable weight, commodity and delivery deadline, and we will connect you with providers who can quote air freight, SABER and destination fees together."
+    />
+  </section>
+</BaseLayout>
