@@ -20,7 +20,7 @@ export const routes: Route[] = originPorts.flatMap((origin) =>
     country: dest.country,
     transitDays: { typical: dest.typical, range: [15, 30] },
     confidence: 'LOW',
-    note: 'estimate — verify via carrier schedules before publish',
+    note: 'estimate — verify with the relevant carrier before relying on this figure',
   })),
 );
 

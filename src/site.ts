@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://worldfreighthub.com';
+export const SITE_URL = 'https://worldfreighthub.net';
 export const SITE_NAME = 'WorldFreightHub';
 export const SITE_TAGLINE = 'Global Freight Intelligence Network';
 export const SITE_DESCRIPTION =

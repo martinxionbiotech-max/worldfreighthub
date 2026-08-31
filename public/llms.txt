@@ -1,0 +1,26 @@
+# WorldFreightHub
+
+WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, and a provider directory framework.
+
+All freight rates and transit times are indicative estimates, not live quotes. Verify figures with the relevant carrier, port authority, or customs authority before making commercial decisions.
+
+## Main
+
+- [Home](https://worldfreighthub.net/): China to GCC freight intelligence overview.
+- [Routes](https://worldfreighthub.net/routes/): China to GCC shipping routes with indicative transit times.
+- [Countries](https://worldfreighthub.net/countries/): GCC destination country profiles with VAT, capitals, currencies, and ports.
+- [Ports](https://worldfreighthub.net/ports/): GCC destination ports and China origin port profiles.
+- [Methods](https://worldfreighthub.net/methods/): FCL, LCL, air, rail, DDP, and express shipping methods.
+- [Glossary](https://worldfreighthub.net/glossary/): Freight and customs terminology definitions.
+- [Middle East](https://worldfreighthub.net/middleeast/): China-to-GCC corridor overview.
+
+## Trust
+
+- [Methodology](https://worldfreighthub.net/methodology/): How route, port, and rate information is sourced and labeled.
+- [Editorial Policy](https://worldfreighthub.net/editorial-policy/): Confidence levels, corrections, and source standards.
+- [About](https://worldfreighthub.net/about/): About the project and its coverage.
+- [Contact](https://worldfreighthub.net/contact/): Corrections and partnership enquiries.
+
+## Request a quote
+
+- [Get Quote](https://worldfreighthub.net/get-quote/): Currently a preview; quote requests are not yet enabled.

@@ -16,6 +16,8 @@ interface Props {
   description?: string;
   canonical?: string;
   ogType?: 'website' | 'article';
+  ogImage?: string;
+  ogImageAlt?: string;
   noindex?: boolean;
   schema?: SchemaEntry[];
 }
@@ -25,6 +27,8 @@ const {
   description = SITE_DESCRIPTION,
   canonical,
   ogType,
+  ogImage = '/og.png',
+  ogImageAlt,
   noindex,
   schema = [],
 } = Astro.props;
@@ -43,6 +47,8 @@ const {
       description={description}
       canonical={canonical}
       ogType={ogType}
+      ogImage={ogImage}
+      ogImageAlt={ogImageAlt}
       noindex={noindex}
     />
     {schema.map((entry) => (

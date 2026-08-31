@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Cta from '../../components/Cta.astro';
 import { methods } from '../../data/methods';
-import { SITE_URL } from '../../site';
+import { SITE_NAME, SITE_URL } from '../../site';
 
 export function getStaticPaths() {
   return methods.map((method) => ({
@@ -22,6 +22,22 @@ const schema = [
       headline: method.name,
       url: `${SITE_URL}/methods/${method.slug}/`,
       description: method.summary,
+      author: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      datePublished: '2026-08-30',
+      dateModified: '2026-08-30',
+      publisher: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE_URL}/og.png`,
+        },
+      },
     },
   },
 ];

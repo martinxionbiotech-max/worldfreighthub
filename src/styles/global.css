@@ -218,6 +218,12 @@ code {
   color: var(--navy-700);
 }
 
+.btn:disabled,
+.btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* ---------- Cards ---------- */
 .card {
   display: block;
@@ -708,6 +714,11 @@ code {
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--navy-900);
+}
+
+.fact .fact-value a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 /* ---------- Notes / callouts ---------- */

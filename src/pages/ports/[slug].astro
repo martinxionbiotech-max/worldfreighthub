@@ -6,40 +6,28 @@ import Card from '../../components/Card.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
 import { gccPorts } from '../../data/gcc-ports';
+import { chinaPorts } from '../../data/china-ports';
 import { routes } from '../../data/routes';
-import { sources } from '../../data/sources';
-import { portName } from '../../data/lookup';
+import { portSourceIds, sourcesByIds } from '../../data/sources';
+import { getCountryBySlug, portName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
 
 export function getStaticPaths() {
-  return gccPorts.map((port) => ({
+  return [...chinaPorts, ...gccPorts].map((port) => ({
     params: { slug: port.slug },
     props: { port },
   }));
 }
 
 const { port } = Astro.props;
+const isChinaPort = port.countrySlug === 'china';
 
-const portRoutes = routes.filter((route) => route.destPort === port.slug);
+const portRoutes = isChinaPort
+  ? routes.filter((route) => route.originPort === port.slug)
+  : routes.filter((route) => route.destPort === port.slug);
 
-const sourceIds: Record<string, string[]> = {
-  jeddah: ['mawani'],
-  dammam: ['mawani'],
-  'riyadh-dry-port': ['mawani'],
-  'jebel-ali': ['dp-world'],
-  'khalifa-port-abu-dhabi': ['abu-dhabi-ports'],
-  'port-khalid': ['dubai-customs'],
-  hamad: ['qatar-customs'],
-  shuwaikh: ['kuwait-customs'],
-  shuaiba: ['kuwait-customs'],
-  sohar: ['oman-customs'],
-  salalah: ['oman-customs'],
-  'khalifa-bin-salman': ['bahrain-customs'],
-};
-
-const portSources = sources.filter((source) =>
-  (sourceIds[port.slug] ?? []).includes(source.id),
-);
+const portSources = sourcesByIds(portSourceIds[port.slug] ?? []);
+const country = getCountryBySlug(port.countrySlug);
 
 const schema = [
   {
@@ -76,7 +64,13 @@ const schema = [
     <div class="fact-grid">
       <div class="fact">
         <span class="fact-label">Country</span>
-        <span class="fact-value">{port.country}</span>
+        {country ? (
+          <span class="fact-value">
+            <a href={`/countries/${country.slug}/`}>{port.country}</a>
+          </span>
+        ) : (
+          <span class="fact-value">{port.country}</span>
+        )}
       </div>
       <div class="fact">
         <span class="fact-label">Type</span>
@@ -92,12 +86,12 @@ const schema = [
 
   <section class="section section--alt">
     <div class="container">
-      <h2>China routes to this port</h2>
+      <h2>{isChinaPort ? 'Routes from this origin' : 'China routes to this port'}</h2>
       {portRoutes.length > 0 ? (
         <div class="grid grid--3 mt-2">
           {portRoutes.map((route) => (
             <Card
-              title={`${portName(route.originPort)} → ${port.name}`}
+              title={`${portName(route.originPort)} → ${portName(route.destPort)}`}
               description={`Typical transit ${route.transitDays.typical} days (estimate).`}
               href={`/routes/${route.slug}/`}
             />

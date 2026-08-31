@@ -8,7 +8,7 @@ import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
 import { routes } from '../../data/routes';
 import { getRatesByRoute } from '../../data/rates';
-import { sources } from '../../data/sources';
+import { countrySourceIds, sourcesByIds } from '../../data/sources';
 import { portName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
 
@@ -24,6 +24,7 @@ const { route } = Astro.props;
 const originName = portName(route.originPort);
 const destName = portName(route.destPort);
 const routeRates = getRatesByRoute(route.slug);
+const routeSources = sourcesByIds(countrySourceIds[route.country] ?? []);
 
 const rateRows = routeRates.map((rate) => ({
   container: rate.container,
@@ -70,11 +71,11 @@ const schema = [
     <div class="fact-grid">
       <div class="fact">
         <span class="fact-label">Origin</span>
-        <span class="fact-value">{originName}</span>
+        <span class="fact-value"><a href={`/ports/${route.originPort}/`}>{originName}</a></span>
       </div>
       <div class="fact">
         <span class="fact-label">Destination</span>
-        <span class="fact-value">{destName}</span>
+        <span class="fact-value"><a href={`/ports/${route.destPort}/`}>{destName}</a></span>
       </div>
       <div class="fact">
         <span class="fact-label">Typical transit</span>
@@ -113,7 +114,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <SourceList sources={sources.slice(0, 6)} title="Reference sources" />
+    <SourceList sources={routeSources} title="Reference sources" />
   </section>
 
   <section class="section container">

@@ -22,6 +22,7 @@ export interface Port {
   slug: string;
   name: string;
   country: string;
+  countrySlug: string;
   type: 'seaport' | 'dry-port';
   unlocode?: string;
   note?: string;

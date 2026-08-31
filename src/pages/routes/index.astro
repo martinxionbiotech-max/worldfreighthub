@@ -12,7 +12,7 @@ const rows = routes.map((route) => ({
     href: `/routes/${route.slug}/`,
     label: `${portName(route.originPort)} → ${portName(route.destPort)}`,
   },
-  origin: portName(route.originPort),
+  origin: { href: `/ports/${route.originPort}/`, label: portName(route.originPort) },
   destination: portName(route.destPort),
   country: { href: `/countries/${route.country}/`, label: countryName(route.country) },
   transit: `${route.transitDays.typical} days`,
@@ -56,14 +56,14 @@ const schema = [
     <DataTable
       columns={[
         { key: 'route', label: 'Route', type: 'link' },
-        { key: 'origin', label: 'Origin' },
+        { key: 'origin', label: 'Origin', type: 'link' },
         { key: 'destination', label: 'Destination' },
         { key: 'country', label: 'Country', type: 'link' },
         { key: 'transit', label: 'Typical transit' },
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={rows}
-      caption="Indicative transit times only — verify via carrier schedules before publish."
+      caption="Indicative transit times only — verify with the relevant carrier before relying on these figures."
     />
   </section>
 

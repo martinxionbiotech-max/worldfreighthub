@@ -8,7 +8,7 @@ export const gccCountries: Country[] = [
     capital: 'Riyadh',
     currency: 'SAR',
     vatRate: 15,
-    vatNote: 'verify before publish',
+    vatNote: 'verify with the relevant authority before relying on this figure',
     ports: ['jeddah', 'dammam', 'riyadh-dry-port'],
   },
   {
@@ -18,7 +18,7 @@ export const gccCountries: Country[] = [
     capital: 'Abu Dhabi',
     currency: 'AED',
     vatRate: 5,
-    vatNote: 'verify before publish',
+    vatNote: 'verify with the relevant authority before relying on this figure',
     ports: ['jebel-ali', 'khalifa-port-abu-dhabi', 'port-khalid'],
   },
   {
@@ -28,7 +28,7 @@ export const gccCountries: Country[] = [
     capital: 'Doha',
     currency: 'QAR',
     vatRate: null,
-    vatNote: 'no general VAT — verify before publish',
+    vatNote: 'no general VAT — verify with the relevant authority before relying on this figure',
     ports: ['hamad'],
   },
   {
@@ -38,7 +38,7 @@ export const gccCountries: Country[] = [
     capital: 'Kuwait City',
     currency: 'KWD',
     vatRate: null,
-    vatNote: 'verify before publish',
+    vatNote: 'verify with the relevant authority before relying on this figure',
     ports: ['shuwaikh', 'shuaiba'],
   },
   {
@@ -48,7 +48,7 @@ export const gccCountries: Country[] = [
     capital: 'Muscat',
     currency: 'OMR',
     vatRate: 5,
-    vatNote: 'verify before publish',
+    vatNote: 'verify with the relevant authority before relying on this figure',
     ports: ['sohar', 'salalah'],
   },
   {
@@ -58,7 +58,7 @@ export const gccCountries: Country[] = [
     capital: 'Manama',
     currency: 'BHD',
     vatRate: 10,
-    vatNote: 'verify before publish',
+    vatNote: 'verify with the relevant authority before relying on this figure',
     ports: ['khalifa-bin-salman'],
   },
 ];

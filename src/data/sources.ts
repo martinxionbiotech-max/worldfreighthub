@@ -1,5 +1,40 @@
 import type { Source } from './types';
 
+export const countrySourceIds: Record<string, string[]> = {
+  'saudi-arabia': ['mawani', 'zatca'],
+  'united-arab-emirates': ['dubai-customs', 'dp-world', 'abu-dhabi-ports'],
+  qatar: ['qatar-customs'],
+  kuwait: ['kuwait-customs'],
+  oman: ['oman-customs'],
+  bahrain: ['bahrain-customs'],
+};
+
+export const portSourceIds: Record<string, string[]> = {
+  jeddah: ['mawani'],
+  dammam: ['mawani'],
+  'riyadh-dry-port': ['mawani'],
+  'jebel-ali': ['dp-world'],
+  'khalifa-port-abu-dhabi': ['abu-dhabi-ports'],
+  'port-khalid': ['dubai-customs'],
+  hamad: ['qatar-customs'],
+  shuwaikh: ['kuwait-customs'],
+  shuaiba: ['kuwait-customs'],
+  sohar: ['oman-customs'],
+  salalah: ['oman-customs'],
+  'khalifa-bin-salman': ['bahrain-customs'],
+  shanghai: ['sipg'],
+  'ningbo-zhoushan': ['ningbo-zhoushan-port'],
+  shenzhen: ['shenzhen-port-group'],
+  guangzhou: ['world-bank'],
+  qingdao: ['world-bank'],
+  tianjin: ['world-bank'],
+  xiamen: ['world-bank'],
+};
+
+export function sourcesByIds(ids: string[]): Source[] {
+  return sources.filter((source) => ids.includes(source.id));
+}
+
 export const sources: Source[] = [
   {
     id: 'mawani',
