@@ -1,0 +1,948 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/oman-ports/`;
+
+const soharPort = gccPorts.find((item) => item.slug === 'sohar');
+const salalahPort = gccPorts.find((item) => item.slug === 'salalah');
+const soharUnlocode = soharPort?.unlocode ?? '—';
+const salalahUnlocode = salalahPort?.unlocode ?? '—';
+
+const wfhRouteData: Source = {
+  id: 'wfh-oman-port-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Sohar (typical 19 days, range 15–30; LOW confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-oman-port-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const omanCustomsSources = sourcesByIds(['oman-customs']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
+const portFactSources: Source[] = [...omanCustomsSources, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData];
+const decisionSources: Source[] = [wfhRouteData, ...omanCustomsSources];
+const facilitySources: Source[] = [...omanCustomsSources, wfhMethodology];
+const costSources: Source[] = [...omanCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...omanCustomsSources, wfhMethodology];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'Oman',
+    note: 'GCC member; two-coast geography with northern and southern gateways',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Ports covered',
+    value: 'Sohar and Salalah',
+    note: 'The two Oman seaports in the WorldFreightHub port data',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Port type',
+    value: 'Seaport (both)',
+    note: 'Ocean gateways on the Gulf of Oman and the Arabian Sea',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Coast / region',
+    value: 'Sohar — northern (Gulf of Oman); Salalah — southern (Arabian Sea)',
+    note: 'Sohar serves northern Oman/Muscat; Salalah sits on the southern Dhofar coast',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Sohar role',
+    value: 'Industrial, commercial and container gateway near Muscat with an adjacent free zone',
+    note: 'Commonly quoted for general containerised China imports; verify on booking',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Salalah role',
+    value: 'Major deep-water transshipment hub on the Arabian Sea southern coast',
+    note: 'Feeds the wider Gulf, Indian Ocean and East Africa; southern Oman demand',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Sohar UN/LOCODE',
+    value: soharUnlocode,
+    note: 'Use on the bill of lading for Sohar discharge',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Salalah UN/LOCODE',
+    value: salalahUnlocode,
+    note: 'Use on the bill of lading for Salalah discharge',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    value: 'Oman port operators / terminal operators',
+    note: 'Specific operator and terminal allocation not published in the verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Berths, draft, cranes and throughput',
+    value: 'Not published in verified snapshot',
+    note: 'Request the current capability from the port authority or carrier',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'China sea transit to Sohar',
+    value: 'Typical 19 days (range 15–30)',
+    note: 'Route-level estimate from the WorldFreightHub data layer',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'China sea transit to Salalah',
+    value: 'Not published in verified snapshot',
+    note: 'Request a carrier-specific transit rather than borrowing the Sohar figure',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Baseline import duty',
+    value: '5% of CIF value',
+    note: 'GCC Common External Tariff baseline',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'VAT',
+    value: '5%',
+    note: 'Applied on the duty-inclusive base (CIF + duty)',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai',
+    service: 'Sea port-to-port to Sohar',
+    transit: 'Typical 19 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan',
+    service: 'Sea port-to-port to Sohar',
+    transit: 'Typical 19 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen (Yantian / Shekou)',
+    service: 'Sea port-to-port to Sohar',
+    transit: 'Typical 19 days (15–30 day range)',
+    basis: 'WorldFreightHub route data — verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Oman corridor',
+    service: 'Sea port-to-port to Salalah',
+    transit: 'Not published in verified snapshot — request carrier transit',
+    basis: 'No verified Salalah-specific sea transit in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Oman corridor',
+    service: 'Air freight',
+    transit: 'Not published in verified snapshot — request routing quote',
+    basis: 'No verified Oman air transit in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → Oman door',
+    service: 'Door-to-door after sea or air',
+    transit: 'Not published in verified snapshot — request door quote',
+    basis: 'Adds discharge, Bayan clearance, 5% duty/VAT, inspection and last-mile trucking',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'General containerised imports, consumer goods and retail replenishment for Muscat / northern Oman',
+    bestChoice: 'Sohar',
+    why: 'Commonly quoted as the northern commercial/container gateway nearest to the main demand base',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Industrial, petrochemical, bulk or project cargo in the northern Sohar industrial/free-zone corridor',
+    bestChoice: 'Sohar',
+    why: 'The Sohar industrial port and adjacent free zone are the commonly cited fit',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Cargo destined for southern Oman (Dhofar) or a transshipment relay',
+    bestChoice: 'Salalah',
+    why: 'Salalah is the southern Arabian Sea gateway and transshipment hub',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Time-critical, light or high-value cargo',
+    bestChoice: 'Muscat airport / air freight',
+    why: 'Air compresses the main carriage but is an air routing decision, not a seaport choice',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'LCL or FCL general imports where the port has not been fixed by the receiver',
+    bestChoice: 'Confirm Sohar first',
+    why: 'Use Sohar as the planning default for northern/Muscat cargo, then confirm with the carrier',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Transshipment, feedering or regional distribution beyond Oman',
+    bestChoice: 'Salalah',
+    why: 'Salalah’s deep-water transshipment role feeds the Gulf, Indian Ocean and East Africa',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'Container handling',
+    function: 'Deep-sea container discharge for China imports',
+    note: 'Sohar is the commonly quoted northern container gateway; specific capacity not published',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Industrial and free-zone terminals',
+    function: 'Petrochemical, metals, minerals and manufacturing-linked handling',
+    note: 'Commonly associated with Sohar Port and Freezone; not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Transshipment and relay berths',
+    function: 'Deep-water hub handling for relayed and transshipped boxes',
+    note: 'Commonly associated with Salalah; confirm berth and connectivity with the carrier',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'General and breakbulk cargo',
+    function: 'Machinery, project pieces, steel and general commercial cargo',
+    note: 'Commonly associated with Sohar; verify the terminal and gear with the carrier',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Bulk and liquid berths',
+    function: 'Heavy industrial and liquid-bulk discharge',
+    note: 'A Sohar-style cargo fit; confirm berth, draft and product compatibility',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Customs inspection',
+    function: 'Oman Customs screening and release at the port',
+    note: 'Specific inspection capacity and fee schedule are not published in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Muscat, Al Batinah and the Dhofar/southern corridor',
+    note: 'Final delivery distance depends on the chosen port and site; request a destination quote',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Air gateway',
+    function: 'Muscat airport for air cargo',
+    note: 'Not a seaport facility; relevant only when the shipment is routed by air',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Sohar / Salalah terminal and port operator',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Oman Customs clearance and brokerage',
+    who: 'Oman Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Oman Customs',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'VAT',
+    who: 'Oman tax authority',
+    magnitude: '5% on the duty-inclusive base',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to Muscat / northern or southern sites',
+    who: 'Local trucking operator',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Vessel routing and transshipment',
+    effect: 'A direct loop saves time; a transshipped box adds a handling point',
+    direction: 'Transit and handling variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Oman two-coast geography',
+    effect: 'Sohar and Salalah sit on different coasts, so the wrong port choice adds inland distance',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Documents and HS-code readiness',
+    effect: 'Late or wrong documents delay Bayan clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Conformity and restricted-commodity screen',
+    effect: 'Oman-specific standards and permits can add clearance time',
+    direction: 'Clearance risk up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Free-time discipline',
+    effect: 'Demurrage and detention apply after free time',
+    direction: 'Cost up after free days',
+    confidence: 'LOW',
+  },
+];
+
+const rateRows = [
+  {
+    service: 'LCL ocean — China to Sohar / Salalah',
+    benchmark: 'Not published in verified snapshot — request an all-in per-CBM quote',
+    basis: 'No verified Oman LCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ to Sohar or Salalah',
+    benchmark: 'Not published in verified snapshot — request an all-in container quote',
+    basis: 'No verified Oman FCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const fclLclRows = [
+  {
+    factor: 'Pricing unit',
+    fcl: 'Per container (20GP / 40GP / 40HQ)',
+    lcl: 'Per CBM, with a minimum charge on small volumes',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Indicative cost',
+    fcl: 'Not published in the Oman snapshot — request an all-in quote',
+    lcl: 'Not published in the Oman snapshot — request an all-in per-CBM quote',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling',
+    fcl: 'One sealed box with less CFS touch',
+    lcl: 'Extra consolidation and deconsolidation handling',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit',
+    fcl: 'Typical 19-day Sohar estimate (LOW); carrier routing decides',
+    lcl: 'Same ocean window plus consolidation; no separate LCL transit published',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usually best for',
+    fcl: 'Full or near-full containers and homogeneous heavy loads',
+    lcl: 'Small, mixed-SKU consignments and low-volume buyers',
+    confidence: 'LOW',
+  },
+];
+
+const chinaOriginRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; world #1 by cargo tonnage',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named in China→GCC freight guides',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Qingdao (CNTAO) / Tianjin (CNTSN) / Xiamen (CNXMN)',
+    throughput: 'Not published in snapshot',
+    note: 'Additional northern and Fujian origins on the corridor',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where are Oman’s main ports located?',
+    a: 'Oman has two main seaports in the WorldFreightHub port data. Sohar is the northern industrial, commercial and container gateway near Muscat on the Gulf of Oman, while Salalah is a major deep-water transshipment hub on the southern Arabian Sea coast in the Dhofar region. Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
+  },
+  {
+    q: 'What are the UN/LOCODEs for Sohar and Salalah?',
+    a: 'The UN/LOCODE for Sohar is OMSOH and the UN/LOCODE for Salalah is OMSLL. Use the correct code on the bill of lading and customs paperwork to avoid the cargo being routed to the wrong Oman gateway.',
+  },
+  {
+    q: 'What is the difference between Sohar and Salalah ports?',
+    a: 'Sohar (OMSOH) is the northern industrial and container gateway serving Muscat and the Al Batinah corridor, with an adjacent port and free zone. Salalah (OMSLL) is a deep-water Arabian Sea transshipment hub on the southern Dhofar coast that feeds the wider Gulf, Indian Ocean and East Africa. The exact terminal capabilities are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
+  },
+  {
+    q: 'Who operates Oman’s ports?',
+    a: 'Oman’s ports are overseen by the Oman port authorities, with terminal operations and services handled by port operators and service providers. The verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput, so request the current operational details from the port authority or your forwarder.',
+  },
+  {
+    q: 'How long does sea freight take from China to Sohar?',
+    a: 'WorldFreightHub route data records a typical 19 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Sohar (LOW confidence, because the route data is an estimate). Verify the transit with your carrier before relying on the figure.',
+  },
+  {
+    q: 'How long does sea freight take from China to Salalah?',
+    a: 'No verified Salalah-specific sea transit is published in the research snapshot. Request a carrier-specific transit rather than assuming the Sohar 19-day estimate automatically applies to Salalah.',
+  },
+  {
+    q: 'What import duty and VAT apply at Oman ports?',
+    a: 'The baseline import duty is 5% of CIF value under the GCC Common External Tariff, and Oman applies a 5% VAT on the duty-inclusive base. The baseline statutory stack is CIF × 1.05 × 1.05 = CIF × 1.1025. Specific HS-code duty lines and VAT treatments can differ, so classify the goods before quoting.',
+  },
+  {
+    q: 'What documents are needed for clearance at Sohar or Salalah?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Certificate of origin requirements can differ for GCC-origin versus non-GCC goods, and restricted goods may require an import licence or permit before arrival.',
+  },
+  {
+    q: 'How do demurrage and detention work at Oman ports?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Oman free-day allowances and per-diem amounts were not published in the snapshot, so request the fee schedule and book trucking before discharge.',
+  },
+  {
+    q: 'Is there a free zone at Sohar or Salalah?',
+    a: 'Sohar has a port-and-free-zone structure commonly cited for industrial and logistics activity, while Salalah is better known as a transshipment hub. The verified research snapshot does not publish which free-zone treatment attaches to a specific consignment, so confirm the zone rules and discharge point with Oman Customs and the relevant authority.',
+  },
+  {
+    q: 'Is SABER or SASO required for shipments to Oman?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into an Oman import. Oman has its own standards and conformity regime, which may require product-specific certification for certain goods, but those specifics are not published in the verified snapshot — confirm the applicable Oman process for your product.',
+  },
+  {
+    q: 'Which Oman port should I use for China imports?',
+    a: 'Use Sohar as the planning default for general containerised, commercial and industrial cargo bound for Muscat and northern Oman. Consider Salalah when the cargo is destined for southern Oman (Dhofar) or is part of a transshipment relay. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Oman Ports — Sohar & Salalah Intelligence: China Routing, Transit & Clearance (September 2026)',
+      description:
+        'Oman ports intelligence for China freight: Sohar (OMSOH) vs Salalah (OMSLL), port roles, China transit windows, 5% duty and 5% VAT clearance, and the two-port routing decision.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Oman Ports — Sohar & Salalah Intelligence: China Routing, Transit & Clearance (September 2026)"
+  description="Oman ports intelligence for China freight: Sohar (OMSOH) vs Salalah (OMSLL), port roles, China transit windows, 5% duty and 5% VAT clearance, and the two-port routing decision."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Oman Ports' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Oman Ports: Sohar &amp; Salalah intelligence for China freight</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight into Oman. This page explains the
+        Sohar-vs-Salalah decision, the two UN/LOCODEs, the port roles and hinterland logic, how long
+        China ocean moves take, what the destination cost stack looks like, and the 5% duty + 5% VAT
+        clearance rules that apply at the Oman gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified port codes and the GCC duty/VAT baseline from indicative
+        routing and fee notes. Treat every LOW-confidence port, transit and fee note as a planning
+        guide, and verify with the Oman port authority or your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Ports</span>
+          <span class="fact-value">Sohar / Salalah <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{soharUnlocode} / {salalahUnlocode} <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Port type</span>
+          <span class="fact-value">Seaports <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">Typical 19 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Oman’s two-port map matters for China freight</h2>
+    <p>
+      Oman is the only GCC member with a genuinely two-coast port map. Sohar sits in the north on the
+      Gulf of Oman, close to Muscat and the Al Batinah industrial corridor, while Salalah sits far to
+      the south on the Arabian Sea coast, a deep-water transshipment hub feeding the wider Gulf, the
+      Indian Ocean and East Africa. Before any China-to-Oman consignment is booked, the importer faces
+      a genuine routing question: <strong>Sohar or Salalah?</strong> The choice changes inland
+      distance, cargo fit and destination-fee exposure.
+    </p>
+    <p>
+      The commonly quoted commercial gateway is <strong>Sohar</strong>, close to the main northern
+      demand base, with an industrial port and adjacent free zone. <strong>Salalah</strong> is the
+      port to consider for southern Oman (Dhofar) demand and for transshipment relays. Both have their
+      own UN/LOCODEs, but the verified snapshot does not publish their berths, draft, cranes,
+      throughput, operators or fees. Route logically, then request the operational facts from the
+      port authority and carrier.
+    </p>
+    <p>
+      The statutory side is a duty-plus-VAT stack: Oman uses the GCC <strong>5% customs duty on CIF
+      value</strong> baseline, then a <strong>5% VAT</strong> on the duty-inclusive base, giving
+      <code>CIF × 1.1025</code>. The real landed-cost variance therefore comes from port choice,
+      terminal charges, clearance discipline and demurrage/detention — the areas this page keeps
+      visible.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Oman port parameters</h2>
+      <p>
+        Use this table as an orientation, not a terminal directory. The country, port codes and GCC
+        duty/VAT baseline are the verified anchors; the role split, operator, berths and throughput
+        are marked LOW because the verified snapshot does not publish Oman port-authority details.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Oman port parameters — UN/LOCODEs and the GCC duty/VAT baseline are the HIGH/MEDIUM anchors; operational and role details are LOW confidence and require port-authority confirmation."
+      />
+      <SourceList sources={portFactSources} title="Sources — Oman port parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth,
+        draft, crane capability, heavy-lift availability, terminal window or product-handling class,
+        request the current schedule and restrictions from the Oman port authority or your forwarder
+        before booking. The verified snapshot does not supply berth-by-berth constraints.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Oman port transit windows</h2>
+    <p>
+      Transit into Oman is a planning range, not a promise. The route data gives Sohar a typical
+      19 days with a 15–30 day range, LOW confidence. Salalah sea transit and Oman air transit are
+      not published, so the table keeps those lines explicit instead of borrowing another corridor’s
+      figure.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Oman port transit times" />
+
+    <div class="note mt-2">
+      <strong>Port-to-port vs Oman door:</strong> a typical 19-day ocean move to Sohar is not total
+      door time to a Muscat address. Add discharge, Bayan clearance, 5% duty/VAT, any inspection and
+      last-mile trucking before committing a delivery date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL / LCL rate benchmarks and the volume decision</h2>
+      <p>
+        Oman FCL and LCL rates are not published in the verified snapshot, so the table below shows
+        “request an all-in quote” rather than a guessed dollar range. The only corridor figure is the
+        typical 19-day Sohar sea estimate, LOW confidence.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Oman FCL/LCL rates were not published in the verified snapshot — request an all-in quote rather than using a guessed benchmark."
+      />
+      <SourceList sources={rateSources} title="Sources — Oman FCL/LCL rates" />
+
+      <h3 class="mt-3">FCL vs LCL guidance</h3>
+      <p>
+        The crossover is directional because neither rate is published. FCL becomes the usual choice
+        as the shipment approaches a meaningful share of a container; LCL suits small volumes that
+        would not fill a box. Request both all-in quotes at the same destination point before deciding.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Decision factor' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclLclRows}
+        caption="FCL vs LCL guidance is directional; Oman FCL and LCL benchmarks are not published in the verified snapshot."
+      />
+      <SourceList sources={modeSources} title="Sources — FCL vs LCL guidance" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <div class="container">
+      <h2>5. China origins and the Oman destination map</h2>
+      <p>
+        Shanghai and Ningbo-Zhoushan anchor the East China ocean services; Shenzhen and Guangzhou cover
+        South China, while Qingdao, Tianjin and Xiamen serve northern and Fujian suppliers. On the
+        Oman side, the destination map has two seaports — Sohar (OMSOH) and Salalah (OMSLL) — plus
+        Muscat airport for air cargo.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China origin port' },
+          { key: 'throughput', label: 'Throughput' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaOriginRows}
+        caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence; other origins are named on the corridor but their throughput is not stated in the snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+      <div class="note mt-2">
+        <strong>Oman destination codes:</strong> Sohar is {soharUnlocode} and Salalah is
+        {salalahUnlocode}. Use the exact UN/LOCODE on the bill of lading so the cargo does not land
+        on the wrong side of the two-port choice.
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Sohar vs Salalah: the routing decision</h2>
+      <p>
+        The Sohar/Salalah question is the Oman equivalent of the Jeddah-vs-Dammam choice in Saudi
+        Arabia, but with a sharper geographic split: the two ports sit on different coasts. Sohar is
+        the planning default for general commercial, industrial and containerised cargo near Muscat
+        and the northern corridor, while Salalah is the planning default for southern Oman demand and
+        transshipment relays. Confirm the final discharge point with the carrier and receiver before
+        the bill of lading is cut.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestChoice', label: 'Best-fit gateway' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm terminal allocation and the inland leg before choosing the discharge gateway."
+      />
+      <SourceList sources={decisionSources} title="Sources — Sohar vs Salalah routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Book Sohar when...">
+          <ul>
+            <li>The cargo is general containerised, commercial or industrial freight for Muscat / northern Oman.</li>
+            <li>The importer wants the commonly quoted northern container/industrial gateway.</li>
+            <li>The final delivery point is close to Muscat, Al Batinah or the Sohar free zone.</li>
+            <li>You have not been instructed by the receiver to use a southern or transshipment point.</li>
+          </ul>
+        </Card>
+        <Card title="Consider Salalah when...">
+          <ul>
+            <li>The cargo is destined for southern Oman (Dhofar).</li>
+            <li>The consignment is part of a transshipment or feedering relay.</li>
+            <li>The receiver or carrier names Salalah as the discharge point.</li>
+            <li>The distribution plan reaches beyond Oman into the Indian Ocean or East Africa.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Terminals, facilities and the Oman hinterland</h2>
+    <p>
+      Oman’s two-port structure is best understood as an industrial/container gateway in the north and
+      a transshipment hub in the south rather than two identical terminals. The verified snapshot does
+      not publish facility capacities, so the table below records the commonly understood cargo fit
+      and marks every operational detail LOW. Use it to frame the question to the carrier, not to
+      assume a berth or crane is available.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation from common Oman port usage, not a terminal directory. Confirm operator, berth and cargo-fit details with the port authority before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Oman port facilities & terminals" />
+
+    <div class="note mt-2">
+      <strong>Do not assume a UAE or Saudi facility pattern:</strong> Oman’s terminal mix is different
+      from Jebel Ali, Jeddah or Dammam. Ask for the specific berth, draft, gear and product-handling
+      capability for your shipment rather than applying another GCC port’s profile.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Post-arrival cost composition at Sohar and Salalah</h2>
+      <p>
+        The verified snapshot quantifies the 5% duty and 5% VAT, but not Oman destination THC,
+        brokerage, demurrage or inland trucking amounts. Treat operational lines as LOW confidence and
+        request an itemised fee schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only baseline duty (5% CIF) and 5% VAT are stated from verified/secondary sources. Unquantified Oman fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — Oman destination costs & customs" />
+
+      <p>
+        In addition to THC, ask the provider to itemise <strong>documentation / bill of lading
+        fees</strong>, <strong>customs inspection</strong> if selected, and <strong>port storage</strong>.
+        Each amount is not published in the verified snapshot, so treat these lines as LOW confidence
+        and request the current fee from the terminal, carrier or broker.
+      </p>
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged
+        by the ocean carrier when the container stays outside the port beyond the free time allowed
+        after collection. Free-time allowances and per-day rates differ by line and terminal and were
+        not published in the research snapshot, so always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        Bayan import declaration early, keep the HS code and documents ready, screen restricted
+        goods, and book trucking before the container is discharged.
+      </p>
+
+      <h3 class="mt-3">What changes the cost and the clock</h3>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional factors, not quantified figures. Document and conformity/restricted-commodity effects are MEDIUM-confidence regulatory effects; routing, geography and free-time effects are LOW."
+      />
+      <SourceList sources={[...costSources, ...facilitySources]} title="Sources — Oman cost & transit factors" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Compliance at Oman ports: duty, 5% VAT, documents and conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Oman’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common External
+      Tariff, with a <strong>5% VAT</strong> on the duty-inclusive base, so the baseline statutory
+      landed cost is <code>CIF × 1.05 × 1.05 = CIF × 1.1025</code>. Specific goods can still attract
+      different tariff lines or VAT treatments, so the HS code remains the first cost decision.
+    </p>
+
+    <h3>Clearance in the correct order</h3>
+    <ol>
+      <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
+      <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
+      <li>Prepare the commercial invoice, bill of lading, packing list and certificate of origin.</li>
+      <li>File the Oman import declaration through the <strong>Bayan</strong> electronic clearance system.</li>
+      <li>Pay the assessed 5% duty and 5% VAT, pass inspection if selected, and release the container.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin, with the correct HS codes. Certificate of origin requirements can differ for GCC-origin
+      versus non-GCC goods. Restricted goods may need a permit. <strong>ISF</strong> is a United
+      States requirement and does not apply to Oman.
+    </p>
+
+    <h3>No SABER or SASO requirement for Oman</h3>
+    <p>
+      SABER and SASO are Saudi-only conformity systems, so do not copy them into an Oman import. Oman
+      uses its own standards and conformity regime, which may require product-specific certification
+      for certain goods, but those specifics are not published in the verified snapshot — confirm the
+      applicable process with Oman Customs.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Oman customs & port compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>11. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Port codes,
+      the GCC 5% duty baseline and the 5% VAT position are re-checked against Oman Customs and the
+      shared GCC framework; China transit figures are re-checked against the WorldFreightHub route
+      data each month.
+    </p>
+    <p>
+      If a Sohar or Salalah berth, depth, throughput, terminal allocation, destination fee amount or
+      free-time schedule becomes available from the Oman port authority or a carrier, the table is
+      updated, the confidence badge is raised, and the modified date in the page metadata is changed.
+      Until then, unquantified fees and port parameters stay LOW confidence with a request-the-schedule
+      note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Sohar or Salalah quote"
+      text="Tell us your origin, commodity, container or CBM, HS code and final Oman destination, and we will connect you with providers who can quote ocean freight, Oman clearance, 5% duty, 5% VAT and destination fees together."
+    />
+  </section>
+</BaseLayout>
