@@ -1,0 +1,771 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/sea-freight-from-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const rateSources: Source[] = [cargofromchinaUae];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const airSources: Source[] = [cargofromchinaUae];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const rateRows = [
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE 20GP rate appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 40GP / 40HQ',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE 40GP/40HQ rate appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — comparison only',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'Shanghai → Jebel Ali',
+    mode: 'Sea (FCL/LCL)',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'Ningbo-Zhoushan → Jebel Ali',
+    mode: 'Sea (FCL/LCL)',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'Shenzhen → Jebel Ali',
+    mode: 'Sea (FCL/LCL)',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'China → UAE corridor',
+    mode: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → UAE corridor',
+    mode: 'Air express (comparison)',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const seaVsAirRows = [
+  {
+    factor: 'Indicative transit',
+    sea: 'Typical 21 days Shanghai→Jebel Ali (route data); 14–18 days fast-guide window',
+    air: '2–4 days express snapshot; 3–7 days planning range for air freight',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Unit basis',
+    sea: 'Per container for FCL; per CBM or chargeable weight for LCL',
+    air: 'Per chargeable kilogram (actual or volumetric, whichever is higher)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost pattern',
+    sea: 'Lowest unit cost for high-volume, heavy cargo',
+    air: 'High unit cost that rises with weight and urgency',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best cargo',
+    sea: 'Large, dense, low-value, stable-demand goods',
+    air: 'Urgent, high-value, perishable, fragile or small goods',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Inventory & cash cycle',
+    sea: 'Slower but materially cheaper per unit for bulk cargo',
+    air: 'Faster arrival can shorten stockout and working-capital cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'UAE clearance & compliance',
+    sea: '5% duty, 5% VAT, HS classification and documents still apply',
+    air: 'Same UAE compliance applies; air does not remove paperwork',
+    confidence: 'MEDIUM',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port; 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway for Yantian / Shekou loadings',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across UAE freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const uaePortRows = [
+  {
+    factor: 'Emirate / coast',
+    jebelAli: 'Dubai — Arabian Gulf',
+    khalifa: 'Abu Dhabi — Arabian Gulf',
+    sharjah: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'UN/LOCODE',
+    jebelAli: 'AEJEA',
+    khalifa: 'AEKHL',
+    sharjah: 'AESHJ',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Main role',
+    jebelAli: "Middle East's largest container port; DP World operated",
+    khalifa: 'Semi-automated deep-water Abu Dhabi gateway',
+    sharjah: 'Container gateway for Sharjah and the northern emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Typical use case',
+    jebelAli: 'Primary China import gateway + GCC/regional transshipment',
+    khalifa: 'Abu Dhabi consignees + industrial/project cargo',
+    sharjah: 'Sharjah/northern emirates + cost-sensitive cargo',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight (FCL or LCL)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'LCL AED 880–980/CBM; FCL by quote (see rate table)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'THC (terminal handling charge)',
+    who: 'China + UAE terminals',
+    magnitude: 'Levied at both ends; amounts not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation & bill of lading fee',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage (after free time)',
+    who: 'UAE terminal',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention (after free time)',
+    who: 'Ocean carrier',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    who: 'Dubai Customs / local broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Peak season / general rate increases',
+    effect: 'Higher ocean rates and tighter space',
+    direction: 'Cost up, transit risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Bunker / fuel adjustment factor',
+    effect: 'Adds a variable surcharge to the base freight rate',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Routing: direct vs transshipment',
+    effect: 'A transshipped box adds another terminal handling point',
+    direction: 'Transit up, risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Port choice (Jebel Ali vs Khalifa vs Sharjah)',
+    effect: 'Shifts transit, destination THC and inland distance',
+    direction: 'Cost/time variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Free zone vs mainland final leg',
+    effect: 'Changes duty/VAT treatment and delivery routing',
+    direction: 'Cost/compliance variable',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Documents & HS code readiness',
+    effect: 'Late or wrong documents delay clearance and start demurrage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does sea freight from China to the UAE take?',
+    a: 'WorldFreightHub route data records a typical 21 days with a 15–30 day range for Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (MEDIUM confidence). A secondary market guide gives a faster 14–18 day window for the China–UAE corridor (LOW confidence). Use the wider route-data range for planning and the fast window only as a best case.',
+  },
+  {
+    q: 'How much does sea freight from China to the UAE cost?',
+    a: 'The research snapshot records LCL ocean at an indicative AED 880–980 per CBM to Dubai (LOW confidence). Verified UAE FCL rates for 20GP, 40GP and 40HQ were not published in the snapshot, so request an all-in container quote. These are collected public figures, not carrier quotes — confirm with a forwarder before booking.',
+  },
+  {
+    q: 'Which China ports serve the UAE sea route?',
+    a: 'Shanghai, Ningbo-Zhoushan and Shenzhen (Yantian / Shekou) are the primary origin ports in the route data, with Guangzhou also named in UAE freight guides. Shanghai handled 55.06 million TEU in 2025 and Ningbo-Zhoushan 43 million TEU, both verified figures.',
+  },
+  {
+    q: 'Which UAE port should I use for sea freight from China?',
+    a: 'Jebel Ali is the Middle East’s largest container port and the default China import gateway and regional transshipment hub. Khalifa Port Abu Dhabi suits Abu Dhabi consignees and industrial cargo, while Port Khalid in Sharjah suits Sharjah and the northern emirates. Match the discharge port to your consignee and confirm the inland delivery leg.',
+  },
+  {
+    q: 'What is the FCL sea freight process from China to the UAE?',
+    a: 'The full FCL chain runs from booking and empty-container pickup, through stuffing, VGM, China export clearance, gate-in, loading and ocean transit, to discharge at the UAE port, import clearance, final delivery and empty-container return. See the 12-step breakdown on this page for the exact sequence.',
+  },
+  {
+    q: 'What is the difference between demurrage and detention?',
+    a: 'Demurrage is charged by the terminal when a container stays inside the port beyond free time after discharge; detention is charged by the carrier when the container stays outside the port beyond free time. Avoid both by filing documents early, clearing quickly and booking trucking before the vessel arrives.',
+  },
+  {
+    q: 'What does the ocean rate exclude?',
+    a: 'The headline ocean rate usually excludes origin charges, THC at both ends, documentation and bill of lading fees, demurrage/detention after free time, customs clearance and brokerage, duty and VAT, and optional insurance. Specific fee amounts were not published in the verified snapshot — request an itemised schedule in writing.',
+  },
+  {
+    q: 'When should I choose sea freight instead of air for the UAE?',
+    a: 'Sea freight wins for large, dense, low-value or stable-demand cargo because its cost per CBM or per container is far lower than air. Air wins when speed, shelf life or value density justify a much higher chargeable-weight rate. Use the sea-vs-air decision table on this page for the full comparison.',
+  },
+  {
+    q: 'What taxes apply to a UAE sea freight import?',
+    a: 'The baseline import duty is 5% of the CIF value under the GCC Common External Tariff, and import VAT is 5% on the CIF value plus duty. Higher protective or anti-dumping rates can apply to specific goods, so classify the HS code correctly and confirm with the Federal Tax Authority and Dubai Customs.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Sea Freight from China to UAE: Routes, 21-Day Jebel Ali Transit & 12-Step FCL Chain (August 2026)',
+      description:
+        'Sea freight from China to the UAE explained: Shanghai/Ningbo/Shenzhen to Jebel Ali routings, typical 21-day transit, the 12-step FCL chain, THC and B/L fees, and 5% VAT.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Sea Freight from China to UAE: Routes, 21-Day Jebel Ali Transit & 12-Step FCL Chain (August 2026)"
+  description="Sea freight from China to the UAE: Shanghai/Ningbo/Shenzhen to Jebel Ali routings, typical 21-day transit, the 12-step FCL chain, THC and B/L fees, and 5% VAT."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Sea freight from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Sea freight from China to the UAE: routes, 21-day Jebel Ali transit &amp; the 12-step FCL chain</h1>
+      <p class="lead">
+        The China–UAE ocean corridor is anchored by Jebel Ali, the Middle East’s largest container
+        port. This page covers the Shanghai / Ningbo / Shenzhen routings, the typical 21-day transit,
+        the complete FCL chain from booking to empty-container return, the THC and B/L fees most
+        quotes hide, and the 5% VAT and 5% duty rules that shape your landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and fee note as indicative, verify with carrier before relying
+        on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai → Jebel Ali</span>
+          <span class="fact-value">21 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL benchmark</span>
+          <span class="fact-value">AED 880–980/CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali</span>
+          <span class="fact-value">Middle East hub <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Sea freight at a glance: FCL and LCL</h2>
+    <p>
+      Sea freight is the default for UAE-bound cargo that does not need to arrive in days. It comes
+      in two forms. <strong>FCL (Full Container Load)</strong> reserves a whole 20ft or 40ft box and
+      is priced per container; <strong>LCL (Less than Container Load)</strong> shares space with
+      other importers and is priced per CBM. For most established volumes, FCL gives the lowest unit
+      cost and the simplest handling; for small or mixed shipments, LCL avoids paying for an empty
+      box.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="FCL is usually the right lens when...">
+        <ul>
+          <li>Your volume fills most of a 20GP or 40GP container.</li>
+          <li>Goods are dense, fragile, high-value or should not be mixed.</li>
+          <li>Transit predictability and a sealed unit matter more.</li>
+          <li>You are an established importer with a repeat schedule.</li>
+        </ul>
+      </Card>
+      <Card title="LCL is usually the right lens when...">
+        <ul>
+          <li>The shipment is small and well below a full container.</li>
+          <li>You are testing the UAE market or restocking mixed SKUs.</li>
+          <li>You can absorb consolidation and deconsolidation time.</li>
+          <li>You want to avoid paying for unused container space.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative sea freight rates from China to the UAE</h2>
+      <p>
+        Ocean pricing moves weekly with capacity, fuel and peak season, so this page deliberately
+        labels market figures as LOW confidence rather than presenting them as guaranteed prices.
+        The UAE corridor is anchored by Jebel Ali, which gives importers deep schedule choice — but
+        the headline rate still has to be locked with an all-in quote, not an advertised number.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Indicative market snapshots, not carrier quotes. UAE FCL container rates were not published in the verified snapshot — request an all-in quote."
+      />
+      <SourceList sources={rateSources} title="Sources — UAE sea rates" />
+
+      <div class="note mt-2">
+        <strong>Why FCL is shown as “request a quote”:</strong> the research snapshot published an
+        LCL benchmark and air figures but no verified UAE FCL container rate. Never back into a
+        container price from the LCL figure — request the equipment type, surcharges and destination
+        fees itemised in writing.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Typical sea transit windows: Shanghai, Ningbo and Shenzhen to Jebel Ali</h2>
+    <p>
+      The route data gives the same <strong>typical 21 days</strong> with a 15–30 day range for
+      Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali. That is a MEDIUM-confidence planning
+      figure, while a secondary market guide cites a faster 14–18 day window that assumes a direct
+      sailing with no delay. Plan on the wider range and treat the fast window as a best case.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="The typical 21-day figures come from WorldFreightHub route data; the 14–18 day corridor figure is a LOW-confidence secondary snapshot. Verify with the carrier."
+    />
+    <SourceList sources={transitSources} title="Sources — sea transit times" />
+
+    <div class="note mt-2">
+      <strong>Direct vs transhipped:</strong> a direct China–Jebel Ali sailing is the fastest path;
+      a transshipped box adds another terminal handling point and can widen the 15–30 day range.
+      All transit figures are LOW/MEDIUM confidence, verify with carrier.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. One full container: the 12-step FCL chain from booking to signed-off delivery</h2>
+      <p>
+        The sea rate is the most visible cost, but the operational chain below is where delays,
+        demurrage and detention are created. Walk each step before booking so you know which party
+        owns it and what document or action unlocks the next one.
+      </p>
+
+      <ol>
+        <li><strong>Quote &amp; booking:</strong> lock the equipment type, route, sailing, cut-off and all-in rate in writing.</li>
+        <li><strong>Empty-container pickup:</strong> the carrier releases the box and it is trucked to the loading location in China.</li>
+        <li><strong>Stuffing &amp; load planning:</strong> the cargo is loaded, braced and sealed; weight distribution is planned for safety.</li>
+        <li><strong>VGM (verified gross mass):</strong> the packed container’s gross mass is verified and submitted before gate-in.</li>
+        <li><strong>China export declaration:</strong> the exporter files export customs and any required Chinese-side documents.</li>
+        <li><strong>Gate-in &amp; terminal handover:</strong> the container is accepted at the terminal against the booking.</li>
+        <li><strong>Loading &amp; sailing:</strong> the box is loaded onto the vessel and the sailing begins.</li>
+        <li><strong>Ocean transit:</strong> the container moves through the planned route to the UAE.</li>
+        <li><strong>Arrival &amp; discharge:</strong> the vessel berths and the box is discharged at Jebel Ali, Khalifa or Sharjah.</li>
+        <li><strong>UAE import clearance:</strong> the consignee or broker files the import declaration, pays duty and VAT where due, and releases the box.</li>
+        <li><strong>Final delivery:</strong> the container is trucked to the UAE warehouse, free zone or consignee address.</li>
+        <li><strong>Empty return:</strong> the box is returned empty within the carrier’s allowed time to stop detention charges.</li>
+      </ol>
+
+      <p class="mt-2">
+        The two steps that most often create cost are step 10 (clearance speed) and step 12 (empty
+        return). If either runs past the free-time allowance, demurrage or detention begins. Prepare
+        documents before arrival and book trucking before discharge.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports and major routings from China to the UAE</h2>
+    <p>
+      Shanghai, Ningbo-Zhoushan and Shenzhen are the primary origin gateways in the route data, with
+      Guangzhou also named across UAE freight guides. At the UAE end, Jebel Ali is the dominant
+      container destination, while Khalifa Port Abu Dhabi and Port Khalid in Sharjah serve their
+      respective emirates.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'China port' },
+        { key: 'throughput', label: '2025 throughput' },
+        { key: 'note', label: 'Routing note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China ports" />
+
+    <h3 class="mt-3">UAE destination ports</h3>
+    <p>
+      <strong>Jebel Ali</strong>, operated by DP World, is the Middle East’s largest container port
+      and combines deep-water capacity with a large free zone and strong road/sea connectivity. That
+      makes it a natural consolidation and transshipment point for the GCC, Middle East, Africa and
+      Indian subcontinent rather than only a Dubai gateway.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'jebelAli', label: 'Jebel Ali' },
+        { key: 'khalifa', label: 'Khalifa Port Abu Dhabi' },
+        { key: 'sharjah', label: 'Port Khalid (Sharjah)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={uaePortRows}
+      caption="Port roles are secondary-source findings; verify the discharge port and final delivery leg with your forwarder."
+    />
+    <SourceList sources={uaePortSources} title="Sources — UAE ports" />
+
+    <div class="note mt-2">
+      <strong>Routing in one line:</strong> match the discharge port to the consignee. Jebel Ali
+      suits most Dubai and Northern Emirates destinations, Khalifa suits Abu Dhabi, and Port Khalid
+      suits Sharjah and the northern emirates. A cheaper ocean rate at the wrong port can become
+      more expensive after inland trucking.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Sea vs air: when the ocean is still the right answer</h2>
+      <p>
+        The UAE is a short enough corridor that air can be tempting, but sea wins decisively on unit
+        cost for volume cargo. The comparison is a landed-cost and delivery-priority decision rather
+        than a speed contest.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaVsAirRows}
+        caption="Indicative transit and pricing are LOW confidence; UAE duty/VAT compliance is the same for both modes."
+      />
+      <SourceList sources={airSources} title="Sources — air comparison" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Sea freight cost composition: the fees competitors skip</h2>
+    <p>
+      The ocean rate is only one line. THC, documentation, the bill of lading fee, demurrage and
+      detention sit on top, and none of those amounts were published in the verified research
+      snapshot. The correct comparison number is an itemised all-in quote.
+    </p>
+
+    <h3>Demurrage and detention</h3>
+    <p>
+      <strong>Demurrage</strong> is charged by the terminal when the container stays inside the port
+      beyond free time after discharge. <strong>Detention</strong> is charged by the carrier when the
+      container stays outside the port beyond free time before return. Free-time allowances and
+      per-day charges were not published in the snapshot and vary by terminal and line — request them
+      with your quote.
+    </p>
+
+    <h3 class="mt-3">Full sea freight cost stack</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'magnitude', label: 'Indicative magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — sea freight cost & UAE customs" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Peak season and the factors that move sea freight prices</h2>
+      <p>
+        Sea freight rates for the China–UAE lane are not stable. Peak season, fuel adjustments and
+        routing decisions all move the all-in number even when the base rate looks unchanged. Treat
+        the direction of each factor below as a planning signal, not a forecast.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional planning factors, not pricing rules. Confirm the current surcharges, free-time and routing with your forwarder."
+      />
+
+      <div class="note mt-2">
+        <strong>Book against cut-offs, not “sometime this week”:</strong> a missed vessel cut-off
+        rolls the cargo to the next sailing and can push the delivery past free-time planning. Ask
+        for the cut-off, VGM deadline and document deadline together with the quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Compliance: VAT, duty, documents &amp; HS codes for UAE sea freight</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on the
+      CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher protective or anti-dumping rates possible on
+      specific goods — a secondary source cites examples up to 35% on certain products. Confirm both
+      figures and your product’s classification with the Federal Tax Authority and Dubai Customs
+      before relying on them.
+    </p>
+
+    <h3>Free zone vs mainland</h3>
+    <p>
+      Designated UAE free zones can suspend customs duty while goods remain in the zone and the
+      importer meets the zone’s conditions; VAT treatment still depends on the entity, location and
+      transaction structure. Goods cleared for the mainland normally attract the 5% duty and 5% VAT
+      on the CIF-plus-duty base. Confirm the treatment for your specific entity and final
+      destination.
+    </p>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading, packing list and certificate of
+      origin. Classify goods with the correct <strong>HS code</strong> before quoting, because duty
+      and any conformity requirements depend on it. Note that <strong>SABER</strong> is a Saudi
+      conformity platform and does not apply to the UAE; for the UAE, confirm whether your product
+      needs a conformity certificate from the relevant authority.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE VAT & customs" />
+  </section>
+
+  <section class="section container">
+    <h2>10. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to UAE sea freight quote"
+      text="Tell us your origin, destination port, equipment type or CBM, commodity and delivery address, and we will connect you with providers who can quote ocean freight, THC, documentation, duty and VAT together."
+    />
+  </section>
+</BaseLayout>

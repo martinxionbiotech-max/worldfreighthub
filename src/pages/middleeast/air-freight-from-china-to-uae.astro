@@ -1,0 +1,735 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/air-freight-from-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE air freight guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance and Dangerous Goods Regulations',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const rateSources: Source[] = [cargofromchinaUae];
+const transitSources: Source[] = [cargofromchinaUae];
+const airportSources: Source[] = [iata, cargofromchinaUae];
+const comparisonSources: Source[] = [cargofromchinaUae];
+const dgSources: Source[] = [iata];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const airRateRows = [
+  {
+    service: 'Air freight — China to UAE market bracket',
+    benchmark: 'AED 20–23.5 per kg',
+    transit: '2–4 days (express snapshot)',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — airport-to-airport planning range',
+    benchmark: 'Not published as a per-kg floor/ceiling — request a quote',
+    transit: '3–7 days',
+    basis: 'Planning range for direct airport-to-airport moves; verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air door-to-door',
+    benchmark: 'Not published in verified snapshot — request a per-kg quote',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Sea LCL — comparison only',
+    benchmark: 'AED 880–980 per CBM',
+    transit: '14–18 days (fast guide)',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai)',
+    confidence: 'LOW',
+  },
+];
+
+const airTransitRows = [
+  {
+    lane: 'China → Dubai / UAE',
+    service: 'Air freight airport-to-airport',
+    transit: '3–7 days',
+    basis: 'Planning range for direct airport-to-airport moves; verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Dubai / UAE',
+    service: 'Air express',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Dubai / UAE',
+    service: 'DDP air door-to-door',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Shanghai → Jebel Ali (comparison)',
+    service: 'Sea freight',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+];
+
+const volumetricRows = [
+  {
+    example: 'Light, bulky carton',
+    actualWeight: '12 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '20 kg',
+    note: 'You pay for 20 kg, not 12 kg',
+  },
+  {
+    example: 'Dense carton',
+    actualWeight: '30 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '30 kg',
+    note: 'You pay for actual weight because it is higher',
+  },
+];
+
+const chinaGatewayRows = [
+  {
+    gateway: 'Shanghai Pudong (PVG)',
+    role: 'Major East China air cargo gateway; Shanghai seaport is 55.06M TEU (2025)',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Hong Kong (HKG)',
+    role: 'Major Asia air cargo transhipment hub',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Guangzhou Baiyun (CAN)',
+    role: 'South China manufacturing gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Shenzhen Bao’an (SZX)',
+    role: 'South China electronics and e-commerce gateway',
+    confidence: 'LOW',
+  },
+];
+
+const uaeAirportRows = [
+  {
+    gateway: 'Dubai International Airport (DXB)',
+    role: 'Primary Dubai passenger and air cargo gateway; ranked among the world’s busiest airports by international passenger traffic',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Al Maktoum International Airport (DWC)',
+    role: 'Dubai South air cargo gateway positioned for freight and future aviation expansion',
+    confidence: 'LOW',
+  },
+];
+
+const airVsSeaRows = [
+  {
+    factor: 'Indicative transit',
+    air: '3–7 days airport-to-airport; 2–4 day express snapshot',
+    sea: 'Typical 21 days Shanghai→Jebel Ali; 14–18 day fast-guide window',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Unit basis',
+    air: 'Per chargeable kilogram (actual or volumetric, whichever is higher)',
+    sea: 'Per container for FCL; per CBM or chargeable weight for LCL',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost pattern',
+    air: 'High unit cost that rises with weight, volume and urgency',
+    sea: 'Lowest unit cost for high-volume, heavy cargo',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best cargo',
+    air: 'Urgent, high-value, perishable, fragile or small goods',
+    sea: 'Large, dense, low-value, stable-demand goods',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Inventory & cash cycle',
+    air: 'Faster arrival can shorten stockout and working-capital cost',
+    sea: 'Slower but materially cheaper per unit for bulk cargo',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'UAE clearance & compliance',
+    air: '5% duty, 5% VAT, HS classification and documents still apply',
+    sea: 'Same UAE compliance applies; sea does not remove paperwork',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Air freight (chargeable weight)',
+    who: 'Airline / forwarder',
+    magnitude: 'See rate table — AED 20–23.5/kg snapshot',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Fuel, security & peak-season surcharges',
+    who: 'Airline / forwarder',
+    magnitude: 'Commonly added; amounts not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin terminal & handling',
+    who: 'Forwarder / origin terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal & airline handling',
+    who: 'UAE ground handler / forwarder',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    who: 'Dubai Customs / local broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Volumetric divisor (6,000 vs 5,000)',
+    effect: 'Changes the volumetric weight and therefore the chargeable weight',
+    direction: 'Cost up for bulky cargo',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Cargo density',
+    effect: 'Light, bulky cargo is billed far above its actual weight',
+    direction: 'Cost up',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Peak season / capacity',
+    effect: 'Higher air rates and tighter space',
+    direction: 'Cost up, transit risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Fuel & security surcharges',
+    effect: 'Added on top of the base per-kg rate',
+    direction: 'Cost up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Airport choice (DXB vs DWC)',
+    effect: 'Shifts handling and final-mile delivery distance',
+    direction: 'Cost/time variable',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Dangerous goods status',
+    effect: 'Lithium and other regulated goods face acceptance limits',
+    direction: 'Cost/availability variable',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is air freight from China to the UAE?',
+    a: 'Air freight is airport-to-airport transport of goods on scheduled or chartered aircraft from a Chinese origin airport to a UAE gateway such as Dubai International (DXB) or Al Maktoum International (DWC). It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.',
+  },
+  {
+    q: 'How is air freight charged — actual weight or volumetric weight?',
+    a: 'Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is usually L × W × H in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.',
+  },
+  {
+    q: 'How do I calculate volumetric weight for UAE air freight?',
+    a: 'Measure the packed carton in centimetres, multiply length × width × height, then divide by 6,000. For example, a 60 × 50 × 40 cm carton is 120,000 cm³ ÷ 6,000 = 20 kg volumetric. If its actual weight is 12 kg, you pay for 20 kg. Confirm the carrier’s divisor because some services use 5,000.',
+  },
+  {
+    q: 'What does air freight from China to the UAE cost?',
+    a: 'The research snapshot records an indicative China–UAE air benchmark of AED 20–23.5 per kg, a LOW-confidence market figure collected from a public guide rather than a carrier quote. DDP air and airport-to-airport rates vary by chargeable weight, airport pair and season, so request an itemised quote for your actual dimensions and weight.',
+  },
+  {
+    q: 'How long does air freight from China to Dubai take?',
+    a: 'A planning range of 3–7 days is reasonable for direct airport-to-airport moves (LOW confidence). The research snapshot records air express at 2–4 days and DDP air door-to-door at 3–6 days. All figures are indicative — verify with the carrier before relying on them.',
+  },
+  {
+    q: 'Which UAE airport should I use for air freight — DXB or DWC?',
+    a: 'Dubai International (DXB) is the primary Dubai passenger and air cargo gateway and is ranked among the world’s busiest airports by international passenger traffic. Al Maktoum International (DWC) at Dubai South is positioned as a cargo and future-expansion gateway. Match the arrival airport to your consignee and confirm the final-mile leg.',
+  },
+  {
+    q: 'When should I choose air freight instead of sea freight for the UAE?',
+    a: 'Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout, and when the chargeable weight is low enough that the premium is acceptable. Choose sea when the cargo is large, dense or cost-sensitive. Use the air-vs-sea decision table on this page for the full comparison.',
+  },
+  {
+    q: 'Can I ship lithium batteries by air to the UAE?',
+    a: 'Lithium batteries are regulated as dangerous goods under the IATA Dangerous Goods Regulations. Lithium-ion batteries are commonly shipped under UN3480 (batteries alone) or UN3481 (contained in or packed with equipment), and require compliant packaging, labelling and documentation — many carriers restrict or refuse them. Confirm acceptance, testing and paperwork with the carrier before booking.',
+  },
+  {
+    q: 'What documents and taxes apply to a UAE air freight import?',
+    a: 'Standard documents are a commercial invoice, air waybill, packing list and certificate of origin. The baseline import duty is 5% of CIF under the GCC Common External Tariff, and import VAT is 5% on the CIF value plus duty. Classify the HS code correctly and confirm any UAE conformity requirements for regulated goods.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Air Freight from China to UAE: DXB/DWC Gateways, Chargeable Weight & Lithium Rules (August 2026)',
+      description:
+        'Air freight from China to the UAE explained: DXB and DWC gateways, the 6,000-divisor chargeable weight rule, indicative AED/kg rates, 3–7 day transit and lithium battery restrictions.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Air Freight from China to UAE: DXB/DWC Gateways, Chargeable Weight & Lithium Rules (August 2026)"
+  description="Air freight from China to the UAE: DXB and DWC gateways, the 6,000-divisor chargeable weight rule, indicative AED/kg rates, 3–7 day transit and lithium battery restrictions."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Air freight from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Air freight from China to the UAE: DXB/DWC gateways, chargeable weight &amp; lithium rules</h1>
+      <p class="lead">
+        Air freight to Dubai is fast but the invoice depends on a number most shippers never measure:
+        chargeable weight. This page explains the 6,000-divisor rule that makes bulky cargo expensive,
+        the DXB and DWC airport options, indicative AED per-kg rates, 3–7 day transit planning, and
+        the lithium-battery and dangerous-goods restrictions you must clear before booking.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate and transit number as an indicative figure to verify with your carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Chargeable weight</span>
+          <span class="fact-value">L×W×H/6000 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air benchmark</span>
+          <span class="fact-value">AED 20–23.5/kg <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DXB</span>
+          <span class="fact-value">Global gateway <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The billing rule most shippers miss: chargeable weight</h2>
+    <p>
+      Air freight is not billed on actual weight alone. Airlines bill on <strong>chargeable
+      weight</strong>, which is the higher of the actual gross weight and the volumetric weight of
+      the packed cargo. That means a light but bulky carton can cost several times what its physical
+      weight suggests — which is exactly how the “cheap air” quote turns expensive for e-commerce,
+      packaging and bulky consumer goods.
+    </p>
+    <p>
+      The standard IATA volumetric formula is <strong>L × W × H (cm) ÷ 6,000</strong>. Some express
+      or dense-cargo services use a divisor of 5,000, which makes the volumetric result even larger.
+      Always confirm the divisor before comparing quotes.
+    </p>
+
+    <h3>Worked examples</h3>
+    <DataTable
+      columns={[
+        { key: 'example', label: 'Example' },
+        { key: 'actualWeight', label: 'Actual weight' },
+        { key: 'dimensions', label: 'Dimensions' },
+        { key: 'volumetricWeight', label: 'Volumetric weight' },
+        { key: 'chargeableWeight', label: 'Chargeable weight' },
+        { key: 'note', label: 'What happens' },
+      ]}
+      rows={volumetricRows}
+      caption="Volumetric weight uses the IATA 6,000 divisor. Chargeable weight is the higher of actual and volumetric weight."
+    />
+    <SourceList sources={[iata]} title="Sources — chargeable weight" />
+
+    <div class="note mt-2">
+      <strong>The comparison trap:</strong> never compare two air quotes on $/kg of actual weight.
+      Compute the chargeable weight for each quote using the same divisor, then compare the total
+      chargeable kilograms and the all-in line items.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative air freight rates from China to the UAE</h2>
+      <p>
+        Air pricing moves with fuel, capacity and peak season, so this page deliberately labels
+        market figures as LOW confidence rather than presenting them as guaranteed prices. The
+        benchmark below is a public China–UAE snapshot, not a carrier quote.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airRateRows}
+        caption="Indicative market snapshots, not carrier quotes. Airport-to-airport and DDP air per-kg floors/ceilings were not published in the verified snapshot — request a quote."
+      />
+      <SourceList sources={rateSources} title="Sources — UAE air rates" />
+
+      <div class="note mt-2">
+        <strong>Why per-kg alone misleads:</strong> the AED 20–23.5/kg figure is a market bracket on
+        an unpublished chargeable-weight base. A low per-kg rate with a 5,000 divisor or heavy
+        surcharges can cost more than a higher headline rate with a 6,000 divisor and transparent
+        add-ons. Compare all-in chargeable-weight totals.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Typical air transit windows from China to Dubai</h2>
+    <p>
+      The UAE corridor is short enough that air transit is measured in days, not weeks. The planning
+      range below covers direct airport-to-airport moves, express services and door-to-door DDP air;
+      all are LOW confidence and depend on schedule, customs and the final-mile leg.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="The sea comparison uses WorldFreightHub route data; air windows are LOW-confidence planning figures. Verify with the carrier."
+    />
+    <SourceList sources={transitSources} title="Sources — air transit times" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Airports and major routings: China gateways to DXB and DWC</h2>
+      <p>
+        Air freight routing is about airport pair, not just city pair. The origin gateways below
+        feed China’s manufacturing regions, while Dubai International (DXB) and Al Maktoum
+        International (DWC) are the two UAE arrival options most quoted for China–UAE air cargo.
+      </p>
+
+      <h3>China origin gateways</h3>
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'China gateway' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaGatewayRows}
+        caption="Shanghai’s seaport throughput is verified; the air gateway roles are secondary-source findings."
+      />
+      <SourceList sources={airportSources} title="Sources — China air gateways" />
+
+      <h3 class="mt-3">UAE arrival airports</h3>
+      <p>
+        <strong>Dubai International (DXB)</strong> is the primary Dubai passenger and air cargo
+        gateway and is ranked among the world’s busiest airports by international passenger traffic.
+        <strong>Al Maktoum International (DWC)</strong> at Dubai South is positioned as a cargo and
+        future-expansion gateway. The choice changes handling, storage and final-mile distance, so
+        confirm which airport the quote assumes.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'UAE airport' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={uaeAirportRows}
+        caption="DXB’s global gateway status is a verified finding; DWC’s positioning is a LOW-confidence planning note."
+      />
+      <SourceList sources={airportSources} title="Sources — UAE airports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Air vs sea: when the speed is worth the premium</h2>
+    <p>
+      The UAE’s short China corridor makes air genuinely attractive for more than emergency cargo.
+      The right choice is a landed-cost and delivery-priority decision: air wins on days, sea wins on
+      cost per CBM for volume, and the chargeable-weight rule decides how wide the gap really is.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'air', label: 'Air freight' },
+        { key: 'sea', label: 'Sea freight' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airVsSeaRows}
+      caption="Indicative transit and pricing are LOW confidence; UAE duty/VAT compliance is the same for both modes."
+    />
+    <SourceList sources={comparisonSources} title="Sources — air vs sea comparison" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Air freight cost composition: the fees competitors skip</h2>
+      <p>
+        The per-kg rate is only one line. Fuel and security surcharges, origin and destination
+        handling, and customs brokerage all sit on top, and specific amounts were not published in
+        the verified research snapshot. Compare total chargeable kilograms and the all-in line items.
+      </p>
+
+      <h3>Airport storage and free time</h3>
+      <p>
+        Air cargo typically gets a limited free-storage window after arrival, and days beyond that
+        become chargeable. Free-time allowances and per-day storage rates differ by airport, handler
+        and airline and were not published in the snapshot — request them with your quote.
+      </p>
+
+      <h3 class="mt-3">Full air freight cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+      />
+      <SourceList sources={costSources} title="Sources — air freight cost & UAE customs" />
+
+      <h3 class="mt-3">Factors that move air freight cost</h3>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional planning factors, not pricing rules. Confirm the divisor, surcharges and dangerous-goods acceptance with the carrier."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Dangerous goods and lithium batteries: the pre-booking checkpoint</h2>
+    <p>
+      Air freight is the most restricted mode for regulated cargo. Lithium batteries, aerosols,
+      certain chemicals and other dangerous goods are governed by the <strong>IATA Dangerous Goods
+      Regulations</strong>, and carrier acceptance is narrower than the regulation itself. Assume a
+      dangerous-goods shipment needs more lead time, more documentation and a specific carrier
+      agreement.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Lithium batteries">
+        <ul>
+          <li>Lithium-ion batteries are commonly classified as UN3480 (batteries alone) or UN3481 (contained in / packed with equipment).</li>
+          <li>Require compliant packaging, labelling and documentation.</li>
+          <li>Many carriers restrict or refuse lithium cargo — confirm acceptance first.</li>
+          <li>Testing and safety data requirements apply; do not assume “battery included” is acceptable.</li>
+        </ul>
+      </Card>
+      <Card title="Other regulated goods">
+        <ul>
+          <li>Aerosols, flammable liquids, gases and some cosmetics can be regulated.</li>
+          <li>Mis-declared dangerous goods can delay, fine or return the shipment.</li>
+          <li>Ask for the UN number, class and packing instruction before quoting.</li>
+          <li>Obtain the MSDS / safety data sheet and carrier’s acceptance in writing.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      Treat dangerous-goods compliance as a pre-booking checkpoint, not a post-booking form. The
+      fastest way to lose the speed advantage of air freight is to arrive at the origin terminal with
+      an undeclared battery or an unapproved packing instruction.
+    </p>
+
+    <SourceList sources={dgSources} title="Sources — dangerous goods" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance: VAT, duty, documents &amp; HS codes for UAE air freight</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on the
+        CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher protective or anti-dumping rates possible
+        on specific goods — a secondary source cites examples up to 35% on certain products. Confirm
+        both figures and your product’s classification with the Federal Tax Authority and Dubai
+        Customs before relying on them.
+      </p>
+
+      <h3>Free zone vs mainland</h3>
+      <p>
+        Designated UAE free zones can suspend customs duty while goods remain in the zone and the
+        importer meets the zone’s conditions; VAT treatment still depends on the entity, location and
+        transaction structure. Goods cleared for the mainland normally attract the 5% duty and 5% VAT
+        on the CIF-plus-duty base. Confirm the treatment for your specific entity and final
+        destination.
+      </p>
+
+      <h3>Documents and classification</h3>
+      <p>
+        Standard documents are the commercial invoice, <strong>air waybill</strong>, packing list and
+        certificate of origin. Classify goods with the correct <strong>HS code</strong> before
+        quoting, because duty and any conformity requirements depend on it. For regulated products,
+        confirm whether a UAE conformity certificate is required and keep the air waybill reference
+        ready for the clearance file.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE VAT & customs" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to UAE air freight quote"
+      text="Tell us your origin and destination airports, packed dimensions and weight, commodity and delivery deadline, and we will connect you with providers who can quote air freight, duty and destination fees together."
+    />
+  </section>
+</BaseLayout>

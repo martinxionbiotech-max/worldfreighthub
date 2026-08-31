@@ -1,0 +1,856 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/lcl-shipping-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const rateSources: Source[] = [cargofromchinaUae, wfhRouteData];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const lclRateRows = [
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL ocean — minimum-charge floor',
+    benchmark: 'Minimum charge applies on very small volumes',
+    basis: 'Forwarder practice; specific floor not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP / 40GP / 40HQ',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'No verified UAE FCL rate appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — comparison only',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const lclTransitRows = [
+  {
+    lane: 'Shanghai → Jebel Ali',
+    service: 'Sea corridor (FCL/LCL planning basis)',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'China → UAE corridor',
+    service: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → UAE corridor',
+    service: 'Air express (comparison)',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → UAE corridor',
+    service: 'DDP air door-to-door (comparison)',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+];
+
+const chargeableCbmRows = [
+  {
+    example: 'Light, bulky carton',
+    actualWeight: '60 kg',
+    packedVolume: '0.576 CBM (120 × 80 × 60 cm)',
+    weightCbm: '0.060 CBM (at 1,000 kg / CBM)',
+    chargeableCbm: '0.576 CBM',
+    note: 'Volume wins — you pay for the space, not the 60 kg',
+  },
+  {
+    example: 'Dense carton',
+    actualWeight: '650 kg',
+    packedVolume: '0.576 CBM (120 × 80 × 60 cm)',
+    weightCbm: '0.650 CBM (at 1,000 kg / CBM)',
+    chargeableCbm: '0.650 CBM',
+    note: 'Weight wins — dense cargo is billed above its physical cube',
+  },
+];
+
+const lclVsFclRows = [
+  {
+    factor: 'Best-fit volume',
+    lcl: 'Small and mixed shipments, commonly below ~15 CBM (planning heuristic)',
+    fcl: 'Most of a container — 20GP ~33 CBM, 40GP ~67 CBM nominal',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Pricing basis',
+    lcl: 'Per chargeable CBM (volume or weight-derived), with a minimum charge',
+    fcl: 'Per container, regardless of how full it is',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling & transit',
+    lcl: 'Slower: origin consolidation + Jebel Ali deconsolidation',
+    fcl: 'Usually faster and simpler: one sealed unit moves as one consignment',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Damage / mixing risk',
+    lcl: 'Higher: cargo is handled at two CFS points and shares the box',
+    fcl: 'Lower: the unit is sealed and not opened at the CFS',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Clearance entry',
+    lcl: 'House bill with multiple consignees under one master bill',
+    fcl: 'One container, one consignee, one clearance entry',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for',
+    lcl: 'Market testing, slow restocking, e-commerce and mixed SKUs',
+    fcl: 'Established volumes, dense goods, fragile or high-value cargo',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port; major origin CFS market',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; dense schedule depth into Gulf services',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen (Yantian / Shekou)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin CFS option',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across UAE freight guides',
+    confidence: 'LOW',
+  },
+];
+
+const uaePortRows = [
+  {
+    factor: 'Emirate / coast',
+    jebelAli: 'Dubai — Arabian Gulf',
+    khalifa: 'Abu Dhabi — Arabian Gulf',
+    sharjah: 'Sharjah — Arabian Gulf',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'UN/LOCODE',
+    jebelAli: 'AEJEA',
+    khalifa: 'AEKHL',
+    sharjah: 'AESHJ',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Main role',
+    jebelAli: "Middle East's largest container port; DP World operated",
+    khalifa: 'Semi-automated deep-water Abu Dhabi gateway',
+    sharjah: 'Container gateway for Sharjah and the northern emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'LCL destination CFS role',
+    jebelAli: 'Principal deconsolidation point for China imports',
+    khalifa: 'Deconsolidation for Abu Dhabi consignees',
+    sharjah: 'Deconsolidation for Sharjah / northern emirates',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight (LCL)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'AED 880–980 / CBM (see rate table)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin CFS receiving & consolidation',
+    who: 'China forwarder / warehouse',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination CFS deconsolidation / handling',
+    who: 'Jebel Ali / Khalifa / Sharjah CFS',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'THC & destination port charges',
+    who: 'UAE terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fee (house B/L, delivery order)',
+    who: 'Forwarder / carrier',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'CFS storage after free time',
+    who: 'Destination CFS',
+    magnitude: 'Per-day charge; free time varies — request schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance & brokerage',
+    who: 'Dubai Customs / local broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Dubai Customs / FTA',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'MEDIUM',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Chargeable CBM ratio (volume vs weight)',
+    effect: 'Determines whether you are billed on cube or weight-derived CBM',
+    direction: 'Cost up for light or dense extremes',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Minimum charge',
+    effect: 'Pulls very small LCL shipments up to a floor',
+    direction: 'Cost up at low CBM',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Consolidation frequency',
+    effect: 'Cargo waits for enough volume before the box is stuffed',
+    direction: 'Transit up vs FCL',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Peak season / general rate increases',
+    effect: 'Higher ocean rates and tighter space',
+    direction: 'Cost up, transit risk up',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Destination CFS free time',
+    effect: 'Days beyond the allowance become chargeable storage',
+    direction: 'Cost up if clearance is slow',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Free zone vs mainland final leg',
+    effect: 'Changes duty/VAT treatment and delivery routing',
+    direction: 'Cost/compliance variable',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Documents & HS code readiness',
+    effect: 'Late or wrong documents delay clearance and start storage',
+    direction: 'Transit up, cost up',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is LCL shipping from China to the UAE?',
+    a: 'LCL (Less than Container Load) means your cargo shares a container with other importers. It is received at an origin CFS in China, consolidated into one box, shipped to a UAE port such as Jebel Ali, then deconsolidated at the destination CFS for clearance and delivery. You pay for the space and weight you use rather than a whole container.',
+  },
+  {
+    q: 'How is LCL priced from China to the UAE?',
+    a: 'LCL is usually billed per chargeable CBM. The chargeable CBM is the greater of the packed volume in cubic metres and a weight-derived volume, often using a planning ratio such as 1,000 kg = 1 CBM. Light, bulky cargo is charged by cube and dense cargo by weight. The ratio varies by forwarder, so confirm it before quoting.',
+  },
+  {
+    q: 'What does LCL from China to the UAE cost?',
+    a: 'The research snapshot records an indicative Dubai / Jebel Ali LCL benchmark of AED 880–980 per CBM, a LOW-confidence market figure collected from a public guide rather than a carrier quote. The all-in landed cost also depends on origin CFS, destination deconsolidation, THC, documentation, storage and delivery fees, which were not published in the verified snapshot — request an itemised quote.',
+  },
+  {
+    q: 'When should I choose LCL instead of FCL for the UAE?',
+    a: 'A common planning heuristic is to use LCL while the shipment is below about 15 CBM and to compare an FCL quote once volume approaches that level. There is no universal break-even because the crossover depends on route, surcharges and CFS fees. Always compare the all-in LCL landed cost against an all-in FCL landed cost at your actual CBM.',
+  },
+  {
+    q: 'What is the LCL process from China to the UAE?',
+    a: 'The standard flow is: collect cargo at a China warehouse or CFS, consolidate it with other importers into one container, move the container through export clearance, ship it to the UAE, discharge at Jebel Ali or another UAE port, deconsolidate at the destination CFS, clear customs, then deliver the final leg to your address.',
+  },
+  {
+    q: 'What hidden fees should I watch for in UAE LCL?',
+    a: 'The headline AED/CBM rate is only one line. Watch for origin CFS receiving, destination CFS deconsolidation, THC and port charges, a documentation fee, a minimum charge on small volumes, storage after the CFS free-time allowance, and final delivery or brokerage. Specific amounts were not published in the verified snapshot, so request a fee schedule in writing before booking.',
+  },
+  {
+    q: 'Does LCL have demurrage and detention like FCL?',
+    a: 'The mechanics differ. FCL demurrage/detention applies to a specific container, while LCL cargo usually incurs storage at the destination CFS after a free-time allowance and can also be affected by the master container’s port charges. Free-time policies and per-day charges were not published in the snapshot — request the CFS and terminal schedule.',
+  },
+  {
+    q: 'Which UAE port should I use for LCL from China?',
+    a: 'Jebel Ali is the Middle East’s largest container port and the default deconsolidation point for most China imports. Khalifa Port Abu Dhabi suits Abu Dhabi consignees, and Port Khalid in Sharjah suits Sharjah and the northern emirates. Ask which destination CFS the LCL quote assumes and compare the final delivery leg.',
+  },
+  {
+    q: 'What documents and taxes apply to a UAE LCL import?',
+    a: 'The standard documents are a commercial invoice, house bill of lading, packing list and certificate of origin. The baseline import duty is 5% of CIF under the GCC Common External Tariff, and import VAT is 5% on the CIF value plus duty. Classify the HS code correctly and confirm whether your goods need a conformity certificate for the UAE.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'LCL Shipping from China to UAE: CBM Pricing, Jebel Ali CFS & FCL vs LCL (August 2026)',
+      description:
+        'LCL shipping from China to the UAE explained: indicative AED per-CBM rates, the chargeable CBM trap, Jebel Ali CFS process, hidden fees, LCL vs FCL decision table and 5% VAT.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="LCL Shipping from China to UAE: CBM Pricing, Jebel Ali CFS & FCL vs LCL (August 2026)"
+  description="LCL shipping from China to the UAE: indicative AED per-CBM rates, the chargeable CBM trap, Jebel Ali CFS process, hidden fees, LCL vs FCL decision table and 5% VAT."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'LCL shipping from China to the UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>LCL shipping from China to the UAE: CBM pricing, Jebel Ali CFS &amp; FCL vs LCL</h1>
+      <p class="lead">
+        Less than Container Load lets you pay for only the space your cargo uses — but the
+        chargeable CBM and destination CFS fees decide whether it is actually cheap. This page covers
+        indicative per-CBM rates, the volume-vs-weight billing trap, the consolidation-to-delivery
+        flow, when LCL beats FCL, and the hidden-fee stack at Jebel Ali.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence rate, transit and fee note as indicative, verify with carrier before relying
+        on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL benchmark</span>
+          <span class="fact-value">AED 880–980/CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL vs FCL crossover</span>
+          <span class="fact-value">~15 CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai → Jebel Ali</span>
+          <span class="fact-value">21 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali</span>
+          <span class="fact-value">Middle East hub <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. What LCL is and when it is worth booking</h2>
+    <p>
+      In LCL, your cargo is received at an origin CFS (container freight station) in China,
+      consolidated with other importers’ cargo into one container, shipped to the UAE, then
+      deconsolidated at the destination CFS for clearance and delivery. You pay for the space and
+      weight you use rather than reserving a whole box. The trade-off is extra handling at both CFS
+      points and a longer clock than a direct full-container move.
+    </p>
+    <p>
+      A widely used planning heuristic is to consider LCL while your shipment is <strong>below about
+      15 CBM</strong> and to compare FCL once volume approaches that level. That threshold is LOW
+      confidence — there is no verified universal break-even in the research snapshot — because the
+      crossover depends on the route, surcharges, CFS fees and destination costs. The useful test is
+      always: <em>LCL all-in landed cost versus an FCL all-in landed cost at your actual CBM</em>.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="LCL is usually the right lens when...">
+        <ul>
+          <li>Your shipment is small and well below a full container.</li>
+          <li>You want to avoid paying for unused container space.</li>
+          <li>You are testing the UAE market or restocking with mixed SKUs.</li>
+          <li>You can absorb extra consolidation/deconsolidation time.</li>
+        </ul>
+      </Card>
+      <Card title="Move to an FCL comparison when...">
+        <ul>
+          <li>Volume approaches roughly 15 CBM (planning heuristic, LOW).</li>
+          <li>Goods are dense, fragile, high-value or cannot share space.</li>
+          <li>Transit predictability matters more than the unit rate.</li>
+          <li>Destination CFS and delivery fees start to stack up.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative LCL rates and transit from China to the UAE</h2>
+      <p>
+        LCL is priced per CBM, so the headline number moves with volume, commodity and season. The
+        snapshot below is a market figure collected from a public China–UAE guide and is deliberately
+        labelled LOW confidence; ocean pricing moves weekly and should always be re-quoted with an
+        itemised schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={lclRateRows}
+        caption="Indicative LCL market snapshots, not carrier quotes. UAE FCL rates were not published in the verified snapshot — request an all-in quote."
+      />
+      <SourceList sources={rateSources} title="Sources — LCL rates" />
+
+      <h3 class="mt-3">LCL transit windows</h3>
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'service', label: 'Service' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={lclTransitRows}
+        caption="The Shanghai–Jebel Ali typical 21 days comes from WorldFreightHub route data; the 14–18 day figure is a LOW-confidence secondary snapshot. Verify with the carrier."
+      />
+      <SourceList sources={transitSources} title="Sources — LCL transit times" />
+
+      <div class="note mt-2">
+        <strong>Two different sea windows, explained:</strong> the 14–18 day figure is a market
+        guide that assumes a fast direct sailing and no delay, while the 21-day typical with a
+        15–30 day range is a planning figure that absorbs schedule and port variability. LCL adds
+        consolidation and deconsolidation handling on top of the ocean leg, so use the wider range
+        for commercial planning.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The chargeable CBM trap: volume vs actual weight</h2>
+    <p>
+      The most common LCL pricing surprise is that the forwarder does not bill your actual weight or
+      your physical cube in isolation. It bills the <strong>chargeable CBM</strong> — the greater of
+      the packed volume and a weight-derived volume. A light, bulky shipment is charged for the space
+      it fills; a dense shipment is charged for its weight converted to CBM.
+    </p>
+    <p>
+      A common planning convention is <strong>1 CBM = 1,000 kg</strong>, but forwarders set their own
+      ratio, and some use different thresholds for particularly light or dense cargo. That ratio is
+      LOW confidence and route/carrier specific — confirm it before you quote, because a small change
+      in the ratio changes the unit price materially.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'example', label: 'Example' },
+        { key: 'actualWeight', label: 'Actual weight' },
+        { key: 'packedVolume', label: 'Packed volume' },
+        { key: 'weightCbm', label: 'Weight-derived CBM' },
+        { key: 'chargeableCbm', label: 'Chargeable CBM' },
+        { key: 'note', label: 'What happens' },
+      ]}
+      rows={chargeableCbmRows}
+      caption="Illustrative examples using a 1,000 kg = 1 CBM planning ratio. The exact ratio is carrier-specific and LOW confidence — confirm it before booking."
+    />
+
+    <div class="note mt-2">
+      <strong>Why this matters for UAE LCL:</strong> e-commerce and consumer goods are often bulky
+      relative to their weight, so a shipment that “weighs only 60 kg” can still be billed at more
+      than half a CBM. Measure and weigh the packed cartons, then ask the forwarder for the
+      chargeable CBM and the ratio used in writing.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The LCL process: from China warehouse to UAE delivery</h2>
+      <p>
+        LCL is a two-terminal flow, which is why it is slower and has more fee lines than FCL. The
+        sequence below is the standard consolidation-to-delivery path; specific hand-off points can
+        vary by forwarder.
+      </p>
+
+      <ol>
+        <li><strong>Origin collection:</strong> goods arrive at a China warehouse or CFS near Shanghai, Ningbo, Shenzhen or Guangzhou.</li>
+        <li><strong>Receiving &amp; measuring:</strong> the forwarder checks, measures and weighs the cargo to fix the chargeable CBM.</li>
+        <li><strong>Consolidation:</strong> your cargo is stowed with other importers’ cargo into one container.</li>
+        <li><strong>Export clearance &amp; loading:</strong> the container clears China export and is loaded on the vessel.</li>
+        <li><strong>Ocean transit:</strong> the box sails to Jebel Ali, Khalifa or Port Khalid.</li>
+        <li><strong>Discharge &amp; deconsolidation:</strong> the box is discharged and broken down at the destination CFS.</li>
+        <li><strong>UAE customs clearance:</strong> the consignee or broker files the import declaration and pays duty and VAT where due.</li>
+        <li><strong>Final delivery:</strong> the cargo is trucked to your UAE address, warehouse or free-zone facility.</li>
+      </ol>
+
+      <p class="mt-2">
+        Ask two questions before booking: which UAE CFS the quote assumes, and whether the
+        consolidation is direct or transhipped. A transhipped LCL box adds another terminal handling
+        point and can widen the delivery window.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. LCL vs FCL decision table for the UAE</h2>
+    <p>
+      The commercial question is not “which is cheaper per CBM” in isolation; it is which service has
+      the lower landed cost and the right delivery risk for the goods. Use this table as a checklist,
+      then request both quotes at your actual volume.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclVsFclRows}
+      caption="Planning factors are heuristic and LOW confidence; the crossover depends on route, surcharges and destination fees. Verify with your forwarder."
+    />
+
+    <div class="note mt-2">
+      <strong>The ~15 CBM crossover is a starting point, not a rule:</strong> at Jebel Ali the
+      destination CFS and delivery fees can make FCL competitive below 15 CBM, while a very simple
+      mainland delivery can keep LCL attractive above it. Compare both all-in numbers.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. China origins and UAE destination CFS network</h2>
+      <p>
+        LCL consolidation normally happens at a CFS near the origin port. Shanghai, Ningbo-Zhoushan,
+        Shenzhen and Guangzhou are the main origin points in the research snapshot; at the UAE end,
+        Jebel Ali is the dominant deconsolidation point, with Khalifa and Port Khalid serving their
+        respective hinterlands.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'China port' },
+          { key: 'throughput', label: '2025 throughput' },
+          { key: 'note', label: 'LCL note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="Shanghai and Ningbo-Zhoushan figures are verified; Shenzhen and Guangzhou throughput were not stated in the research snapshot."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — China ports" />
+
+      <h3 class="mt-3">UAE destination ports and CFS roles</h3>
+      <p>
+        <strong>Jebel Ali</strong>, operated by DP World, is the Middle East’s largest container port
+        and combines deep-water capacity with a large free zone and strong road/sea connectivity.
+        That makes it the natural consolidation and transshipment point for the GCC, Middle East,
+        Africa and Indian subcontinent rather than only a Dubai gateway.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port Abu Dhabi' },
+          { key: 'sharjah', label: 'Port Khalid (Sharjah)' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={uaePortRows}
+        caption="Port roles are secondary-source findings; verify the destination CFS and final delivery leg with your forwarder."
+      />
+      <SourceList sources={uaePortSources} title="Sources — UAE ports" />
+
+      <div class="note mt-2">
+        <strong>LCL routing in one line:</strong> ask which destination CFS the LCL quote assumes.
+        Jebel Ali suits most Dubai and Northern Emirates consignees, Khalifa suits Abu Dhabi, and
+        Port Khalid suits Sharjah and the northern emirates. A cheaper ocean rate at the wrong CFS
+        can become more expensive after the inland trucking leg.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. LCL landed cost: the hidden-fee traps competitors skip</h2>
+    <p>
+      The per-CBM ocean rate is only one line of an LCL landed cost. The traps are at both CFS points
+      and at the UAE terminal: origin receiving, destination deconsolidation, THC, documentation,
+      minimum charges, storage and delivery. None of those fee amounts were published in the verified
+      research snapshot, so the correct comparison number is an itemised all-in quote — not a
+      headline AED/CBM.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Destination CFS deconsolidation">
+        <ul>
+          <li>Charged for breaking down the consolidated box in the UAE.</li>
+          <li>Often added after the ocean quote; always ask for it in writing.</li>
+          <li>Specific amount not published in snapshot — request fee schedule.</li>
+        </ul>
+      </Card>
+      <Card title="Minimum charge and THCs">
+        <ul>
+          <li>Very small LCL shipments can be pulled up to a minimum.</li>
+          <li>THC is levied at both ends for terminal handling.</li>
+          <li>Amounts were not published in snapshot — request fee schedule.</li>
+        </ul>
+      </Card>
+      <Card title="Documentation and D/O fees">
+        <ul>
+          <li>House bill of lading and delivery order can carry separate charges.</li>
+          <li>Ask whether documentation is included in the headline rate.</li>
+          <li>Specific amount not published in snapshot — request fee schedule.</li>
+        </ul>
+      </Card>
+      <Card title="Storage after free time">
+        <ul>
+          <li>Destination CFS free time is finite; days beyond it are chargeable.</li>
+          <li>A customs hold on one consignee can delay the whole box.</li>
+          <li>Confirm free-time and per-day policy before booking.</li>
+        </ul>
+      </Card>
+      <Card title="Delivery and clearance add-ons">
+        <ul>
+          <li>Final-mile delivery is quoted per UAE address and access type.</li>
+          <li>Inspection handling and brokerage sit on top of the ocean rate.</li>
+          <li>Ask whether the quote covers free-zone or remote-area delivery.</li>
+        </ul>
+      </Card>
+      <Card title="The comparison rule">
+        <ul>
+          <li>Never back into a container price from the AED/CBM figure.</li>
+          <li>Request equipment type, surcharges and destination fees itemised.</li>
+          <li>Compare LCL and FCL on all-in landed cost, not the headline.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <h3 class="mt-3">Full LCL cost stack</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'magnitude', label: 'Indicative magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Unquantified fees are LOW confidence because the research snapshot did not publish specific amounts — request a fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — LCL cost & UAE customs" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Factors that move LCL cost and transit</h2>
+      <p>
+        Two identical CBM measurements can produce very different landed costs depending on the
+        chargeable-weight ratio, the consolidation schedule and how quickly the destination file is
+        ready. Treat the factors below as planning levers rather than fixed rules.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect' },
+          { key: 'direction', label: 'Direction' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Directional planning factors, not pricing rules. Verify the forwarder's specific ratio, free-time and surcharges."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Compliance: VAT, duty, documents &amp; HS codes for UAE LCL</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, introduced on 1 January 2018, and is calculated on the
+      CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher protective or anti-dumping rates possible on
+      specific goods — a secondary source cites examples up to 35% on certain products. Confirm both
+      figures and your product’s classification with the Federal Tax Authority and Dubai Customs
+      before relying on them.
+    </p>
+    <p>
+      Secondary sources also record a de minimis threshold of <strong>AED 1,000</strong> for
+      duty/tax-free personal courier shipments and <strong>AED 3,000</strong> for gifts. That is a
+      secondary-source figure and should be confirmed before you rely on it. For commercial LCL, the
+      threshold is rarely the planning point — the duty and VAT treatment of the commodity and
+      destination is.
+    </p>
+
+    <h3>Free zone vs mainland</h3>
+    <p>
+      Designated UAE free zones can suspend customs duty while goods remain in the zone and the
+      importer meets the zone’s conditions; VAT treatment still depends on the entity, location and
+      transaction structure. Goods cleared for the mainland normally attract the 5% duty and 5% VAT
+      on the CIF-plus-duty base. This is a compliance variable, not a one-size rule — confirm the
+      treatment for your specific entity and final destination.
+    </p>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, house bill of lading, packing list and
+      certificate of origin. Classify goods with the correct <strong>HS code</strong> before quoting,
+      because duty and any conformity requirements depend on it. Note that <strong>SABER</strong> is
+      a Saudi conformity platform and does not apply to the UAE; for the UAE, confirm whether your
+      product needs a conformity certificate from the relevant authority.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE VAT & customs" />
+  </section>
+
+  <section class="section container">
+    <h2>10. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to UAE LCL quote"
+      text="Tell us your origin, destination, packed CBM and weight, commodity and delivery address, and we will connect you with providers who can quote ocean freight, CFS fees, duty and VAT together."
+    />
+  </section>
+</BaseLayout>
