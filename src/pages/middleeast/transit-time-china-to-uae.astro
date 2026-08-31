@@ -1,0 +1,692 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { routes } from '../../data/routes';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/transit-time-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const seaTransitSources: Source[] = [wfhRouteData, cargofromchinaUae, docshipper];
+const airTransitSources: Source[] = [cargofromchinaUae];
+const comparisonSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const factorSources: Source[] = [
+  ...sourcesByIds(['dubai-customs', 'dp-world', 'abu-dhabi-ports']),
+  fta,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const seaTransitRows = [
+  {
+    destination: 'Jebel Ali (Dubai)',
+    service: 'Sea FCL/LCL · Shanghai, Ningbo-Zhoushan, Shenzhen',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'Jebel Ali (Dubai)',
+    service: 'Sea fast direct-sailing guide',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Khalifa Port Abu Dhabi',
+    service: 'Sea port-to-port',
+    transit: 'Not published — request port-specific schedule',
+    basis: 'No verified Khalifa-specific figure in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Port Khalid (Sharjah)',
+    service: 'Sea port-to-port',
+    transit: 'Not published — request port-specific schedule',
+    basis: 'No verified Sharjah-specific figure in the research snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const planningRows = routes
+  .filter((route) => route.country === 'united-arab-emirates')
+  .map((route) => ({
+    origin: route.originPort,
+    destination: route.destPort,
+    typical: `${route.transitDays.typical} days`,
+    range: `${route.transitDays.range[0]}–${route.transitDays.range[1]} days`,
+    note: route.note,
+    confidence: 'MEDIUM',
+  }));
+
+const airTransitRows = [
+  {
+    lane: 'China → Dubai (DXB/DWC)',
+    service: 'Air airport-to-airport',
+    transit: '3–7 days',
+    basis: 'Planning range for direct airport-to-airport moves; verify with carrier',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Dubai / UAE',
+    service: 'Air express',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → Dubai / UAE',
+    service: 'DDP air door-to-door',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Shanghai → Jebel Ali (comparison)',
+    service: 'Sea freight',
+    transit: 'Typical 21 days (range 15–30)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+];
+
+const seaVsAirRows = [
+  {
+    factor: 'Indicative transit',
+    sea: 'Typical 21 days Shanghai→Jebel Ali; 14–18 day fast-guide window',
+    air: '3–7 days airport-to-airport; 2–4 day express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Time variability',
+    sea: 'Wider range; schedule, transshipment and congestion stretch the clock',
+    air: 'Narrower range, but Mirsal 2 clearance still gates release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for',
+    sea: 'Non-urgent, high-volume, stable-demand cargo',
+    air: 'Urgent, perishable, fragile, high-value or stockout-critical cargo',
+    confidence: 'LOW',
+  },
+];
+
+const stageRows = [
+  {
+    stage: 'Origin pick-up and China export clearance',
+    effect: 'Adds time before the vessel or aircraft departs',
+    note: 'Timing depends on origin gateway and documentation readiness',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Vessel / flight cut-off and loading',
+    effect: 'Cargo waits for the scheduled departure',
+    note: 'Fewer sailings or flights means more dwell',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'International transit',
+    effect: 'Jebel Ali ~21 days typical; air 3–7 days by comparison',
+    note: 'The most visible clock, but not the only one',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'Transhipment (if applicable)',
+    effect: 'Adds terminal handling and waiting at the hub',
+    note: 'Direct services are usually faster but less frequent',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'Discharge and terminal availability',
+    effect: 'Container or cargo becomes available after discharge',
+    note: 'Terminal congestion can extend this step',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'UAE customs release',
+    effect: 'Mirsal 2 pre-arrival declaration plus HS/document checks',
+    note: 'A late declaration or document hold stops the clock at the border',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'Inland delivery',
+    effect: 'Trucking from Jebel Ali / Khalifa / Sharjah to the final address',
+    note: 'Final delivery point is part of the true door-to-door time',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'Sailing / flight schedule and frequency',
+    effect: 'Fewer departures create longer dwell at origin or hub',
+    note: 'Confirm the actual vessel, voyage and cut-off',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Direct vs transhipped routing',
+    effect: 'Transhipment adds handling and waiting time',
+    note: 'Direct loops are faster but less frequent',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Peak season and capacity',
+    effect: 'Congestion and space pressure extend both sea and air',
+    note: 'Book earlier during peak windows',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Port congestion',
+    effect: 'Jebel Ali / Khalifa / Sharjah throughput pressure can delay discharge',
+    note: 'Match the discharge port to the consignee and inland leg',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Regional routing changes',
+    effect: 'Schedule revisions can stretch the published transit window',
+    note: 'Confirm current routing before booking',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Mirsal 2 and document readiness',
+    effect: 'A late declaration, HS error or missing document holds cargo',
+    note: 'File Mirsal 2 early and keep documents consistent',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Free zone vs mainland final leg',
+    effect: 'Changes clearance flow and delivery routing after discharge',
+    note: 'Confirm the final consignee status in writing',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to the UAE take?',
+    a: 'WorldFreightHub route data records a typical 21 days with a 15–30 day range for Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (MEDIUM confidence). A secondary market guide gives a faster 14–18 day window for the China–UAE corridor (LOW confidence). Use the wider route-data range for planning and the fast window only as a best case.',
+  },
+  {
+    q: 'What is the sea freight transit time to Jebel Ali?',
+    a: 'The route dataset puts Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali at a typical 21 days with a 15–30 day range. That is a planning shorthand, not a schedule guarantee — confirm the vessel, voyage and any transshipment points before booking.',
+  },
+  {
+    q: 'How long does sea freight take to Khalifa Port or Sharjah?',
+    a: 'The verified research snapshot does not publish a Khalifa Port or Port Khalid specific figure. The UAE corridor ballpark is 14–18 days by sea as a fast-guide window, but port-specific schedules differ, so request the exact transit for Abu Dhabi or Sharjah discharge.',
+  },
+  {
+    q: 'How fast is air freight from China to Dubai?',
+    a: 'A planning range of 3–7 days is reasonable for direct airport-to-airport moves (LOW confidence). The research snapshot records air express at 2–4 days and DDP air door-to-door at 3–6 days. All figures are indicative — verify with the carrier before relying on them.',
+  },
+  {
+    q: 'Is FCL faster than LCL from China to the UAE?',
+    a: 'In most cases FCL is faster because the sealed container moves as one consignment. LCL adds consolidation at origin and deconsolidation at the destination CFS, which can add scheduling and handling risk even when the main carriage time is similar.',
+  },
+  {
+    q: 'Why is there a gap between vessel arrival and cargo release?',
+    a: 'Arrival is not release. After discharge the container must be made available, then the Mirsal 2 declaration is processed, duty and VAT are settled, and any inspection is completed. A late Mirsal 2 filing or document mismatch holds cargo at the port even though the vessel arrived on schedule.',
+  },
+  {
+    q: 'What is the difference between port-to-port and door-to-door transit time?',
+    a: 'Port-to-port stops at the UAE terminal or airport and leaves pre-carriage, clearance and delivery to you. Door-to-door bundles pick-up, export, transit, UAE import and final delivery into one window. Confirm where the clock starts and stops on every quote — the same route can be quoted as 21 days or 30 days depending on scope.',
+  },
+  {
+    q: 'What delays UAE transit the most?',
+    a: 'The usual levers are transshipment, peak-season capacity, port congestion, a late Mirsal 2 filing, an incorrect HS code, missing permits and the inland delivery leg. The controllable half is document and clearance readiness; the uncontrollable half is schedule, season and congestion.',
+  },
+  {
+    q: 'Does UAE customs clearance add much time?',
+    a: 'The research snapshot does not publish a reliable hour or day figure for UAE clearance. Effective lead time depends on HS accuracy, document consistency, whether inspection is selected, and free time. Complete pre-arrival work first; clearance is usually faster than fixing a wrong HS code or missing permit.',
+  },
+  {
+    q: 'How can I shorten China to UAE transit time?',
+    a: 'Book a direct sailing or direct airport pair; file the Mirsal 2 pre-arrival declaration early; classify the HS code correctly; prepare documents before departure; match the discharge port to the final destination; and switch urgent replenishment to air while the main stock moves by sea.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Transit Time from China to UAE: Jebel Ali Sea & Air Windows (August 2026)',
+      description:
+        'Transit time from China to the UAE and Dubai explained: the typical 21-day Jebel Ali sea window, Khalifa and Sharjah port notes, 3–7 day air freight, and the delays that stretch the clock.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Transit Time from China to UAE: Jebel Ali Sea & Air Windows (August 2026)"
+  description="Transit time from China to the UAE and Dubai: the typical 21-day Jebel Ali sea window, Khalifa and Sharjah port notes, 3–7 day air freight, and the delays that stretch the clock."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Transit time from China to UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Transit time from China to the UAE: Jebel Ali sea &amp; air windows</h1>
+      <p class="lead">
+        A single “21 days” number hides three different clocks: the sailing schedule, the actual
+        arrival, and the Mirsal 2 clearance that lets your buyer take delivery. This page separates
+        Jebel Ali from Khalifa and Sharjah, sea from air, and port-to-port from door-to-door.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative market snapshots. Treat every
+        LOW-confidence transit window as indicative, verify with carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Jebel Ali by sea</span>
+          <span class="fact-value">21 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea planning range</span>
+          <span class="fact-value">15–30 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Fast sea guide</span>
+          <span class="fact-value">14–18 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Mirsal 2 filing</span>
+          <span class="fact-value">Pre-arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Three clocks, not one</h2>
+    <p>
+      The headline transit time is usually the <strong>schedule clock</strong>: the published
+      port-to-port sailing or flying time. The <strong>arrival clock</strong> is when the cargo
+      actually reaches the UAE terminal or airport after schedule changes, transshipment and
+      congestion. The <strong>release clock</strong> is when UAE customs releases the goods after
+      Mirsal 2 processing, duty/VAT settlement and any inspection.
+    </p>
+    <p>
+      Shippers usually plan against the first clock and get surprised by the third. That gap between
+      arrival and release is the hidden water in every transit quote, and it is why a port-to-port
+      number is not the same as a delivery promise. In the UAE’s re-export and e-commerce flow, the
+      same gap also decides whether a free-zone parcel reaches the mainland before a free-storage
+      window expires.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Sea transit windows: Jebel Ali vs Khalifa vs Sharjah</h2>
+      <p>
+        The UAE has more than one discharge point, and the schedule is not identical across them.
+        Jebel Ali is the primary China import gateway, while Khalifa Port serves Abu Dhabi and Port
+        Khalid serves Sharjah and the northern emirates. The verified snapshot only quantifies the
+        Jebel Ali corridor, so the other ports stay “request schedule” rather than being guessed.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'destination', label: 'Destination' },
+          { key: 'service', label: 'Service' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="Indicative sea transit windows only — verify with the relevant carrier before relying on these figures."
+      />
+      <SourceList sources={seaTransitSources} title="Sources — sea transit times" />
+
+      <h3 class="mt-3">WorldFreightHub planning dataset</h3>
+      <p>
+        The site’s internal route dataset keeps a simpler planning shorthand: Shanghai,
+        Ningbo-Zhoushan and Shenzhen origins mapped to Jebel Ali. These figures are planning
+        estimates, not schedule guarantees, and are deliberately narrower than the fast-guide market
+        window above.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'origin', label: 'Origin' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'typical', label: 'Typical' },
+          { key: 'range', label: 'Planning range' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={planningRows}
+        caption="Internal planning estimates from src/data/routes.ts. Treat as MEDIUM-confidence planning shorthand and verify with the relevant carrier."
+      />
+      <SourceList sources={chinaPortSources} title="Sources — planning dataset origins" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Air and express transit windows</h2>
+    <p>
+      Air freight shortens the transport clock but not the compliance clock. Airport-to-airport
+      windows are measured in days, but the same Mirsal 2 declaration, HS classification and
+      duty/VAT settlement still apply before release. A DXB or DWC arrival is fast, but a clearance
+      hold at the airport can still erase the time advantage.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'service', label: 'Service' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="Air transit windows are LOW confidence planning ranges, not guarantees. Verify with the airline or forwarder."
+    />
+    <SourceList sources={airTransitSources} title="Sources — air transit times" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Sea vs air: the time decision</h2>
+      <p>
+        The decision is not “which is faster” — air is faster on the transport clock. The real
+        question is whether the premium buys enough time to be worth it, and whether the UAE
+        clearance and final-mile steps will dominate anyway.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaVsAirRows}
+        caption="Comparison is heuristic; transit figures are LOW confidence planning ranges."
+      />
+      <SourceList sources={comparisonSources} title="Sources — sea vs air transit" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose air freight when...">
+          <ul>
+            <li>The shipment is urgent, perishable or stockout-critical.</li>
+            <li>A 3–7 day arrival cycle is worth the premium.</li>
+            <li>The shipment is small and sea minimum charges are wasteful.</li>
+            <li>Value density means the per-kg premium is minor.</li>
+          </ul>
+        </Card>
+        <Card title="Choose sea freight when...">
+          <ul>
+            <li>Cargo is large, dense, heavy or stable-demand.</li>
+            <li>Unit cost matters more than transit time.</li>
+            <li>The shipment fills a meaningful share of a container.</li>
+            <li>The consignee can absorb a 15–30 day planning window.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Port-to-port vs door-to-door: which clock are you buying?</h2>
+    <p>
+      Port-to-port stops at the UAE terminal and leaves pre-carriage, UAE clearance and delivery to
+      you. Door-to-door bundles the whole chain into one provider and one price. The quoted number
+      means different things in each case, so always confirm where the clock starts and stops.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'portToPort', label: 'Port-to-port' },
+        { key: 'doorToDoor', label: 'Door-to-door' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={[
+        {
+          factor: 'Service scope',
+          portToPort: 'Ocean terminal to ocean terminal (or airport to airport)',
+          doorToDoor: 'Origin warehouse to UAE destination address',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'What the time includes',
+          portToPort: 'Main carriage only; pre-carriage and on-carriage are separate',
+          doorToDoor: 'Pick-up, export, transit, UAE import and final delivery bundled',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Timing visibility',
+          portToPort: 'Cleaner comparison, but the real delivery date is incomplete',
+          doorToDoor: 'One end-to-end window, but inclusions must be confirmed in writing',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Incoterm context',
+          portToPort: 'Fits FOB / CFR / CIF negotiations',
+          doorToDoor: 'Fits DAP / DDP arrangements',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'Best for',
+          portToPort: 'Established importers with a UAE broker and trucker',
+          doorToDoor: 'Sellers who want one provider and are not established locally',
+          confidence: 'LOW',
+        },
+      ]}
+      caption="Service-scope comparison is heuristic. Confirm exactly where the clock starts and stops on every quote."
+    />
+
+    <h3 class="mt-3">The stage-by-stage clock</h3>
+    <p>
+      Breaking the move into stages makes the hidden time visible. Stage-level day counts were not
+      published in the verified research snapshot, so the table below shows where time is added
+      rather than inventing per-stage numbers.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'stage', label: 'Stage' },
+        { key: 'effect', label: 'Effect on total time' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={stageRows}
+      caption="Stage-level timing is LOW confidence because the research snapshot did not publish per-stage day counts — request a milestone schedule from your forwarder."
+    />
+    <SourceList sources={[...seaTransitSources, ...factorSources]} title="Sources — transit stages" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. What stretches the clock: the hidden water</h2>
+      <p>
+        The gap between a sailing schedule and the day your buyer receives the goods comes from a
+        small number of controllable and uncontrollable factors. Control the documents and Mirsal 2
+        timing; plan around the schedule, season and congestion variables.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect on transit' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="Transit factors are operational context. Only the Mirsal 2 pre-arrival rule and the 21-day Jebel Ali typical figure are higher-confidence; the rest is LOW confidence and shipment-specific."
+      />
+      <SourceList sources={factorSources} title="Sources — transit factors" />
+
+      <div class="note mt-2">
+        <strong>The controllable half:</strong> file the Mirsal 2 pre-arrival declaration early,
+        classify the HS code correctly, keep documents consistent, confirm free zone vs mainland
+        status, and book trucking before discharge. Those steps remove the clearance hold that turns
+        a routine arrival into a delayed delivery.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points that gate the clock</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on
+      the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher duty or excise possible on specific goods
+      such as tobacco, alcohol and motor vehicles.
+    </p>
+    <p>
+      Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to
+      AED 3,000 as exempt. Treat the de minimis point as secondary-source information and confirm it
+      with Dubai Customs or the FTA for low-value shipments.
+    </p>
+
+    <h3>Mirsal 2 and the clearance order</h3>
+    <ol>
+      <li>Classify the goods with the correct <strong>HS code</strong> before shipping.</li>
+      <li>Confirm importer eligibility, trade licence and any product permits before departure.</li>
+      <li>Prepare the commercial invoice, packing list, bill of lading or air waybill and certificate of origin.</li>
+      <li>File the <strong>Mirsal 2</strong> pre-arrival declaration through Dubai Customs’ single-window system.</li>
+      <li>Settle duty and VAT, complete inspection if selected, then obtain release.</li>
+    </ol>
+
+    <h3>Documents and classification</h3>
+    <p>
+      Standard documents are the commercial invoice, bill of lading or air waybill, packing list and
+      certificate of origin, plus any product-specific permits. Classify goods with the correct
+      <strong>HS code</strong> before shipping, because both duty and permit requirements depend on
+      it. Note that <strong>ISF</strong> is a United States requirement and does not apply to the
+      UAE; the advance-filing step here is the Mirsal 2 pre-arrival declaration.
+    </p>
+    <p>
+      Air shortens the transport clock, not the compliance clock. A late Mirsal 2 filing or HS-code
+      error can wipe out the time advantage by holding cargo at the airport or port, so complete the
+      paperwork before arrival.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE customs & ports" />
+  </section>
+
+  <section class="section container">
+    <h2>8. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The statutory
+      duty/VAT rates and the Mirsal 2 pre-arrival rule are re-checked against the FTA and Dubai
+      Customs; the sea and air transit windows are market snapshots re-checked monthly because
+      sailing frequency, congestion and season change them.
+    </p>
+    <p>
+      If a carrier publishes a fixed schedule, a terminal publishes current discharge times, or
+      Dubai Customs publishes stage-level milestones, the tables are updated, the confidence badge is
+      raised, and the modified date in the page metadata is changed. Until then, stage-level timing
+      stays LOW confidence with a request-the-schedule note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a China to UAE transit-time estimate"
+      text="Tell us your origin, destination, commodity, container or CBM and delivery deadline, and we will connect you with providers who can quote the route, transit window and Mirsal 2 timing together."
+    />
+  </section>
+</BaseLayout>

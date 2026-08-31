@@ -1,0 +1,669 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/sea-vs-air-freight-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance and Dangerous Goods Regulations',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const costSources: Source[] = [cargofromchinaUae, docshipper];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const chargeableSources: Source[] = [iata];
+const riskSources: Source[] = [iata, cargofromchinaUae];
+const hybridSources: Source[] = [wfhRouteData, cargofromchinaUae, docshipper];
+
+const costComparisonRows = [
+  {
+    factor: 'Indicative cost',
+    sea: 'LCL AED 880–980 per CBM to Dubai; FCL by all-in quote',
+    air: 'AED 20–23.5 per kg (chargeable weight basis)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Unit basis',
+    sea: 'Per container (FCL) or per CBM / chargeable weight (LCL)',
+    air: 'Per chargeable kilogram (actual or volumetric, whichever is higher)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Indicative transit',
+    sea: 'Typical 21 days Shanghai→Jebel Ali; 14–18 day fast-guide window',
+    air: '3–7 days airport-to-airport; 2–4 day express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Minimum practical shipment',
+    sea: 'A few CBM for LCL; a meaningful share of a box for FCL',
+    air: 'Small parcels and cartons; low chargeable weight',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best cargo',
+    sea: 'Large, dense, heavy, low-value or stable-demand goods',
+    air: 'Urgent, high-value, perishable, fragile or small goods',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'UAE compliance',
+    sea: '5% duty, 5% VAT, HS classification and Mirsal 2 still apply',
+    air: 'Same UAE compliance applies; air does not remove paperwork',
+    confidence: 'MEDIUM',
+  },
+];
+
+const volumetricRows = [
+  {
+    example: 'Light, bulky carton',
+    actualWeight: '12 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '20 kg',
+    note: 'You pay for 20 kg, not 12 kg',
+  },
+  {
+    example: 'Dense carton',
+    actualWeight: '30 kg',
+    dimensions: '60 × 50 × 40 cm',
+    volumetricWeight: '20 kg',
+    chargeableWeight: '30 kg',
+    note: 'You pay for actual weight because it is higher',
+  },
+];
+
+const workedExampleRows = [
+  {
+    line: 'Shipment dimensions / actual weight',
+    value: '2 CBM · 180 kg actual weight',
+    note: 'A plausible small e-commerce or consumer-goods move',
+  },
+  {
+    line: 'Sea LCL (2 CBM × AED 880–980)',
+    value: 'AED 1,760–1,960',
+    note: 'Arithmetic on the LOW-confidence LCL benchmark',
+  },
+  {
+    line: 'Air chargeable weight (2,000,000 cm³ ÷ 6,000)',
+    value: '333.33 kg',
+    note: 'Chargeable weight exceeds the 180 kg actual weight',
+  },
+  {
+    line: 'Air freight (333.33 kg × AED 20–23.5)',
+    value: 'AED 6,666.60–7,833.26',
+    note: 'Arithmetic on the LOW-confidence air benchmark',
+  },
+  {
+    line: 'Illustrative cost gap',
+    value: 'Air is roughly 3.4–4.5× the sea LCL quote',
+    note: 'Illustrative only — rates are LOW confidence and subject to change',
+  },
+];
+
+const denseExampleRows = [
+  {
+    scenario: 'Dense variant · 2 CBM · 2,000 kg actual weight',
+    sea: 'AED 1,760–1,960 (2 CBM LCL)',
+    air: 'AED 40,000–47,000 (2,000 kg chargeable × AED 20–23.5)',
+    note: 'Dense cargo makes the sea advantage extreme',
+  },
+  {
+    scenario: 'Light variant · 2 CBM · 180 kg actual weight',
+    sea: 'AED 1,760–1,960 (2 CBM LCL)',
+    air: 'AED 6,666.60–7,833.26 (333.33 kg chargeable)',
+    note: 'Light, bulky cargo is still expensive by air because of volumetric billing',
+  },
+];
+
+const decisionMatrixRows = [
+  {
+    dimension: 'Cargo value',
+    chooseSea: 'Low or moderate value where the freight share is material',
+    chooseAir: 'High value where freight is a small share of the item price',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Urgency',
+    chooseSea: 'Delivery window is flexible (15–30 day planning)',
+    chooseAir: 'Stockout-critical or must-arrive-this-week cargo',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Volume and density',
+    chooseSea: 'Large, dense or heavy cargo approaching a container share',
+    chooseAir: 'Small, light or compact cargo at a low chargeable weight',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Shelf life / fragility',
+    chooseSea: 'Durable goods that tolerate a longer voyage',
+    chooseAir: 'Perishable, fragile or time-sensitive goods',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Working capital',
+    chooseSea: 'Stable demand with predictable inventory',
+    chooseAir: 'Fast arrival that shortens stockout and cash-to-revenue cycles',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Budget posture',
+    chooseSea: 'Unit-cost driven with time flexibility',
+    chooseAir: 'Service-level driven where the premium buys availability',
+    confidence: 'LOW',
+  },
+];
+
+const riskRows = [
+  {
+    risk: 'Delay',
+    sea: 'Schedule slips, transshipment, port congestion and free-time pressure',
+    air: 'Capacity tightness and peak-season cut-offs',
+    confidence: 'LOW',
+  },
+  {
+    risk: 'Billing surprise',
+    sea: 'Destination THC, CFS, demurrage/detention beyond the headline rate',
+    air: 'Volumetric weight above actual weight (6,000-divisor rule)',
+    confidence: 'LOW',
+  },
+  {
+    risk: 'Restricted cargo',
+    sea: 'Usually broader acceptance; dangerous goods need declaration and stowage rules',
+    air: 'Lithium and other dangerous goods face strict IATA DGR acceptance limits',
+    confidence: 'MEDIUM',
+  },
+  {
+    risk: 'Handling damage',
+    sea: 'Lower handling frequency but longer exposure and container movement',
+    air: 'More handling steps and tighter packaging requirements',
+    confidence: 'LOW',
+  },
+];
+
+const hybridRows = [
+  {
+    lever: 'Main stock by sea',
+    detail: 'Send forecasted replenishment on the lowest unit cost',
+    benefit: 'Protects the per-unit margin',
+    confidence: 'LOW',
+  },
+  {
+    lever: 'Emergency stock by air',
+    detail: 'Air-lift only the units needed to cover a stockout',
+    benefit: 'Fast replenishment with a small chargeable-weight footprint',
+    confidence: 'LOW',
+  },
+  {
+    lever: 'Seasonal launch',
+    detail: 'Sea the base volume early; air the top-up for a promotion',
+    benefit: 'Avoids both an over-ordered sea stock and a full air program',
+    confidence: 'LOW',
+  },
+  {
+    lever: 'Working-capital split',
+    detail: 'Sea carries stable demand; air carries variability',
+    benefit: 'Lowers average inventory without risking availability',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is sea or air freight cheaper from China to the UAE?',
+    a: 'Sea is almost always cheaper per unit for meaningful volume. The research snapshot records UAE LCL at an indicative AED 880–980 per CBM and air at AED 20–23.5 per kg. Air is justified by speed, value density or urgency, not by cost. Both figures are LOW confidence and should be re-quoted for your actual shipment.',
+  },
+  {
+    q: 'When should I choose sea freight to Dubai?',
+    a: 'Choose sea when cargo is large, dense, heavy or stable-demand, when unit cost matters more than transit, and when the consignee can absorb a 15–30 day planning window. FCL suits container-share volumes; LCL suits smaller moves.',
+  },
+  {
+    q: 'When should I choose air freight to the UAE?',
+    a: 'Choose air when cargo is urgent, high-value, perishable, fragile or stockout-critical, and when the chargeable weight is low enough that the premium is minor relative to the item value. Air makes sense when a 3–7 day arrival cycle is worth the extra cost.',
+  },
+  {
+    q: 'How does chargeable weight change the air vs sea decision?',
+    a: 'Air is billed on chargeable weight — the higher of actual and volumetric weight, where volumetric weight is L × W × H in centimetres divided by 6,000. Light, bulky cargo can be billed far above its actual weight, which makes sea even more attractive for low-density goods.',
+  },
+  {
+    q: 'Can you show a sea vs air cost example for 2 CBM and 180 kg?',
+    a: 'Yes, as an illustrative arithmetic example on LOW-confidence rates. Sea LCL is about AED 1,760–1,960 (2 CBM × AED 880–980). Air chargeable weight is 2,000,000 cm³ ÷ 6,000 = 333.33 kg, so air is about AED 6,666.60–7,833.26 (333.33 kg × AED 20–23.5). Air is roughly 3.4–4.5 times the sea figure in this example — verify with real quotes.',
+  },
+  {
+    q: 'Are lithium batteries restricted on air freight to the UAE?',
+    a: 'Yes, lithium batteries and other dangerous goods face strict IATA Dangerous Goods Regulations acceptance limits on air freight. They must be declared, packaged and documented correctly, and the airline must accept the consignment. Sea freight has a different but still regulated dangerous-goods flow, so declare the goods either way.',
+  },
+  {
+    q: 'What is the best hybrid sea + air approach?',
+    a: 'Use sea for forecasted main stock at the lowest unit cost, and air only for the units needed to cover a stockout, a seasonal promotion or a launch top-up. This keeps the base margin low while protecting availability, without paying air rates for the entire volume.',
+  },
+  {
+    q: 'Do duty and VAT differ between sea and air freight?',
+    a: 'No. UAE import duty is 5% of CIF and import VAT is 5% on CIF plus duty regardless of transport mode. Air shortens the transport clock but not the compliance clock — Mirsal 2, HS classification and duty/VAT settlement still apply.',
+  },
+  {
+    q: 'Which UAE airport or port should I use?',
+    a: 'For sea, Jebel Ali is the primary China import gateway, Khalifa Port serves Abu Dhabi, and Port Khalid serves Sharjah and the northern emirates. For air, Dubai International (DXB) is the primary gateway and Al Maktoum International (DWC) is the Dubai South cargo gateway. Match the node to your consignee and final-mile route.',
+  },
+  {
+    q: 'How do I make the final sea vs air decision?',
+    a: 'Score the shipment on value, urgency, volume, density, shelf life and working capital. Then run two all-in quotes on the same chargeable basis — including destination fees, Mirsal 2, duty and VAT — and compare the total landed cost and delivery date, not just the headline rate.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Sea vs Air Freight from China to UAE: Decision Matrix, Costs & Hybrid Plan (August 2026)',
+      description:
+        'Sea vs air freight to the UAE and Dubai compared: cost, 21-day vs 3–7 day transit, CBM vs chargeable weight, the 6,000-divisor rule, lithium risks and a hybrid sea-plus-air plan.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Sea vs Air Freight from China to UAE: Decision Matrix, Costs & Hybrid Plan (August 2026)"
+  description="Sea vs air freight to the UAE and Dubai: cost, 21-day vs 3–7 day transit, CBM vs chargeable weight, the 6,000-divisor rule, lithium risks and a hybrid sea-plus-air plan."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Sea vs air freight China to UAE' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Sea vs air freight from China to the UAE: the decision, not just the rates</h1>
+      <p class="lead">
+        The real question is rarely “which is cheaper” — it is “which combination protects both your
+        unit margin and your stock availability”. This page compares cost, transit, CBM vs chargeable
+        weight, the 6,000-divisor rule, lithium restrictions, and the hybrid plan that uses sea for
+        the base and air for the emergency.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative market snapshots. Treat every
+        LOW-confidence rate and transit figure as indicative, verify with carrier before relying on
+        it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Sea LCL</span>
+          <span class="fact-value">AED 880–980/CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air benchmark</span>
+          <span class="fact-value">AED 20–23.5/kg <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali sea</span>
+          <span class="fact-value">21 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Chargeable weight</span>
+          <span class="fact-value">L×W×H/6000 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UAE VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The three dimensions of the decision</h2>
+    <p>
+      A sea-vs-air decision has three independent dimensions: <strong>cost</strong> (what the move
+      costs per unit), <strong>time</strong> (how quickly it arrives and clears), and
+      <strong>cargo fit</strong> (whether the goods are dense, bulky, perishable, fragile or
+      restricted). A rational decision weighs all three, because a low freight rate can be offset by
+      stockout cost, and a fast air move can be offset by a volumetric-weight billing surprise.
+    </p>
+    <p>
+      The UAE is a useful case because both modes are mature. Sea freight anchors on Jebel Ali with
+      a typical 21-day Shanghai transit, while air freight reaches Dubai’s DXB/DWC gateways in 3–7
+      days. The difference is not only speed — it is how each mode prices your exact cargo and how
+      much working capital each one ties up.
+    </p>
+    <p>
+      This page treats the choice as a portfolio problem, not a binary switch. The highest-value
+      answer for many importers is a hybrid: sea for the predictable base, air for the variability.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Cost and transit compared</h2>
+      <p>
+        The headline comparison below is deliberately LOW confidence because both brackets are
+        market snapshots rather than carrier quotes. The unit bases are the point: sea prices by
+        container or CBM, while air prices by chargeable kilogram — which changes the result far more
+        than the rate per unit suggests.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costComparisonRows}
+        caption="Indicative comparison on different unit bases. FCL was not published in the UAE research snapshot, so request an all-in container quote."
+      />
+      <SourceList sources={[...costSources, ...transitSources]} title="Sources — cost & transit comparison" />
+
+      <div class="note mt-2">
+        <strong>Compare on the same total, not the same unit:</strong> compute the chargeable weight
+        for air, the CBM or container count for sea, add destination fees, Mirsal 2, duty and VAT,
+        then compare the landed cost and delivery date together.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The billing rules: CBM vs chargeable weight</h2>
+    <p>
+      Sea LCL is billed per cubic metre (CBM), and FCL is billed per container. Air is billed per
+      chargeable kilogram — the higher of actual gross weight and volumetric weight. The standard
+      IATA volumetric formula is <strong>L × W × H (cm) ÷ 6,000</strong>, though some express or
+      dense-cargo services use 5,000, which makes volumetric billing even larger.
+    </p>
+    <p>
+      This is the single biggest reason a “cheap air” quote turns expensive: light, bulky cargo is
+      billed far above its physical weight. The table below shows both cases with the same carton
+      dimensions.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'example', label: 'Example' },
+        { key: 'actualWeight', label: 'Actual weight' },
+        { key: 'dimensions', label: 'Dimensions' },
+        { key: 'volumetricWeight', label: 'Volumetric weight' },
+        { key: 'chargeableWeight', label: 'Chargeable weight' },
+        { key: 'note', label: 'What happens' },
+      ]}
+      rows={volumetricRows}
+      caption="Volumetric weight uses the IATA 6,000 divisor. Chargeable weight is the higher of actual and volumetric weight."
+    />
+    <SourceList sources={chargeableSources} title="Sources — chargeable weight" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Worked example: 2 CBM and 180 kg</h2>
+      <p>
+        The arithmetic below is illustrative and built on the LOW-confidence UAE benchmarks. It shows
+        how the different unit bases produce a large cost gap even on a small shipment, and why
+        density matters more than the headline rate.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'line', label: 'Line' },
+          { key: 'value', label: 'Illustrative value' },
+          { key: 'note', label: 'Note' },
+        ]}
+        rows={workedExampleRows}
+        caption="Illustrative arithmetic only. The AED 880–980/CBM and AED 20–23.5/kg benchmarks are LOW confidence — request real quotes before deciding."
+      />
+      <SourceList sources={[...costSources, chargeableSources]} title="Sources — worked example inputs" />
+
+      <h3 class="mt-3">Why density flips the decision</h3>
+      <p>
+        Run the same 2 CBM with a dense and a light cargo, and the sea bill stays the same while the
+        air bill changes dramatically. That is the practical decision rule: sea scales by volume,
+        air scales by chargeable weight, so density decides how large the air premium really is.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'sea', label: 'Sea LCL (2 CBM)' },
+          { key: 'air', label: 'Air (chargeable weight)' },
+          { key: 'note', label: 'Planning note' },
+        ]}
+        rows={denseExampleRows}
+        caption="Illustrative arithmetic on LOW-confidence benchmarks. Dense cargo makes sea dominant; light, bulky cargo still carries a large volumetric premium by air."
+      />
+      <SourceList sources={[...costSources, chargeableSources]} title="Sources — density example" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Decision matrix by cargo profile</h2>
+    <p>
+      No single rule fits every shipment. Score the shipment on the dimensions below, then run the
+      two all-in quotes. Where the dimensions conflict, the hybrid approach in the next section
+      usually resolves the tension.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'dimension', label: 'Dimension' },
+        { key: 'chooseSea', label: 'Choose sea when...' },
+        { key: 'chooseAir', label: 'Choose air when...' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={decisionMatrixRows}
+      caption="Decision matrix is heuristic. The research snapshot did not publish a verified crossover threshold, so these are planning patterns, not fixed rules."
+    />
+    <SourceList sources={costSources} title="Sources — decision matrix context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Risks: sea delays vs air restrictions</h2>
+      <p>
+        Both modes carry risks that the headline comparison hides. Sea exposes you to time and
+        free-time risk; air exposes you to volumetric surprises and strict dangerous-goods rules. The
+        table below separates them so the decision includes risk, not just rate.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'risk', label: 'Risk' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={riskRows}
+        caption="Risk comparison is heuristic. The lithium/dangerous-goods restriction is the only higher-confidence line; the rest is operational context."
+      />
+      <SourceList sources={riskSources} title="Sources — mode risks" />
+
+      <h3 class="mt-3">Lithium batteries: declare before booking</h3>
+      <p>
+        Lithium and other dangerous goods face strict <strong>IATA Dangerous Goods Regulations</strong>
+        acceptance limits on air freight. The goods must be declared, packaged, labelled and
+        documented correctly, and the airline must accept the consignment. Sea freight has a
+        different but still regulated dangerous-goods flow, so the rule is the same in practice:
+        declare the commodity truthfully on every quote.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. The hybrid plan: air replenishment + sea main stock</h2>
+    <p>
+      The best answer for many UAE importers is not one mode but a portfolio. Sea carries the
+      forecasted base at the lowest unit cost, while air covers the top of the demand curve with a
+      small chargeable-weight footprint. This is especially common for e-commerce sellers using
+      Dubai free zones for storage and regional fulfilment.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'lever', label: 'Lever' },
+        { key: 'detail', label: 'How it works' },
+        { key: 'benefit', label: 'Benefit' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={hybridRows}
+      caption="Hybrid planning is heuristic. The sea/air cost and transit inputs are LOW confidence market snapshots — verify before committing to a program."
+    />
+    <SourceList sources={hybridSources} title="Sources — hybrid planning inputs" />
+
+    <div class="note mt-2">
+      <strong>Operational rule:</strong> sea orders should be triggered by forecast and lead time,
+      air orders by the remaining stockout buffer. The moment air becomes the default rather than the
+      exception, revisit the sea cadence and the safety-stock level.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance points that apply to both modes</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on
+        the CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher duty or excise possible on specific goods
+        such as tobacco, alcohol and motor vehicles.
+      </p>
+      <p>
+        Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to
+        AED 3,000 as exempt. Treat the de minimis point as secondary-source information and confirm
+        with Dubai Customs or the FTA.
+      </p>
+
+      <h3>Mirsal 2 and documents</h3>
+      <p>
+        File the <strong>Mirsal 2</strong> pre-arrival declaration through Dubai Customs’ single-window
+        system, classify the goods with the correct <strong>HS code</strong>, and keep the commercial
+        invoice, packing list, bill of lading or air waybill and certificate of origin consistent.
+        Free zone vs mainland status should be confirmed in writing before booking, because it changes
+        the clearance and delivery flow.
+      </p>
+
+      <h3>Dangerous goods</h3>
+      <p>
+        Lithium and other dangerous goods must be declared, packaged and documented under the
+        applicable IATA rules for air or the maritime dangerous-goods rules for sea. A hidden
+        dangerous-goods shipment is a safety, legal and commercial risk regardless of mode.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE customs, tax & ports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>10. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The statutory
+      lines (5% VAT, 5% duty) and the 6,000-divisor chargeable-weight rule are re-checked against the
+      FTA, Dubai Customs and IATA; the sea/air cost and transit brackets are market snapshots that
+      are re-checked monthly because capacity, fuel and season move them.
+    </p>
+    <p>
+      If a verified FCL rate, airline tariff or port-to-port schedule becomes available, the tables
+      are updated, the confidence badge is raised, and the modified date in the page metadata is
+      changed. Until then, the worked examples stay illustrative arithmetic on LOW-confidence
+      benchmarks rather than being presented as binding prices.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get sea and air quotes for the same UAE shipment"
+      text="Tell us your dimensions, weight, commodity, HS code, origin and Dubai delivery point, and we will connect you with providers who can quote sea, air and a hybrid plan on the same all-in basis."
+    />
+  </section>
+</BaseLayout>
