@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 06:15 (Asia/Shanghai)
+> 最后更新：2026-09-01 07:15 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -54,7 +54,7 @@
 - [x] STEP 9 Firecrawl 竞品/中文/Primary Sources Research（`docs/research-notes-2026-08-30.md`）
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
-- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容进行中：Saudi 15 页 ✅ / UAE 12 页+3 工具 ✅ / Qatar 4 页 ✅ / Kuwait 4 页 ✅ / Oman 4 页 ✅ / Bahrain 4/4 页 ✅ —— **六国核心内容页全齐**；Directory/Ad/Quote 未开始）
+- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅：六国核心内容页全齐 131 页；工具 3 ✅；**Directory 框架已建**（数据模型 + 列表页 + 详情页模板 + 2 家 unverified seed）；Ad Slots 填充 + Quote 接线未开始）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
 
 ## 关键交付物（已入库 docs/）
@@ -84,7 +84,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. **Day 36–50 收尾 ✅**：Bahrain 簇已完成 4/4 页（Route Pillar + Customs/Duty + `bahrain-ports` + Cost/Transit）—— 六国（Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）核心内容页全齐；下一步进入 STEP 18–20（Directory / Ad Slots / Quote Framework）+ STEP 21–25（SEO/AIO/EEAT 终审）
-2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
-3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
-4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
+1. **STEP 18 Directory 框架 ✅**：数据模型 + 列表页 + 详情页模板 + 2 家 unverified seed 已建；下一批用 Firecrawl 爬取真实中国→GCC 货代企业资料（100–200 家，Verified/Unverified/Claimed/Sponsored 分层）填充 directory.ts
+2. STEP 19–20：Ad Slots 填充 + Quote Framework（get-quote 表单接线）
+3. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
+4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档；解决 Saudi de minimis 冲突（ZATCA 一手确认）

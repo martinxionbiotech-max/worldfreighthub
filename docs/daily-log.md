@@ -199,3 +199,27 @@
   2. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
   3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
   4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
+
+
+## 2026-09-01（Directory 框架批次 — STEP 18）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai）
+- **服务器资源**：远程正常；Codex 0.150.1（`source ~/.profile` 拿 `DEEPSEEK_API_KEY`）
+- **Tasks**：Day 8–50 六国核心内容页已全齐（131 页）→ 按 project-status 进入 **STEP 18 Directory**。本批交付 Directory 框架：数据模型 + 目录列表页 + 供应商详情页模板。
+- **Research**：仅复用 `research-notes-2026-08-30.md` 中两个真实供应商线索（广州安时达 ontaskksa.com、广州三其 globalimporter 帖）。**零杜撰**——未编造任何公司名 / 电话 / 邮箱 / 地址。
+- **Content**：
+  - `src/data/directory.ts`（新增）—— `DirectoryProvider` 类型 + 2 条 seed（均 `unverified`）
+  - `src/pages/directory/index.astro`（替换 Coming soon 占位）—— 验证状态图例（Verified/Unverified/Claimed/Sponsored）+ 诚实状态说明（当前仅 2 家、均未验证）+ 按 GCC 服务国分组 + FAQ 9 条
+  - `src/pages/directory/[slug].astro`（新增）—— `getStaticPaths` 供应商详情模板 + 自报声明区（显式标注 unverified）+ 无已验证联系方式说明 + 报错入口
+- **Gap Analysis**：Directory 是 STEP 18 基础设施；诚实标注「unverified」「self-reported」延续全站数据诚信口径，不掺假、不凑数。
+- **SEO / Schema**：Organization + ItemList + WebSite（列表页）；LocalBusiness + WebSite（详情页）；BreadcrumbList 自动注入。
+- **Engineering**：复用 Seo/JsonLd/Breadcrumb/Card/DataTable/FaqBlock/Cta 组件，无新组件；BaseLayout 已有 `schema[]` 插槽，无需改动。
+- **QA**：`npm run build` 133 页（+2 详情页）零 error；FAQ 9 条；所有自报声明/联系信息显式 unverified，零杜撰数字。
+- **Build Result**：✅ 133 pages，clean（1.44s）
+- **Git Commit**：`a0347e3 feat(directory): add provider directory data model and listing/detail pages`（已推 origin/main）
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. Directory 框架就绪但仅 2 家 seed → 下一批用 Firecrawl 爬取真实中国→GCC 货代企业资料（100–200 家，Verified/Unverified/Claimed/Sponsored 分层）填充 directory.ts
+  2. STEP 19–20：Ad Slots 填充 + Quote Framework（get-quote 表单接线）
+  3. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
+  4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档；解决 Saudi de minimis 冲突（ZATCA 一手确认）
