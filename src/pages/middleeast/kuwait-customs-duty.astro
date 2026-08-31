@@ -1,0 +1,718 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/kuwait-customs-duty/`;
+
+const wfhMethodology: Source = {
+  id: 'wfh-kuwait-customs-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const kuwaitCustomsSources = sourcesByIds(['kuwait-customs']);
+const taxSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+const timelineSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+const restrictedSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
+
+const dutyRows = [
+  {
+    component: 'Baseline import duty',
+    who: 'Kuwait General Administration of Customs',
+    rate: '5% of CIF value',
+    basis: 'GCC Common External Tariff, ad valorem on CIF; shared framework verified for Saudi/UAE/Qatar, Kuwait-specific confirmation pending',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'General VAT',
+    who: 'Kuwait tax framework',
+    rate: 'No general VAT has been introduced',
+    basis: 'gcc-countries.ts records vatRate null; verify with the Kuwait authority',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Specific tariff lines / exemptions',
+    who: 'Kuwait General Administration of Customs',
+    rate: 'Not published in verified snapshot — verify HS code',
+    basis: 'Kuwait-specific duty lines and exemptions are not stated in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Restricted / prohibited goods',
+    who: 'Kuwait General Administration of Customs',
+    rate: 'N/A if entry is refused',
+    basis: 'Kuwait-specific restricted/prohibited list is not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Customs brokerage / clearance fee',
+    who: 'Licensed Kuwait customs broker',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Service fee, not a statutory tax',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Kuwait Customs e-processing charge',
+    who: 'Kuwait General Administration of Customs / service provider',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Electronic processing and service fees',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Inspection / conformity fees',
+    who: 'Kuwait Customs / relevant agency',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Kuwait-specific inspection fees are not stated in the snapshot; SABER/SASO are Saudi-only',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Storage, demurrage or detention',
+    who: 'Terminal / airport / carrier',
+    rate: 'Per-day after free time',
+    basis: 'Kuwait free time is not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+];
+
+const calcTimelineRows = [
+  {
+    step: 'Classify the goods with the correct HS code',
+    when: 'Before quoting or booking',
+    basis: 'The code decides the duty line, permits and prohibited/restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Establish the CIF value',
+    when: 'Before the declaration',
+    basis: 'Cost + insurance + freight; the base for Kuwait customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Screen for prohibited, restricted or permit goods',
+    when: 'Before shipment',
+    basis: 'Kuwait-specific restricted/prohibited list is not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Assess customs duty',
+    when: 'At declaration',
+    basis: 'CIF value × duty rate; baseline 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Apply any general VAT layer',
+    when: 'At declaration',
+    basis: 'No general VAT has been introduced in the current Kuwait framework',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Kuwait Customs electronic declaration',
+    when: 'Before release',
+    basis: 'Electronic declaration with invoice, packing list, B/L or AWB and certificate of origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay duty and service charges',
+    when: 'Before release',
+    basis: 'Duty is statutory; brokerage and processing fees are separate',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Release and deliver the cargo',
+    when: 'After payment and any inspection',
+    basis: 'Goods release once duty, documents and permit checks are complete',
+    confidence: 'LOW',
+  },
+];
+
+const ddpVsSelfRows = [
+  {
+    factor: 'Who pays the 5% duty',
+    selfPay: 'The importer pays the Kuwait General Administration of Customs directly at clearance',
+    ddp: 'The seller or forwarder pays and builds the cost into one price',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Tax visibility',
+    selfPay: 'Full line-item visibility on the Kuwait Customs duty assessment',
+    ddp: 'Duty and service fees are embedded in one all-in price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and valuation risk',
+    selfPay: 'The importer owns classification and any audit exposure',
+    ddp: 'The forwarder handles filing, but a wrong HS code still changes the final cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cash-flow timing',
+    selfPay: 'Duty is settled at clearance, after the goods arrive',
+    ddp: 'Duty is included in the upfront delivered price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Restricted-goods responsibility',
+    selfPay: 'The importer owns permits and prohibited/restricted screening',
+    ddp: 'The forwarder can manage it, but the legal responsibility still follows the importer',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Usually best for',
+    selfPay: 'Established Kuwait importers with a broker and HS-code discipline',
+    ddp: 'First-time importers, small parcels and buyers who want one provider',
+    confidence: 'LOW',
+  },
+];
+
+const categoryRows = [
+  {
+    category: 'General merchandise at the GCC baseline',
+    duty: '5% of CIF',
+    vat: 'No general VAT',
+    note: 'The default planning position for most goods without a Kuwait-specific special line',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Kuwait-specific tariff lines or exemptions',
+    duty: 'Not published in verified snapshot — verify',
+    vat: 'No general VAT',
+    note: 'The snapshot does not establish Kuwait-specific duty rates for food, tobacco, alcohol or other special lines',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Prohibited / restricted goods',
+    duty: 'N/A if entry is refused',
+    vat: 'N/A',
+    note: 'Kuwait-specific list not published in verified snapshot — screen the commodity before shipping',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Permit-dependent goods',
+    duty: 'Same duty line for the HS code',
+    vat: 'No general VAT',
+    note: 'Import licence or agency approval may be required before arrival',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Standards / conformity-sensitive goods',
+    duty: 'Same duty line for the HS code',
+    vat: 'No general VAT',
+    note: 'SABER/SASO are Saudi-only; Kuwait-specific conformity requirements are not published in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const landedCostRows = [
+  {
+    line: 'CIF value',
+    formula: 'Cost + insurance + freight',
+    example: '1,000.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Customs duty',
+    formula: 'CIF value × 5%',
+    example: '50.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'General VAT',
+    formula: 'No general VAT on imports',
+    example: '0.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Total before operational fees',
+    formula: 'CIF value + customs duty',
+    example: '1,050.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Operational fees',
+    formula: 'Brokerage + e-processing + inspection + delivery + storage',
+    example: 'Request itemised schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the Kuwait import duty rate?',
+    a: 'The baseline import duty is 5% of the CIF value — cost, insurance and freight — under the shared GCC Common External Tariff framework. Treat the 5% as MEDIUM confidence: the framework is verified for Saudi Arabia, the UAE and Qatar in the snapshot, but Kuwait-specific confirmation is pending. Verify the exact line for your HS code with the Kuwait General Administration of Customs.',
+  },
+  {
+    q: 'Does Kuwait charge VAT on imports?',
+    a: 'Kuwait has not introduced a general VAT in the current framework shown in this site’s country data, so the main statutory charge is the 5% customs duty on CIF value. This is a MEDIUM-confidence current-state finding — verify the current position with the Kuwait tax or customs authority before finalising a landed-cost quote.',
+  },
+  {
+    q: 'How is Kuwait customs duty calculated?',
+    a: 'For most goods, customs duty is calculated as CIF value × 5%. CIF is the cost of the goods plus insurance plus freight. Unlike Saudi Arabia or the UAE, Kuwait currently has no separate general VAT layer on top of that duty in the framework shown here.',
+  },
+  {
+    q: 'What is the combined landed-cost multiplier for Kuwait duty?',
+    a: 'At the 5% baseline, the statutory landed cost is CIF × 1.05. A CIF value of 1,000 USD becomes 1,050 before operational fees. This is arithmetic based on the GCC baseline, not a binding Kuwait assessment — rates are subject to change and should be verified with the Kuwait General Administration of Customs.',
+  },
+  {
+    q: 'Can you show a worked example for a CIF 1,000 USD Kuwait shipment?',
+    a: 'Yes: customs duty is 1,000 × 5% = 50. No general VAT is applied, so the total before operational fees is 1,050. Operational fees such as brokerage, Kuwait e-processing, inspection and delivery sit on top and should be requested as an itemised schedule.',
+  },
+  {
+    q: 'How does the HS code affect Kuwait import duty?',
+    a: 'The HS code decides the duty line — the 5% GCC baseline, a possible Kuwait-specific exemption or higher line, or a prohibited/restricted classification. It also drives permit requirements and the prohibited-goods screen. Kuwait-specific tariff lines are not published in the verified snapshot, so classify before quoting and confirm the line with Kuwait Customs.',
+  },
+  {
+    q: 'What goods are prohibited or restricted in Kuwait?',
+    a: 'Kuwait screens alcohol, tobacco, pork, narcotics, weapons, counterfeit goods, hazardous materials, cultural/religious-sensitive items and certain regulated products strictly. The exact Kuwait prohibited/restricted list is not published in the verified research snapshot, so do not rely on the Saudi or UAE list — check the commodity with Kuwait Customs before shipment.',
+  },
+  {
+    q: 'What electronic system does Kuwait use for customs clearance?',
+    a: 'Kuwait clearance is handled through the Kuwait Customs electronic declaration system. The importer or broker submits the declaration, attaches the required documents, pays the assessed 5% duty on CIF, and receives release after any inspection or permit checks. The exact system name and processing fees are not published in the verified snapshot, so confirm the current flow with a licensed Kuwait broker.',
+  },
+  {
+    q: 'What documents are needed for Kuwait customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods.',
+  },
+  {
+    q: 'What is the difference between DDP and paying Kuwait duty myself?',
+    a: 'Self-payment keeps the importer as the taxpayer with full Kuwait Customs line-item visibility. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying 5% duty does not change — only who pays, how visible the duty is, and how the cash flow is structured.',
+  },
+  {
+    q: 'Is there a de minimis threshold for Kuwait imports?',
+    a: 'No reliable Kuwait de minimis threshold is published in the verified research snapshot. Do not assume a low-value exemption for courier or personal shipments without confirming the current position with Kuwait Customs.',
+  },
+  {
+    q: 'Do I need an import licence to clear goods in Kuwait?',
+    a: 'Not for all goods, but regulated and restricted products may require an import licence or approval from the relevant Kuwait agency. Confirm the permit requirement for your HS code and commodity before shipment rather than waiting until arrival.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into Kuwait?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Kuwait quote. Kuwait may have its own standards or inspection requirements for certain goods, but those are not published in the verified snapshot — confirm the applicable Kuwait process for your product.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Kuwait Customs Clearance & Import Duty Guide: The CIF × 1.05 Landed-Cost Stack (August 2026)',
+      description:
+        'Kuwait customs clearance and import duty guide: 5% CIF baseline duty, no general VAT, Kuwait Customs filing, required documents, HS code treatment, restricted goods and the CIF × 1.05 landed-cost example.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Kuwait Customs Clearance & Import Duty Guide: The CIF × 1.05 Landed-Cost Stack (August 2026)"
+  description="Kuwait customs clearance and import duty guide: 5% CIF baseline duty, no general VAT, Kuwait Customs filing, required documents, HS code treatment, restricted goods and the CIF × 1.05 landed-cost example."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Kuwait customs & import duty' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Kuwait customs clearance &amp; import duty: the CIF × 1.05 landed-cost stack</h1>
+      <p class="lead">
+        A customs-first brief for China-to-Kuwait imports: the 5% CIF duty baseline, the absence of
+        a general VAT layer, Kuwait Customs electronic filing, the document set, HS-code treatment,
+        restricted/prohibited goods, and the arithmetic that turns a CIF value into a statutory
+        landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative operational fees. The 5% duty and
+        no-general-VAT position are MEDIUM confidence; brokerage, processing and storage amounts were
+        not published in the verified snapshot and must be requested as an itemised schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">General VAT</span>
+          <span class="fact-value">None <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Clearance system</span>
+          <span class="fact-value">Kuwait Customs e-clearance <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Authority</span>
+          <span class="fact-value">Kuwait General Administration of Customs <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER / SASO</span>
+          <span class="fact-value">Saudi-only <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.05 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The Kuwait tax stack at a glance</h2>
+    <p>
+      Kuwait’s import tax position is simpler than the neighbouring GCC duty-plus-VAT stacks. The
+      main statutory charge on most goods is a <strong>5% customs duty on the CIF value</strong>
+      under the shared GCC Common External Tariff framework, and Kuwait has not introduced a general
+      VAT in the current framework shown here. That makes the baseline statutory landed cost:
+    </p>
+    <div class="note">
+      <strong>Total before operational fees = CIF × 1.05.</strong><br />
+      A CIF value of 1,000 USD becomes 1,050 after the 5% duty. There is no additional general VAT
+      layer in the current Kuwait framework.
+    </div>
+    <p class="mt-2">
+      The operational reality is that “simple tax” is not the same as “simple clearance”. Kuwait has
+      its own prohibited/restricted goods rules and an electronic clearance flow through
+      <strong>Kuwait Customs</strong>, so the risk is concentrated in commodity screening, HS-code
+      classification, document readiness and destination fees rather than in a complex VAT
+      calculation.
+    </p>
+    <p class="small muted">
+      The 5% CIF duty baseline and no-general-VAT position are MEDIUM confidence in the research
+      snapshot — the shared GCC framework is verified for Saudi Arabia, the UAE and Qatar, but
+      Kuwait-specific confirmation is pending. Treat them as current-state planning inputs and
+      verify the duty line for your HS code with the Kuwait General Administration of Customs before
+      committing.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Duty, no VAT and the unverified Kuwait-specific tariff lines</h2>
+      <p>
+        Only the GCC 5% baseline and the no-general-VAT position are known with MEDIUM confidence.
+        Kuwait-specific tariff lines, exemptions, brokerage, e-processing, inspection and storage
+        amounts were not published in the verified research snapshot, so this page refuses to invent
+        a single Kuwait fee number. Request an itemised schedule for the operational lines from a
+        licensed Kuwait broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'component', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'rate', label: 'Rate or amount' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={dutyRows}
+        caption="Only the 5% GCC CIF duty and no-general-VAT position are stated. Kuwait-specific tariff exceptions and operational fees are LOW and must be requested as an itemised schedule."
+      />
+      <SourceList sources={taxSources} title="Sources — Kuwait import duty & no VAT" />
+
+      <div class="note mt-2">
+        <strong>Tax checklist before booking:</strong> ask for the HS-code duty line, the CIF valuation
+        used, any restricted-goods permit, plus brokerage, Kuwait e-processing, inspection and
+        storage-free-time charges — in writing, on the same quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The assessment timeline: from HS code to release</h2>
+    <p>
+      Kuwait duty is not a single percentage charged on arrival; it is an ordered calculation that
+      starts with classification and commodity screening. If the first two steps are wrong, the
+      clearance can stall at the border — and unlike a VAT-heavy market, the correction is more
+      about permits and classification than about a complex tax arithmetic.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When' },
+        { key: 'basis', label: 'What it depends on' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={calcTimelineRows}
+        caption="Statutory duty order is anchored on the shared GCC 5% CIF rate; operational steps such as Kuwait e-filing and inspection are LOW confidence and should be confirmed with a broker."
+      />
+    <SourceList sources={timelineSources} title="Sources — assessment & payment timeline" />
+
+    <div class="note mt-2">
+      <strong>The order to remember:</strong> classify → screen restricted goods → value on CIF →
+      duty at 5% → confirm no general VAT → file Kuwait Customs → pay → release. Skipping commodity
+      screening or HS classification is how a straightforward “5%” estimate turns into a border hold.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Self-paid duty vs DDP</h2>
+      <p>
+        DDP does not remove Kuwait’s 5% duty; it changes who pays and how visible the duty is. The
+        choice is about cash flow, compliance ownership and transparency, not about paying less
+        statutory duty.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'selfPay', label: 'Self-paid duty' },
+          { key: 'ddp', label: 'DDP all-in' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpVsSelfRows}
+        caption="The statutory 5% duty is unchanged in either structure; only the payer, visibility, responsibility and cash-flow timing differ."
+      />
+      <SourceList sources={taxSources} title="Sources — self-paid vs DDP duty handling" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Self-pay is usually better when...">
+          <ul>
+            <li>You are an established Kuwait importer with a licensed broker.</li>
+            <li>You want line-item visibility of duty, Kuwait e-processing and operational fees.</li>
+            <li>You already have HS-code discipline and permit readiness.</li>
+            <li>Your volume is high enough to justify internal clearance work.</li>
+          </ul>
+        </Card>
+        <Card title="DDP is usually better when...">
+          <ul>
+            <li>The buyer wants one all-in price and one provider to chase.</li>
+            <li>You are not established with Kuwait Customs or a local broker.</li>
+            <li>You sell small parcels or want the forwarder to manage clearance.</li>
+            <li>You want the forwarder to manage duty and restricted-goods timing together.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed-cost structure and the CIF 1,000 worked example</h2>
+    <p>
+      Build the landed cost in this order: CIF value, duty, no general VAT, then operational fees.
+      The table below uses a <strong>1,000 USD CIF</strong> example only to keep the arithmetic
+      transparent — it is not a market rate or a binding assessment.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Cost line' },
+        { key: 'formula', label: 'Formula' },
+        { key: 'example', label: 'Example (USD)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example uses CIF 1,000 USD purely to show the calculation. Rates are subject to change — verify with the Kuwait General Administration of Customs."
+    />
+    <SourceList sources={taxSources} title="Sources — landed-cost formula" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="The formula in one line">
+        <p class="lead">
+          <strong>CIF × (1 + duty rate)</strong>
+        </p>
+        <p>
+          Baseline: CIF × 1.05. Add brokerage, Kuwait e-processing, inspection, delivery and any
+          storage beyond free time on top of that statutory figure.
+        </p>
+      </Card>
+      <Card title="Why Kuwait differs from Saudi and UAE">
+        <p>
+          Saudi Arabia compounds 5% duty with 15% VAT, and the UAE compounds 5% duty with 5% VAT.
+          Kuwait currently has no general VAT in the framework shown here, which makes the statutory
+          stack simpler — but the commodity screen and destination-fee exposure still require care.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
+      and freight. An unrealistically low invoice value or missing freight component invites
+      revaluation, penalties and delay.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Applicable categories: how the HS code changes the bill</h2>
+      <p>
+        The HS code is the lever that changes the duty component of the stack and drives the
+        prohibited/restricted screen. The 5% GCC CIF baseline is the default, but Kuwait-specific
+        goods may sit on different tariff lines that are not published in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'category', label: 'Product category / treatment' },
+          { key: 'duty', label: 'Duty treatment' },
+          { key: 'vat', label: 'General VAT treatment' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={categoryRows}
+        caption="Category treatment is drawn from the shared GCC duty/no-VAT snapshot. Kuwait-specific tariff lines, exemptions and restricted-goods status must be confirmed with the Kuwait General Administration of Customs."
+      />
+      <SourceList sources={taxSources} title="Sources — category & HS-code treatment" />
+
+      <div class="note mt-2">
+        <strong>Classification rule:</strong> resolve a borderline HS code before shipping. A change at
+        the border can move the duty line, trigger a permit or turn a normal consignment into a
+        prohibited one.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points to keep in view</h2>
+
+    <h3>The stack is duty-only for general VAT purposes</h3>
+    <p>
+      For most goods, the statutory landed cost is <strong>CIF × 1.05</strong>. Unlike Saudi Arabia’s
+      CIF × 1.05 × 1.15 or the UAE’s CIF × 1.05 × 1.05, Kuwait has not introduced a general VAT
+      layer in the current framework shown here. Do not copy a Saudi or UAE calculator into a Kuwait
+      quote.
+    </p>
+
+    <h3>HS code first</h3>
+    <p>
+      Duty line, permit requirements and prohibited/restricted exposure all flow from the HS code.
+      Classify with a broker or a written ruling before quoting, and keep the invoice description
+      specific enough to defend the code.
+    </p>
+
+    <h3>CIF valuation must be complete</h3>
+    <p>
+      Cost, insurance and freight are all part of the base. A low declared value or a missing freight
+      component creates revaluation risk, and any value correction flows through the 5% duty.
+    </p>
+
+    <h3>Restricted goods are a border risk, not a tax detail</h3>
+    <p>
+      Kuwait screens alcohol, tobacco, pork, narcotics, weapons, counterfeit goods, hazardous
+      materials and cultural/religious-sensitive items strictly, but the exact Kuwait
+      prohibited/restricted list is not published in the verified snapshot. Confirm the commodity
+      status before shipment; a post-arrival surprise can mean refusal, destruction, permit delay or
+      severe demurrage.
+    </p>
+
+    <h3>Kuwait Customs needs the documents ready</h3>
+    <p>
+      The electronic declaration is only as good as the underlying invoice, packing list, bill of
+      lading or air waybill, certificate of origin and HS-code data. Prepare the set before arrival
+      so the declaration can be filed and the free-time clock does not start.
+    </p>
+
+    <h3>No general VAT does not mean no service fees</h3>
+    <p>
+      Brokerage, Kuwait e-processing, inspection, delivery, demurrage and detention remain separate
+      operational costs. The research snapshot does not publish their amounts, so request an itemised
+      schedule rather than assuming “no VAT” makes the shipment fee-free.
+    </p>
+
+    <h3>SABER and SASO are not a Kuwait requirement</h3>
+    <p>
+      SABER and SASO are Saudi-only conformity systems. A Kuwait quote should not include a Saudi
+      SABER/SASO step. Kuwait may have its own standards or inspection requirements for certain
+      goods, but those are not published in the verified snapshot — confirm the applicable Kuwait
+      process for your product before arrival.
+    </p>
+
+    <h3>Rates are subject to change</h3>
+    <p>
+      The 5% duty baseline and no-general-VAT position are from a dated snapshot. Treat every figure
+      here as a planning input and verify the current duty line, exemptions and restricted-goods
+      rules with the Kuwait General Administration of Customs before finalising a landed-cost quote.
+    </p>
+
+    <SourceList sources={restrictedSources} title="Sources — Kuwait customs, duty & valuation" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The statutory
+      lines (5% CIF duty and no general VAT) are re-checked against the Kuwait General Administration
+      of Customs and the shared GCC framework; the restricted-goods and permit notes are re-checked
+      against Kuwait customs notices and broker guidance.
+    </p>
+    <p>
+      If a brokerage amount, Kuwait e-processing fee, free-time schedule, de minimis threshold or a
+      change to the Kuwait VAT position becomes available from the Kuwait General Administration of
+      Customs or a licensed broker, the table is updated, the confidence badge is raised, and the
+      modified date in the page metadata is changed. Until then, unquantified Kuwait fees stay LOW
+      confidence with a “not published — verify” note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Kuwait landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity type and whether you want DDP or self-paid duty, and we will connect you with providers who can itemise 5% duty, Kuwait Customs clearance and delivery."
+    />
+  </section>
+</BaseLayout>
