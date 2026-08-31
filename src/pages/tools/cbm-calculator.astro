@@ -1,0 +1,321 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import { SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/tools/cbm-calculator/`;
+const title = 'CBM Calculator';
+const description =
+  'Calculate cubic meters (CBM) from length, width and height in cm or m, total multiple cartons, and see indicative 20ft and 40ft container volume estimates.';
+
+const faqs = [
+  {
+    q: 'What is CBM?',
+    a: 'CBM stands for cubic meter. It is the metric unit of volume used to quote LCL, FCL and volumetric cargo. One CBM equals a cube of 1 m × 1 m × 1 m.',
+  },
+  {
+    q: 'How do I convert cubic centimeters to cubic meters?',
+    a: 'Divide the volume in cubic centimeters by 1,000,000. For example, 60 cm × 40 cm × 50 cm = 120,000 cm³, which equals 0.12 CBM.',
+  },
+  {
+    q: 'How is total CBM calculated for multiple cartons?',
+    a: 'Calculate the CBM of one carton, then multiply by the number of identical cartons. If the shipment contains different sizes, add the total CBM for each carton type together.',
+  },
+  {
+    q: 'Does CBM differ between air and sea freight?',
+    a: 'The physical volume is the same, but air freight usually converts CBM to volumetric weight using a divisor such as 6000, while sea freight generally quotes by actual volume for LCL.',
+  },
+  {
+    q: 'How many CBM fit in a 20ft or 40ft container?',
+    a: 'A 20ft container is often planned at about 28 CBM and a 40ft at about 58 CBM of usable volume. These are indicative figures only; actual load depends on pallets, dunnage, carton dimensions and weight.',
+  },
+  {
+    q: 'What is the difference between CBM and chargeable weight?',
+    a: 'CBM measures space, while chargeable weight compares actual weight with volumetric weight and charges the higher value. Carriers use one or the other depending on the freight mode and cargo density.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'en',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Tools', href: '/tools/' },
+          { label: 'CBM Calculator' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>CBM calculator</h1>
+      <p class="lead">
+        Convert carton or pallet dimensions into cubic meters, total a
+        multi-piece shipment, and see how the volume compares with indicative
+        container capacity.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="cbm-form" aria-label="CBM calculator inputs">
+          <div class="form-grid">
+            <div class="field">
+              <label for="cbm-unit">Measurement unit</label>
+              <select id="cbm-unit">
+                <option value="cm" selected>Centimetres (cm)</option>
+                <option value="m">Metres (m)</option>
+              </select>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="cbm-length">Length</label>
+                <input id="cbm-length" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 60" />
+              </div>
+              <div class="field">
+                <label for="cbm-width">Width</label>
+                <input id="cbm-width" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 40" />
+              </div>
+              <div class="field">
+                <label for="cbm-height">Height</label>
+                <input id="cbm-height" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 50" />
+              </div>
+              <div class="field">
+                <label for="cbm-quantity">Quantity (pieces)</label>
+                <input id="cbm-quantity" type="number" min="1" step="1" inputmode="numeric" value="1" />
+              </div>
+            </div>
+            <p class="form-error" id="cbm-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cbm-calculate">Calculate</button>
+              <button type="button" class="btn btn-secondary" id="cbm-add">Add to shipment</button>
+              <button type="button" class="btn btn-secondary" id="cbm-clear">Clear shipment</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>Formula</h3>
+          <p><code id="cbm-formula-single">CBM = L (cm) × W (cm) × H (cm) ÷ 1,000,000</code></p>
+          <p><code>Total CBM = Single CBM × Quantity</code></p>
+          <p><code>Indicative usable volume: 20ft ≈ 28 CBM · 40ft ≈ 58 CBM</code></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="result-panel" aria-live="polite">
+          <h3 class="result-title">Result</h3>
+          <div class="result-grid">
+            <div class="result-item">
+              <span class="result-label">Single CBM</span>
+              <span class="result-value" id="cbm-single">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total CBM (current line)</span>
+              <span class="result-value" id="cbm-total">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">20ft volume estimate</span>
+              <span class="result-value" id="cbm-20ft">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">40ft volume estimate</span>
+              <span class="result-value" id="cbm-40ft">—</span>
+            </div>
+            <div class="result-item result-item--wide">
+              <span class="result-label">Accumulated shipment total</span>
+              <span class="result-value" id="cbm-shipment-total">—</span>
+            </div>
+          </div>
+          <p class="result-note">
+            Container figures are indicative usable volumes. Actual loading
+            depends on pallets, dunnage, carton dimensions and weight limits.
+          </p>
+        </div>
+
+        <div class="table-wrap mt-2">
+          <table class="data-table">
+            <caption>Shipment items added to the running total</caption>
+            <thead>
+              <tr>
+                <th>Line</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>CBM each</th>
+                <th>Total CBM</th>
+              </tr>
+            </thead>
+            <tbody id="cbm-shipment-rows">
+              <tr>
+                <td colspan="5" class="muted">No items added yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>Indicative only:</strong> container capacity figures (20ft ≈ 28 CBM
+      and 40ft ≈ 58 CBM) are planning estimates, not guaranteed loading limits.
+      Confirm actual stowage and weight limits with your carrier.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How CBM is calculated</h2>
+      <p>
+        Measure the external dimensions of one carton or pallet. Multiply
+        length, width and height, then convert the result to cubic meters.
+        When dimensions are entered in centimetres, divide by 1,000,000; when
+        they are entered in metres, the product is already in CBM.
+      </p>
+      <p>
+        For a mixed shipment, calculate each item size separately and add the
+        totals. The “Add to shipment” button below the inputs keeps a running
+        total of multiple carton types.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const fmt = (value, max = 4) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function positiveQuantity() {
+    const value = Number.parseInt(el('cbm-quantity').value, 10);
+    return Number.isInteger(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cbm-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function readEntry() {
+    const unit = el('cbm-unit').value;
+    const length = positiveNumber('cbm-length');
+    const width = positiveNumber('cbm-width');
+    const height = positiveNumber('cbm-height');
+    const quantity = positiveQuantity();
+
+    if (!length || !width || !height || !quantity) {
+      setError('Enter positive length, width, height and a quantity of at least 1.');
+      return null;
+    }
+
+    const cbm = unit === 'm' ? length * width * height : (length * width * height) / 1000000;
+    setError();
+    return { unit, length, width, height, quantity, cbm, total: cbm * quantity };
+  }
+
+  function updateFormula(unit) {
+    el('cbm-formula-single').textContent =
+      unit === 'm'
+        ? 'CBM = L (m) × W (m) × H (m)'
+        : 'CBM = L (cm) × W (cm) × H (cm) ÷ 1,000,000';
+  }
+
+  function calculate() {
+    const entry = readEntry();
+    if (!entry) return;
+
+    el('cbm-single').textContent = `${fmt(entry.cbm)} m³`;
+    el('cbm-total').textContent = `${fmt(entry.total)} m³`;
+
+    const twentyFoot = Math.floor(28 / entry.cbm);
+    const fortyFoot = Math.floor(58 / entry.cbm);
+    el('cbm-20ft').textContent = `~${fmt(twentyFoot, 0)} items`;
+    el('cbm-40ft').textContent = `~${fmt(fortyFoot, 0)} items`;
+  }
+
+  const shipment = [];
+
+  function renderShipment() {
+    const tbody = el('cbm-shipment-rows');
+    const total = shipment.reduce((sum, item) => sum + item.total, 0);
+
+    if (shipment.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="muted">No items added yet.</td></tr>';
+      el('cbm-shipment-total').textContent = '—';
+      return;
+    }
+
+    tbody.innerHTML = shipment
+      .map((item, index) => {
+        const size = `${fmt(item.length)} × ${fmt(item.width)} × ${fmt(item.height)} ${item.unit}`;
+        return `<tr><td>${index + 1}</td><td>${size}</td><td>${item.quantity}</td><td>${fmt(item.cbm)}</td><td>${fmt(item.total)}</td></tr>`;
+      })
+      .join('');
+    el('cbm-shipment-total').textContent = `${fmt(total)} m³`;
+  }
+
+  function addToShipment() {
+    const entry = readEntry();
+    if (!entry) return;
+    shipment.push(entry);
+    renderShipment();
+    calculate();
+  }
+
+  function clearShipment() {
+    shipment.length = 0;
+    renderShipment();
+  }
+
+  el('cbm-calculate').addEventListener('click', calculate);
+  el('cbm-add').addEventListener('click', addToShipment);
+  el('cbm-clear').addEventListener('click', clearShipment);
+  el('cbm-unit').addEventListener('change', () => updateFormula(el('cbm-unit').value));
+
+  updateFormula(el('cbm-unit').value);
+</script>

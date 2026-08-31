@@ -1,0 +1,266 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import { SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/tools/container-loading-calculator/`;
+const title = 'Container Loading Calculator';
+const description =
+  'Estimate how many cartons and total pieces fit in a 20ft, 40ft or 40ft High Cube container using indicative usable volumes of 28, 58 and 68 CBM.';
+
+const faqs = [
+  {
+    q: 'How many cartons fit in a 20ft container?',
+    a: 'It depends on carton size and weight. Using an indicative 28 CBM of usable volume, divide 28 by the CBM of one carton. The result is a volume estimate only, not a guaranteed load.',
+  },
+  {
+    q: 'Why is the container loading estimate only indicative?',
+    a: 'The calculator uses usable-volume benchmarks, but real loading also depends on pallets, dunnage, door height, carton stacking, cargo weight and any dangerous-goods or heavy-cargo restrictions.',
+  },
+  {
+    q: 'What is the difference between 40ft and 40ft High Cube?',
+    a: 'A 40ft High Cube has roughly the same footprint as a standard 40ft but about one extra foot of internal height, so it is often planned at about 68 CBM instead of 58 CBM. These are indicative figures.',
+  },
+  {
+    q: 'Should I estimate container loading by volume or by weight?',
+    a: 'Check both. High-volume cargo may fill the cube first, while dense cargo may hit the container payload weight limit before the volume is full. Confirm both the usable CBM and maximum payload with the carrier.',
+  },
+  {
+    q: 'What happens if my cartons are oversized or very heavy?',
+    a: 'Oversized cartons may waste space around the door, and heavy cartons may exceed the payload limit before volume is filled. For these cases, have a load planner or carrier validate the stowage.',
+  },
+  {
+    q: 'Can I actually load the full usable CBM?',
+    a: 'Rarely. Pallet footprints, dunnage, carton shapes, cargo care rules and stowage efficiency all reduce the practical fill. Treat the full usable volume as a planning ceiling, not a booking guarantee.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'en',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Tools', href: '/tools/' },
+          { label: 'Container Loading Calculator' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Container loading calculator</h1>
+      <p class="lead">
+        Estimate how many cartons — and how many total pieces — fit in a 20ft,
+        40ft or 40ft High Cube container using indicative volume benchmarks.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="cl-form" aria-label="Container loading calculator inputs">
+          <div class="form-grid">
+            <div class="field">
+              <label for="cl-unit">Carton measurement unit</label>
+              <select id="cl-unit">
+                <option value="cm" selected>Centimetres (cm)</option>
+                <option value="m">Metres (m)</option>
+              </select>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="cl-length">Carton length</label>
+                <input id="cl-length" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 60" />
+              </div>
+              <div class="field">
+                <label for="cl-width">Carton width</label>
+                <input id="cl-width" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 40" />
+              </div>
+              <div class="field">
+                <label for="cl-height">Carton height</label>
+                <input id="cl-height" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 50" />
+              </div>
+              <div class="field">
+                <label for="cl-pieces">Pieces per carton</label>
+                <input id="cl-pieces" type="number" min="1" step="1" inputmode="numeric" value="1" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="cl-container">Container type</label>
+              <select id="cl-container">
+                <option value="20ft" selected>20ft — ~28 CBM (indicative)</option>
+                <option value="40ft">40ft — ~58 CBM (indicative)</option>
+                <option value="40hq">40ft High Cube — ~68 CBM (indicative)</option>
+              </select>
+            </div>
+            <p class="form-error" id="cl-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cl-calculate">Calculate</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>Formula</h3>
+          <p><code id="cl-formula-carton">Carton CBM = L (cm) × W (cm) × H (cm) ÷ 1,000,000</code></p>
+          <p><code>Estimated cartons = floor(Usable CBM ÷ Carton CBM)</code></p>
+          <p><code>Total pieces = Estimated cartons × Pieces per carton</code></p>
+          <p><code>Indicative usable volume: 20ft ≈ 28 CBM · 40ft ≈ 58 CBM · 40ft HC ≈ 68 CBM</code></p>
+        </div>
+      </div>
+
+      <div class="result-panel" aria-live="polite">
+        <h3 class="result-title">Result</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="result-label">Carton CBM</span>
+            <span class="result-value" id="cl-carton-cbm">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Usable container CBM</span>
+            <span class="result-value" id="cl-usable-cbm">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Estimated cartons</span>
+            <span class="result-value" id="cl-cartons">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Total pieces</span>
+            <span class="result-value" id="cl-total-pieces">—</span>
+          </div>
+        </div>
+        <p class="result-note">
+          Actual loading is subject to pallets, dunnage, reinforcement, heavy-cargo
+          and weight limits. Confirm final stowage with the carrier before booking.
+        </p>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>Indicative only:</strong> 20ft ≈ 28 CBM, 40ft ≈ 58 CBM and 40ft High
+      Cube ≈ 68 CBM are planning benchmarks. Real loads can be lower due to carton
+      shape, stacking rules, pallets and payload limits.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How the estimate works</h2>
+      <p>
+        The calculator first finds the volume of one carton in cubic meters. It
+        then divides the container's indicative usable volume by that carton
+        volume and rounds down, because you cannot load a fraction of a carton.
+        Finally, it multiplies the estimated cartons by the number of pieces in
+        each carton.
+      </p>
+      <p>
+        This is a pure volume calculation. It does not model carton orientation,
+        pallet footprints, door clearance, weight distribution or stacking
+        strength, so use the result for planning only.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const containers = {
+    '20ft': { name: '20ft', cbm: 28 },
+    '40ft': { name: '40ft', cbm: 58 },
+    '40hq': { name: '40ft High Cube', cbm: 68 },
+  };
+
+  const fmt = (value, max = 4) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function positivePieces() {
+    const value = Number.parseInt(el('cl-pieces').value, 10);
+    return Number.isInteger(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cl-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function updateFormula(unit) {
+    el('cl-formula-carton').textContent =
+      unit === 'm'
+        ? 'Carton CBM = L (m) × W (m) × H (m)'
+        : 'Carton CBM = L (cm) × W (cm) × H (cm) ÷ 1,000,000';
+  }
+
+  function calculate() {
+    const unit = el('cl-unit').value;
+    const length = positiveNumber('cl-length');
+    const width = positiveNumber('cl-width');
+    const height = positiveNumber('cl-height');
+    const pieces = positivePieces();
+
+    if (!length || !width || !height || !pieces) {
+      setError('Enter positive carton dimensions and a piece count of at least 1.');
+      return;
+    }
+
+    const cartonCbm = unit === 'm' ? length * width * height : (length * width * height) / 1000000;
+    const container = containers[el('cl-container').value];
+    const cartons = Math.floor(container.cbm / cartonCbm);
+    const totalPieces = cartons * pieces;
+
+    setError();
+    el('cl-carton-cbm').textContent = `${fmt(cartonCbm)} m³`;
+    el('cl-usable-cbm').textContent = `${container.name} · ${container.cbm} CBM`;
+    el('cl-cartons').textContent = fmt(cartons, 0);
+    el('cl-total-pieces').textContent = fmt(totalPieces, 0);
+  }
+
+  el('cl-calculate').addEventListener('click', calculate);
+  el('cl-unit').addEventListener('change', () => updateFormula(el('cl-unit').value));
+
+  updateFormula(el('cl-unit').value);
+</script>

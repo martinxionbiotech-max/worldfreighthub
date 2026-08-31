@@ -8,14 +8,17 @@ const tools = [
   {
     name: 'CBM Calculator',
     description: 'Convert dimensions into cubic meters for LCL and volumetric calculations.',
+    href: '/tools/cbm-calculator/',
   },
   {
     name: 'Container Loading Calculator',
     description: 'Estimate how many cartons or pallets fit in a 20ft or 40ft container.',
+    href: '/tools/container-loading-calculator/',
   },
   {
     name: 'Volumetric Weight Calculator',
     description: 'Compute volumetric and chargeable weight for air freight.',
+    href: '/tools/volumetric-weight-calculator/',
   },
 ];
 ---
@@ -30,21 +33,15 @@ const tools = [
       <Breadcrumb items={[{ label: 'Tools' }]} />
       <h1>Freight tools & calculators</h1>
       <p class="lead">
-        Practical calculators to support shipment planning. These are in
-        development.
+        Practical, client-side calculators to support shipment planning across
+        the China–GCC freight corridor.
       </p>
     </div>
   </div>
 
   <section class="section container">
     <div class="grid grid--3">
-      {tools.map((tool) => (
-        <div class="card">
-          <h3>{tool.name}</h3>
-          <p>{tool.description}</p>
-          <span class="coming-soon">Coming soon</span>
-        </div>
-      ))}
+      {tools.map((tool) => <Card title={tool.name} description={tool.description} href={tool.href} />)}
     </div>
   </section>
 </BaseLayout>

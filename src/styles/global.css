@@ -794,3 +794,123 @@ code {
     padding: 1.25rem;
   }
 }
+
+/* ---------- Tools / calculators ---------- */
+.tool-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.result-panel {
+  background: var(--navy-900);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.result-title {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.9rem;
+}
+
+.result-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  padding: 0.9rem;
+}
+
+.result-item--wide {
+  grid-column: 1 / -1;
+}
+
+.result-item--accent {
+  background: var(--amber-500);
+  border-color: var(--amber-500);
+  color: var(--navy-900);
+}
+
+.result-item--accent .result-label {
+  color: var(--navy-800);
+}
+
+.result-item--accent .result-value {
+  color: var(--navy-900);
+}
+
+.result-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a9b6c9;
+  margin-bottom: 0.35rem;
+}
+
+.result-value {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.result-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #a9b6c9;
+}
+
+.formula-box {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.formula-box h3 {
+  margin-bottom: 0.6rem;
+}
+
+.formula-box p {
+  margin-bottom: 0.5rem;
+}
+
+.formula-box p:last-child {
+  margin-bottom: 0;
+}
+
+.formula-box code {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  overflow-wrap: anywhere;
+}
+
+.form-error {
+  color: #a83232;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
+}

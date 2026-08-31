@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import { SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/tools/volumetric-weight-calculator/`;
+const title = 'Volumetric Weight Calculator';
+const description =
+  'Calculate volumetric weight from carton dimensions in cm using the air freight 6000 divisor or sea freight 1000 divisor, and find the chargeable weight.';
+
+const faqs = [
+  {
+    q: 'What is volumetric weight?',
+    a: 'Volumetric weight is the space a shipment occupies converted into a weight equivalent. Carriers use it to charge fairly for light but bulky cargo that fills space without adding much physical weight.',
+  },
+  {
+    q: 'Why does air freight divide by 6000?',
+    a: 'The 6000 divisor is a common international air freight standard. It means 1 CBM of space is billed as the equivalent of about 167 kg (1,000,000 ÷ 6000 ≈ 166.67 kg). Some carriers use 5000 for express freight.',
+  },
+  {
+    q: 'When is the sea freight 1000 divisor used?',
+    a: 'For ocean freight, volume is usually quoted in CBM rather than volumetric weight. The 1000 divisor is used in some comparisons and by some operators to treat 1 CBM as 1000 kg; check the exact rate basis with your carrier.',
+  },
+  {
+    q: 'How is chargeable weight calculated?',
+    a: 'Chargeable weight is the higher of the actual weight and the volumetric weight. For example, a 10 kg parcel with 15 kg volumetric weight would be billed at 15 kg.',
+  },
+  {
+    q: 'Does express courier use a different factor?',
+    a: 'Yes. Express and parcel carriers often use a divisor of 5000 instead of 6000, producing a higher volumetric weight for the same carton. Always confirm the divisor in the rate sheet.',
+  },
+  {
+    q: 'Can volumetric weight ever be lower than actual weight?',
+    a: 'Yes. Dense cargo has a low volumetric weight relative to its actual weight, so the chargeable weight is simply the actual weight. The carrier always charges the higher of the two.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'en',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Tools', href: '/tools/' },
+          { label: 'Volumetric Weight Calculator' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Volumetric weight calculator</h1>
+      <p class="lead">
+        Compare actual weight with volumetric weight using the air freight 6000
+        divisor or the sea freight 1000 divisor, and see the chargeable weight.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="vol-form" aria-label="Volumetric weight calculator inputs">
+          <div class="form-grid">
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="vol-length">Length (cm)</label>
+                <input id="vol-length" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 60" />
+              </div>
+              <div class="field">
+                <label for="vol-width">Width (cm)</label>
+                <input id="vol-width" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 40" />
+              </div>
+              <div class="field">
+                <label for="vol-height">Height (cm)</label>
+                <input id="vol-height" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 50" />
+              </div>
+              <div class="field">
+                <label for="vol-actual">Actual weight (kg)</label>
+                <input id="vol-actual" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 10" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="vol-factor">Chargeable factor</label>
+              <select id="vol-factor">
+                <option value="6000" selected>Air freight — ÷6000 (1 CBM ≈ 167 kg)</option>
+                <option value="1000">Sea freight — ÷1000 (1 CBM ≈ 1000 kg)</option>
+              </select>
+            </div>
+            <p class="form-error" id="vol-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="vol-calculate">Calculate</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>Formula</h3>
+          <p><code id="vol-formula-volume">Volumetric weight = L (cm) × W (cm) × H (cm) ÷ 6000</code></p>
+          <p><code>Chargeable weight = max(actual weight, volumetric weight)</code></p>
+          <p><code id="vol-process">—</code></p>
+        </div>
+      </div>
+
+      <div class="result-panel" aria-live="polite">
+        <h3 class="result-title">Result</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="result-label">Actual weight</span>
+            <span class="result-value" id="vol-actual-result">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Volumetric weight</span>
+            <span class="result-value" id="vol-volumetric">—</span>
+          </div>
+          <div class="result-item result-item--accent">
+            <span class="result-label">Chargeable weight</span>
+            <span class="result-value" id="vol-chargeable">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Billing basis</span>
+            <span class="result-value" id="vol-basis">—</span>
+          </div>
+        </div>
+        <p class="result-note">
+          Air freight factors vary by carrier and route; some express services use
+          5000 instead of 6000. Confirm the divisor in your rate sheet before quoting.
+        </p>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>Indicative only:</strong> the 6000 and 1000 divisors are common
+      planning standards, but carriers may apply different factors, minimums or
+      rounding rules. Confirm chargeable weight with your carrier.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How volumetric weight is calculated</h2>
+      <p>
+        Multiply the carton's length, width and height in centimetres to get the
+        cubic-centimetre volume, then divide by the chargeable factor. The result
+        is the volumetric weight in kilograms. Finally, compare that figure with
+        the actual scale weight and use the higher value as the chargeable
+        weight.
+      </p>
+      <p>
+        For air freight with the 6000 divisor, 1 CBM is treated as about 167 kg.
+        For sea freight with the 1000 divisor, 1 CBM is treated as 1000 kg. Both
+        are indicative and should be checked against the carrier's published
+        rate basis.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const fmt = (value, max = 2) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id, allowZero = false) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && (allowZero ? value >= 0 : value > 0) ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('vol-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function updateFormula(factor) {
+    el('vol-formula-volume').textContent =
+      `Volumetric weight = L (cm) × W (cm) × H (cm) ÷ ${factor}`;
+  }
+
+  function calculate() {
+    const length = positiveNumber('vol-length');
+    const width = positiveNumber('vol-width');
+    const height = positiveNumber('vol-height');
+    const actualWeight = positiveNumber('vol-actual', true);
+
+    if (!length || !width || !height || actualWeight === null) {
+      setError('Enter positive length, width and height, and an actual weight of 0 kg or more.');
+      return;
+    }
+
+    const factor = Number.parseInt(el('vol-factor').value, 10);
+    const volumetricWeight = (length * width * height) / factor;
+    const chargeableWeight = Math.max(actualWeight, volumetricWeight);
+    const basis =
+      chargeableWeight === actualWeight && actualWeight !== volumetricWeight
+        ? 'Actual weight'
+        : chargeableWeight === volumetricWeight && actualWeight !== volumetricWeight
+          ? 'Volumetric weight'
+          : 'Equal';
+
+    setError();
+    el('vol-actual-result').textContent = `${fmt(actualWeight)} kg`;
+    el('vol-volumetric').textContent = `${fmt(volumetricWeight)} kg`;
+    el('vol-chargeable').textContent = `${fmt(chargeableWeight)} kg`;
+    el('vol-basis').textContent = basis;
+    el('vol-process').textContent =
+      `= (${fmt(length)} × ${fmt(width)} × ${fmt(height)}) ÷ ${factor} = ${fmt(volumetricWeight)} kg · max(${fmt(actualWeight)}, ${fmt(volumetricWeight)}) = ${fmt(chargeableWeight)} kg`;
+  }
+
+  el('vol-calculate').addEventListener('click', calculate);
+  el('vol-factor').addEventListener('change', () => updateFormula(el('vol-factor').value));
+
+  updateFormula(el('vol-factor').value);
+</script>
