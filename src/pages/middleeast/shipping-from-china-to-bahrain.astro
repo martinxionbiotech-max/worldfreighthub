@@ -1,0 +1,880 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-from-china-to-bahrain/`;
+
+const khalifaPort = gccPorts.find((item) => item.slug === 'khalifa-bin-salman');
+const khalifaUnlocode = khalifaPort?.unlocode ?? '—';
+
+const wfhRouteData: Source = {
+  id: 'wfh-bahrain-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Khalifa bin Salman (typical 22 days, range 15–30; LOW confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-bahrain-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const bahrainCustomsSources = sourcesByIds(['bahrain-customs']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group', 'world-bank']);
+const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
+const costSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+const marketSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+
+const rateRows = [
+  {
+    service: 'LCL ocean — China to Khalifa bin Salman',
+    benchmark: 'Not published in verified snapshot — request an all-in $/m³ range',
+    basis: 'No verified Bahrain LCL per-CBM rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 20GP to Khalifa bin Salman',
+    benchmark: 'Not published in verified snapshot — request a 20ft $ range',
+    basis: 'No verified Bahrain 20ft FCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — 40GP / 40HQ to Khalifa bin Salman',
+    benchmark: 'Not published in verified snapshot — request a 40ft $ range',
+    basis: 'No verified Bahrain 40ft FCL rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — China to Bahrain air gateway',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'No verified Bahrain air freight rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier — China to Bahrain',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door — China to Bahrain',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'DDP embeds freight, clearance, 5% duty, 10% VAT and delivery',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai (CNSHA)',
+    mode: 'Sea',
+    transit: 'Typical 22 days (range 15–30)',
+    basis: 'WorldFreightHub route data to Khalifa bin Salman',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan (CNNGB)',
+    mode: 'Sea',
+    transit: 'Typical 22 days (range 15–30)',
+    basis: 'WorldFreightHub route data to Khalifa bin Salman',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen Yantian / Shekou (CNSZX)',
+    mode: 'Sea',
+    transit: 'Typical 22 days (range 15–30)',
+    basis: 'WorldFreightHub route data to Khalifa bin Salman',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shanghai / Ningbo / Shenzhen',
+    mode: 'Air freight',
+    transit: 'Not published in verified snapshot — request a routing quote',
+    basis: 'No verified Bahrain air transit appears in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China door-to-door',
+    mode: 'Sea or air + clearance + trucking',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds discharge, Bahrain Customs clearance, 5% duty, 10% VAT and last-mile trucking',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea FCL',
+    bestFor: 'Large, heavy, palletised or containerised cargo that can absorb the typical 22-day ocean window',
+    indicativeTime: 'Khalifa bin Salman typical 22 days (LOW)',
+    indicativeCost: 'Not published — request an all-in container quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Sea LCL',
+    bestFor: 'Smaller consignments that do not fill a container but are not urgent',
+    indicativeTime: 'Khalifa bin Salman typical 22 days plus CFS consolidation/breakbulk (LOW)',
+    indicativeCost: 'Not published — request an all-in per-CBM quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo into the Bahrain air gateway',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'Not published — request a per-kg quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const fclLclRows = [
+  {
+    factor: 'Shipment size',
+    fcl: 'A full container load for enough pallets, cartons or machine units to justify exclusive use of the box',
+    lcl: 'Less-than-container load sharing a consolidated container with other importers',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost logic',
+    fcl: 'Priced per container, but there is no verified Bahrain 20ft/40ft rate in the snapshot',
+    lcl: 'Priced per cubic metre, but there is no verified Bahrain per-CBM rate in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling risk',
+    fcl: 'Single sealed unit between shipper and receiver; less handling exposure',
+    lcl: 'Additional CFS handling, deconsolidation and short-term warehousing steps',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit experience',
+    fcl: 'Main carriage timing is the same planning window; container moves directly to discharge',
+    lcl: 'Consolidation and deconsolidation can add variable time before final release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Destination fees',
+    fcl: 'THC, documentation, inspection risk, port storage, demurrage and detention all remain possible',
+    lcl: 'Adds destination CFS/deconsolidation and per-CBM handling to the same hidden-charge stack',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usual fit',
+    fcl: 'Volume-heavy cargo, project goods or buyers who want a single sealed unit',
+    lcl: 'Smaller consignments, trial orders, samples or mixed SKU retail replenishment',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across China→GCC freight guides',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Qingdao (CNTAO)',
+    throughput: 'Not published in snapshot',
+    note: 'North China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Tianjin (CNTSN)',
+    throughput: 'Not published in snapshot',
+    note: 'North China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Xiamen (CNXMN)',
+    throughput: 'Not published in snapshot',
+    note: 'Southeast China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+];
+
+const bahrainPortRows = [
+  {
+    factor: 'Port role',
+    detail: 'The only Bahrain seaport present in the WorldFreightHub destination dataset',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'UN/LOCODE',
+    detail: khalifaUnlocode,
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Country',
+    detail: 'Bahrain',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'King Fahd Causeway context',
+    detail: 'Road bridge to Saudi Arabia; relevant for some land/transshipment options. Specific commercial and customs treatment is not published in the verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Mina Salman / Hidd',
+    detail: 'Not present in WorldFreightHub Bahrain port data; treat any port-specific claim as LOW/unverified unless confirmed',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Terminal capabilities',
+    detail: 'Not published in the verified snapshot — confirm berth, depth, equipment and operator details with the carrier or port authority',
+    confidence: 'LOW',
+  },
+];
+
+const processRows = [
+  {
+    step: 'Confirm the product and HS code',
+    who: 'Shipper / forwarder',
+    note: 'The code drives Bahrain duty, VAT, permits and prohibited/restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Book origin collection and China export clearance',
+    who: 'Forwarder / supplier',
+    note: 'From Shanghai, Ningbo-Zhoushan, Shenzhen or the named China origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Move cargo to the load port and issue the export documents',
+    who: 'Forwarder / carrier',
+    note: 'Commercial invoice, packing list and bill of lading are the core set',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Run the ocean or air main carriage',
+    who: 'Carrier',
+    note: 'Sea typical 22 days to Khalifa bin Salman (LOW); air transit not published',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Discharge at Khalifa bin Salman or the Bahrain air gateway',
+    who: 'Terminal / handler',
+    note: 'Khalifa bin Salman is the Bahrain seaport in the destination dataset',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Bahrain import declaration',
+    who: 'Importer / customs broker',
+    note: 'Attach invoice, packing list, B/L or AWB, certificate of origin and HS codes',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay the 5% customs duty and 10% VAT on the duty-inclusive base',
+    who: 'Importer / broker',
+    note: 'Statutory stack is CIF × 1.05 × 1.10 = CIF × 1.155 at the baseline',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pass inspection and clear any restricted/permit goods',
+    who: 'Bahrain Customs / agencies',
+    note: 'Bahrain-specific conformity details are not published; SABER/SASO are Saudi-only',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Collect the container or deconsolidate LCL',
+    who: 'Importer / haulier',
+    note: 'Keep demurrage and detention free time in view',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Deliver the last mile to Manama or the named Bahrain site',
+    who: 'Local trucker',
+    note: 'Confirm the delivery address, equipment and any site access restrictions',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean or air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal handling charge (THC)',
+    who: 'Khalifa bin Salman terminal / line',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Bahrain Customs clearance and brokerage',
+    who: 'Bahrain Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs inspection fee',
+    who: 'Bahrain Customs / appointed inspector',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Port storage',
+    who: 'Khalifa bin Salman port / CFS',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Bahrain Customs',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'VAT',
+    who: 'Bahrain tax authority',
+    magnitude: '10% on the duty-inclusive base',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; priced by value, commodity and cover — not published in snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to Bahrain take?',
+    a: 'WorldFreightHub route data records a typical 22 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Khalifa bin Salman (LOW confidence, because the route data is an estimate). No verified Bahrain air transit is published in the snapshot, so request that from your carrier rather than assuming the sea figure applies.',
+  },
+  {
+    q: 'How much does shipping from China to Bahrain cost?',
+    a: 'Bahrain-specific freight rates were not published in the verified research snapshot, so this page does not invent a dollar, per-CBM or per-kg figure. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+  },
+  {
+    q: 'Which port should I use when shipping from China to Bahrain?',
+    a: 'Use Khalifa bin Salman (UN/LOCODE BHKBS) as the Bahrain seaport destination in the WorldFreightHub dataset. It is the only Bahrain port present in the verified port data, so do not assume Mina Salman or Hidd details without separate confirmation. For air cargo, request a Bahrain air-gateway routing quote because no verified air gateway data is published in the snapshot.',
+  },
+  {
+    q: 'What is the difference between FCL and LCL for China to Bahrain?',
+    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ container and is usually the fit for large or heavy loads. LCL consolidates your cargo with other importers and is priced per cubic metre. Neither Bahrain rate was published in the verified snapshot, so the decision should be based on CBM, urgency and handling tolerance while the freight figures are requested as itemised quotes.',
+  },
+  {
+    q: 'Is Bahrain part of the GCC common customs area?',
+    a: 'Yes. Bahrain is a Gulf Cooperation Council member and applies the GCC Common External Tariff framework, which gives a 5% customs duty baseline on most imported goods. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
+  },
+  {
+    q: 'Does Bahrain charge VAT on imports?',
+    a: 'Yes. Bahrain’s country data shows a 10% VAT rate, with the standard “verify with the relevant authority before relying on this figure” note. For imports, VAT is applied on the duty-inclusive base, so the baseline statutory stack is CIF × 1.05 (duty) × 1.10 (VAT) = CIF × 1.155. Verify the current rate and any zero-rating or exemption with the Bahrain tax authority or your broker.',
+  },
+  {
+    q: 'What is King Fahd Causeway and does it matter for China cargo?',
+    a: 'King Fahd Causeway is the road bridge between Saudi Arabia and Bahrain, relevant where cargo is routed as a land/transshipment movement into or through Bahrain. Its commercial timing, fees and customs treatment are not published in the verified snapshot, so treat any Causeway-specific figure as LOW/unverified and confirm the routing with your carrier before booking.',
+  },
+  {
+    q: 'What documents are needed for Bahrain customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits may be required for regulated goods, so confirm the specific requirement before shipping.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into Bahrain?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Bahrain quote. Bahrain-specific standards or product approvals may still be required for certain goods, but those are not published in the verified snapshot — confirm the applicable Bahrain process for your product.',
+  },
+  {
+    q: 'How do demurrage and detention differ in Bahrain?',
+    a: 'Demurrage is charged by the terminal when import cargo stays in the port beyond the allowed free time. Detention is charged by the ocean carrier when the container is kept beyond the equipment free time after collection. Bahrain free-time periods and per-day rates are not published in the verified snapshot — confirm both free-time allowances in writing before booking and plan clearance so neither clock runs.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to Bahrain: Khalifa bin Salman Routing, 22-Day Sea Transit, 5% Duty & 10% VAT (September 2026)',
+      description:
+        'China to Bahrain freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Khalifa bin Salman (BHKBS), typical 22-day sea transit, FCL vs LCL decision, 5% duty, 10% VAT and hidden destination charges.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to Bahrain: Khalifa bin Salman Routing, 22-Day Sea Transit, 5% Duty & 10% VAT (September 2026)"
+  description="China to Bahrain freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Khalifa bin Salman (BHKBS), typical 22-day sea transit, FCL vs LCL decision, 5% duty, 10% VAT and hidden destination charges."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shipping from China to Bahrain' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping from China to Bahrain: Khalifa bin Salman routing, 22-day sea transit, 5% duty &amp; 10% VAT</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        and the wider China origin set to Khalifa bin Salman and Manama — with the FCL-vs-LCL decision,
+        the typical 22-day sea window, the 5% duty plus 10% VAT stack, and the hidden destination
+        charges that shape the Bahrain landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. Bahrain freight
+        rates were not published in the verified snapshot, so every rate is shown as a request-for-quote
+        range marker rather than being filled with invented numbers. Treat every LOW-confidence figure
+        as an indicative planning input and verify with your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Bahrain import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">10% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">BHD <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Destination port</span>
+          <span class="fact-value">Khalifa bin Salman <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">Typical 22 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.155 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Bahrain deserves its own China routing lens</h2>
+    <p>
+      Bahrain is a compact, capital-centric market: the country data shows <strong>Manama</strong> as
+      the capital, the currency as <strong>BHD</strong>, and Khalifa bin Salman (BHKBS) as the only
+      Bahrain seaport in the WorldFreightHub destination dataset. That means the China-to-Bahrain
+      route is not a multiple-gateway puzzle like Saudi Arabia or the UAE; it is a single-port planning
+      problem with a road-bridge complication: the <strong>King Fahd
+      Causeway</strong> to Saudi Arabia.
+    </p>
+    <p>
+      The statutory side is also specific. Bahrain applies the GCC <strong>5% customs duty on CIF
+      value</strong> baseline, then adds a <strong>10% VAT</strong> on the duty-inclusive base. The
+      baseline statutory stack is therefore <code>CIF × 1.05 × 1.10 = CIF × 1.155</code>. That is
+      higher than the UAE or Oman compound (CIF × 1.1025 at 5% VAT), below Saudi Arabia’s 15% VAT
+      case, and different again from Qatar and Kuwait, which have no general VAT in the current data.
+    </p>
+    <p>
+      The commercial caveat is just as important: <strong>no Bahrain freight rate was published</strong>
+      in the verified research snapshot. This page keeps the verified duty/VAT position explicit, shows
+      every freight figure as a request-for-quote marker, and treats the typical 22-day Khalifa bin
+      Salman sea transit as a LOW-confidence planning estimate rather than a promised delivery date.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight rates from China to Bahrain</h2>
+      <p>
+        Bahrain is a small market with less published benchmark depth than the UAE or even Qatar. The
+        honest answer to “how much does it cost to ship to Bahrain” is that <strong>no verified FCL,
+        LCL, air, express or DDP rate was published</strong> in the snapshot. Rather than borrow a
+        Jebel Ali or Dammam bracket, this page keeps the 20ft, 40ft and per-CBM lines as explicit
+        request-for-quote markers and labels them LOW confidence.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Bahrain freight rates were not published in the verified snapshot — request an all-in quote rather than using a guessed benchmark from another GCC corridor."
+      />
+      <SourceList sources={rateSources} title="Sources — Bahrain rates" />
+
+      <div class="note mt-2">
+        <strong>Why every line says “request a quote”:</strong> the research snapshot published no
+        Bahrain 20ft, 40ft, per-CBM, per-kg, express or DDP figure. Ask the forwarder to itemise
+        freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery
+        on the same quote so the price is comparable.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit times by origin port and mode</h2>
+    <p>
+      The China-to-Bahrain clock is a planning range, not a promise. The WorldFreightHub route data
+      gives Khalifa bin Salman a typical <strong>22 days</strong> with a 15–30 day planning range from
+      Shanghai, Ningbo-Zhoushan and Shenzhen, all LOW confidence. Bahrain air transit is not published,
+      so the table keeps that line explicit instead of borrowing a neighbouring airport figure.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Bahrain transit times" />
+
+    <div class="note mt-2">
+      <strong>Sea planning default:</strong> Shanghai, Ningbo-Zhoushan and Shenzhen to Khalifa bin
+      Salman are recorded at typical 22 days (range 15–30). That is an estimate, not a carrier promise.
+      For air, express or King Fahd Causeway land/transshipment moves, no verified timing was published
+      — request a routing quote before committing to a date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL vs LCL: which fits Bahrain cargo?</h2>
+      <p>
+        The FCL-vs-LCL decision for Bahrain starts with cube, urgency and handling tolerance. FCL suits
+        cargo large enough to justify a 20GP, 40GP or 40HQ; LCL suits smaller consignments sharing a
+        container. Because neither Bahrain rate was published in the snapshot, do not decide on headline
+        price alone — compare the full hidden-charge stack for both options.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'fcl', label: 'FCL (20GP / 40GP / 40HQ)' },
+          { key: 'lcl', label: 'LCL (per CBM)' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclLclRows}
+        caption="Decision support, not a rate card. Bahrain FCL and LCL prices are LOW confidence and must be quoted by a forwarder."
+      />
+      <SourceList sources={modeSources} title="Sources — FCL vs LCL decision" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose FCL when...">
+          <ul>
+            <li>The cargo fills, or nearly fills, a 20GP, 40GP or 40HQ.</li>
+            <li>You value a single sealed unit and lower handling exposure.</li>
+            <li>The delivery plan can absorb the typical 22-day sea window.</li>
+            <li>The cargo is heavy, palletised or machine/project-oriented.</li>
+          </ul>
+        </Card>
+        <Card title="Choose LCL when...">
+          <ul>
+            <li>The consignment is well under a container load.</li>
+            <li>You are running a trial order, mixed SKU retail fill or samples.</li>
+            <li>You can accept CFS consolidation and deconsolidation time.</li>
+            <li>Per-CBM economics beat paying for an empty container.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports: China origin ports and Khalifa bin Salman</h2>
+    <p>
+      The origin side is the familiar China port hierarchy: Shanghai and Ningbo-Zhoushan anchor the
+      East China ocean services, while Shenzhen and Guangzhou cover South China and Qingdao, Tianjin
+      and Xiamen provide northern/southeast alternatives. On the Bahrain side, the destination dataset
+      has one seaport — <strong>Khalifa bin Salman (BHKBS)</strong> — plus the King Fahd Causeway
+      context for land/transshipment options.
+    </p>
+
+    <h3>China origin ports</h3>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence; other China throughputs are not stated in the snapshot."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+    <h3 class="mt-3">Bahrain destination port</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'detail', label: 'Khalifa bin Salman (BHKBS)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={bahrainPortRows}
+      caption="Khalifa bin Salman is the verified Bahrain seaport in the destination data. Mina Salman/Hidd and terminal capabilities are not published and remain LOW/unverified."
+    />
+    <SourceList sources={marketSources} title="Sources — Bahrain destination port" />
+
+    <h3 class="mt-3">Door-to-door process from China to Bahrain</h3>
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'who', label: 'Who owns it' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={processRows}
+      caption="The operational chain is directional; the statutory 5% duty + 10% VAT step is MEDIUM confidence and operational fee/timing steps are LOW confidence."
+    />
+    <SourceList sources={[...costSources, ...marketSources]} title="Sources — Bahrain door-to-door chain" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost composition and the hidden charges that competitors miss</h2>
+      <p>
+        Bahrain’s statutory stack is only the visible top layer: <strong>5% customs duty on
+        CIF</strong>, then <strong>10% VAT on the duty-inclusive base</strong>, giving
+        <code>CIF × 1.05 × 1.10 = CIF × 1.155</code>. The commercial risk sits below that line in
+        operational charges that the verified snapshot does not quantify. This is where a cheap freight
+        quote can become an expensive clearance: THC, documentation, inspection, port storage,
+        demurrage and detention.
+      </p>
+
+      <div class="note">
+        <strong>Baseline statutory landed cost = CIF × 1.155.</strong><br />
+        For example, a USD 10,000 CIF shipment attracts USD 500 duty (→ USD 10,500), then 10% VAT of
+        USD 1,050, giving USD 11,550 before destination fees. Rates are subject to change — verify the
+        current duty line and VAT treatment with Bahrain Customs and the Bahrain tax authority.
+      </div>
+
+      <h3 class="mt-3">Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only the 5% duty and 10% VAT are stated from verified/secondary sources. Unquantified Bahrain fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is the charge the <strong>terminal</strong> applies when import
+        cargo stays in the port beyond the allowed free time after discharge. <strong>Detention</strong>
+        is the charge the <strong>ocean carrier</strong> applies when the importer keeps the container
+        beyond the equipment free time after collection. They sound similar, but they are separate
+        contracts, separate free-time allowances and separate per-day rates.
+      </p>
+      <p>
+        Bahrain free-time periods and per-day amounts are not published in the verified snapshot, so do
+        not assume a Dubai or Dammam schedule applies. Before booking, ask the carrier and the Bahrain
+        forwarder to put the Khalifa bin Salman free time, demurrage rate and detention rate in writing.
+        The most reliable avoidance tactic is documentary readiness: classify the HS code early, prepare
+        the invoice/packing list/B-L and file the Bahrain declaration promptly so release happens before
+        either free-time clock runs out.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised schedule that separates each destination line. A quote that only says “freight
+        + customs” can hide <strong>THC</strong> at the terminal, a <strong>documentation fee</strong>,
+        a possible <strong>customs inspection fee</strong>, <strong>port storage</strong>, and the
+        <strong>demurrage/detention</strong> exposure if release is delayed. Without those lines, a
+        USD-level freight quote cannot be compared or used for landed-cost budgeting.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: Bahrain duty, 10% VAT, documents &amp; conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Bahrain applies the GCC Common External Tariff baseline of <strong>5% customs duty on the CIF
+      value</strong> for most imported goods, then <strong>10% VAT</strong> on the duty-inclusive base.
+      The baseline statutory calculation is <code>CIF × 1.05 × 1.10 = CIF × 1.155</code>. Specific
+      goods can still carry different duty lines or VAT treatment (zero-rating or exemptions), so the
+      HS code remains the first compliance decision.
+    </p>
+
+    <h3>Documents and classification</h3>
+    <p>
+      The standard document set is a commercial invoice, bill of lading or air waybill, packing list
+      and certificate of origin, with the correct <strong>HS code</strong> before quoting. Bahrain
+      Customs handles clearance electronically, but the exact platform name, workflow and processing
+      fees are not published in the verified snapshot — confirm the current flow with a licensed
+      Bahrain broker. Certificate of origin requirements can differ for GCC-origin versus non-GCC goods,
+      so confirm the applicable origin documentation with the broker.
+    </p>
+
+    <h3>Conformity: SABER/SASO is Saudi-only</h3>
+    <p>
+      SABER and SASO are Saudi-only conformity systems and do not apply to Bahrain. Do not copy a Saudi
+      SABER/SASO step into a Bahrain quote. Bahrain may have its own standards or product-approval
+      requirements for certain goods, but those are not published in the verified snapshot — confirm
+      the applicable Bahrain process for your product before shipment rather than assuming a Saudi step.
+    </p>
+
+    <h3>Restricted and prohibited goods</h3>
+    <p>
+      As with other GCC states, Bahrain screens alcohol, tobacco, narcotics, weapons, counterfeit goods,
+      hazardous materials and cultural/religious-sensitive items strictly. The exact Bahrain
+      prohibited/restricted list is not published in the verified snapshot, so check the commodity
+      with Bahrain Customs before booking rather than discovering the restriction at the border.
+    </p>
+
+    <h3>King Fahd Causeway compliance note</h3>
+    <p>
+      The Causeway is relevant where cargo moves by road between Saudi Arabia and Bahrain. Its
+      commercial timing, border procedures and fee treatment are not published in the verified snapshot,
+      so treat Causeway-specific claims as LOW/unverified and confirm the current movement and clearance
+      requirements with the carrier or broker for that routing.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Bahrain customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      statutory lines (5% CIF duty and 10% VAT) are re-checked against Bahrain Customs, the Bahrain tax
+      authority and the shared GCC framework; the Khalifa bin Salman transit figure is re-checked
+      against the WorldFreightHub route data each month.
+    </p>
+    <p>
+      If a Bahrain FCL/LCL/air rate, Khalifa bin Salman terminal fee, demurrage/detention schedule,
+      Causeway movement detail or a conformity requirement becomes available from Bahrain Customs, a
+      port operator or a carrier, the table is updated, the confidence badge is raised, and the modified
+      date in the page metadata is changed. Until then, unquantified Bahrain fees and rates stay LOW
+      confidence with a “not published — verify” note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Bahrain quote"
+      text="Tell us your origin, commodity, container or CBM, HS code and final Bahrain destination, and we will connect you with providers who can quote ocean/air freight, 5% duty, 10% VAT, Bahrain clearance and Khalifa bin Salman destination fees together."
+    />
+  </section>
+</BaseLayout>

@@ -1,0 +1,724 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/bahrain-customs-duty/`;
+
+const wfhMethodology: Source = {
+  id: 'wfh-bahrain-customs-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const bahrainCustomsSources = sourcesByIds(['bahrain-customs']);
+const taxSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+const timelineSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+const restrictedSources: Source[] = [...bahrainCustomsSources, wfhMethodology];
+
+const dutyRows = [
+  {
+    component: 'Baseline import duty',
+    who: 'Bahrain Customs',
+    rate: '5% of CIF value',
+    basis: 'GCC Common External Tariff, ad valorem on CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'VAT',
+    who: 'Bahrain tax authority',
+    rate: '10% on the duty-inclusive base',
+    basis: 'Bahrain VAT at 10%; applied on CIF + duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'Specific tariff lines / exemptions',
+    who: 'Bahrain Customs',
+    rate: 'Not published in verified snapshot — verify HS code',
+    basis: 'Bahrain-specific duty lines and exemptions are not stated in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Restricted / prohibited goods',
+    who: 'Bahrain Customs',
+    rate: 'N/A if entry is refused',
+    basis: 'Bahrain-specific restricted/prohibited list is not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Customs brokerage / clearance fee',
+    who: 'Licensed Bahrain customs broker',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Service fee, not a statutory tax',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Bahrain Customs electronic processing charge',
+    who: 'Bahrain Customs / service provider',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Exact platform name and processing fees are not published in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Conformity / certification fees',
+    who: 'Bahrain Customs / relevant agency',
+    rate: 'Not published in verified snapshot — request schedule',
+    basis: 'Bahrain has its own compliance regime; SABER/SASO are Saudi-only',
+    confidence: 'LOW',
+  },
+  {
+    component: 'Storage, demurrage or detention',
+    who: 'Terminal / airport / carrier',
+    rate: 'Per-day after free time',
+    basis: 'Bahrain free time and per-day rates are not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+];
+
+const calcTimelineRows = [
+  {
+    step: 'Classify the goods with the correct HS code',
+    when: 'Before quoting or booking',
+    basis: 'The code decides the duty line, VAT treatment, permits and prohibited/restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Establish the CIF value',
+    when: 'Before the declaration',
+    basis: 'Cost + insurance + freight; the base for Bahrain customs duty',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Screen for prohibited, restricted or permit goods',
+    when: 'Before shipment',
+    basis: 'Bahrain-specific restricted/prohibited list is not published in verified snapshot — verify',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Assess customs duty',
+    when: 'At declaration',
+    basis: 'CIF value × duty rate; baseline 5%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess VAT on the duty-inclusive base',
+    when: 'At declaration',
+    basis: '(CIF + duty) × 10%',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Bahrain Customs electronic declaration',
+    when: 'Before release',
+    basis: 'Electronic declaration with invoice, packing list, B/L or AWB and certificate of origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay duty, VAT and service charges',
+    when: 'Before release',
+    basis: 'Duty and VAT are statutory; brokerage and processing fees are separate',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Release and deliver the cargo',
+    when: 'After payment and any inspection',
+    basis: 'Goods release once duty, VAT, documents and permit checks are complete',
+    confidence: 'LOW',
+  },
+];
+
+const ddpVsSelfRows = [
+  {
+    factor: 'Who pays the 5% duty and 10% VAT',
+    selfPay: 'The importer pays Bahrain Customs directly at clearance',
+    ddp: 'The seller or forwarder pays and builds the cost into one price',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Tax visibility',
+    selfPay: 'Full line-item visibility on the Bahrain Customs duty and VAT assessment',
+    ddp: 'Duty, VAT and service fees are embedded in one all-in price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'HS code and valuation risk',
+    selfPay: 'The importer owns classification and any audit exposure',
+    ddp: 'The forwarder handles filing, but a wrong HS code still changes the final cost',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cash-flow timing',
+    selfPay: 'Duty and VAT are settled at clearance, after the goods arrive',
+    ddp: 'Duty and VAT are included in the upfront delivered price',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Restricted-goods responsibility',
+    selfPay: 'The importer owns permits and prohibited/restricted screening',
+    ddp: 'The forwarder can manage it, but the legal responsibility still follows the importer',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Usually best for',
+    selfPay: 'Established Bahrain importers with a broker and HS-code discipline',
+    ddp: 'First-time importers, small parcels and buyers who want one provider',
+    confidence: 'LOW',
+  },
+];
+
+const categoryRows = [
+  {
+    category: 'General merchandise at the GCC baseline',
+    duty: '5% of CIF',
+    vat: '10% on duty-inclusive base',
+    note: 'The default planning position for most goods without a Bahrain-specific special line',
+    confidence: 'MEDIUM',
+  },
+  {
+    category: 'Bahrain-specific tariff lines or exemptions',
+    duty: 'Not published in verified snapshot — verify',
+    vat: '10% (subject to zero-rating/exemption rules)',
+    note: 'The snapshot does not establish Bahrain-specific duty rates for food, tobacco, alcohol or other special lines',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Zero-rated or exempt VAT goods',
+    duty: 'Same duty line for the HS code',
+    vat: 'May be zero-rated or exempt — verify',
+    note: 'Bahrain VAT zero-rating/exemption specifics are not published in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Prohibited / restricted goods',
+    duty: 'N/A if entry is refused',
+    vat: 'N/A',
+    note: 'Bahrain-specific list not published in verified snapshot — screen the commodity before shipping',
+    confidence: 'LOW',
+  },
+  {
+    category: 'Standards / conformity-sensitive goods',
+    duty: 'Same duty line for the HS code',
+    vat: '10% on duty-inclusive base',
+    note: 'SABER/SASO are Saudi-only; Bahrain conformity requirements are not published in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const landedCostRows = [
+  {
+    line: 'CIF value',
+    formula: 'Cost + insurance + freight',
+    example: '10,000.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Customs duty',
+    formula: 'CIF value × 5%',
+    example: '500.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Duty-inclusive base',
+    formula: 'CIF value + customs duty',
+    example: '10,500.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'VAT',
+    formula: 'Duty-inclusive base × 10%',
+    example: '1,050.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Total statutory landed cost',
+    formula: 'CIF × 1.05 × 1.10',
+    example: '11,550.00',
+    confidence: 'MEDIUM',
+  },
+  {
+    line: 'Operational fees',
+    formula: 'Brokerage + processing + inspection + delivery + storage',
+    example: 'Request itemised schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the Bahrain import duty rate?',
+    a: 'The baseline import duty is 5% of the CIF value — cost, insurance and freight — under the shared GCC Common External Tariff framework. Treat the 5% as MEDIUM confidence and verify the exact line for your HS code with Bahrain Customs.',
+  },
+  {
+    q: 'Does Bahrain charge VAT on imports?',
+    a: 'Yes. Bahrain’s country data shows a 10% VAT rate, with the standard “verify with the relevant authority before relying on this figure” note. For imports, VAT is applied on the duty-inclusive base (CIF + duty), so the baseline statutory stack is CIF × 1.05 × 1.10 = CIF × 1.155. Verify the current rate and any zero-rating or exemption with the Bahrain tax authority before finalising a landed-cost quote.',
+  },
+  {
+    q: 'How is Bahrain customs duty and VAT calculated?',
+    a: 'For most goods, customs duty is calculated as CIF value × 5%. VAT is then calculated as (CIF + duty) × 10%. The two-step baseline is CIF × 1.05 × 1.10 = CIF × 1.155, which is higher than the UAE/Oman compound at 5% VAT and below the Saudi 15% VAT case, but not a copy of either.',
+  },
+  {
+    q: 'What is the combined landed-cost multiplier for Bahrain duty and VAT?',
+    a: 'At the 5% duty and 10% VAT baselines, the statutory landed cost is CIF × 1.155. A CIF value of 10,000 USD becomes 11,550 before operational fees. This is arithmetic based on the GCC baseline and Bahrain VAT rate, not a binding Bahrain assessment — rates are subject to change and should be verified with Bahrain Customs and the Bahrain tax authority.',
+  },
+  {
+    q: 'Can you show a worked example for a CIF 10,000 USD Bahrain shipment?',
+    a: 'Yes: customs duty is 10,000 × 5% = 500, giving a duty-inclusive base of 10,500. VAT is 10,500 × 10% = 1,050. The total before operational fees is 11,550. Operational fees such as brokerage, Bahrain processing, inspection, delivery and storage sit on top and should be requested as an itemised schedule.',
+  },
+  {
+    q: 'How does the HS code affect Bahrain import duty and VAT?',
+    a: 'The HS code decides the duty line — the 5% GCC baseline, a possible Bahrain-specific exemption or higher line, or a prohibited/restricted classification — and can also affect VAT treatment (zero-rating or exemption). Bahrain-specific tariff lines are not published in the verified snapshot, so classify before quoting and confirm the line with Bahrain Customs.',
+  },
+  {
+    q: 'What goods are prohibited or restricted in Bahrain?',
+    a: 'Bahrain screens alcohol, tobacco, narcotics, weapons, counterfeit goods, hazardous materials and cultural/religious-sensitive items strictly. The exact Bahrain prohibited/restricted list is not published in the verified research snapshot, so do not rely on the Saudi or UAE list — check the commodity with Bahrain Customs before shipment.',
+  },
+  {
+    q: 'What electronic system does Bahrain Customs use for clearance?',
+    a: 'Bahrain Customs handles clearance electronically, but the exact platform name, workflow and processing fees are not published in the verified snapshot. Confirm the current electronic declaration flow with a licensed Bahrain customs broker rather than assuming a neighbouring GCC system name.',
+  },
+  {
+    q: 'What documents are needed for Bahrain customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Certificate of origin requirements can differ for GCC-origin versus non-GCC goods, and import licences or permits are required for restricted goods.',
+  },
+  {
+    q: 'What is the difference between DDP and paying Bahrain duty myself?',
+    a: 'Self-payment keeps the importer as the taxpayer with full Bahrain Customs line-item visibility on duty and VAT. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying 5% duty and 10% VAT do not change — only who pays, how visible the tax is, and how the cash flow is structured.',
+  },
+  {
+    q: 'Is there a de minimis threshold for Bahrain imports?',
+    a: 'No reliable Bahrain de minimis threshold is published in the verified research snapshot. Do not assume a low-value exemption for courier or personal shipments without confirming the current position with Bahrain Customs.',
+  },
+  {
+    q: 'Do I need an import licence to clear goods in Bahrain?',
+    a: 'Not for all goods, but regulated and restricted products may require an import licence or approval from the relevant Bahrain agency. Confirm the permit requirement for your HS code and commodity before shipment rather than waiting until arrival.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into Bahrain?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Bahrain quote. Bahrain may have its own standards or product-approval requirements for certain goods, but those are not published in the verified snapshot — confirm the applicable Bahrain process for your product.',
+  },
+  {
+    q: 'Does King Fahd Causeway change Bahrain customs treatment?',
+    a: 'King Fahd Causeway is relevant for road/transshipment movements between Saudi Arabia and Bahrain. Its border procedures, commercial timing and fee treatment are not published in the verified snapshot, so treat Causeway-specific clearance claims as LOW/unverified and confirm the current movement with the carrier or broker.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Bahrain Customs Clearance & Import Duty Guide: The CIF × 1.155 Duty + 10% VAT Stack (September 2026)',
+      description:
+        'Bahrain customs clearance and import duty guide: 5% CIF baseline duty, 10% VAT, electronic filing, required documents, HS code treatment, restricted goods and the CIF × 1.155 landed-cost example.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Bahrain Customs Clearance & Import Duty Guide: The CIF × 1.155 Duty + 10% VAT Stack (September 2026)"
+  description="Bahrain customs clearance and import duty guide: 5% CIF baseline duty, 10% VAT, electronic filing, required documents, HS code treatment, restricted goods and the CIF × 1.155 landed-cost example."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Bahrain customs & import duty' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Bahrain customs clearance &amp; import duty: the CIF × 1.155 duty + 10% VAT stack</h1>
+      <p class="lead">
+        A customs-first brief for China-to-Bahrain imports: the 5% CIF duty baseline, the 10% VAT
+        layer, Bahrain electronic filing, the document set, HS-code treatment, restricted/prohibited
+        goods, and the arithmetic that turns a CIF value into a statutory landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative operational fees. The 5% duty and
+        10% VAT are MEDIUM confidence; brokerage, processing, inspection and storage amounts were not
+        published in the verified snapshot and must be requested as an itemised schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">10% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Authority</span>
+          <span class="fact-value">Bahrain Customs <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Clearance platform</span>
+          <span class="fact-value">Electronic <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER / SASO</span>
+          <span class="fact-value">Saudi-only <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.155 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The Bahrain tax stack at a glance</h2>
+    <p>
+      Bahrain combines a <strong>5% customs duty on the CIF value</strong> under the shared GCC
+      Common External Tariff with a <strong>10% VAT</strong> on the duty-inclusive base. The baseline
+      statutory landed cost is therefore:
+    </p>
+    <div class="note">
+      <strong>Baseline statutory landed cost = CIF × 1.05 × 1.10 = CIF × 1.155.</strong><br />
+      Duty first, then VAT on the duty-inclusive base. The 10% VAT figure comes from the WorldFreightHub
+      Bahrain country data and carries the standard “verify with the relevant authority before relying
+      on this figure” note.
+    </div>
+    <p>
+      That makes Bahrain different from Qatar and Kuwait (which stop at CIF × 1.05 with no general VAT)
+      and from the UAE or Oman (which compound 5% VAT to reach CIF × 1.1025). It is also not the Saudi
+      case: Saudi Arabia applies 15% VAT, not Bahrain’s 10%. Use the correct stack for the destination —
+      do not relabel a neighbour’s VAT figure as a Bahrain number.
+    </p>
+    <SourceList sources={taxSources} title="Sources — Bahrain 5% duty & 10% VAT baseline" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. What you pay beyond duty and VAT</h2>
+      <p>
+        Bahrain Customs assesses the statutory duty and VAT, but those are not the whole bill.
+        Brokerage, electronic processing, inspection, port storage, demurrage and detention are separate
+        operational lines. Their specific amounts were not published in the verified research snapshot,
+        so this page refuses to invent a single Bahrain fee number. Request an itemised schedule for the
+        operational lines from a licensed Bahrain broker or provider instead.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'component', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'rate', label: 'Rate or amount' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={dutyRows}
+        caption="Only the 5% GCC CIF duty and 10% VAT position are stated. Bahrain-specific tariff exceptions and operational fees are LOW and must be requested as an itemised schedule."
+      />
+      <SourceList sources={taxSources} title="Sources — Bahrain import duty & 10% VAT" />
+
+      <div class="note mt-2">
+        <strong>Tax checklist before booking:</strong> ask for the HS-code duty line, the CIF valuation
+        used, any VAT zero-rating or exemption, any restricted-goods permit, plus brokerage, Bahrain
+        processing, conformity, inspection and storage-free-time charges — in writing, on the same quote.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The assessment timeline: from HS code to release</h2>
+    <p>
+      Bahrain duty and VAT are not a single percentage charged on arrival; they are an ordered
+      calculation that starts with classification and commodity screening. If the first two steps are
+      wrong, the clearance can stall at the border — and unlike a duty-only market, the correction
+      flows through both the 5% duty and the 10% VAT layer.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'when', label: 'When' },
+        { key: 'basis', label: 'What it depends on' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={calcTimelineRows}
+      caption="Statutory duty/VAT order is anchored on the shared GCC 5% CIF rate and Bahrain 10% VAT; operational steps such as electronic filing and inspection are LOW confidence."
+    />
+    <SourceList sources={timelineSources} title="Sources — assessment & payment timeline" />
+
+    <div class="note mt-2">
+      <strong>The order to remember:</strong> classify → screen restricted goods → value on CIF →
+      duty at 5% → VAT at 10% on the duty-inclusive base → file the Bahrain electronic declaration →
+      pay → release. Skipping commodity screening or HS classification is how a straightforward
+      “1.155” estimate turns into a border hold.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Self-paid duty vs DDP</h2>
+      <p>
+        DDP does not remove Bahrain’s 5% duty or 10% VAT; it changes who pays and how visible the tax
+        is. The choice is about cash flow, compliance ownership and transparency, not about paying less
+        statutory duty or VAT.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'selfPay', label: 'Self-paid duty' },
+          { key: 'ddp', label: 'DDP all-in' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={ddpVsSelfRows}
+        caption="The statutory 5% duty and 10% VAT are unchanged in either structure; only the payer, visibility, responsibility and cash-flow timing differ."
+      />
+      <SourceList sources={taxSources} title="Sources — self-paid vs DDP duty handling" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Self-pay is usually better when...">
+          <ul>
+            <li>You are an established Bahrain importer with a licensed broker.</li>
+            <li>You want line-item visibility of duty, VAT, processing and operational fees.</li>
+            <li>You already have HS-code discipline and permit readiness.</li>
+            <li>Your volume is high enough to justify internal clearance work.</li>
+          </ul>
+        </Card>
+        <Card title="DDP is usually better when...">
+          <ul>
+            <li>The buyer wants one all-in price and one provider to chase.</li>
+            <li>You are not established with Bahrain Customs or a local broker.</li>
+            <li>You sell small parcels or want the forwarder to manage clearance.</li>
+            <li>You want the forwarder to manage duty, VAT and restricted-goods timing together.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Landed-cost structure and the CIF 10,000 worked example</h2>
+    <p>
+      Build the landed cost in this order: CIF value, duty, duty-inclusive base, VAT, then operational
+      fees. The table below uses a <strong>10,000 USD CIF</strong> example only to keep the arithmetic
+      transparent — it is not a market rate or a binding assessment.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Cost line' },
+        { key: 'formula', label: 'Formula' },
+        { key: 'example', label: 'Example (USD)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Worked example uses CIF 10,000 USD purely to show the calculation. Rates are subject to change — verify with Bahrain Customs and the Bahrain tax authority."
+    />
+    <SourceList sources={taxSources} title="Sources — landed-cost formula" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="The formula in one line">
+        <p class="lead">
+          <strong>CIF × (1 + duty rate) × (1 + VAT rate)</strong>
+        </p>
+        <p>
+          Baseline: CIF × 1.05 × 1.10. Add brokerage, Bahrain processing, conformity, inspection,
+          delivery and any storage beyond free time on top of that statutory figure.
+        </p>
+      </Card>
+      <Card title="Why Bahrain differs from its neighbours">
+        <p>
+          Qatar and Kuwait stop at CIF × 1.05 (no general VAT). The UAE and Oman compound 5% duty
+          with 5% VAT to CIF × 1.1025. Bahrain compounds 5% duty with 10% VAT to CIF × 1.155, while
+          Saudi Arabia is a separate 5% duty plus 15% VAT case.
+        </p>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
+      and freight. An unrealistically low invoice value or missing freight component invites
+      revaluation, penalties and delay — and any correction flows through both the 5% duty and the
+      10% VAT layer.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Applicable categories: how the HS code changes the bill</h2>
+      <p>
+        The HS code is the lever that changes the duty component of the stack, can affect VAT treatment,
+        and drives the prohibited/restricted screen. The 5% GCC CIF baseline and 10% VAT are the
+        default, but Bahrain-specific goods may sit on different tariff lines or VAT treatments that
+        are not published in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'category', label: 'Product category / treatment' },
+          { key: 'duty', label: 'Duty treatment' },
+          { key: 'vat', label: 'VAT treatment' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={categoryRows}
+        caption="Category treatment is drawn from the shared GCC duty and Bahrain 10% VAT snapshot. Bahrain-specific tariff lines, exemptions and restricted-goods status must be confirmed with Bahrain Customs."
+      />
+      <SourceList sources={taxSources} title="Sources — category & HS-code treatment" />
+
+      <div class="note mt-2">
+        <strong>Classification rule:</strong> resolve a borderline HS code before shipping. A change at
+        the border can move the duty line, change VAT treatment, trigger a permit or turn a normal
+        consignment into a prohibited one.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance points to keep in view</h2>
+
+    <h3>The stack is duty-plus-10% VAT, not duty-only</h3>
+    <p>
+      For most goods, the statutory landed cost is <strong>CIF × 1.155</strong>. This differs from
+      Qatar and Kuwait (CIF × 1.05, no general VAT), the UAE and Oman (CIF × 1.1025 at 5% VAT) and
+      Saudi Arabia (5% duty plus 15% VAT). Do not copy a Qatar, Kuwait, UAE or Oman calculator into a
+      Bahrain quote.
+    </p>
+
+    <h3>HS code first</h3>
+    <p>
+      Duty line, VAT treatment, permit requirements and prohibited/restricted exposure all flow from
+      the HS code. Classify with a broker or a written ruling before quoting, and keep the invoice
+      description specific enough to defend the code.
+    </p>
+
+    <h3>CIF valuation must be complete</h3>
+    <p>
+      Cost, insurance and freight are all part of the base. A low declared value or a missing freight
+      component creates revaluation risk, and any value correction flows through both the 5% duty and
+      the 10% VAT.
+    </p>
+
+    <h3>Restricted goods are a border risk, not a tax detail</h3>
+    <p>
+      Bahrain screens alcohol, tobacco, narcotics, weapons, counterfeit goods, hazardous materials and
+      cultural/religious-sensitive items strictly, but the exact Bahrain prohibited/restricted list is
+      not published in the verified snapshot. Confirm the commodity status before shipment; a
+      post-arrival surprise can mean refusal, destruction, permit delay or severe demurrage.
+    </p>
+
+    <h3>Bahrain Customs needs the documents ready</h3>
+    <p>
+      The electronic declaration is only as good as the underlying invoice, packing list, bill of
+      lading or air waybill, certificate of origin and HS-code data. Prepare the set before arrival so
+      the declaration can be filed and the free-time clock does not start.
+    </p>
+
+    <h3>No SABER or SASO for Bahrain</h3>
+    <p>
+      SABER and SASO are Saudi-only conformity systems. A Bahrain quote should not include a Saudi
+      SABER/SASO step. Bahrain may have its own standards or product-approval requirements for certain
+      goods, but those are not published in the verified snapshot — confirm the applicable Bahrain
+      process for your product before arrival.
+    </p>
+
+    <h3>VAT and duty are not the whole bill</h3>
+    <p>
+      Brokerage, Bahrain processing, conformity, inspection, delivery, demurrage and detention remain
+      separate operational costs. The research snapshot does not publish their amounts, so request an
+      itemised schedule rather than assuming the statutory stack is the full landed cost.
+    </p>
+
+    <h3>Rates are subject to change</h3>
+    <p>
+      The 5% duty baseline and 10% VAT are from a dated snapshot. Treat every figure here as a planning
+      input and verify the current duty line, VAT treatment, exemptions and restricted-goods rules with
+      Bahrain Customs and the Bahrain tax authority before finalising a landed-cost quote.
+    </p>
+
+    <SourceList sources={restrictedSources} title="Sources — Bahrain customs, duty, VAT & valuation" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      statutory lines (5% CIF duty and 10% VAT) are re-checked against Bahrain Customs, the Bahrain tax
+      authority and the shared GCC framework; the restricted-goods and permit notes are re-checked
+      against Bahrain customs notices and broker guidance.
+    </p>
+    <p>
+      If a brokerage amount, Bahrain processing fee, free-time schedule, VAT zero-rating detail, de
+      minimis threshold or a change to the Bahrain VAT position becomes available from Bahrain Customs,
+      the Bahrain tax authority or a licensed broker, the table is updated, the confidence badge is
+      raised, and the modified date in the page metadata is changed. Until then, unquantified Bahrain
+      fees stay LOW confidence with a “not published — verify” note rather than being filled with
+      estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Bahrain landed-cost quote"
+      text="Tell us your HS code, CIF value, commodity type and whether you want DDP or self-paid duty, and we will connect you with providers who can itemise 5% duty, 10% VAT, Bahrain clearance and delivery."
+    />
+  </section>
+</BaseLayout>
