@@ -123,6 +123,32 @@
   3. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
   4. STEP 21–25：SEO/AIO/EEAT 终审 + Directory + Ad + Quote + 部署文档
 
+## 2026-09-01（夜间，Oman 簇收尾批次）
+
+- **可用时间**：凌晨窗口（cron 03:30 Asia/Shanghai，实际执行 ~03:30 CST 触发后）
+- **服务器资源**：远程 39G 可用 / 内存 2.3G 可用 / load 0.00 ✅；OpenCode shell 执行器已从 08-31 codex 卡死中恢复（本次实测 SHELL_ALIVE_MARKER 返回正常）
+- **Tasks**：Oman 簇 4 页 —— Route Pillar（shipping-from-china-to-oman）+ Customs & 5% VAT（oman-customs-duty）+ 港口情报（oman-ports，Sohar OMSOH + Salalah OMSLL）+ Cost & Transit（shipping-cost-transit-time-china-to-oman）；并在 middleeast/index.astro 注册 4 张卡片。至此 **Oman 簇 4 页齐**，对齐 Qatar/Kuwait 的 4 页结构。
+- **Research**：复用已验证数据（GCC 统一关税 5% CIF、Oman VAT 5%、上海港 55.06M TEU、宁波舟山 43M TEU）；Oman 专属费率/时效/港杂费均不在已验证快照 → 一律 LOW +「not published — verify」
+- **Verification**：Sohar `OMSOH` / Salalah `OMSLL`（gcc-ports.ts HIGH）；routes.ts 上海/宁波/深圳 → Sohar typical 19 天（15–30，LOW）；Salalah 无已验证时效 → 标注 not published；Oman Customs 官方源
+- **Content**：
+  - shipping-from-china-to-oman.astro —— 4,717 词，FAQ 10
+  - oman-customs-duty.astro —— 4,210 词，FAQ 13
+  - oman-ports.astro —— 5,163 词，FAQ 12
+  - shipping-cost-transit-time-china-to-oman.astro —— 4,688 词，FAQ 12
+  - 四页均含 Sohar vs Salalah 分流对比 + 隐藏成本栈（THC/文件费/查验/港存/demurrage/detention）+ demurrage vs detention 详解
+- **Gap Analysis**：继续打 Demurrage/Detention + Hidden Charges 高价值 Gap；明确标注「SABER/SASO 仅限沙特，Oman 不适用」
+- **SEO / AIO / EEAT**：Article + FAQPage + BreadcrumbList + Organization schema；ConfidenceBadge 每数据点标注（7 处/页）；月度更新标记 September 2026
+- **Engineering**：复用 DataTable/SourceList/FaqBlock/Cta/Card/Breadcrumb/ConfidenceBadge 组件，无新组件；未改任何 data 文件
+- **QA**：npm run build 127 页（+4）零 error；四页 FAQ ≥10、词数 ≥4100；每个数据点来源或标 LOW；5% 关税 + 5% VAT 合成系数 CIF × 1.1025 已显式标注
+- **Build Result**：✅ 127 pages，clean（1.65s）
+- **Git Commit**：`2660545 content: add Oman route pillar, customs/duty, ports, and cost/transit pages`（5 files +3350）已推 origin/main
+- **Deployment**：未部署（Cloudflare Pages 待配置）
+- **Remaining / Next Priority**：
+  1. Oman 簇 4 页 ✅；下一批 **Bahrain**（Route Pillar shipping-from-china-to-bahrain + Customs & 10% VAT + Khalifa bin Salman 港口 + Cost/Transit）→ 完成 Day 36–50 全部 6 国
+  2. Cloudflare Pages 部署 + 子站 subdomain 规划
+  3. STEP 18–20：Directory / Ad Slots / Quote Framework 尚未开始
+  4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档
+
 ## YYYY-MM-DD
 
 - **可用时间**：
