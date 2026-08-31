@@ -1,0 +1,944 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/sharjah-port/`;
+const port = gccPorts.find((item) => item.slug === 'port-khalid');
+const unlocode = port?.unlocode ?? '—';
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port']);
+const portSources = sourcesByIds(['dubai-customs']);
+const portListSources: Source[] = [docshipper, ...sourcesByIds(['dubai-customs'])];
+const rateSources: Source[] = [cargofromchinaUae, wfhRouteData];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const routingSources: Source[] = [
+  ...sourcesByIds(['dubai-customs', 'dp-world', 'abu-dhabi-ports']),
+  cargofromchinaUae,
+  docshipper,
+];
+const facilitySources: Source[] = [...sourcesByIds(['dubai-customs']), docshipper];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+
+const parameterRows = [
+  {
+    parameter: 'Country',
+    value: 'United Arab Emirates',
+    note: 'GCC member on the China–UAE freight corridor',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Emirate',
+    value: 'Sharjah',
+    note: 'Northern emirate gateway for Sharjah and surrounding emirates',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port name',
+    value: 'Port Khalid / Sharjah Port',
+    note: 'The Sharjah entry in the UAE port list used by China freight guides',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    value: unlocode,
+    note: 'Defined in WorldFreightHub GCC ports data as Sharjah / Port Khalid',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Port role',
+    value: 'Container and cargo gateway for Sharjah and the northern emirates',
+    note: 'Directional role — verify current terminal capability with the port authority',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Operator / authority',
+    value: 'Not published in verified snapshot',
+    note: 'Verify the current port authority and terminal operator',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Berths',
+    value: 'Not published in verified snapshot',
+    note: 'Verify berth count and terminal allocation with the port authority',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Maximum water depth',
+    value: 'Not published in verified snapshot',
+    note: 'Verify approach channel and alongside depth with the port authority',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Annual throughput',
+    value: 'Not published in verified snapshot',
+    note: 'Verify port-specific TEU figures with the port authority',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'UAE port list context',
+    value: 'Jebel Ali, Khalifa, Zayed, Fujairah, Rashid, Sharjah',
+    note: 'The six UAE ports named in the China DocShipper guide',
+    confidence: 'MEDIUM',
+  },
+];
+
+const rateRows = [
+  {
+    service: 'FCL ocean — China to Sharjah / Port Khalid',
+    benchmark: 'Not published in verified snapshot — request an all-in carrier quote',
+    basis: 'No verified China–UAE FCL dollar range appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'FCL ocean — UAE corridor context',
+    benchmark: 'Not published — use Jebel Ali routing context only',
+    basis: 'WorldFreightHub route data provides transit, not FCL pricing',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali corridor benchmark',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai); Sharjah-specific rate not published',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL ocean — Sharjah CFS',
+    benchmark: 'Not published in verified snapshot — request CFS tariff',
+    basis: 'Sharjah deconsolidation/handling fee was not in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — corridor comparison',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai → Port Khalid',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Sharjah route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Ningbo-Zhoushan → Port Khalid',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Sharjah route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shenzhen → Port Khalid',
+    service: 'Sea port-to-port (direct call)',
+    transit: 'Not published in verified snapshot — request carrier schedule',
+    basis: 'No direct Sharjah route figure in the verified snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China → UAE corridor',
+    service: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'Shanghai → Jebel Ali (context)',
+    service: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data — relay context for Sharjah',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'China → UAE corridor',
+    service: 'Air express (comparison)',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const lclVsFclRows = [
+  {
+    factor: 'Best-fit volume',
+    lcl: 'Small and mixed shipments, commonly below ~15 CBM (planning heuristic)',
+    fcl: 'Most of a container — 20GP ~33 CBM, 40GP ~67 CBM nominal',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Pricing basis',
+    lcl: 'Per chargeable CBM, with a minimum charge and CFS handling at both ends',
+    fcl: 'Per container, regardless of how full the unit is',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit and handling',
+    lcl: 'Slower: origin consolidation plus Sharjah/Jebel Ali deconsolidation',
+    fcl: 'Usually faster and simpler: one sealed unit moves as one consignment',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Damage and mixing risk',
+    lcl: 'Higher: cargo is handled at two CFS points and shares the box',
+    fcl: 'Lower: the unit is sealed and not opened at the CFS',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Clearance entry',
+    lcl: 'House bill with multiple consignees under one master bill',
+    fcl: 'One container, one consignee, one clearance entry',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for Sharjah-bound cargo',
+    lcl: 'Market testing, slow restocking, e-commerce and mixed SKUs',
+    fcl: 'Established volumes, dense goods, fragile or high-value cargo',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'Sharjah and northern-emirate consignees',
+    bestPort: 'Port Khalid / Sharjah',
+    why: 'Closest gateway to Sharjah and surrounding emirates',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Sharjah industrial and free zones',
+    bestPort: 'Port Khalid / Sharjah',
+    why: 'Northern-emirate inland link for zones such as Hamriyah Free Zone',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Dubai, re-export, distribution or e-commerce fulfilment',
+    bestPort: 'Jebel Ali',
+    why: 'Broader line connectivity, JAFZA and established Dubai distribution',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Transhipment and Gulf relay flows',
+    bestPort: 'Jebel Ali',
+    why: 'The main Gulf relay point for China services',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Abu Dhabi mainland or KIZAD consignees',
+    bestPort: 'Khalifa Port Abu Dhabi',
+    why: 'Closer to the capital and Abu Dhabi hinterland',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'LCL deconsolidation for northern emirates',
+    bestPort: 'Port Khalid / Sharjah or Jebel Ali CFS',
+    why: 'Depends on the forwarder’s nominated CFS and final trucking leg',
+    confidence: 'LOW',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'Port Khalid / Sharjah port complex',
+    function: 'Container and general cargo gateway for Sharjah',
+    note: 'Current operator, berth and terminal detail not in snapshot — verify with the port authority',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Sharjah CFS and bonded areas',
+    function: 'LCL deconsolidation, examination and customs-controlled storage',
+    note: 'Useful for LCL importers; verify nominated CFS charges',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Hamriyah Free Zone',
+    function: 'Sharjah industrial and free-zone cluster for manufacturing, warehousing and distribution',
+    note: 'Directional context only — verify zone boundaries, licensing and incentives',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Road hinterland',
+    function: 'Trucking to Sharjah, Ajman, Umm Al Quwain, Ras Al Khaimah and Fujairah',
+    note: 'Inland distance and rate are route-dependent',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Jebel Ali relay option',
+    function: 'China cargo can relay through Jebel Ali before the final Sharjah leg',
+    note: 'Ask whether the quoted transit includes the relay and final trucking',
+    confidence: 'LOW',
+  },
+  {
+    facility: 'Reefer / breakbulk / general cargo',
+    function: 'Typical commercial-port capability; service availability varies',
+    note: 'Confirm booking window and equipment before committing',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC and port charges',
+    who: 'Sharjah terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'UAE customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Electronic clearance processing charge',
+    who: 'UAE Customs / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking',
+    who: 'Trucking provider',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'UAE Federal Customs Authority',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'LCL ocean — market context',
+    who: 'Market snapshot (Dubai / Jebel Ali)',
+    magnitude: 'AED 880–980 per CBM',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight — market context',
+    who: 'Market snapshot (UAE corridor)',
+    magnitude: 'AED 20–23.5 per kg',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Where is Port Khalid / Sharjah Port?',
+    a: 'Port Khalid is the Sharjah port in the United Arab Emirates. It is listed among the six UAE ports — Jebel Ali, Khalifa, Zayed, Fujairah, Rashid and Sharjah — named in the China DocShipper freight guide, and is the natural port enquiry for Sharjah-bound freight.',
+  },
+  {
+    q: 'What is the UN/LOCODE for Port Khalid?',
+    a: 'The UN/LOCODE is AESHJ, defined in the WorldFreightHub GCC ports data as Sharjah / Port Khalid. Use it on the bill of lading and customs paperwork when the destination is Sharjah.',
+  },
+  {
+    q: 'Who operates Port Khalid?',
+    a: 'The verified snapshot does not publish the current port authority or terminal operator for Port Khalid. Confirm the operator, berth allocation and fee schedule directly with the Sharjah port authority or your forwarder before relying on any terminal-specific detail.',
+  },
+  {
+    q: 'How long does sea freight take from China to Sharjah?',
+    a: 'The verified snapshot does not publish a direct China–Sharjah transit figure. As corridor context, the China→UAE sea guide is 14–18 days, and the WorldFreightHub Jebel Ali route data is a typical 21 days with a 15–30 day range. If the cargo relays through Jebel Ali, add the relay and final trucking leg; always request the actual vessel schedule.',
+  },
+  {
+    q: 'How does China freight actually reach Port Khalid?',
+    a: 'Some services call Port Khalid directly, while others discharge at Jebel Ali and relay or truck the container to Sharjah. The verified snapshot does not specify the current sailing pattern, so ask the forwarder whether the quote is a direct Sharjah call or a Jebel Ali relay plus final leg.',
+  },
+  {
+    q: 'Should I route Sharjah cargo through Port Khalid, Jebel Ali or Khalifa?',
+    a: 'Match the discharge port to the consignee and final inland leg. Port Khalid is usually the better fit for Sharjah and northern-emirate consignees; Jebel Ali is the default for Dubai, re-export and transhipment; Khalifa Port Abu Dhabi suits Abu Dhabi and KIZAD. Confirm inland distance, cost and transit before choosing.',
+  },
+  {
+    q: 'What free zones are associated with Sharjah freight?',
+    a: 'Sharjah has industrial and free-zone clusters, commonly cited examples including Hamriyah Free Zone. The verified snapshot does not publish zone boundaries, licensing terms or incentives, so treat that as directional and verify the specific zone with the relevant Sharjah authority before assuming any duty or VAT benefit.',
+  },
+  {
+    q: 'What import taxes apply at Sharjah?',
+    a: 'The baseline UAE import duty is 5% of CIF value under the GCC Common External Tariff, and UAE import VAT is 5%, calculated on CIF value plus customs duty. Higher duty or excise can apply to specific goods such as tobacco, alcohol and motor vehicles.',
+  },
+  {
+    q: 'What is the UAE de minimis threshold?',
+    a: 'The verified snapshot records a de minimis of Dhs 1,000 duty/tax free for goods, with gifts up to Dhs 3,000 exempt. This is a courier/e-commerce planning figure; confirm the current rules with UAE Customs before relying on it for a specific shipment.',
+  },
+  {
+    q: 'What documents are needed for clearance at Sharjah?',
+    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin. Classify the goods with the correct HS code before booking, because both duty and any permit requirements depend on it.',
+  },
+  {
+    q: 'How do demurrage and detention work at Port Khalid?',
+    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Finish clearance and book trucking before discharge to avoid both.',
+  },
+  {
+    q: 'Is ISF required for a China to Sharjah shipment?',
+    a: 'No. ISF is a United States import filing requirement and does not apply to UAE imports. Do not treat US customs requirements as UAE requirements.',
+  },
+  {
+    q: 'Does Sharjah freight require SABER or SASO certification?',
+    a: 'No. SABER and SASO are Saudi Arabian conformity systems. They do not apply to UAE imports. For UAE goods, confirm the UAE-specific regulatory and permit position from Dubai/Federal Customs or the relevant authority.',
+  },
+  {
+    q: 'Are Port Khalid berth, depth and throughput figures verified?',
+    a: 'The verified facts are the UN/LOCODE AESHJ, Sharjah’s inclusion in the UAE port list, the 5% duty, the 5% VAT and the corridor benchmarks. Port-specific berth, depth, operator and throughput figures were not published in the research snapshot, so they are marked LOW and should be verified with the port authority.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Sharjah Port (Port Khalid) — China to Sharjah Freight Guide (August 2026)',
+      description:
+        'Sharjah / Port Khalid intelligence for China freight: UN/LOCODE AESHJ, Sharjah vs Jebel Ali vs Khalifa routing, China transit context, LCL/FCL decision support, hidden destination charges and 5% duty/VAT compliance.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Port Khalid / Sharjah Port',
+      url: pageUrl,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Sharjah',
+        addressCountry: 'AE',
+      },
+      description:
+        'Port Khalid is the Sharjah entry in the UAE port list used for China freight. It serves as the northern-emirate gateway for Sharjah-bound container and general cargo.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Sharjah Port (Port Khalid) — China to Sharjah Freight Guide"
+  description="Sharjah / Port Khalid intelligence for China freight: UN/LOCODE AESHJ, Sharjah vs Jebel Ali vs Khalifa routing, China transit context, LCL/FCL decision support, hidden destination charges and 5% duty/VAT compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Sharjah Port' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Sharjah Port (Port Khalid): China freight guide for Sharjah and the northern emirates</h1>
+      <p class="lead">
+        A port-intelligence page for shippers routing China freight to Sharjah. This page explains
+        what Port Khalid is, how it fits the wider UAE port list, how to choose between Sharjah,
+        Jebel Ali and Khalifa, what the rate and transit picture looks like, and the 5% duty / 5% VAT
+        clearance rules that apply at the gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified statutory facts from indicative corridor benchmarks.
+        Treat every LOW-confidence transit, facility and fee note as indicative, and verify with the
+        Sharjah port authority or your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{unlocode} <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">14–18 days corridor <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL benchmark</span>
+          <span class="fact-value">AED 880–980/CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Port role</span>
+          <span class="fact-value">Northern gateway <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Port Khalid matters for China freight</h2>
+    <p>
+      Port Khalid is the Sharjah entry in the UAE port landscape. When a China freight enquiry lists
+      Sharjah among the UAE destinations, Port Khalid is the port question that follows: it is the
+      discharge point that keeps Sharjah-bound cargo close to the emirate rather than routing every
+      consignment through Dubai. That inland proximity is the whole commercial case for using it.
+    </p>
+    <p>
+      The UAE port list from the China DocShipper guide names six ports — Jebel Ali, Khalifa, Zayed,
+      Fujairah, Rashid and Sharjah. Sharjah therefore sits in the same UAE corridor as Jebel Ali and
+      Khalifa, but the port-choice logic is different: Jebel Ali wins on line connectivity and
+      transhipment, Khalifa wins Abu Dhabi, and Port Khalid wins the northern-emirate hinterland.
+    </p>
+    <p>
+      The verified research snapshot does not publish Port Khalid berth, depth, operator or
+      port-specific throughput figures. What it does give is the UN/LOCODE AESHJ, Sharjah’s place in
+      the UAE port list, the 14–18 day China–UAE sea corridor benchmark, and the statutory 5% duty /
+      5% VAT position. Everything else on this page is deliberately marked LOW rather than filled with
+      plausible-looking numbers.
+    </p>
+    <p>
+      China origin depth matters here too. Shanghai handled 55.06 million TEU in 2025 as the world’s
+      #1 container port, and Ningbo-Zhoushan handled 43 million TEU in 2025 as the #3 container port.
+      Those figures are HIGH-confidence context for why the China–UAE corridor has schedule depth —
+      but they do not answer whether your specific carrier calls Sharjah directly or relays through
+      Jebel Ali. That answer must come from the carrier schedule.
+    </p>
+    <SourceList sources={[...chinaPortSources, ...portSources]} title="Sources — Sharjah corridor & China port context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Port Khalid parameters</h2>
+      <p>
+        Use this table as an orientation, not a capacity guarantee. Port-specific berth, depth,
+        operator and throughput figures were not published in the verified research snapshot, so those
+        rows stay deliberately empty of invented numbers and point you to the Sharjah port authority
+        for the current value.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'value', label: 'Value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="Port parameters — verify berth, depth, operator and per-port throughput with the Sharjah port authority before relying on these details."
+      />
+      <SourceList sources={portSources} title="Sources — Port Khalid parameters" />
+
+      <div class="note mt-2">
+        <strong>Capacity-sensitive cargo:</strong> if your consignment depends on a specific berth
+        length, draft or crane capability, request the current terminal schedule and restrictions
+        from the port authority or your forwarder before booking. The verified snapshot does not
+        supply those numbers.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to Sharjah rate benchmarks</h2>
+    <p>
+      Rate transparency is deliberately strict here. The verified snapshot gives a Dubai/Jebel Ali LCL
+      benchmark and an air benchmark, but it does not publish a China–UAE FCL dollar range or a
+      Sharjah-specific destination tariff. The FCL rows therefore say “request an all-in quote”
+      instead of inventing a number.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="Rate benchmarks marked LOW. FCL and Sharjah-specific fees were not published in the verified snapshot — request an itemised quote."
+    />
+    <SourceList sources={rateSources} title="Sources — China to Sharjah rate context" />
+
+    <div class="note mt-2">
+      <strong>Sharjah-specific vs corridor benchmark:</strong> AED 880–980 per CBM is a Dubai/Jebel
+      Ali LCL snapshot, not a Sharjah CFS quote. A Sharjah LCL quote can differ once destination CFS
+      handling, documentation and last-mile trucking are added. Ask for the all-in landed cost.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. China to Sharjah transit windows</h2>
+      <p>
+        The verified snapshot does not publish a direct China–Port Khalid transit figure, so the
+        honest answer is “request the carrier schedule”. Many Sharjah routings relay through Jebel
+        Ali, which means the effective Sharjah transit includes a relay or trucking leg on top of the
+        ocean time. Use the corridor benchmarks below as planning context only.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'origin', label: 'Origin / lane' },
+          { key: 'service', label: 'Service' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Direct China–Port Khalid transit was not published in the verified snapshot. Treat the corridor figures as planning context and verify the actual vessel/routing with the carrier."
+      />
+      <SourceList sources={transitSources} title="Sources — China to Sharjah transit context" />
+
+      <div class="note mt-2">
+        <strong>Direct vs relayed:</strong> a direct China–Sharjah call removes the Jebel Ali relay
+        leg but may be less frequent. A relayed routing uses Jebel Ali’s broad connectivity and then
+        moves cargo to Sharjah. Ask whether the quoted transit includes the relay and the final
+        northern-emirate leg.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. FCL vs LCL for Sharjah-bound freight</h2>
+    <p>
+      The FCL/LCL decision is a volume, handling and clearance decision, not just a price comparison.
+      LCL consolidates at origin and deconsolidates in the UAE, which suits small or mixed shipments;
+      FCL moves one sealed unit to one consignee. The table gives the planning heuristics.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclVsFclRows}
+      caption="Directional planning heuristics, not guaranteed quotes. Nominal container cube figures are planning approximations."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL vs LCL decision context" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>The shipment is small, mixed-SKU or market-testing stock.</li>
+          <li>You can tolerate origin consolidation and destination CFS handling.</li>
+          <li>You are building an e-commerce or slow-restock flow into the northern emirates.</li>
+          <li>Sharjah or Jebel Ali CFS deconsolidation is already in your forwarder’s plan.</li>
+        </ul>
+      </Card>
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>The volume approaches a 20GP, 40GP or 40HQ load.</li>
+          <li>The goods are dense, fragile, branded or high-value.</li>
+          <li>You want one sealed unit and one clearance entry.</li>
+          <li>You are trying to avoid the damage and mixing risk of shared CFS handling.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Sharjah vs Jebel Ali vs Khalifa routing decision</h2>
+      <p>
+        This is the decision that determines most of the destination cost and transit. Jebel Ali wins
+        Dubai, re-export and transhipment; Khalifa wins Abu Dhabi; Port Khalid wins Sharjah and the
+        northern emirates. The table gives the common scenarios, and the two cards summarise the rule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Routing heuristics, not guaranteed carrier schedules. Confirm the inland leg and cost before choosing the discharge port."
+      />
+      <SourceList sources={routingSources} title="Sources — Sharjah vs Jebel Ali vs Khalifa routing context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose Port Khalid when...">
+          <ul>
+            <li>The consignee is in Sharjah, Ajman, Umm Al Quwain, Ras Al Khaimah or Fujairah.</li>
+            <li>The cargo serves a Sharjah industrial or free zone such as Hamriyah Free Zone.</li>
+            <li>Shortening the final northern-emirate trucking leg matters more than sailing frequency.</li>
+            <li>The forwarder confirms a direct or relayed Sharjah call that works for your origin.</li>
+          </ul>
+        </Card>
+        <Card title="Choose Jebel Ali or Khalifa instead when...">
+          <ul>
+            <li>The consignee is in Dubai, Abu Dhabi or a Dubai/Abu Dhabi free zone.</li>
+            <li>You need the broadest line connectivity and sailing frequency.</li>
+            <li>The cargo is re-export, transhipment or distribution through JAFZA/KIZAD.</li>
+            <li>A Sharjah call is unavailable or the inland savings do not justify the routing.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Port and free-zone list for Sharjah freight</h2>
+    <p>
+      Sharjah operates as a commercial gateway with a container and general cargo function, CFS and
+      bonded areas, and a nearby industrial/free-zone hinterland. The verified snapshot does not
+      enumerate terminal-specific details, so this list is an operational orientation marked LOW and
+      should be confirmed against the port authority for the actual call.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'facility', label: 'Facility' },
+        { key: 'function', label: 'Function' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility orientation, not a terminal directory. Confirm operator, berth and inland-transfer details with the Sharjah port authority before booking."
+    />
+    <SourceList sources={facilitySources} title="Sources — Sharjah port & free-zone context" />
+
+    <div class="note mt-2">
+      <strong>Northern-emirate hinterland:</strong> Port Khalid’s value is proximity. If the final
+      consignee is in Sharjah or another northern emirate, estimate the full road leg before comparing
+      a Sharjah discharge against a Jebel Ali discharge. The snapshot does not quantify the trucking
+      rate, so request a destination quote.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Post-arrival cost composition and hidden charges</h2>
+      <p>
+        The headline ocean rate is not the landed cost. Sharjah-bound cargo still faces terminal,
+        clearance, document, trucking and potential storage charges after discharge. The verified
+        snapshot quantifies only the statutory 5% duty and 5% VAT; every operational line is LOW
+        confidence and should be itemised by the forwarder before booking.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only VAT (5%) and baseline duty (5% CIF) are verified. LCL/air benchmarks and unquantified fees are LOW confidence because the snapshot did not publish specific amounts."
+      />
+      <SourceList sources={costSources} title="Sources — Sharjah destination costs & customs" />
+
+      <h3 class="mt-3">The hidden-charge checklist</h3>
+      <p>
+        The most common surprise lines after discharge are <strong>THC and port charges</strong>,
+        <strong>customs clearance/brokerage</strong>, <strong>electronic processing charges</strong>,
+        <strong>inland trucking</strong>, and the two storage clocks described below. The verified
+        snapshot does not publish dollar or AED amounts for these, so the practical discipline is not
+        to accept a quote without them — request an itemised destination fee schedule from the
+        forwarder and the nominated CFS.
+      </p>
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond free time after discharge. <strong>Detention</strong> is charged by the ocean
+        carrier when the container stays outside the port beyond free time. Free-time allowances and
+        per-day rates differ by line and terminal and were not published in the verified snapshot, so
+        always request the fee schedule before booking.
+      </p>
+      <p>
+        The practical way to avoid both is to finish clearance before the vessel arrives: file the
+        pre-arrival declaration through the UAE customs system, keep the HS code and documents ready,
+        and book trucking before the container is discharged.
+      </p>
+
+      <h3 class="mt-3">Free-zone vs mainland treatment</h3>
+      <p>
+        If the consignee holds goods inside a Sharjah free zone, duty and VAT can be suspended while
+        the cargo remains in the zone; when the goods later exit to the mainland, the normal duty and
+        VAT treatment generally applies. Confirm the specific zone rules and the importer-of-record
+        structure with the zone authority and your broker, because the snapshot does not publish
+        zone-by-zone conditions.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Compliance at Sharjah: VAT, duty, HS codes and the rules that do not apply</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on the
+      CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+      under the GCC Common External Tariff, with higher duty or excise treatment possible on specific
+      goods such as tobacco, alcohol and motor vehicles.
+    </p>
+
+    <h3>De minimis and declaration flow</h3>
+    <p>
+      The verified snapshot records a UAE de minimis of Dhs 1,000 duty/tax free for goods, with gifts
+      up to Dhs 3,000 exempt. For commercial ocean freight, do not assume a courier de minimis applies;
+      classify the goods with the correct <strong>HS code</strong>, establish the CIF value, and file
+      the declaration through the UAE customs system before or upon arrival.
+    </p>
+    <ol>
+      <li>Classify the goods with the correct HS code before quoting or booking.</li>
+      <li>Confirm importer eligibility, permits and any restricted-commodity approval.</li>
+      <li>Prepare the commercial invoice, packing list, bill of lading and certificate of origin so every line agrees.</li>
+      <li>File the pre-arrival declaration through the UAE customs system used for the Sharjah port call.</li>
+      <li>Pay the assessed duty and VAT, and complete any inspection, to obtain release.</li>
+    </ol>
+
+    <h3>Labelling</h3>
+    <p>
+      UAE imports can require product labelling, Arabic-language information or product-specific
+      conformity evidence depending on the goods and regulator. The verified snapshot does not publish
+      a Sharjah-specific labelling checklist, so treat labelling as a per-product compliance item and
+      verify the current requirements with UAE Customs, the destination authority or your buyer before
+      shipment.
+    </p>
+
+    <h3>Rules that do not apply to the UAE</h3>
+    <p>
+      <strong>ISF</strong> is a United States import filing requirement and does not apply to UAE
+      imports. <strong>SABER/SASO</strong> are Saudi Arabian conformity systems and do not apply to
+      UAE imports. Do not let US or Saudi requirements leak into a Sharjah-bound shipment; confirm the
+      UAE-specific position instead.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — UAE customs, VAT & compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>11. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified
+      statutory facts are re-checked against the FTA and UAE customs sources; corridor benchmarks are
+      re-checked against the cargofromchina and DocShipper guides. Port-specific parameters, operator
+      and terminal details that remain unpublished or unverifiable stay at LOW confidence with a
+      verify-with-the-port-authority note instead of being filled with estimates.
+    </p>
+    <p>
+      If a berth, depth, operator, throughput or fee amount becomes available from the Sharjah port
+      authority or customs authority, the table is updated, the confidence badge is raised, and the
+      modified date in the page metadata is changed. Subscribe to your forwarder’s schedule and the
+      UAE customs notices for the shipment-level values that matter at booking time.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Sharjah Port quote"
+      text="Tell us your origin, commodity, container or CBM and final northern-emirate destination, and we will connect you with providers who can quote ocean freight, duty, VAT and Sharjah destination fees together."
+    />
+  </section>
+</BaseLayout>

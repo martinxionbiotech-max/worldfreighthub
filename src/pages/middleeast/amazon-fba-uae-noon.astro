@@ -1,0 +1,852 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/amazon-fba-uae-noon/`;
+const jebelAli = gccPorts.find((item) => item.slug === 'jebel-ali');
+const portKhalid = gccPorts.find((item) => item.slug === 'port-khalid');
+const jebelAliUnlocode = jebelAli?.unlocode ?? 'AEJEA';
+const portKhalidUnlocode = portKhalid?.unlocode ?? 'AESHJ';
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const anshida: Source = {
+  id: 'anshida-gcc-platform-warehouse',
+  name: 'Guangzhou Anshida — GCC platform warehouse delivery note',
+  url: 'https://www.ontaskksa.com/',
+  type: 'industry',
+};
+
+const uaePortSources = sourcesByIds(['dubai-customs', 'dp-world', 'abu-dhabi-ports']);
+const rateSources: Source[] = [cargofromchinaUae, wfhRouteData];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const decisionSources: Source[] = [...uaePortSources, cargofromchinaUae, docshipper];
+const platformSources: Source[] = [cargofromchinaUae, docshipper, anshida];
+const costSources: Source[] = [
+  ...sourcesByIds(['dubai-customs']),
+  fta,
+  numeral,
+  cargofromchinaUae,
+  docshipper,
+];
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+
+const rateRows = [
+  {
+    service: 'FCL ocean — China to UAE fulfilment-centre inbound',
+    benchmark: 'Not published in verified snapshot — request an all-in carrier quote',
+    basis: 'No verified China–UAE FCL dollar range appeared in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL ocean — Dubai / Jebel Ali corridor benchmark',
+    benchmark: 'AED 880–980 per CBM',
+    basis: 'cargofromchina China→UAE LCL snapshot (Dubai)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — corridor benchmark',
+    benchmark: 'AED 20–23.5 per kg',
+    basis: 'cargofromchina China→UAE air snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Amazon FBA storage and referral fees',
+    benchmark: 'Not published in verified snapshot — verify in Amazon Seller Central UAE',
+    basis: 'Platform fee schedules were not captured in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'noon fulfilment fees',
+    benchmark: 'Not published in verified snapshot — verify in the noon seller portal',
+    basis: 'Platform fee schedules were not captured in the research snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'China → UAE corridor',
+    method: 'Sea (fast direct-sailing guide)',
+    transit: '14–18 days',
+    basis: 'cargofromchina China→UAE sea snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Shanghai → Jebel Ali',
+    method: 'Sea port-to-port',
+    transit: '~21 days typical (15–30 day range)',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'China → UAE corridor',
+    method: 'Air express',
+    transit: '2–4 days',
+    basis: 'cargofromchina China→UAE express snapshot',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'China → UAE corridor',
+    method: 'DDP air door-to-door',
+    transit: '3–6 days',
+    basis: 'cargofromchina DDP air note',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Port/airport arrival → Amazon or noon FC intake',
+    method: 'Final-mile booking plus platform receiving',
+    transit: 'Not published in verified snapshot — confirm appointment and receiving window',
+    basis: 'FC intake lead time was not captured in the research snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const lclVsFclRows = [
+  {
+    factor: 'Best-fit volume',
+    lcl: 'Market-testing batches, mixed SKUs and slow restocking',
+    fcl: 'Replenishment runs, promotional stock or a 20GP/40GP/40HQ-scale order',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Pricing basis',
+    lcl: 'Per chargeable CBM with a minimum charge and CFS handling',
+    fcl: 'Per container, regardless of how full the unit is',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'FC inbound timing',
+    lcl: 'Adds origin consolidation and UAE deconsolidation before FC delivery',
+    fcl: 'Usually a faster, simpler unit flow before FC delivery',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Damage and mixing risk',
+    lcl: 'Higher: cargo is handled at two CFS points and shares the box',
+    fcl: 'Lower: one sealed unit moves as one consignment',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Platform receiving risk',
+    lcl: 'Mixed-SKU cartons can be harder to match to FC appointments',
+    fcl: 'Cleaner pallet/carton plan maps more directly to an FC delivery',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best for FBA/noon sellers',
+    lcl: 'New listings, low velocity, low storage tolerance',
+    fcl: 'High velocity, large parcels, or long-tail replenishment',
+    confidence: 'LOW',
+  },
+];
+
+const platformRows = [
+  {
+    factor: 'Fulfilment model',
+    amazonFba: 'Sellers send inventory to Amazon UAE fulfilment centres; Amazon stores, picks, packs and delivers eligible orders',
+    noon: 'Sellers send inventory to noon fulfilment centres; noon stores, picks, packs and delivers eligible orders',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Marketplace',
+    amazonFba: 'amazon.ae',
+    noon: 'noon.com',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Inbound requirements',
+    amazonFba: 'Amazon carton labels, shipment plan and FC appointment rules — verify in Seller Central',
+    noon: 'noon inbound requirements, barcode and carton rules — verify in the noon seller portal',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Prep and labelling',
+    amazonFba: 'Platform-specific prep, barcode and packaging requirements — verify current spec',
+    noon: 'Platform-specific prep, barcode and packaging requirements — verify current spec',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Fee structure',
+    amazonFba: 'Storage, fulfilment/referral and optional service fees — amounts not published in snapshot',
+    noon: 'Fulfilment/referral and optional service fees — amounts not published in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Inventory lead time',
+    amazonFba: 'Ocean transit + UAE clearance + FC receiving; the FC intake portion is not published',
+    noon: 'Ocean/air transit + UAE clearance + FC receiving; the FC intake portion is not published',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Tax and importer setup',
+    amazonFba: 'Confirm importer of record, TRN and VAT handling before shipment',
+    noon: 'Confirm importer of record, TRN and VAT handling before shipment',
+    confidence: 'LOW',
+  },
+];
+
+const portAndFcRows = [
+  {
+    destination: 'Jebel Ali Port (AEJEA)',
+    role: 'Main UAE container gateway for China ocean freight and Amazon/noon inbound stock',
+    note: 'Strongest line connectivity and UAE distribution context',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'Khalifa Port Abu Dhabi (AEKHL)',
+    role: 'Abu Dhabi gateway for Abu Dhabi fulfilment or KIZAD logistics',
+    note: 'Use when the FC or 3PL is in Abu Dhabi',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Port Khalid / Sharjah (AESHJ)',
+    role: 'Northern-emirate gateway for Sharjah-based fulfilment or 3PL',
+    note: 'Use when the FC or warehouse is in the northern emirates',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Amazon FBA UAE fulfilment centres',
+    role: 'Amazon-operated network for amazon.ae FBA inventory',
+    note: 'Exact addresses and receiving appointments are not in the verified snapshot — verify in Seller Central',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'noon fulfilment centres',
+    role: 'noon-operated network for noon.com seller inventory',
+    note: 'Exact addresses and receiving appointments are not in the verified snapshot — verify in the noon seller portal',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'Third-party prep and forwarding warehouses',
+    role: 'Pre-shipment QC, labelling, palletisation and FC-delivery consolidation',
+    note: 'Guangzhou Anshida is a directional example of a China forwarder advertising Amazon and Noon platform warehouse delivery across the GCC',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Factory pickup and origin trucking',
+    who: 'China forwarder / trucking provider',
+    magnitude: 'Not published in verified snapshot — request origin quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'China export clearance and documentation',
+    who: 'China forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Ocean freight (LCL corridor benchmark)',
+    who: 'Ocean carrier / forwarder',
+    magnitude: 'AED 880–980 per CBM (Dubai / Jebel Ali context)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight (corridor benchmark)',
+    who: 'Air carrier / forwarder',
+    magnitude: 'AED 20–23.5 per kg',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination THC and port charges',
+    who: 'UAE terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'UAE customs broker / agent',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Electronic clearance processing charge',
+    who: 'UAE Customs / service provider',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time varies by terminal and line',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Per-day charge; free time varies by carrier',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to the FC',
+    who: 'Trucking provider',
+    magnitude: 'Not published in verified snapshot — request destination quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'UAE Federal Customs Authority',
+    magnitude: '5% of CIF value (GCC Common External Tariff)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'UAE Federal Tax Authority',
+    magnitude: '5% on CIF value + customs duty',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Amazon FBA storage and referral fees',
+    who: 'Amazon UAE',
+    magnitude: 'Not published in verified snapshot — verify in Seller Central',
+    confidence: 'LOW',
+  },
+  {
+    item: 'noon fulfilment fees',
+    who: 'noon',
+    magnitude: 'Not published in verified snapshot — verify in the noon seller portal',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Prep, labelling and palletisation',
+    who: 'China prep centre or 3PL',
+    magnitude: 'Not published in verified snapshot — request prep quote',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is Amazon FBA for amazon.ae?',
+    a: 'Amazon FBA is Amazon’s fulfilment service for sellers on amazon.ae: the seller sends inventory to an Amazon UAE fulfilment centre and Amazon stores, picks, packs and delivers eligible orders. The verified snapshot does not publish FBA fee schedules or warehouse addresses, so confirm current terms, fees and inbound rules in Amazon Seller Central UAE.',
+  },
+  {
+    q: 'What is noon fulfilment?',
+    a: 'noon fulfilment is the equivalent service for noon.com sellers: inventory is sent to a noon fulfilment centre and noon stores, picks, packs and delivers eligible orders. The verified snapshot does not publish noon fee schedules or fulfilment-centre addresses, so confirm current terms in the noon seller portal.',
+  },
+  {
+    q: 'Which UAE port is best for Amazon FBA or noon inventory from China?',
+    a: 'Jebel Ali is usually the default because it has the strongest China–UAE line connectivity and the broadest UAE distribution context. Khalifa Port Abu Dhabi can work for Abu Dhabi fulfilment, and Port Khalid / Sharjah can work for northern-emirate fulfilment. Match the discharge port to the final FC or 3PL location.',
+  },
+  {
+    q: 'How long does it take to ship from China to a UAE fulfilment centre?',
+    a: 'The China→UAE sea corridor benchmark is 14–18 days, and the Jebel Ali route-data benchmark is a typical 21 days with a 15–30 day range. Air express is 2–4 days. The FC receiving and intake time after port/airport arrival was not published in the verified snapshot, so add a confirmed receiving window from the platform before committing a live-listing date.',
+  },
+  {
+    q: 'What documents are needed for Amazon FBA or noon inbound freight from China?',
+    a: 'The standard UAE import set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS code. On top of that, the platform will require its own shipment plan, carton labels and possibly barcode or appointment references. Prepare both the customs set and the platform set before shipping.',
+  },
+  {
+    q: 'How are UAE import duty and VAT handled on Amazon FBA or noon shipments?',
+    a: 'UAE import duty is a baseline 5% of CIF value under the GCC Common External Tariff, and UAE import VAT is 5%, calculated on CIF value plus customs duty. Confirm who is the importer of record and how the duty and VAT are paid or accounted for, because that affects the seller’s VAT recovery position.',
+  },
+  {
+    q: 'Do Amazon FBA or noon shipments need ISF?',
+    a: 'No. ISF is a United States import filing requirement and does not apply to UAE imports. Do not apply US customs requirements to an amazon.ae or noon.com inbound shipment.',
+  },
+  {
+    q: 'Do Amazon FBA or noon shipments need SABER or SASO certification?',
+    a: 'No. SABER and SASO are Saudi Arabian conformity systems. They do not apply to UAE imports. Confirm the UAE-specific product, labelling and permit requirements for the relevant goods instead.',
+  },
+  {
+    q: 'What prep and labelling do Amazon FBA and noon require?',
+    a: 'Each platform has its own carton, barcode, prep and packaging specifications. The verified snapshot does not publish those specifications, so verify the current FBA and noon inbound checklists before packing. UAE product-labelling requirements may also apply separately depending on the goods and regulator.',
+  },
+  {
+    q: 'How do I avoid demurrage and detention on FBA/noon inventory?',
+    a: 'Demurrage is charged by the terminal when the container stays inside the port beyond free time after discharge; detention is charged by the carrier when the container stays outside the port beyond free time. Finish clearance before arrival, keep documents ready and book trucking before discharge to avoid both.',
+  },
+  {
+    q: 'Should I use FCL or LCL for Amazon FBA or noon inventory?',
+    a: 'LCL suits market-testing batches, mixed SKUs and slow restocking because you only pay for chargeable CBM. FCL suits replenishment runs or a 20GP/40GP/40HQ-scale order because it is usually faster, simpler and less exposed to CFS damage or mixing risk. Compare the full landed cost, not the ocean rate alone.',
+  },
+  {
+    q: 'Are Amazon FBA storage and referral fees included in this page?',
+    a: 'No. Amazon FBA storage, fulfilment and referral fees were not published in the verified research snapshot. Confirm the current fee schedule in Amazon Seller Central UAE before calculating a per-unit margin.',
+  },
+  {
+    q: 'Are noon fulfilment fees included in this page?',
+    a: 'No. noon fulfilment fees were not published in the verified research snapshot. Confirm the current fee schedule in the noon seller portal before calculating a per-unit margin.',
+  },
+  {
+    q: 'Do China forwarders actually deliver to Amazon and noon warehouse networks in the GCC?',
+    a: 'The verified snapshot records a directional fact that Guangzhou Anshida advertises Amazon and Noon platform warehouse delivery across the GCC. Treat that as a market example, not a verified service guarantee, and confirm the forwarder’s current FC-delivery capability, paperwork and insurance before booking.',
+  },
+  {
+    q: 'What is the hidden cost stack from a China factory to a UAE fulfilment centre?',
+    a: 'It includes factory pickup and origin trucking, China export clearance, ocean or air freight, destination THC and port charges, UAE customs brokerage, electronic processing, inland trucking to the FC, duty and VAT, demurrage/detention risk, plus Amazon or noon storage/referral fees and prep/labelling. Most operational amounts were not published in the verified snapshot, so request an itemised all-in quote.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Amazon FBA UAE & noon — Shipping from China to UAE Fulfilment Centres (August 2026)',
+      description:
+        'Guide to shipping from China to Amazon UAE (amazon.ae) FBA warehouses and noon.com fulfilment centres: FBA vs noon, transit and inventory lead times, FCL/LCL choice, UAE ports, hidden destination costs and 5% duty/VAT compliance.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Amazon FBA UAE & noon — Shipping from China to UAE Fulfilment Centres"
+  description="Guide to shipping from China to Amazon UAE (amazon.ae) FBA warehouses and noon.com fulfilment centres: FBA vs noon, transit and inventory lead times, FCL/LCL choice, UAE ports, hidden destination costs and 5% duty/VAT compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Amazon FBA UAE & noon' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Amazon FBA UAE &amp; noon: shipping from China to UAE fulfilment centres</h1>
+      <p class="lead">
+        A practical guide for sellers moving inventory from China to Amazon UAE (amazon.ae) FBA
+        warehouses and noon.com fulfilment centres. This page covers the FBA-vs-noon decision, China
+        transit and inventory lead times, FCL vs LCL choice, UAE port routing, the full hidden-cost
+        stack from factory to FC, and the 5% duty / 5% VAT compliance position.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified statutory facts from indicative corridor benchmarks.
+        Platform fees, warehouse addresses and prep specifications are marked LOW because they were
+        not published in the verified snapshot — confirm them in Seller Central or the noon portal.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UAE import VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China sea transit</span>
+          <span class="fact-value">14–18 days corridor <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air express</span>
+          <span class="fact-value">2–4 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL benchmark</span>
+          <span class="fact-value">AED 880–980/CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">FBA/noon fees</span>
+          <span class="fact-value">Verify portal <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why China sellers care about Amazon FBA UAE and noon</h2>
+    <p>
+      The UAE is the Gulf’s most developed e-commerce bridge. A China seller can ship to a UAE
+      marketplace and let the platform handle storage, picking, packing and delivery through its
+      fulfilment network — Amazon FBA for amazon.ae sellers and noon fulfilment for noon.com sellers.
+      The supply-chain question is therefore not only “what does ocean freight cost?” but “what is the
+      full factory-to-FC cost, and which platform flow should I choose?”
+    </p>
+    <p>
+      The verified snapshot supports the corridor facts: China→UAE sea transit is 14–18 days, air
+      express is 2–4 days, LCL is AED 880–980 per CBM on a Dubai/Jebel Ali basis, and air is AED
+      20–23.5 per kg. It also records the statutory import stack — 5% baseline duty on CIF and 5% VAT
+      on CIF plus duty. What the snapshot does <em>not</em> publish are Amazon FBA fee schedules,
+      noon fee schedules, fulfilment-centre addresses, prep specifications and per-day demurrage or
+      detention amounts. Those are marked LOW throughout this page.
+    </p>
+    <p>
+      A directional market fact from the research notes is that China forwarders such as Guangzhou
+      Anshida advertise Amazon and Noon platform warehouse delivery across the GCC. That tells you the
+      service pattern exists in the market; it does not replace due diligence on the specific
+      forwarder’s FC-delivery capability, paperwork, insurance or current pricing.
+    </p>
+    <SourceList sources={[...rateSources, anshida]} title="Sources — China to UAE e-commerce corridor context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Amazon FBA vs noon fulfilment: the platform decision</h2>
+      <p>
+        Amazon FBA and noon fulfilment solve the same operational problem — a seller sends stock to a
+        platform fulfilment centre and the platform handles the customer-facing fulfilment — but they
+        are separate marketplaces with separate inbound rules, fee schedules and delivery networks.
+        The table gives the directional comparison; the exact fees and requirements are LOW confidence
+        because they were not in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'amazonFba', label: 'Amazon FBA UAE' },
+          { key: 'noon', label: 'noon fulfilment' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={platformRows}
+        caption="Directional platform comparison. Verify current fees, inbound rules and prep specifications in Seller Central and the noon seller portal before relying on this table."
+      />
+      <SourceList sources={platformSources} title="Sources — Amazon FBA vs noon context" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Plan for Amazon FBA when...">
+          <ul>
+            <li>Your marketplace strategy is built around amazon.ae.</li>
+            <li>You can follow the Seller Central shipment plan, carton labels and FC appointment flow.</li>
+            <li>You want Amazon to store, pick, pack and deliver eligible orders.</li>
+            <li>You are prepared to verify the current FBA storage and referral fees.</li>
+          </ul>
+        </Card>
+        <Card title="Plan for noon fulfilment when...">
+          <ul>
+            <li>Your marketplace strategy is built around noon.com.</li>
+            <li>You can follow the noon inbound, barcode and carton requirements.</li>
+            <li>You want noon to store, pick, pack and deliver eligible orders.</li>
+            <li>You are prepared to verify the current noon fulfilment fees.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. China to UAE fulfilment rate benchmarks</h2>
+    <p>
+      The verified snapshot gives a Dubai/Jebel Ali LCL benchmark and an air benchmark, but it does not
+      publish a China–UAE FCL dollar range, Amazon FBA fee schedule or noon fee schedule. The rate
+      table therefore separates verified corridor benchmarks from platform fees that must be checked
+      in the seller portals.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="Rate benchmarks marked LOW. FCL and platform fee schedules were not published in the verified snapshot — request an itemised quote and verify portal fees."
+    />
+    <SourceList sources={rateSources} title="Sources — China to UAE fulfilment rate context" />
+
+    <div class="note mt-2">
+      <strong>Freight vs fulfilment:</strong> the AED 880–980/CBM LCL and AED 20–23.5/kg air figures
+      are freight benchmarks. Amazon FBA and noon add storage, fulfilment and referral fees that are
+      not included in those numbers and must be verified separately.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Transit times and inventory lead times</h2>
+      <p>
+        Ocean and air transit get you to a UAE port or airport; they do not get your units checked in
+        at the FC. The inventory lead time is the sum of origin prep, China export, international
+        transit, UAE clearance, last-mile trucking and platform receiving. The verified snapshot covers
+        the international transit portion; the FC receiving portion is not published.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'method', label: 'Method' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Transit windows only — verify carrier schedules and platform receiving appointments before relying on these figures."
+      />
+      <SourceList sources={transitSources} title="Sources — China to UAE fulfilment transit context" />
+
+      <div class="note mt-2">
+        <strong>Buffer the receiving window:</strong> add the platform’s appointment and receiving
+        window to the ocean or air transit before setting a live-listing date. A 14–18 day sea window
+        can still stretch if clearance or FC intake is delayed.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. FCL vs LCL for Amazon FBA and noon inventory</h2>
+    <p>
+      The FCL/LCL decision is a volume, timing and handling decision. LCL suits new listings and mixed
+      SKUs; FCL suits replenishment and high-velocity stock. The table gives the planning heuristics
+      for platform inventory specifically.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={lclVsFclRows}
+      caption="Directional planning heuristics, not guaranteed quotes. Match the container choice to the FC delivery plan and platform receiving rules."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL vs LCL decision context" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>You are testing new SKUs or selling at low velocity.</li>
+          <li>The shipment is below a full-container load.</li>
+          <li>You can tolerate origin consolidation and destination CFS handling.</li>
+          <li>Your forwarder can coordinate CFS deconsolidation to the FC appointment.</li>
+        </ul>
+      </Card>
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>The order is a 20GP, 40GP or 40HQ-scale replenishment.</li>
+          <li>The goods are dense, fragile or high-value.</li>
+          <li>You want a sealed unit and a cleaner FC-delivery plan.</li>
+          <li>You are trying to avoid shared-CFS damage and mixing risk.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. UAE ports and fulfilment-centre destinations</h2>
+      <p>
+        The UAE ocean inbound usually lands at Jebel Ali, Khalifa or Port Khalid, then moves by truck
+        to an Amazon or noon FC or a third-party prep warehouse. The verified snapshot does not publish
+        FC addresses, so the table identifies roles rather than street-level destinations.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'destination', label: 'Destination' },
+          { key: 'role', label: 'Role' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portAndFcRows}
+        caption="Destination roles, not a street-level FC directory. Verify FC addresses and receiving appointments in Seller Central or the noon seller portal."
+      />
+      <SourceList sources={decisionSources} title="Sources — UAE port & fulfilment-centre routing context" />
+
+      <div class="note mt-2">
+        <strong>Port choice follows the FC:</strong> before booking ocean freight, confirm which
+        fulfilment centre or prep warehouse will receive the inventory. Jebel Ali is the default
+        gateway, but Khalifa or Port Khalid can shorten the final trucking leg for Abu Dhabi or
+        northern-emirate fulfilment.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. From China factory to UAE FC: the full hidden-cost stack</h2>
+    <p>
+      The biggest margin error in Amazon FBA and noon planning is comparing only the headline ocean or
+      air rate. The real cost starts at the China factory and ends when the platform has received the
+      inventory. The verified snapshot quantifies only the statutory 5% duty and 5% VAT; every
+      operational line is LOW confidence and should be itemised by the forwarder and platform.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'magnitude', label: 'Indicative magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only VAT (5%) and baseline duty (5% CIF) are verified. Freight benchmarks and unquantified operational/platform fees are LOW confidence — request an itemised all-in quote."
+    />
+    <SourceList sources={costSources} title="Sources — China factory to UAE FC cost stack" />
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
+        the port beyond free time after discharge. <strong>Detention</strong> is charged by the ocean
+        carrier when the container stays outside the port beyond free time. Free-time allowances and
+        per-day rates differ by line and terminal and were not published in the verified snapshot, so
+        always request the fee schedule before booking.
+      </p>
+      <p>
+        For FBA/noon stock the risk is amplified by appointment timing. If the FC receiving window is
+        not ready when the container arrives, the box can sit and start one of the two clocks. Finish
+        clearance before arrival, confirm the FC appointment in advance and book trucking before
+        discharge to keep demurrage and detention off the final invoice.
+      </p>
+
+      <h3 class="mt-3">Prep, labelling and platform fees</h3>
+      <p>
+        Amazon FBA and noon both have carton, barcode, prep and packaging rules, and both charge
+        storage and fulfilment/referral fees. None of those amounts or specifications were published in
+        the verified snapshot. Build a margin model from the current Seller Central and noon fee
+        schedules, and confirm whether your China forwarder or a prep centre will handle labelling
+        before the goods leave China.
+      </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance for Amazon FBA and noon imports from China</h2>
+
+      <h3>Tax and duty</h3>
+      <p>
+        UAE import VAT is <strong>5%</strong>, effective since 1 January 2018, and is calculated on the
+        CIF value <em>plus</em> customs duty. The baseline import duty is <strong>5% of CIF</strong>
+        under the GCC Common External Tariff, with higher duty or excise treatment possible on specific
+        goods such as tobacco, alcohol and motor vehicles.
+      </p>
+
+      <h3>HS codes, documents and labelling</h3>
+      <p>
+        Classify every SKU with the correct <strong>HS code</strong> before quoting, because both duty
+        and permit requirements depend on it. Prepare the commercial invoice, bill of lading, packing
+        list and certificate of origin so every line agrees. UAE product-labelling requirements can
+        apply depending on the goods and regulator; the verified snapshot does not publish an
+        FBA/noon-specific labelling checklist, so confirm both the platform inbound spec and the UAE
+        regulatory requirements before packing.
+      </p>
+
+      <h3>Importer of record and VAT position</h3>
+      <p>
+        Confirm who is the importer of record for the FBA or noon shipment. That decision changes how
+        the duty and VAT are paid and whether a VAT-registered seller can account for the import VAT
+        on its return where eligible. The verified snapshot does not publish platform-specific
+        importer-of-record rules, so confirm the structure with your broker and tax adviser.
+      </p>
+
+      <h3>Rules that do not apply to the UAE</h3>
+      <p>
+        <strong>ISF</strong> is a United States import filing requirement and does not apply to UAE
+        imports. <strong>SABER/SASO</strong> are Saudi Arabian conformity systems and do not apply to
+        UAE imports. Do not let US or Saudi requirements leak into an amazon.ae or noon.com inbound
+        shipment; confirm the UAE-specific position instead.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — UAE customs, VAT & compliance" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. Data freshness &amp; monthly update cadence</h2>
+      <p>
+        This page is marked <span class="badge badge--amber">August 2026 updated</span>. Verified
+        statutory facts are re-checked against the FTA and UAE customs sources; corridor benchmarks are
+        re-checked against the cargofromchina and DocShipper guides. Platform fee schedules, FC
+        addresses and prep specifications remain LOW confidence and are re-checked through Seller
+        Central or the noon seller portal whenever a source snapshot becomes available.
+      </p>
+      <p>
+        If an Amazon FBA or noon fee schedule, FC address or prep checklist becomes verifiable, the
+        table is updated, the confidence badge is raised, and the modified date in the page metadata is
+        changed. Subscribe to your forwarder’s schedule and the platform seller notices for the
+        shipment-level values that matter at booking time.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to UAE fulfilment-centre quote"
+      text="Tell us your origin, SKU volume, container or CBM and target Amazon or noon fulfilment centre, and we will connect you with providers who can quote freight, duty, VAT and final FC delivery together."
+    />
+  </section>
+</BaseLayout>
