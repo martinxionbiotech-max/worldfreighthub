@@ -1,13 +1,13 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 09:40 (Asia/Shanghai)
+> 最后更新：2026-09-02 03:30 (Asia/Shanghai)
 
 ## 核心信息
 
 | 项 | 值 |
 |---|---|
 | 域名 | `worldfreighthub.net`（主站） |
-| 子站 | `middleeast.worldfreighthub.net`（第一阶段，China → GCC） |
+| 子站 | `middleeast.worldfreighthub.net`（第一阶段，China → GCC）· `europe.worldfreighthub.net`（第二阶段，China → Europe） |
 | GitHub | `martinxionbiotech-max/worldfreighthub`（public, main） |
 | 远程项目路径 | `/home/developer/worldfreighthub/`（OpenCode 服务器 43.130.37.37） |
 | 本地归档 | `/home/ubuntu/.openclaw/workspace/worldfreighthub/` |
@@ -56,6 +56,7 @@
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
 - [x] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅ 131 页；工具 3 ✅；Directory 16 家真实企业 ✅；**Ad Slots house ad 接入 ✅ + Quote 表单接 FormSubmit ✅**）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档（**SEO/AIO 终审 ✅**：llms.txt 全面更新 + robots.txt 放行 AI 爬虫 + 69 页 meta 齐全；Cloudflare 部署 + 部署文档未完成）
+- [x] **Phase 2 — Europe 走廊（2026-09-02 收尾 ✅）**：`src/data/europe-*`（8 国 + 8 港 + 56 路线）+ `src/pages/europe/`（hub + 3 index + 56 路线详情 + 5 深度指南 rail/sea-vs-rail/netherlands-vs-germany/direct-vs-transshipment/ioss-vs-vat-deferral）。**329 页 zero error**，commit `dc534c1` 已推 origin/main。数据诚信口径延续（VAT 税率/EORI/EU 统一关税/Red Sea Cape 绕行均经核实，费率标 MEDIUM、时效标 LOW）。
 
 ## 关键交付物（已入库 docs/）
 
@@ -84,7 +85,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. **STEP 18 Directory ✅**：框架已建 + 已填充 **16 家真实企业**（全部 unverified，14 家有官网 URL 背书）；后续可继续扩充至 100–200 家并逐步 verified 分层
-2. ~~STEP 19–20：Ad Slots 填充 + Quote Framework~~ ✅（Quote 表单接 FormSubmit + AdSlots house ad 接入首页/middleeast）
-3. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
-4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档；解决 Saudi de minimis 冲突（ZATCA 一手确认）
+1. **回填 GCC 最高价值 Gap 长页**：Demurrage/Detention + Hidden Charges（竞品 0 覆盖，通向 Freight Cost Calculator）
+2. **Europe 走廊第二波**：每国 Route Pillar 长页（Germany/UK/NL 优先）、铁路转运、FCL vs LCL Europe 拆解、海运/铁路成本对比数据页
+3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
+4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified

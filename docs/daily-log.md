@@ -316,3 +316,23 @@
 - **QA**：`npm run build` 234 页零 error；12 verified + 91 unverified。
 - **Git Commit**：`d890520`。
 - **Next**：要进一步核剩余 91 家，需接 Qichacha/天眼查/国家企业信用信息公示系统 API（或人工逐家查统一社会信用代码）；Web 抓取已到能力边界。
+
+
+## 2026-09-02（Europe 走廊收尾批次 — 提交/推送/文档）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 内容路线图（Day 8–50：Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）已 100% 完成，无剩余 GCC 页面可写。远程工作区存在一批**未提交的 Europe 走廊扩展**（上一轮构建但未 commit/push/文档化）。
+- **本轮动作**（非新写页，而是收尾一批悬空工作）：
+  1. 核对 `content-roadmap.md` 顺序 → Day 8–50 全部已写（ls `src/pages/middleeast` 逐页比对，Saudi 15 页 / UAE 12 页+3 工具 / 四国各 4 页全齐）。
+  2. 发现悬空 Europe 批次（`git status` 未提交：Header/lookup/sources 改动 + 3 个 europe 数据文件 + `src/pages/europe/` 整目录）。
+  3. 质量自检：`npm run build` **329 页零 error**；抽查数据——VAT 税率全对（DE 19/UK 20/FR 20/NL 21/ES 21/IT 22/PL 23/BE 21）、EU 统一关税 + EORI + 2021 起取消 €22 免税额、Red Sea/Cape 绕行 +10–14 天、Rotterdam ≈13.4m TEU(2023)/Hamburg ≈7.7m TEU(2023) 均正确；费率/时效标注 MEDIUM/LOW confidence，无杜撰。
+- **Content（本次提交 dc534c1 收录）**：
+  - `src/data/europe-countries.ts`（8 国，含 VAT/duty/EORI/de-minimis/compliance/clearance/insight/FAQ）
+  - `src/data/europe-ports.ts`（8 港，含 throughput/draft/terminals/hinterland/FAQ）
+  - `src/data/europe-routes.ts`（7 中国起运港 × 8 欧洲目的港 = **56 条路线**，程序化生成，transit confidence=LOW、费率 MEDIUM）
+  - `src/pages/europe/`：hub + countries/ports/routes 三个 index + 56 路线详情 + **5 篇深度指南**（rail / sea-vs-rail / netherlands-vs-germany / direct-vs-transshipment / ioss-vs-vat-deferral）
+  - `lookup.ts` 接入 europe ports/countries；`sources.ts` 新增 EU/UK 海关 + 5 港口管理局来源；Header 加 Europe 导航
+- **Engineering**：复用 BaseLayout/Breadcrumb/DataTable/FaqBlock/ConfidenceBadge/SourceList/Cta 组件，无新组件；`getStaticPaths` 数据驱动详情页。
+- **QA**：329 页 zero error；数据诚信口径延续（confidence 徽章 + 来源列表 + "indicative not guarantees" 声明）。
+- **Git Commit**：`dc534c1 feat(europe): add China-to-Europe corridor (8 countries, 8 ports, 56 routes, 5 guides)`（已推 origin/main）
+- **Next**：① Europe 走廊第二波（每国 Route Pillar 长页 / 铁路转运 / FCL-LCL Europe 拆解）；② Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；③ 回填 GCC 的 Demurrage/Detention + Hidden Charges 长页（仍是最高价值 Gap）。
