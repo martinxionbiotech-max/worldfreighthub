@@ -5,6 +5,8 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import { gccCountries } from '../../data/gcc-countries';
 import { routes } from '../../data/routes';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
@@ -37,12 +39,22 @@ const schema = [
       address: { addressCountry: country.iso2 },
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: country.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
-  title={`Shipping to ${country.name} from China`}
-  description={`Freight information for ${country.name}: VAT, capital ${country.capital}, currency ${country.currency}, and entry ports.`}
+  title={`Shipping to ${country.name} from China — Duty, VAT & Clearance`}
+  description={`Freight and customs information for ${country.name}: ${country.vatRate === null ? 'no VAT' : `${country.vatRate}% VAT`}, import duty, de minimis, compliance and entry ports.`}
   canonical={`${SITE_URL}/countries/${country.slug}/`}
   schema={schema}
 >
@@ -78,10 +90,57 @@ const schema = [
         <span class="fact-value">{country.vatRate === null ? 'None' : `${country.vatRate}%`}</span>
       </div>
     </div>
-    <div class="note mt-3">
-      <strong>VAT note:</strong> {country.vatNote}. Always confirm current rates
-      with the relevant customs authority before making commercial decisions.
-    </div>
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> {country.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Import duty &amp; VAT</h2>
+    <p>
+      <strong>Duty:</strong> {country.dutyRate}{' '}
+      <ConfidenceBadge level="MEDIUM" />
+    </p>
+    <p class="muted">{country.dutyNote}</p>
+    <p class="mt-2">
+      <strong>VAT:</strong>{' '}
+      {country.vatRate === null ? 'None currently' : `${country.vatRate}%`}{' '}
+      <ConfidenceBadge level="HIGH" />
+      {country.vatRate !== null && ` — ${country.vatNote}`}
+    </p>
+    {country.vatRate === null && (
+      <p class="muted">{country.vatNote}</p>
+    )}
+  </section>
+
+  <section class="section container">
+    <h2>De minimis threshold</h2>
+    <p>
+      <strong>{country.deMinimis}</strong>{' '}
+      <ConfidenceBadge level="LOW" />
+    </p>
+    <p class="muted">{country.deMinimisNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>Compliance requirements</h2>
+    <ul>
+      {country.compliance.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section container">
+    <h2>Clearance process</h2>
+    <ol>
+      {country.clearanceProcess.map((step) => (
+        <li>{step}</li>
+      ))}
+    </ol>
   </section>
 
   <section class="section section--alt">
@@ -117,7 +176,33 @@ const schema = [
   </section>
 
   <section class="section container">
+    <h2>What most guides skip</h2>
+    <p>{country.insight}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={country.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      {country.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
     <SourceList sources={countrySources} title="Official sources" />
+    <p class="muted">
+      Duty, VAT and de minimis figures are indicative and change over time.
+      Always confirm current rates with the relevant customs authority before
+      making commercial decisions.
+    </p>
   </section>
 
   <section class="section container">

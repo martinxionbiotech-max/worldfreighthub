@@ -7,6 +7,11 @@ export interface Source {
   type: 'government' | 'carrier' | 'industry' | 'port-authority' | 'organization';
 }
 
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
 export interface Country {
   slug: string;
   name: string;
@@ -16,6 +21,16 @@ export interface Country {
   vatRate: number | null;
   vatNote: string;
   ports: string[];
+  tldr: string;
+  dutyRate: string;
+  dutyNote: string;
+  deMinimis: string;
+  deMinimisNote: string;
+  compliance: string[];
+  clearanceProcess: string[];
+  insight: string;
+  keyTakeaways: string[];
+  faqs: FaqItem[];
 }
 
 export interface Port {
