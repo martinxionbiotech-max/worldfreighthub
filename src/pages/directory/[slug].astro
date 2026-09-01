@@ -3,6 +3,7 @@ import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { directoryProviders, type DirectoryProvider } from '../../data/directory';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
@@ -61,6 +62,25 @@ const tableRows = [
   },
 ];
 
+const faqs = [
+  {
+    q: 'How does WorldFreightHub verify a freight forwarder?',
+    a: 'A provider is marked "verified" only after its business identity, contact details and service claims are independently confirmed against a primary source — an official licence (NVOCC, FMC or equivalent), a government registry, or the provider\u2019s own published credentials. Until that confirmation happens, the listing stays "unverified" and is treated as a documented research lead.',
+  },
+  {
+    q: 'What does "unverified" mean on a listing?',
+    a: 'It means the provider was found during research, but its identity, contact details and service claims have not yet been independently confirmed. Unverified leads are published for transparency, but you should do your own due diligence — check licences, ask for references and confirm terms — before committing cargo to any unverified provider.',
+  },
+  {
+    q: 'How should I choose a freight forwarder for China-to-GCC shipping?',
+    a: 'Look for a forwarder with a licence you can verify (NVOCC, FMC or equivalent), proven experience on your specific lane, and a clear written quote that itemises freight, terminal handling, clearance, duty and VAT. Ask about hidden charges such as demurrage and detention before booking, and confirm who acts as importer of record for DDP shipments.',
+  },
+  {
+    q: 'Why are no contact details published on some listings?',
+    a: 'WorldFreightHub only publishes contact details after confirming them directly with the provider. For unverified listings, phone numbers, emails and addresses are withheld to avoid pointing you at outdated or unconfirmed information. You can reach the provider through their listed website, or contact us if you need help confirming a listing.',
+  },
+];
+
 const schema = [
   {
     type: 'LocalBusiness',
@@ -77,6 +97,16 @@ const schema = [
       name: SITE_NAME,
       url: SITE_URL,
       description: SITE_DESCRIPTION,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
     },
   },
 ];
@@ -164,6 +194,13 @@ const schema = [
         Report an incorrect or outdated listing
       </a>
     </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
   </section>
 
   <section class="section container">
