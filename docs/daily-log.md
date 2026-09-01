@@ -247,3 +247,13 @@
 - **QA**：`npm run build` 147 页零 error（表单/AdSlot 均通过）。
 - **Git Commit**：`aa03de9 feat: wire get-quote form to FormSubmit backend + fill AdSlot placements`（已推 origin/main）。
 - **注意**：FormSubmit.co 需邮箱 owner 首次提交时点确认激活；上线后建议实测一次并考虑换 Formspree 或 Cloudflare Pages Functions。
+
+
+## 2026-09-01（STEP 21 — SEO/AIO 终审）
+
+- **Tasks**：AIO/SEO 终审。核查 llms.txt / robots.txt / sitemap / 全站 meta。
+- **llms.txt 全面更新**（`fb3daae`）：新增 Directory 段（16 家供应商）、Tools 段（3 计算器）、Middle East corridors 段（6 国 route pillar + SABER + Jeddah vs Dammam）、Get Quote 段（从"未启用"改为 live）。AI 爬虫（ChatGPT/Perplexity/Gemini）可据此完整索引站群。
+- **robots.txt**：已放行全部主流 AI 爬虫（GPTBot/ClaudeBot/PerplexityBot/Bytespider/Baiduspider/Google-Extended/CCBot）+ Sitemap 指向 `sitemap-index.xml`。✅ 无需改动。
+- **SEO 终审**：69 个页面全部有唯一 `canonical` + `description`（grep 审计零缺失）；sitemap 自动含 147 页（含 directory 详情页 + get-quote）。
+- **Build**：147 页零 error。
+- **Next**：STEP 25 部署文档 + Cloudflare Pages 部署（需 Martin CF 账号）；解决 Saudi de minimis 冲突（ZATCA 一手确认）。

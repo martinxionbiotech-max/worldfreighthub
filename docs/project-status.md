@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 08:10 (Asia/Shanghai)
+> 最后更新：2026-09-01 08:12 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -55,7 +55,7 @@
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
 - [x] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅ 131 页；工具 3 ✅；Directory 16 家真实企业 ✅；**Ad Slots house ad 接入 ✅ + Quote 表单接 FormSubmit ✅**）
-- [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
+- [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档（**SEO/AIO 终审 ✅**：llms.txt 全面更新 + robots.txt 放行 AI 爬虫 + 69 页 meta 齐全；Cloudflare 部署 + 部署文档未完成）
 
 ## 关键交付物（已入库 docs/）
 
