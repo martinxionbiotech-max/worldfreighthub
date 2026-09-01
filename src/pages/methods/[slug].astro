@@ -3,6 +3,10 @@ import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Cta from '../../components/Cta.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import DataTable from '../../components/DataTable.astro';
+import SourceList from '../../components/SourceList.astro';
 import { methods } from '../../data/methods';
 import { SITE_NAME, SITE_URL } from '../../site';
 
@@ -14,6 +18,21 @@ export function getStaticPaths() {
 }
 
 const { method } = Astro.props;
+
+const shortName = method.name.split(' (')[0];
+const related = methods.filter((m) => m.slug !== method.slug);
+
+const costColumns = [
+  { key: 'label', label: 'Item' },
+  { key: 'range', label: 'Indicative range (China → GCC)' },
+  { key: 'confidence', label: 'Confidence', type: 'confidence' as const },
+];
+
+const costRows = method.costRows.map((row) => ({
+  label: row.label,
+  range: row.range,
+  confidence: row.confidence,
+}));
 
 const schema = [
   {
@@ -28,7 +47,7 @@ const schema = [
         url: SITE_URL,
       },
       datePublished: '2026-08-30',
-      dateModified: '2026-08-30',
+      dateModified: method.updated,
       publisher: {
         '@type': 'Organization',
         name: SITE_NAME,
@@ -38,6 +57,16 @@ const schema = [
           url: `${SITE_URL}/og.png`,
         },
       },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: method.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
     },
   },
 ];
@@ -64,13 +93,129 @@ const schema = [
   </div>
 
   <section class="section container">
-    <div class="note">
-      <strong>Note:</strong> this page is a definitional overview. Specific rates
-      and transit times are published on individual route pages and are always
-      marked as estimates.
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> {method.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>What is {shortName}?</h2>
+    <p>{method.definition}</p>
+  </section>
+
+  <section class="section container">
+    <h2>When to use {shortName}</h2>
+    <ul>
+      {method.bestFor.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section container">
+    <h2>How {shortName} pricing works</h2>
+    <p>{method.pricingLogic}</p>
+  </section>
+
+  <section class="section container">
+    <h2>Reference cost ranges</h2>
+    <p class="muted">
+      Indicative ranges compiled from multiple public sources — not live quotes.
+      Figures shift weekly with fuel, season and geopolitical risk. Confirm a
+      current quote before booking.
+    </p>
+    <DataTable
+      columns={costColumns}
+      rows={costRows}
+      caption="Indicative cost ranges for the China–GCC corridor"
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Transit time</h2>
+    <p class="lead">
+      <strong>{method.transitTime.range}</strong>{' '}
+      <ConfidenceBadge level={method.transitTime.confidence} />
+    </p>
+    <p class="muted">{method.transitTime.note}</p>
+  </section>
+
+  <section class="section container">
+    <h2>Pros and cons</h2>
+    <div class="grid grid--2">
+      <div>
+        <h3>Pros</h3>
+        <ul>
+          {method.pros.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3>Cons</h3>
+        <ul>
+          {method.cons.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
     </div>
-    <p class="mt-3">
-      <a class="btn btn-secondary" href="/routes/">Browse routes</a>
+    {method.compareWith && (
+      <p class="mt-3">
+        <a class="btn btn-secondary" href={`/methods/${method.compareWith.slug}/`}>
+          {method.compareWith.label}
+        </a>
+      </p>
+    )}
+  </section>
+
+  <section class="section container">
+    <h2>What most guides skip</h2>
+    <p>{method.insight}</p>
+  </section>
+
+  <section class="section container">
+    <h2>How {shortName} works, step by step</h2>
+    <ol>
+      {method.process.map((step) => (
+        <li>{step}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>Related shipping methods</h2>
+    <ul>
+      {related.map((m) => (
+        <li>
+          <a href={`/methods/${m.slug}/`}>{m.name}</a> — {m.summary}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={method.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      {method.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={method.sources} title="Sources" />
+    <p class="muted">
+      Last updated: {method.updated}. Rates and transit times on this page are
+      indicative ranges, not live quotes — confirm figures with a licensed
+      carrier or freight forwarder before booking.
     </p>
   </section>
 

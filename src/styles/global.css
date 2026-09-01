@@ -935,3 +935,18 @@ code {
   background: #20bd5a;
   color: #0b1c2e;
 }
+
+/* ---------- TL;DR box ---------- */
+.tldr {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: #f0f6ff;
+  border-left: 4px solid #0b5cad;
+  border-radius: 0 8px 8px 0;
+  color: #1f2937;
+  font-size: 0.98rem;
+}
+
+.tldr p {
+  margin: 0;
+}

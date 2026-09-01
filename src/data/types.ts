@@ -38,10 +38,36 @@ export interface Route {
   note?: string;
 }
 
+export interface MethodFaq {
+  q: string;
+  a: string;
+}
+
+export interface MethodCostRow {
+  label: string;
+  range: string;
+  confidence: Confidence;
+}
+
 export interface Method {
   slug: string;
   name: string;
   summary: string;
+  tldr: string;
+  definition: string;
+  bestFor: string[];
+  pricingLogic: string;
+  costRows: MethodCostRow[];
+  transitTime: { range: string; note: string; confidence: Confidence };
+  pros: string[];
+  cons: string[];
+  insight: string;
+  process: string[];
+  faqs: MethodFaq[];
+  keyTakeaways: string[];
+  compareWith?: { slug: string; label: string };
+  updated: string;
+  sources: Source[];
 }
 
 export interface GlossaryTerm {
