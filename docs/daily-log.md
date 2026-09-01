@@ -277,3 +277,14 @@
 - **QA**：`npm run build` 154 页（+7 详情页）零 error；目录状态说明/FAQ/llms.txt 已同步 16→23。
 - **Git Commit**：`28c80ae feat(directory): add 7 more freight forwarders (23 total) + fix Honour Ocean naming`。
 - **Next**：可继续按 100–200 家目标扩充（建议下一批角度：Yiwu/义乌市场货代、Amazon FBA 中东专线、义新欧中欧班列中东支线），并逐步 verified 分层。
+
+
+## 2026-09-01（Directory 三批扩充 — 23→50 家，达成目标）
+
+- **Tasks**：按 Yiwu 义乌市场 + Amazon FBA 中东专线角度扩充目录至 **50 家**（+27）。
+- **Research**：Tavily 多角度搜索（义乌 DDP / Amazon FBA 沙特·阿联酋 / Noon / Shenzhen·Guangzhou·Ningbo·Qingdao）+ Firecrawl 抓 ddpchain「Top 10 Freight Forwarders」榜单页批量提取公司名。**零杜撰**——每家均有官网 URL、Alibaba/Made-in-China 店铺或第三方榜单背书。
+- **新增 27 家**：ContactWithChina(深圳 Cubic Speed)、SDI Logistics、YiwuAgent、Coshipper、HART Worldwide、深圳沃达丰国际货运、广东 Wozka、East Shipping、深圳浩鹏(Haopeng)、深圳森峰(Senfeng)、DPS Logistic、BOSA Shipping、宝仕航、Fly Logistics、CDT Logistics、Cooperate Logistics、Maskura、Kapoklog、STU Supply Chain、Dantful、Easy China Warehouse、YLT Global Cargo、深圳粤海、NextSmartShip、Sunny Worldwide、深圳美联华、深圳安达快递。
+- **工程**：`directory.ts` 50 条；`index.astro`/`llms.txt` 计数同步 23→50；Senfeng 条目补全称+2014 成立+Intertek。
+- **QA**：`npm run build` **181 页（+11 详情页）零 error**；50 详情页独立复验；工作区干净。
+- **Git Commit**：`5291d37 feat(directory): expand to 50 freight forwarders (Yiwu + Amazon FBA Middle East angles)`。
+- **Next**：可选继续扩至 100–200 家（下一角度：宁波/青岛专线、义新欧中欧班列、Noon/亚马逊中东仓储）；或开始 verified 分层（对已有 50 家逐一核实执照/联系方式）。
