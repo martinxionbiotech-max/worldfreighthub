@@ -7,6 +7,14 @@ export const countrySourceIds: Record<string, string[]> = {
   kuwait: ['kuwait-customs'],
   oman: ['oman-customs'],
   bahrain: ['bahrain-customs'],
+  germany: ['german-customs', 'eu-taric'],
+  'united-kingdom': ['hmrc'],
+  france: ['eu-taric'],
+  netherlands: ['eu-taric', 'port-rotterdam'],
+  spain: ['eu-taric'],
+  italy: ['eu-taric'],
+  poland: ['eu-taric', 'port-gdansk'],
+  belgium: ['eu-taric', 'port-antwerp'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -29,6 +37,14 @@ export const portSourceIds: Record<string, string[]> = {
   qingdao: ['world-bank'],
   tianjin: ['world-bank'],
   xiamen: ['world-bank'],
+  rotterdam: ['port-rotterdam'],
+  hamburg: ['port-hamburg'],
+  antwerp: ['port-antwerp'],
+  felixstowe: ['hmrc'],
+  'le-havre': ['eu-taric'],
+  valencia: ['eu-taric'],
+  genoa: ['eu-taric'],
+  gdansk: ['port-gdansk'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -119,5 +135,47 @@ export const sources: Source[] = [
     name: 'UNCTAD — Trade Statistics',
     url: 'https://unctad.org',
     type: 'organization',
+  },
+  {
+    id: 'eu-taric',
+    name: 'European Commission — TARIC & Customs Tariff',
+    url: 'https://taxation-customs.ec.europa.eu',
+    type: 'government',
+  },
+  {
+    id: 'german-customs',
+    name: 'German Customs (Zoll)',
+    url: 'https://www.zoll.de',
+    type: 'government',
+  },
+  {
+    id: 'hmrc',
+    name: 'UK HMRC — Customs & VAT',
+    url: 'https://www.gov.uk/hmrc',
+    type: 'government',
+  },
+  {
+    id: 'port-rotterdam',
+    name: 'Port of Rotterdam Authority',
+    url: 'https://www.portofrotterdam.com',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-hamburg',
+    name: 'Hamburg Port Authority',
+    url: 'https://www.hafen-hamburg.de',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-antwerp',
+    name: 'Port of Antwerp-Bruges',
+    url: 'https://www.portofantwerpbruges.com',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-gdansk',
+    name: 'Port of Gdańsk Authority',
+    url: 'https://www.portgdansk.pl',
+    type: 'port-authority',
   },
 ];

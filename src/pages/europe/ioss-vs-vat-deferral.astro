@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const rows = [
+  { dimension: 'What it is', ioss: 'Import One-Stop Shop — a single EU VAT registration for sub-€150 e-commerce imports', deferral: 'A licence to delay import VAT until goods enter a member state' },
+  { dimension: 'Who it is for', ioss: 'B2C e-commerce sellers shipping small parcels', deferral: 'B2B importers holding inventory or re-exporting' },
+  { dimension: 'Threshold', ioss: 'Consignments up to €150', deferral: 'No value threshold — applies to full containers' },
+  { dimension: 'Main benefit', ioss: 'Buyer sees the full price; simplified clearance', deferral: 'Import VAT stays out of your cash flow' },
+  { dimension: 'Where it lives', ioss: 'Any EU member state', deferral: 'Notably the Netherlands (Article 23)' },
+];
+
+const faqs = [
+  {
+    q: 'Are IOSS and VAT deferral the same thing?',
+    a: 'No. IOSS is for B2C e-commerce parcels up to €150 — it simplifies VAT collection at the point of sale. VAT deferral (such as the Netherlands\u2019 Article 23) is for importers holding inventory or re-exporting — it delays import VAT until goods enter a member state. They solve different problems for different businesses.',
+  },
+  {
+    q: 'When should I use IOSS?',
+    a: 'When you sell to EU consumers and ship consignments valued at €150 or less. You register once in a single member state, collect the buyer\u2019s VAT at checkout, and remit it monthly — the buyer sees the full price with no surprise charges at delivery.',
+  },
+  {
+    q: 'When should I use VAT deferral instead?',
+    a: 'When you import full containers as a business to hold in stock or re-export within the EU. Deferral keeps import VAT out of your cash flow until the goods actually enter a member state, which is a working-capital advantage — not a tax saving.',
+  },
+  {
+    q: 'Can I use both IOSS and VAT deferral?',
+    a: 'They can coexist for different parts of a business. A company that both sells B2C parcels and holds B2B inventory might use IOSS for the parcels and a deferral licence for the container stock. They are complementary, not competing.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="IOSS vs VAT Deferral for China-to-Europe Imports"
+  description="IOSS versus VAT deferral for China-to-Europe imports: what each mechanism does, who it is for, and when to use which."
+  canonical={`${SITE_URL}/europe/ioss-vs-vat-deferral/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'IOSS vs VAT Deferral' },
+        ]}
+      />
+      <h1>IOSS vs VAT deferral</h1>
+      <p class="lead">
+        Two VAT mechanisms that are constantly confused — one is for e-commerce
+        parcels, the other for containers of inventory, and picking the wrong
+        one is a common, costly mistake.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> IOSS simplifies VAT on sub-€150 e-commerce
+        parcels sold to consumers. VAT deferral (notably the Netherlands\u2019
+        Article 23) delays import VAT on full containers held in stock or
+        re-exported. They are different tools for different businesses — not
+        substitutes.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Side by side</h2>
+    <DataTable
+      columns={[
+        { key: 'dimension', label: 'Dimension' },
+        { key: 'ioss', label: 'IOSS' },
+        { key: 'deferral', label: 'VAT deferral' },
+      ]}
+      rows={rows}
+      caption="Two mechanisms that serve different import models."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>IOSS: solving the parcel problem</h2>
+    <p>
+      The Import One-Stop Shop launched in July 2021 when the EU abolished the
+      old €22 duty-free threshold. From the first euro, every import owes VAT —
+      and for the flood of sub-€150 e-commerce parcels, that threatened to
+      create a clearance bottleneck and surprise charges at the buyer's door.
+      IOSS fixes both: the seller registers in one member state, collects the
+      buyer's VAT at checkout, and remits it monthly through a single
+      declaration. The buyer sees the full price up front and the parcel clears
+      fast.
+    </p>
+    <p>
+      IOSS is a B2C tool. If you sell parcels to EU consumers, it is the
+      mechanism to know. It is not for container freight or B2B inventory.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>VAT deferral: solving the cash-flow problem</h2>
+    <p>
+      VAT deferral is the opposite end of the scale. When a business imports
+      full containers to hold in stock or re-export within the EU, the import
+      VAT is a large, recurring cash outflow that arrives long before the goods
+      are sold. A deferral licence — most famously the Netherlands\u2019 Article 23
+      — lets the importer place goods in bonded storage and account for import
+      VAT only when they actually enter a member state. It is a cash-flow
+      advantage, not a tax saving: the VAT is still owed, just later, when the
+      goods move and the revenue exists to cover it.
+    </p>
+    <p>
+      This is why the Netherlands is the natural home for EU distribution
+      operations — the deferral turns a working-capital drain into a
+      working-capital asset, and no other member state offers the mechanism as
+      cleanly.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>The common mistake</h2>
+    <p>
+      The error most first-time importers make is applying the wrong tool to
+      the wrong model — registering for IOSS when they actually hold container
+      inventory, or expecting VAT deferral to simplify their e-commerce
+      parcels. The two mechanisms do not overlap, and neither replaces the
+      other. Match the tool to the import model: parcels to consumers, IOSS;
+      containers of stock, deferral. If you run both models, you may well need
+      both.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

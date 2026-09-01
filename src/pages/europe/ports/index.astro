@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import Cta from '../../../components/Cta.astro';
+import { europePorts } from '../../../data/europe-ports';
+import { SITE_URL } from '../../../site';
+
+const rows = europePorts.map((port) => ({
+  port: { href: `/europe/ports/${port.slug}/`, label: port.name },
+  country: port.country,
+  type: port.type === 'dry-port' ? 'Dry port' : 'Seaport',
+  operator: port.operator,
+  unlocode: port.unlocode ?? '—',
+}));
+
+const columns = [
+  { key: 'port', label: 'Port', type: 'link' },
+  { key: 'country', label: 'Country' },
+  { key: 'type', label: 'Type' },
+  { key: 'operator', label: 'Operator' },
+  { key: 'unlocode', label: 'UN/LOCODE' },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Europe destination ports',
+      itemListElement: europePorts.map((port, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: port.name,
+        url: `${SITE_URL}/europe/ports/${port.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Europe Destination Ports for China Freight"
+  description="Major Europe destination ports served by the China freight corridor, from Rotterdam to Gdańsk, with operator and UN/LOCODE details."
+  canonical={`${SITE_URL}/europe/ports/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Ports' },
+        ]}
+      />
+      <h1>Europe destination ports</h1>
+      <p class="lead">
+        Major European destination ports on the China freight corridor — eight
+        gateways from Rotterdam to Gdańsk.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <DataTable
+      columns={columns}
+      rows={rows}
+      caption="Europe destination ports — verify with the relevant authority before relying on these details."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

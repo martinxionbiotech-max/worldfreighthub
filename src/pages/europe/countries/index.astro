@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import Cta from '../../../components/Cta.astro';
+import { europeCountries } from '../../../data/europe-countries';
+import { SITE_URL } from '../../../site';
+
+const rows = europeCountries.map((country) => ({
+  country: { href: `/europe/countries/${country.slug}/`, label: country.name },
+  iso2: country.iso2,
+  capital: country.capital,
+  currency: country.currency,
+  vat: country.vatRate === null ? 'None' : `${country.vatRate}%`,
+  ports: country.ports.length,
+}));
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Europe destination countries',
+      itemListElement: europeCountries.map((country, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: country.name,
+        url: `${SITE_URL}/europe/countries/${country.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Europe Destination Countries for China Freight"
+  description="VAT rates, capitals, currencies and ports for the eight core Europe states served by the China freight corridor."
+  canonical={`${SITE_URL}/europe/countries/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Countries' },
+        ]}
+      />
+      <h1>Europe destination countries</h1>
+      <p class="lead">
+        Eight core European destination markets on the China freight corridor —
+        each with its own VAT, EU common duty and EORI requirements.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country', type: 'link' },
+        { key: 'iso2', label: 'ISO' },
+        { key: 'capital', label: 'Capital' },
+        { key: 'currency', label: 'Currency' },
+        { key: 'vat', label: 'VAT' },
+        { key: 'ports', label: 'Ports' },
+      ]}
+      rows={rows}
+      caption="VAT rates are indicative — verify with the relevant authority before relying on these figures."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

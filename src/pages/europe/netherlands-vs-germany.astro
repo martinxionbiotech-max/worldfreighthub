@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const rows = [
+  { dimension: 'Gateway port', netherlands: 'Rotterdam — Europe\u2019s largest', germany: 'Hamburg — Germany\u2019s largest' },
+  { dimension: 'VAT rate', netherlands: '21% (deferrable under Article 23)', germany: '19% (no full deferral scheme)' },
+  { dimension: 'China rail terminus', netherlands: 'Limited', germany: 'Major (Hamburg, Duisburg)' },
+  { dimension: 'Hinterland reach', netherlands: 'Rhine barge to Germany, France, Switzerland', germany: 'Central Europe by rail' },
+  { dimension: 'Best fit', netherlands: 'EU-wide distribution hub, inventory holding', germany: 'German market + Central Europe, rail-split' },
+];
+
+const faqs = [
+  {
+    q: 'Should I set up my EU distribution base in the Netherlands or Germany?',
+    a: 'For EU-wide distribution and inventory holding, the Netherlands — its Article 23 VAT-deferral licence lets you hold China inventory without paying import VAT until goods enter a member state. For serving the German market itself or a sea-rail split, Germany is stronger.',
+  },
+  {
+    q: 'Which has the lower VAT, the Netherlands or Germany?',
+    a: 'Germany, at 19% versus the Netherlands\u2019 21%. But the Netherlands\u2019 Article 23 deferral can defer the VAT cash outflow entirely for inventory held in bonded storage, which often outweighs the two-point rate difference.',
+  },
+  {
+    q: 'Does China rail freight serve the Netherlands?',
+    a: 'Less than Germany. The New Silk Road\u2019s main European termini are in Germany (Hamburg, Duisburg) and Poland (Małaszewicze, Łódź). Rotterdam is primarily a deep-sea gateway, though it is building rail capacity.',
+  },
+  {
+    q: 'Can I distribute to Germany from a Rotterdam base?',
+    a: 'Yes — Rotterdam\u2019s Rhine barge network reaches the German Ruhr and beyond cheaply. Many EU distributors run a Dutch base and barge German-bound cargo inland rather than running a separate German operation.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Netherlands vs Germany for China Imports — Distribution Base"
+  description="Netherlands versus Germany as a China-to-Europe import and distribution base: Rotterdam vs Hamburg, VAT deferral, rail access and hinterland reach."
+  canonical={`${SITE_URL}/europe/netherlands-vs-germany/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Netherlands vs Germany' },
+        ]}
+      />
+      <h1>Netherlands vs Germany for China imports</h1>
+      <p class="lead">
+        The two heavyweight entry points for China cargo are not interchangeable —
+        one is a distribution machine, the other a market plus a rail terminus.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> The Netherlands is the better base for EU-wide
+        distribution and inventory holding, thanks to Rotterdam\u2019s Rhine barge
+        network and Article 23 VAT deferral. Germany is the better base for
+        serving the German market directly or running a sea-rail split, with
+        lower VAT and the New Silk Road terminus at Hamburg and Duisburg.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Side by side</h2>
+    <DataTable
+      columns={[
+        { key: 'dimension', label: 'Dimension' },
+        { key: 'netherlands', label: 'Netherlands' },
+        { key: 'germany', label: 'Germany' },
+      ]}
+      rows={rows}
+      caption="Indicative comparison of the two leading China-to-Europe entry points."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>The VAT deferral that tips the scale</h2>
+    <p>
+      The single biggest structural difference is not the two-point VAT gap
+      (Germany 19% versus Netherlands 21%) — it is the Netherlands\u2019 Article 23
+      licence. It lets an importer hold China inventory in bonded storage at
+      Rotterdam and account for import VAT only when goods actually enter a
+      member state. For a distributor holding stock or re-exporting across the
+      EU, that defers a large, recurring cash outflow that Germany\u2019s system
+      does not offer in the same form.
+    </p>
+    <p>
+      This is why "cheapest VAT" is the wrong way to pick a base. Germany's 19%
+      looks better on paper, but a Dutch deferral can remove the VAT from your
+      cash flow entirely until the sale. Price the cash-flow effect, not the
+      headline rate.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>The rail split is Germany\u2019s edge</h2>
+    <p>
+      Germany is where deep-sea and New Silk Road rail physically meet. Hamburg
+      takes both ocean vessels and China trains, and Duisburg is the largest
+      inland rail terminal in Europe. That makes Germany the natural home for a
+      sea-rail split — part of your volume by ocean, part by rail — which the
+      Netherlands cannot match on the rail side. Rotterdam is building rail
+      capacity, but its identity remains deep-sea.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>They overlap more than they compete</h2>
+    <p>
+      The practical truth is that many importers use both, not either. A Dutch
+      base at Rotterdam with Rhine barge distribution into the German Ruhr is a
+      common, cost-effective pattern — you get Dutch VAT deferral and still
+      reach German buyers by water. The clean "Netherlands or Germany" framing
+      is usually a false choice; the real question is whether your priority is
+      EU-wide distribution (lean Dutch) or the German market plus a rail option
+      (lean German).
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { europeCountries } from '../../data/europe-countries';
+import { europePorts } from '../../data/europe-ports';
+import { europeRoutes } from '../../data/europe-routes';
+import { portName } from '../../data/lookup';
+import { SITE_URL } from '../../site';
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'China to Europe corridor',
+      itemListElement: [...europeCountries, ...europePorts].map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.name,
+        url: `${SITE_URL}/europe/${item.countrySlug ? 'ports' : 'countries'}/${item.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'ItemList',
+    data: {
+      name: 'China to Europe freight routes',
+      itemListElement: europeRoutes.map((route, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: `${portName(route.originPort)} to ${portName(route.destPort)}`,
+        url: `${SITE_URL}/europe/routes/${route.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to Europe Freight — Countries, Ports & Duty"
+  description="China to Europe freight intelligence: eight destination countries, Europe ports, EU common duty, VAT and EORI requirements."
+  canonical={`${SITE_URL}/europe/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Europe' }]} />
+      <h1>China to Europe freight</h1>
+      <p class="lead">
+        The second corridor on the WorldFreightHub network — eight European
+        destination markets with their VAT, EU common duty, EORI rules and
+        entry ports.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Freight routes</h2>
+    <p class="muted">
+      {europeRoutes.length} China → Europe routes — seven loading ports to
+      eight gateways — with indicative transit times, cost ranges and routing
+      notes.
+    </p>
+    <p class="mt-2">
+      <a class="btn" href="/europe/routes/">Browse the route directory</a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>In-depth guides</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Rail Freight"
+        description="The New Silk Road land bridge — corridors, transit times and the Russia question."
+        href="/europe/rail/"
+      />
+      <Card
+        title="Sea vs Rail"
+        description="When a 2–3× freight premium is worth buying back three weeks of transit."
+        href="/europe/sea-vs-rail/"
+      />
+      <Card
+        title="Netherlands vs Germany"
+        description="Rotterdam's VAT deferral versus Hamburg's rail terminus for your EU base."
+        href="/europe/netherlands-vs-germany/"
+      />
+      <Card
+        title="Direct vs Transshipment"
+        description="Why Mediterranean ports transship, and the second schedule you can miss."
+        href="/europe/direct-vs-transshipment/"
+      />
+      <Card
+        title="IOSS vs VAT Deferral"
+        description="The parcel tool versus the container tool — two VAT mechanisms people confuse."
+        href="/europe/ioss-vs-vat-deferral/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Destination countries</h2>
+    <div class="grid grid--3 mt-2">
+      {europeCountries.map((country) => (
+        <Card
+          title={country.name}
+          description={`${country.vatRate}% VAT · ${country.ports.length} port`}
+          href={`/europe/countries/${country.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Destination ports</h2>
+    <div class="grid grid--3 mt-2">
+      {europePorts.map((port) => (
+        <Card
+          title={port.name}
+          description={`${port.country} · ${port.unlocode ?? ''}`}
+          href={`/europe/ports/${port.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>What makes Europe different from the GCC</h2>
+      <p>
+        Two things. First, the <strong>EU Common Customs Tariff</strong> means
+        duty is uniform across member states — only VAT and local rules change,
+        from Germany's 19% to Italy's 22%. Second, the <strong>New Silk Road
+        rail</strong> gives Europe a middle option between sea and air that the
+        Gulf does not have — and the UK sits outside both, with its own tariff
+        and a GB EORI since Brexit.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

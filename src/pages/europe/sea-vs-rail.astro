@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const rows = [
+  { metric: 'Typical transit', sea: '28–45 days (Cape-routed)', rail: '18–22 days' },
+  { metric: 'Cost per 40ft', sea: '≈ $1,600 – $6,800', rail: '≈ $5,000 – $7,000+', confidence: 'LOW' },
+  { metric: 'Cost relative to sea', sea: 'Baseline', rail: '2–3× sea freight' },
+  { metric: 'Main risk', sea: 'Red Sea / Cape rerouting', rail: 'Russia transit + border congestion' },
+  { metric: 'Best for', sea: 'Low-value bulk, price-sensitive cargo', rail: 'High-value, deadline-sensitive cargo' },
+];
+
+const faqs = [
+  {
+    q: 'Is rail faster than sea freight from China to Europe?',
+    a: 'Yes — rail runs roughly 18–22 days versus 28–45 days for a Cape-routed ocean sailing. Rail\u2019s advantage has grown since 2024, when Red Sea rerouting stretched ocean transit by 10–14 days.',
+  },
+  {
+    q: 'Which is cheaper, sea or rail?',
+    a: 'Sea is almost always cheaper per container — roughly half to a third of rail. Rail only wins on total cost when the value of faster delivery (inventory financing, deadlines) exceeds the freight premium.',
+  },
+  {
+    q: 'When should I choose rail over sea?',
+    a: 'When your cargo is high-value, deadline-sensitive or expensive to hold in transit. Rail buys back about three weeks of transit, which for electronics, auto parts or fashion often justifies the premium.',
+  },
+  {
+    q: 'Does rail avoid the Red Sea risk entirely?',
+    a: 'Yes. Rail runs overland through Central Asia and Russia, so it is completely insulated from Red Sea routing and the Cape detour — the main reason it looked attractive through 2024–2026.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Sea vs Rail Freight: China to Europe — Which to Choose"
+  description="Sea freight versus New Silk Road rail for China-to-Europe shipping: transit time, cost, risk and which cargo each method suits."
+  canonical={`${SITE_URL}/europe/sea-vs-rail/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Sea vs Rail' },
+        ]}
+      />
+      <h1>Sea vs rail: China to Europe</h1>
+      <p class="lead">
+        The choice is not between cheap and fast — it is between slow-and-cheap
+        and faster-and-dearer, and the tiebreaker is the cost of your money
+        tied up in transit.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> Sea freight is cheaper and slower; rail is
+        faster and dearer. Since the Red Sea crisis forced ocean around the Cape,
+        the transit gap widened to roughly 18–22 days (rail) versus 28–45 days
+        (sea). Choose rail when the value of three weeks of faster delivery
+        outweighs a 2–3× freight premium.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Side by side</h2>
+    <DataTable
+      columns={[
+        { key: 'metric', label: 'Dimension' },
+        { key: 'sea', label: 'Sea freight' },
+        { key: 'rail', label: 'Rail freight' },
+      ]}
+      rows={rows}
+      caption="Indicative comparison — verify live figures before booking."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>The transit gap has widened</h2>
+    <p>
+      For years the sea-versus-rail decision was roughly 30 days against 18.
+      The Red Sea crisis changed that. Since 2024, most carriers route around
+      the Cape of Good Hope to avoid the Houthi threat, adding 10–14 days to
+      every China-to-Europe sailing. Ocean transit now runs 28–45 days while
+      rail holds at 18–22. The gap nearly doubled — which is precisely why rail
+      volumes and prices held up through the crisis even as the underlying
+      economics of ocean stayed cheaper.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Cost is not the real question</h2>
+    <p>
+      On the freight line item, sea wins almost every time — a Cape-routed 40ft
+      runs roughly $1,600–6,800, while rail sits around $5,000–7,000 or more.
+      But the freight rate is only part of the landed cost. A container at sea
+      for 40 days ties up the value of its cargo for a month longer than rail
+      does. For high-value goods, the financing cost of that extra month —
+      plus the risk of missing a season or a deadline — frequently exceeds the
+      rail surcharge.
+    </p>
+    <p>
+      The honest framing: <strong>sea wins on freight cost, rail wins on total
+      cost of time.</strong> Low-value, price-sensitive cargo belongs on a
+      ship. High-value, deadline-sensitive cargo usually belongs on a train —
+      and the decision turns on your cost of capital, not the published rate.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Risk is different, not just different in size</h2>
+    <p>
+      Sea freight's dominant risk today is geopolitical routing — the Red Sea,
+      the Cape detour, and the war-risk premiums that feed into rates. Rail's
+      dominant risk is different: the dominant corridors transit Russia, which
+      carries its own insurance, compliance and reputational exposure. Neither
+      is "safe"; they are two different risks. Some shippers accept Russia
+      transit to keep rail's speed; others move back to ocean or onto the
+      slower southern Caspian corridor. Match the risk to your own compliance
+      posture, not just the price.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

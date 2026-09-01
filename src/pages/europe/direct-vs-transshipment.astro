@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const rows = [
+  { dimension: 'Transit time', direct: 'Shorter — no hub wait', transshipment: 'Longer — adds a hub connection' },
+  { dimension: 'Cost', direct: 'Often higher (premium schedule)', transshipment: 'Often lower (hub consolidation)' },
+  { dimension: 'Reliability', direct: 'Fewer hand-offs, fewer failure points', transshipment: 'Two sailings to miss, not one' },
+  { dimension: 'Schedule frequency', direct: 'Thinner on niche lanes', transshipment: 'More frequent on small lanes' },
+  { dimension: 'Typical on', direct: 'Rotterdam, Hamburg, Antwerp, Felixstowe', transshipment: 'Valencia, Genoa via Med hubs' },
+];
+
+const faqs = [
+  {
+    q: 'Is direct shipping always faster than transshipment?',
+    a: 'Almost always, but the gap varies. Direct saves the hub connection and the waiting time at the transshipment port. On a congested hub, transshipment can add a week or more — though a well-scheduled connection can be nearly as fast as direct.',
+  },
+  {
+    q: 'Is transshipment cheaper than direct?',
+    a: 'Usually, because hubs consolidate cargo and let carriers fill larger vessels. But the saving is not guaranteed once you factor in the risk of a missed connection and the extra handling. Price the total, not the ocean line item.',
+  },
+  {
+    q: 'Which European ports are served directly from China?',
+    a: 'The Northwest European range — Rotterdam, Hamburg, Antwerp and Felixstowe — has the densest direct China calls. Mediterranean ports like Valencia and Genoa are more often served by transshipment via hubs such as Tanger Med or Malta.',
+  },
+  {
+    q: 'What is the risk of transshipment?',
+    a: 'The main risk is a missed connection: your first sailing is delayed, the feeder leaves without your container, and you wait for the next. It is a second schedule to depend on, which is why direct is valued for time-sensitive cargo.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Direct vs Transshipment Shipping: China to Europe"
+  description="Direct versus transshipped ocean freight from China to Europe: transit time, cost, reliability, and which European ports each serves."
+  canonical={`${SITE_URL}/europe/direct-vs-transshipment/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Direct vs Transshipment' },
+        ]}
+      />
+      <h1>Direct vs transshipment: China to Europe</h1>
+      <p class="lead">
+        The word "direct" sells, but it is not always the right buy — the
+        choice is a trade between time and a second schedule to depend on.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> Direct sailings are faster and more reliable but
+        often dearer and only available on the dense Northwest European lanes.
+        Transshipment is usually cheaper and keeps small lanes viable, but it
+        adds a hub connection and a second schedule you can miss.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Side by side</h2>
+    <DataTable
+      columns={[
+        { key: 'dimension', label: 'Dimension' },
+        { key: 'direct', label: 'Direct' },
+        { key: 'transshipment', label: 'Transshipment' },
+      ]}
+      rows={rows}
+      caption="Indicative comparison — confirm the routing on your specific lane."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Europe splits by geography</h2>
+    <p>
+      The direct-versus-transshipment choice is not uniform across Europe — it
+      splits by geography. The Northwest European range — Rotterdam, Hamburg,
+      Antwerp and Felixstowe — carries the densest direct China calls, because
+      the volumes justify full vessels. Mediterranean ports — Valencia, Genoa
+      and to some extent Le Havre — are more often fed by transshipment: a
+      China sailing discharges at a hub like Tanger Med, Malta or Piraeus, and
+      a feeder carries the container the final leg.
+    </p>
+    <p>
+      That is why a Mediterranean port can look slower on paper — it often
+      carries an extra hub stop — yet still be the cheapest total route for
+      Iberian or Italian cargo. The transshipment is the price of reaching a
+      thinner lane, not a sign of a worse route.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>The risk nobody prices</h2>
+    <p>
+      Transshipment's real cost is not the extra sailing — it is the missed
+      connection. A direct container depends on one schedule; a transshipped
+      container depends on two. If the first leg is delayed and the feeder
+      leaves without your box, you wait for the next feeder, and a "cheaper"
+      route quietly becomes a slower one. For time-sensitive cargo, direct
+      buys you insurance against that second schedule. For patient, price-driven
+      cargo, transshipment's saving is usually worth the small extra risk.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

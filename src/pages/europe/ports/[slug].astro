@@ -1,0 +1,156 @@
+---
+import { getStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Cta from '../../../components/Cta.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { europePorts } from '../../../data/europe-ports';
+import { europeCountries } from '../../../data/europe-countries';
+import { SITE_URL } from '../../../site';
+
+export function getStaticPaths() {
+  return europePorts.map((port) => ({
+    params: { slug: port.slug },
+    props: { port },
+  }));
+}
+
+const { port } = Astro.props;
+
+const country = europeCountries.find((c) => c.slug === port.countrySlug);
+
+const schema = [
+  {
+    type: 'Place',
+    data: {
+      name: port.name,
+      url: `${SITE_URL}/europe/ports/${port.slug}/`,
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: port.country,
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: port.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${port.name} — Port Profile`}
+  description={`${port.name} (${port.country}) port profile: operator, key specifications, hinterland and China freight context. ${port.tldr.slice(0, 120)}`}
+  canonical={`${SITE_URL}/europe/ports/${port.slug}/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Ports', href: '/europe/ports/' },
+          { label: port.name },
+        ]}
+      />
+      <h1>{port.name}</h1>
+      <p class="lead">Port profile for the China-to-Europe corridor.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">Country</span>
+        {country ? (
+          <span class="fact-value">
+            <a href={`/europe/countries/${country.slug}/`}>{port.country}</a>
+          </span>
+        ) : (
+          <span class="fact-value">{port.country}</span>
+        )}
+      </div>
+      <div class="fact">
+        <span class="fact-label">Type</span>
+        <span class="fact-value">{port.type === 'dry-port' ? 'Dry port' : 'Seaport'}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">UN/LOCODE</span>
+        <span class="fact-value">{port.unlocode ?? '—'}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Operator</span>
+        <span class="fact-value">{port.operator}</span>
+      </div>
+    </div>
+    {port.note && <div class="note mt-3"><strong>Note:</strong> {port.note}</div>}
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> {port.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Key specifications</h2>
+    <div class="fact-grid">
+      {port.specs.map((spec) => (
+        <div class="fact">
+          <span class="fact-label">{spec.label}</span>
+          <span class="fact-value">{spec.value}</span>
+        </div>
+      ))}
+    </div>
+    <p class="muted mt-2">
+      Throughput and draft figures are indicative and change year to year.
+      Confirm current figures with the port authority before relying on them.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Hinterland</h2>
+    <p>{port.hinterland}</p>
+  </section>
+
+  <section class="section container">
+    <h2>What most guides skip</h2>
+    <p>{port.insight}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={port.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      {port.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={[]} title="Port authority sources" />
+    <p class="muted">
+      Port facts are indicative and change over time. Always confirm current
+      operational details with the relevant port authority before making
+      commercial decisions.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

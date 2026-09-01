@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { europeRoutes } from '../../../data/europe-routes';
+import { portName, countryName } from '../../../data/lookup';
+import { SITE_URL } from '../../../site';
+
+const rows = europeRoutes.map((route) => ({
+  route: {
+    href: `/europe/routes/${route.slug}/`,
+    label: `${portName(route.originPort)} → ${portName(route.destPort)}`,
+  },
+  origin: { href: `/ports/${route.originPort}/`, label: portName(route.originPort) },
+  destination: portName(route.destPort),
+  country: { href: `/europe/countries/${route.country}/`, label: countryName(route.country) },
+  transit: `${route.transitDays.typical} days`,
+  confidence: route.confidence,
+}));
+
+const faqs = [
+  {
+    q: 'Which China port should I ship from?',
+    a: 'Shanghai has the densest direct sailings to Northwest Europe. Ningbo-Zhoushan is a strong Zhejiang alternative, often slightly cheaper. Shenzhen and Guangzhou serve the Pearl River Delta, while Qingdao and Tianjin are the natural origins for North China. Choose the port closest to your factory to minimise inland trucking.',
+  },
+  {
+    q: 'How long does a China-to-Europe route take?',
+    a: 'Since 2024 most China–Europe sailings reroute around the Cape of Good Hope to avoid the Red Sea, which adds 10–14 days versus the pre-crisis Suez routing. Direct sailings to Rotterdam, Hamburg and Antwerp typically run 28–33 days; Mediterranean ports (Valencia, Genoa) often transship and run longer. China rail to Germany or Poland is a faster alternative at roughly 18–22 days.',
+  },
+  {
+    q: 'Do these routes go direct or transship?',
+    a: 'Both, and it splits by geography. The Northwest European range (Rotterdam, Hamburg, Antwerp) has the most direct China calls. Mediterranean ports (Valencia, Genoa) usually transship via a hub like Tanger Med or Malta. Felixstowe is a separate UK regime since Brexit and needs its own clearance.',
+  },
+  {
+    q: 'Why do China-to-Europe transit times vary so much?',
+    a: 'One dominant cause: Red Sea routing. When carriers reroute around the Cape of Good Hope, transit stretches by 10–14 days and rates spike with the extra fuel and capacity. Add Mediterranean transshipment and seasonal congestion, and the spread between a fast direct sailing and a slow transshipped one is wide — which is why the ranges here are broad.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'China to Europe freight routes',
+      itemListElement: europeRoutes.map((route, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: `${portName(route.originPort)} to ${portName(route.destPort)}`,
+        url: `${SITE_URL}/europe/routes/${route.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to Europe Freight Routes"
+  description="Indicative shipping routes from China (Shanghai, Ningbo, Shenzhen, Guangzhou, Qingdao, Tianjin, Xiamen) to Europe's major ports, with transit time estimates and routing notes."
+  canonical={`${SITE_URL}/europe/routes/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Routes' },
+        ]}
+      />
+      <h1>China to Europe freight routes</h1>
+      <p class="lead">
+        Main corridors from seven China loading ports to eight European
+        gateways, with indicative transit times and the routing risks behind
+        them.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Route directory</h2>
+    <DataTable
+      columns={[
+        { key: 'route', label: 'Route', type: 'link' },
+        { key: 'origin', label: 'Origin', type: 'link' },
+        { key: 'destination', label: 'Destination' },
+        { key: 'country', label: 'Country', type: 'link' },
+        { key: 'transit', label: 'Typical transit' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rows}
+      caption="Indicative transit times only — verify with the relevant carrier before relying on these figures."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>One crisis, one reroute — and a rail alternative</h2>
+      <p>
+        Every China-to-Europe route has been reshaped by the Red Sea crisis.
+        Since 2024, most carriers route around the Cape of Good Hope to avoid
+        the Houthi threat, stretching transit by 10–14 days and inflating rates
+        with extra fuel and tied-up capacity. The Northwest European range —
+        Rotterdam, Hamburg, Antwerp — takes the densest direct calls, while
+        Mediterranean gateways like Valencia and Genoa usually transship via a
+        hub. There is a genuine third option the ocean-only guides skip: the
+        New Silk Road rail into Germany or Poland at 18–22 days, which trades a
+        higher per-container cost for roughly half the goods-in-transit.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

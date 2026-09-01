@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const faqs = [
+  {
+    q: 'How long does China-to-Europe rail freight take?',
+    a: 'Typically 18–22 days door-to-terminal for the main corridors — Xi\u2019an or Chengdu to Duisburg or Hamburg runs roughly 18 days in good conditions. Border transloading, customs and weather can push it to 25–30 days, but it is still roughly half the time of a Cape-routed ocean sailing.',
+  },
+  {
+    q: 'Is China rail freight cheaper than air freight?',
+    a: 'Yes, by a wide margin. Rail typically costs about a quarter to a third of air freight per kilogram, and two to three times sea freight. It occupies the middle band: far cheaper than air, meaningfully faster than sea.',
+  },
+  {
+    q: 'What cargo suits China-to-Europe rail?',
+    a: 'High-value, deadline-sensitive or inventory-heavy goods: electronics, automotive parts, machinery, fast fashion and pharmaceuticals. It does not suit low-value bulk commodities, where the rail premium over sea cannot be justified.',
+  },
+  {
+    q: 'Does rail freight avoid the Red Sea problem?',
+    a: 'Yes — rail runs overland through Central Asia and Russia, so it is completely insulated from Red Sea routing and the Cape of Good Hope detour. That is exactly why rail looked comparatively attractive through 2024–2026, when ocean transit stretched and rates spiked.',
+  },
+  {
+    q: 'Do I still need an EORI for rail freight into the EU?',
+    a: 'Yes. Rail cargo clears EU customs exactly like ocean cargo — the EORI number, TARIC classification and import VAT all apply regardless of whether the box arrived by ship or train.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to Europe Rail Freight — The New Silk Road Guide"
+  description="How China–Europe rail freight works: main corridors, transit times, cost versus sea and air, gauge changes, and which cargo justifies the rail premium."
+  canonical={`${SITE_URL}/europe/rail/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Rail Freight' },
+        ]}
+      />
+      <h1>China to Europe rail freight</h1>
+      <p class="lead">
+        The New Silk Road is Europe's advantage that the Gulf does not have — a
+        land bridge that halves ocean transit at a fraction of air cost.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> China-to-Europe rail runs about 18–22 days — half
+        a Cape-routed ocean sailing — and costs roughly two to three times sea
+        freight but a quarter to a third of air. It is not a way to save money
+        against ocean; it is a way to buy back three weeks of goods-in-transit
+        when inventory cost justifies the premium.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>What the New Silk Road actually is</h2>
+    <p>
+      The China–Europe rail network — branded the New Silk Road under China's
+      Belt and Road initiative — is a set of block-train services connecting
+      Chinese manufacturing hubs to European terminals by rail. Containers load
+      in Xi'an, Chengdu, Chongqing, Zhengzhou or Wuhan and unload in Duisburg,
+      Hamburg, Warsaw, Łódź or Małaszewicze, running through Kazakhstan, Russia
+      and Belarus (or via a southern Caspian corridor) before entering the EU.
+    </p>
+    <p>
+      It is not one route but a family of corridors. The northern and central
+      lines dominate — they cross from China at Alashankou or Khorgos, traverse
+      Kazakhstan and Russia, and enter the EU through Poland's Małaszewicze
+      border terminal. A southern route via the Caspian Sea and Turkey exists
+      but carries far less volume and serves mostly Central Asian and
+      Transcaucasian destinations.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Transit time and the gauge-change reality</h2>
+    <p>
+      The headline number — 18–22 days — is real but it hides a mechanical
+      detail that shapes reliability: <strong>track gauge changes</strong>.
+      China and Europe use standard gauge (1,435 mm), while Russia, Belarus and
+      much of Central Asia use broad gauge (1,520 mm). At the border — Alashankou
+      on the China side and Małaszewicze or Brest on the Europe side — containers
+      are lifted and re-loaded onto different wagons, a process called
+      transloading.
+    </p>
+    <p>
+      Transloading adds hours per border, not days, but it is a congestion point.
+      When volume spikes or border infrastructure saturates, the queues form
+      here, not at the ports. If you are planning rail, budget the border
+      transload and customs into your timeline rather than treating the 18-day
+      figure as a guarantee.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Cost: the honest middle band</h2>
+    <p>
+      Rail pricing sits firmly between sea and air, but the spread has been
+      violent. A 40ft container on the main corridors has swung from roughly
+      $3,000 in the quiet 2023 market to over $10,000 in the immediate aftermath
+      of the 2022 Ukraine escalation, settling toward a $5,000–7,000 band in
+      2024–2026. Against that, a Cape-routed 40ft sea shipment has run roughly
+      $1,600–6,800, and air freight for the same cube runs several times higher
+      still.
+    </p>
+    <p class="muted">
+      These are indicative ranges, not quotes — rail rates move with Russia
+      transit risk, China subsidy policy and border capacity. Confirm a live
+      figure before booking.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>What rail is really for</h2>
+    <p>
+      The mistake is to treat rail as a cheaper ocean. It is not — it is a
+      faster ocean, and the value is in the time, not the freight rate. A
+      container at sea around the Cape ties up capital for 40–45 days; the same
+      container on rail is in a European warehouse in three weeks. For
+      high-value goods — electronics, automotive components, machinery, fast
+      fashion — the financing cost of an extra three weeks at sea often exceeds
+      the rail surcharge.
+    </p>
+    <p>
+      That is the calculation most freight guides skip: <strong>price the
+      inventory, not just the rate.</strong> If your goods carry a high
+      cost-of-capital or a strict delivery window, rail wins on total landed
+      cost even when the per-container freight is higher. If you are shipping
+      low-value bulk or price-insensitive goods, sea remains the right answer.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>The Russia question</h2>
+    <p>
+      Since 2022, the dominant corridors transit Russia, which adds a layer of
+      insurance, compliance and reputational risk that did not exist before.
+      Some shippers moved off the Russian corridors entirely — either back to
+      ocean or onto the slower southern Caspian route — while others accepted
+      the transit risk to keep the speed advantage. There is no single right
+      answer: it depends on your cargo, your buyer and your own compliance
+      posture. What is clear is that the Russia question, not the physics of
+      rail, is now the biggest variable in the rail decision.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
