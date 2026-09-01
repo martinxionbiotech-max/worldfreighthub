@@ -1,0 +1,712 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/hidden-charges-china-to-gcc/`;
+
+const freightAmigo: Source = {
+  id: 'freightamigo-demurrage',
+  name: 'FreightAmigo — Demurrage & Detention charges (2025 averages)',
+  url: 'https://www.freightamigo.com/en/blog/logistics/demurrage-and-detention-charges-in-shipping-understanding-and-minimizing-costs',
+  type: 'industry',
+};
+
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+const portSources: Source[] = [
+  ...complianceSources,
+  freightAmigo,
+];
+const costSources: Source[] = [
+  freightAmigo,
+  ...complianceSources,
+];
+
+const notPublished = '待核实 / not published in our research snapshot — request an itemised schedule from your forwarder';
+
+const hiddenChargeRows = [
+  {
+    charge: 'THC — terminal handling charge',
+    who: 'Terminal (origin OTHC and destination DTHC)',
+    amount: notPublished,
+    note: 'Applies to both FCL and LCL; split between origin and destination on many quotes 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Port service fee',
+    who: 'Port authority / terminal',
+    amount: notPublished,
+    note: 'Local port-imposed line; can appear on top of THC 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Cargo service fee',
+    who: 'Forwarder / CFS operator',
+    amount: notPublished,
+    note: 'Often covers LCL handling, documents and coordination 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Documentation / delivery order (DO) fee',
+    who: 'Carrier / agent',
+    amount: notPublished,
+    note: 'Bill of lading, telex release, delivery order and amendment work 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'ISPS / security fee',
+    who: 'Carrier / terminal',
+    amount: notPublished,
+    note: 'Port security surcharge passed through on the shipment 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Customs inspection / exam fee',
+    who: 'Customs / inspection facility',
+    amount: notPublished,
+    note: 'Depends on cargo, HS classification and declaration risk 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Brokerage / clearance fee',
+    who: 'Customs broker',
+    amount: notPublished,
+    note: 'Preparation, filing and attendance; can be flat or per declaration 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'SABER PC / SC conformity fee',
+    who: 'SASO / SABER platform',
+    amount: notPublished,
+    note: 'PC is per product; SC is per shipment and must be obtained before arrival 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Storage',
+    who: 'CFS / warehouse / depot',
+    amount: notPublished,
+    note: 'Separate from demurrage; accrues after the storage free period 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Demurrage / detention',
+    who: 'Terminal (demurrage) / carrier (detention)',
+    amount: '≈ $50 up to $300+ per day; 2025 average ≈ $150–$300',
+    note: 'The only quantified destination-charge range in the snapshot; escalates with time 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    charge: 'Inland trucking / rail',
+    who: 'Trucker / rail operator',
+    amount: notPublished,
+    note: 'Door or dry-port delivery; Dammam rail to Riyadh Dry Port is a common example 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'Sea · China to Saudi Arabia (Jeddah / Dammam)',
+    window: '≈ 20–45 days',
+    basis: 'Corridor estimate',
+    note: 'Wide range; Red Sea rerouting can shift arrival dates 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to UAE (Jebel Ali / Khalifa / Sharjah)',
+    window: '≈ 14–18 days',
+    basis: 'Corridor estimate',
+    note: 'The fastest verified GCC sea window in the snapshot 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to Qatar / Kuwait / Oman / Bahrain',
+    window: notPublished,
+    basis: 'Research snapshot',
+    note: 'Request the current sailing schedule; do not invent a figure 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Air freight · China to GCC',
+    window: notPublished,
+    basis: 'Research snapshot',
+    note: 'Faster than sea, but destination charges are applied differently 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const fclVsLclRows = [
+  {
+    factor: 'THC and port charges',
+    fcl: 'Typically one box-level THC at origin and destination plus local port charges.',
+    lcl: 'THC is usually allocated across the consolidated shipment by CBM or weight.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'CFS / cargo service fees',
+    fcl: 'Less CFS handling unless the box is unstuffed at a CFS.',
+    lcl: 'Consolidation at origin and deconsolidation at destination add CFS and cargo-service lines.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Demurrage / detention exposure',
+    fcl: 'Consignee directly holds the carrier box and terminal slot; demurrage/detention apply per container.',
+    lcl: 'Storage after the CFS free period is the main time-based risk; box detention usually sits with the CFS operator.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Documentation and clearance',
+    fcl: 'One consignee and one container means a simpler documentation chain.',
+    lcl: 'Multiple consignees can complicate release, delivery orders and fee allocation.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const portRows = [
+  {
+    port: 'Jeddah Islamic Port',
+    chargeExposure: 'THC, port service, documentation, SABER holds, demurrage',
+    note: 'Missing SABER is the most common charge trigger; free time typically 3–7 days',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam',
+    chargeExposure: 'THC, port service, documentation, demurrage, inland rail',
+    note: 'Riyadh Dry Port transfer adds inland but can reduce coastal exposure',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Riyadh Dry Port',
+    chargeExposure: 'Inland handling, storage, trucking/rail',
+    note: notPublished,
+    confidence: 'LOW',
+  },
+  {
+    port: 'Jebel Ali (UAE)',
+    chargeExposure: 'THC, port service, documentation, demurrage, free-zone handling',
+    note: 'High-volume hub; JAFZA routing changes the fee structure',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa Port (UAE)',
+    chargeExposure: 'THC, port service, documentation, demurrage',
+    note: 'AD Ports tariff applies; request the schedule',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sharjah / Port Khalid (UAE)',
+    chargeExposure: 'THC, port service, documentation, demurrage',
+    note: 'Confirm local charges; used for regional distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad (Qatar)',
+    chargeExposure: 'THC, port service, documentation, demurrage',
+    note: 'Request the Mwani Qatar tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh / Shuaiba (Kuwait)',
+    chargeExposure: 'THC, port service, documentation, demurrage',
+    note: 'Two-port choice can change the inland charge profile',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar / Salalah (Oman)',
+    chargeExposure: 'THC, port service, documentation, demurrage',
+    note: 'Salalah is transshipment-heavy; confirm consignee-side charges',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa Bin Salman (Bahrain)',
+    chargeExposure: 'THC, port service, documentation, demurrage, causeway trucking',
+    note: 'The King Fahd Causeway leg adds a separate inland line',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    layer: 'Headline ocean freight',
+    basis: 'FCL 20ft $1,500–$6,200; FCL 40ft $1,900–$8,100',
+    note: 'Corridor bracket; only the first line of the invoice',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'LCL benchmark',
+    basis: '$267–$955 per CBM (Shanghai–Riyadh snapshot)',
+    note: 'Volume-dependent; minimum charges apply at low CBM 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Statutory stack (Saudi)',
+    basis: '15% VAT on CIF + 5% duty',
+    note: 'Duty is 5% of CIF; VAT is calculated on CIF plus duty',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Statutory stack (UAE)',
+    basis: '5% VAT on CIF + 5% duty',
+    note: 'Lower VAT destination, but the CIF-plus-duty base still applies',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Destination charge items',
+    basis: 'THC + port service + docs + ISPS + inspection + brokerage + SABER + storage + demurrage/detention + inland',
+    note: 'Amounts not published — request the full itemised schedule 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Demurrage / detention',
+    basis: '≈ $50–$300+ per day; 2025 average ≈ $150–$300',
+    note: 'The quantified exception among destination charges; escalates with time 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const complianceRows = [
+  {
+    rule: 'Saudi import VAT',
+    value: '15% on CIF + duty',
+    note: 'Effective since 1 July 2020',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'UAE import VAT',
+    value: '5% on CIF + duty',
+    note: 'VAT is calculated on the duty-inclusive CIF base',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'GCC Common External Tariff',
+    value: '5% duty on CIF',
+    note: 'Baseline across the GCC states in the snapshot',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'SABER Shipment Conformity Certificate',
+    value: 'Must be obtained before vessel arrival',
+    note: 'Effective 1 January 2025; missing SC causes Saudi port holds',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'HS classification',
+    value: 'Correct HS code before quoting',
+    note: 'Drives duty, SABER scope and inspection risk',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between THC and a port service fee?',
+    a: 'THC is the terminal handling charge for receiving, moving and loading/discharging the container; it usually appears as OTHC at origin and DTHC at destination. A port service fee is an additional local port-imposed line that can sit on top. The research snapshot does not publish either amount, so request both as separate lines.',
+  },
+  {
+    q: 'Why is my destination invoice higher than the ocean freight quote?',
+    a: 'The ocean freight quote is only the international move. Destination invoices add THC, port service, documentation/DO, ISPS, brokerage, possible inspection, SABER conformity fees, storage and demurrage/detention after free time, plus inland delivery. All of those amounts were not published in the research snapshot and must come from an itemised schedule.',
+  },
+  {
+    q: 'Is SABER a hidden charge or a compliance step?',
+    a: 'Both. SABER is a mandatory Saudi conformity step, and it has two cost lines: the PC (Product Conformity Certificate) per product and the SC (Shipment Conformity Certificate) per shipment. The SC must be obtained before vessel arrival. The research snapshot does not publish the fee amounts, so quote them by HS code and shipment value.',
+  },
+  {
+    q: 'What is ISPS and will I be charged for it?',
+    a: 'ISPS is the International Ship and Port Facility Security surcharge. It is commonly passed through on both FCL and LCL shipments. The amount was not published in the research snapshot, so it should appear as a named line on your destination schedule.',
+  },
+  {
+    q: 'Does customs inspection always cost extra?',
+    a: 'Not always, but when an inspection or exam is required the associated facility, handling and attendance charges can be added. Inspection depends on cargo, HS classification and declaration risk. Request the inspection-fee rule and confirm who is responsible before the cargo arrives.',
+  },
+  {
+    q: 'How much are hidden destination charges on China-to-GCC shipments?',
+    a: 'The research snapshot does not publish specific amounts for THC, port service, cargo service, documentation, ISPS, brokerage, SABER, storage or inland trucking. The only quantified charge is demurrage/detention at roughly $50–$300+ per day, with a 2025 average of about $150–$300 per day. Everything else should be requested as an itemised schedule.',
+  },
+  {
+    q: 'Are duty and VAT hidden charges?',
+    a: 'No, they are statutory costs, but they are frequently forgotten in early freight comparisons. Saudi VAT is 15% on CIF plus duty, UAE VAT is 5%, and GCC duty is 5% of CIF. Budget them separately from the commercial destination-fee stack.',
+  },
+  {
+    q: 'Which charges does FCL attract that LCL does not?',
+    a: 'FCL exposes you directly to box-level demurrage/detention and the full destination THC/port charges on the box. LCL usually spreads THC across consignees and adds CFS deconsolidation, cargo-service and storage lines, while box detention normally sits with the CFS operator.',
+  },
+  {
+    q: 'How do I ask a forwarder for a full charge schedule?',
+    a: 'Request a written, line-by-line schedule from origin to delivery: OTHC/DTHC, port service, cargo service, documentation/DO, ISPS, inspection, brokerage, SABER PC/SC, storage, demurrage/detention and inland. Ask which items are fixed, which are conditional and which accrue by day. Compare schedules, not headline rates.',
+  },
+  {
+    q: 'Why should I link this page to the demurrage guide?',
+    a: 'Demurrage and detention are the time-based subset of the larger destination-fee stack. Read the companion page to understand free time, the combined clock and how a Jeddah hold turns into $1,050–$2,100 of per-container exposure, then use this page to audit the other fixed and conditional charges.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Hidden & Destination Charges: China to GCC Freight Cost Breakdown (August 2026)',
+      description:
+        'Every China-to-GCC destination charge importers overlook: THC, port service fee, documentation, ISPS, inspection, brokerage, SABER, storage, inland trucking and the $50–$300+ daily demurrage/detention range.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Hidden & Destination Charges: China to GCC Freight Cost Breakdown (August 2026)"
+  description="The all-in China-to-GCC destination charge breakdown: THC, port service, documentation, ISPS, inspection, brokerage, SABER, storage, inland trucking and the $50–$300+ daily demurrage/detention range."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Hidden charges China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Hidden &amp; destination charges: the China-to-GCC cost breakdown</h1>
+      <p class="lead">
+        The ocean freight line is the first cost, not the final cost. This page names and explains
+        every destination and local charge an importer should see on a proper China-to-GCC schedule,
+        so you can ask for a full itemisation instead of accepting a lump-sum quote.
+      </p>
+      <p class="small muted">
+        Fee amounts are deliberately left unquantified where the research snapshot did not publish
+        them. Treat those lines as LOW confidence and request the schedule from your forwarder.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">GCC duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UAE VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Demurrage / detention</span>
+          <span class="fact-value">$50–$300+/day <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Other local fees</span>
+          <span class="fact-value">Schedule only <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The hidden-charge line items to request</h2>
+    <p>
+      A complete destination schedule should name every line below. The only amount the research
+      snapshot quantifies is demurrage/detention; the rest are charge types to audit, not numbers to
+      guess.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'charge', label: 'Charge' },
+        { key: 'who', label: 'Who bills it' },
+        { key: 'amount', label: 'Indicative amount' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={hiddenChargeRows}
+      caption="Charge types are real; specific amounts are not published in the research snapshot. Request the full itemised schedule from your forwarder."
+    />
+    <SourceList sources={costSources} title="Sources — destination charge categories & demurrage range" />
+    <div class="note mt-2">
+      <strong>The audit rule:</strong> if a forwarder quotes a lump-sum “destination fee”, ask them to
+      split it into the lines above. A lump sum hides which charges are fixed, which are conditional
+      and which accrue by day.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit time determines when the charges can start</h2>
+      <p>
+        The verified sea windows are <strong>≈ 20–45 days to Saudi Arabia</strong> and
+        <strong>≈ 14–18 days to the UAE</strong>. Arrival date uncertainty matters because storage,
+        demurrage and detention all begin from discharge, not from when the importer notices the
+        arrival.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'window', label: 'Transit window' },
+          { key: 'basis', label: 'Source basis' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Only Saudi and UAE sea windows are quantified in the snapshot. Treat all other lanes as schedule-dependent."
+      />
+      <SourceList sources={portSources} title="Sources — GCC transit & port context" />
+      <div class="note mt-2">
+        <strong>Plan from the discharge date:</strong> complete SABER, FASAH or Mirsal filing and
+        trucking before the vessel arrives. If you start clearance on arrival day, you are already
+        spending part of the terminal free-time window.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL vs LCL: which charges each mode attracts</h2>
+    <p>
+      FCL and LCL do not share the same fee profile. FCL gives you a sealed box but puts box-level
+      THC, port charges and demurrage/detention directly on your account. LCL spreads some charges
+      across consignees but adds CFS handling, cargo-service and storage lines.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'note', label: 'Caveat' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclVsLclRows}
+      caption="The comparison is structural. Unit amounts are LOW confidence and vary by forwarder, terminal and CFS."
+    />
+    <SourceList sources={costSources} title="Sources — FCL vs LCL destination fees" />
+    <div class="grid grid--2 mt-2">
+      <Card title="FCL fee watchlist">
+        <ul>
+          <li>Box-level OTHC and DTHC.</li>
+          <li>Port service and documentation/DO lines.</li>
+          <li>Demurrage after terminal free time and detention after carrier free days.</li>
+          <li>Inland trucking or rail to the final address.</li>
+        </ul>
+      </Card>
+      <Card title="LCL fee watchlist">
+        <ul>
+          <li>Allocated THC and port charges.</li>
+          <li>CFS deconsolidation and cargo-service fees.</li>
+          <li>Storage after the CFS free period.</li>
+          <li>Delivery orders and multi-consignee documentation work.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. GCC ports and the charges they attract</h2>
+      <p>
+        The corridor norm is <strong>3–7 days of terminal free time</strong> after discharge. Each
+        port below adds its own local lines on top of that clock; amounts are not published in the
+        snapshot and must come from the relevant terminal or forwarder.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Port' },
+          { key: 'chargeExposure', label: 'Charge exposure' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portRows}
+        caption="Charge exposure names the categories, not the amounts. Terminal free time is a 3–7 day corridor norm, not a uniform guarantee."
+      />
+      <SourceList sources={portSources} title="Sources — GCC port charge exposure" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. The all-in cost composition</h2>
+    <p>
+      The invoice you should be auditing has three blocks. <strong>Block one</strong> is the
+      international move. <strong>Block two</strong> is the statutory stack. <strong>Block three</strong>
+      is the destination/local charge schedule. The verified layers below show how they fit together.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'layer', label: 'Layer' },
+        { key: 'basis', label: 'Verified / indicative basis' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="The freight brackets, LCL snapshot, Saudi/UAE VAT and GCC duty are verified; the destination-fee amounts are not."
+    />
+    <SourceList sources={costSources} title="Sources — all-in cost composition" />
+
+    <h3 class="mt-3">The statutory stack, in order</h3>
+    <p>
+      Start with the <strong>CIF value</strong> — goods plus freight plus insurance. Apply
+      <strong>5% duty on CIF</strong>, add the duty to CIF, then apply <strong>VAT to that
+      duty-inclusive base</strong>. Saudi VAT is 15%, UAE VAT is 5%. At baseline rates the Saudi
+      statutory stack is <strong>CIF × 1.05 × 1.15</strong>, or <strong>CIF × 1.2075</strong>. The
+      destination-fee block sits on top of that result.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card title="Saudi statutory example">
+        <p>
+          On an illustrative <strong>$10,000 CIF</strong>: duty = <strong>$500</strong>, VAT =
+          <strong>15% × $10,500 = $1,575</strong>, statutory subtotal =
+          <strong>$12,075</strong> before destination fees.
+        </p>
+      </Card>
+      <Card title="UAE statutory example">
+        <p>
+          On the same <strong>$10,000 CIF</strong>: duty = <strong>$500</strong>, VAT =
+          <strong>5% × $10,500 = $525</strong>, statutory subtotal =
+          <strong>$11,025</strong> before destination fees.
+        </p>
+      </Card>
+    </div>
+
+    <h3 class="mt-3">Why itemisation beats a lump sum</h3>
+    <p>
+      A lump-sum destination fee is not evidence of a good deal; it is a black box. The same shipment
+      can carry hidden assumptions about free time, inspection, storage and inland delivery. Ask for
+      the full line-by-line schedule before booking, then keep it so post-arrival additions can be
+      challenged.
+    </p>
+    <p>
+      Companion guide: <a href="/middleeast/demurrage-detention-china-to-gcc/">Demurrage &amp;
+      detention charges: China-to-GCC free-time guide</a> explains the time-based subset, combined
+      free time and the failure chains that turn these fixed fees into daily charges.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance points that change the fee stack</h2>
+      <p>
+        Compliance errors are the main reason fixed destination fees become daily holds. The rules
+        below are the highest-leverage items to resolve before sailing.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'value', label: 'Verified value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="Tax and SABER rules are verified; classification is an operational control, not a fixed fee."
+      />
+      <SourceList sources={complianceSources} title="Sources — GCC customs, VAT & compliance" />
+      <h3 class="mt-3">Compliance checklist before sailing</h3>
+      <ol>
+        <li>Classify the correct <strong>HS code</strong>; duty, SABER scope and inspection risk all follow from it.</li>
+        <li>Obtain the <strong>SABER SC before vessel arrival</strong> for Saudi-regulated goods.</li>
+        <li>File the <strong>FASAH</strong> pre-arrival declaration (Saudi) or <strong>Mirsal</strong> (UAE) before discharge.</li>
+        <li>Confirm duty and VAT treatment with customs for the exact goods, not a generic category.</li>
+        <li>Ask the broker to flag holds early rather than report them after free time has run.</li>
+      </ol>
+      <p>
+        <strong>ISF note:</strong> ISF is a United States importer security filing and does not apply
+        to the GCC. The GCC advance-filing step is the FASAH/Mirsal pre-arrival declaration.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>8. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The verified
+      layers — GCC 5% duty, Saudi 15% VAT, UAE 5% VAT, SABER-before-arrival and the freight brackets
+      — are re-checked against customs and port sources. The $50–$300+ demurrage/detention range is
+      re-checked monthly because it moves with congestion and carrier policy.
+    </p>
+    <p>
+      If a carrier, terminal or forwarder publishes specific amounts for THC, port service,
+      documentation, ISPS, inspection, brokerage, SABER or storage, the page will add the figures,
+      raise the confidence badge and update the modified date. Until then those lines remain LOW
+      confidence with a request-the-schedule note.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China-to-GCC destination schedule"
+      text="Tell us your HS code, commodity, destination port and volume, and we will connect you with providers who can itemise every destination charge before you book."
+    />
+  </section>
+</BaseLayout>

@@ -1,0 +1,702 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/demurrage-detention-china-to-gcc/`;
+
+const freightAmigo: Source = {
+  id: 'freightamigo-demurrage',
+  name: 'FreightAmigo — Demurrage & Detention charges (2025 averages)',
+  url: 'https://www.freightamigo.com/en/blog/logistics/demurrage-and-detention-charges-in-shipping-understanding-and-minimizing-costs',
+  type: 'industry',
+};
+
+const rateSources: Source[] = [
+  freightAmigo,
+  ...sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'mawani']),
+];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  freightAmigo,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+const costSources: Source[] = [
+  freightAmigo,
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+
+const notPublished = '待核实 / not published in our research snapshot — request an itemised schedule from your forwarder';
+
+const freightRows = [
+  {
+    item: 'FCL 20ft · China to GCC',
+    benchmark: '$1,500–$6,200 per box',
+    basis: 'Corridor indicative bracket',
+    note: 'Use the bracket as a screening range, not a tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'FCL 40ft · China to GCC',
+    benchmark: '$1,900–$8,100 per box',
+    basis: 'Corridor indicative bracket',
+    note: 'Wider range reflects route, carrier and season',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL · Shanghai to Riyadh',
+    benchmark: '$267–$955 per CBM',
+    basis: 'Shanghai–Riyadh snapshot',
+    note: 'Volume-dependent; minimum charges apply at low CBM 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage or detention daily charge',
+    benchmark: '≈ $50 up to $300+ per day; 2025 average ≈ $150–$300',
+    basis: 'FreightAmigo 2025 market average',
+    note: 'Terminal/carrier-specific and escalates the longer the box sits 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'Sea · China to Saudi Arabia (Jeddah / Dammam)',
+    window: '≈ 20–45 days',
+    basis: 'Corridor estimate',
+    note: 'Wide range; confirm against the current sailing schedule 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to UAE (Jebel Ali / Khalifa / Sharjah)',
+    window: '≈ 14–18 days',
+    basis: 'Corridor estimate',
+    note: 'Faster end of the GCC corridor in the snapshot 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to Qatar / Kuwait / Oman / Bahrain',
+    window: notPublished,
+    basis: 'Research snapshot',
+    note: 'Request current schedule; use the verified Saudi/UAE windows only as direction 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'LCL vs FCL handling time',
+    window: 'Additional CFS/deconsolidation time — amount not published',
+    basis: 'Operational definition',
+    note: 'LCL adds consolidation at origin and deconsolidation at destination 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const fclVsLclRows = [
+  {
+    factor: 'Free-time exposure',
+    fcl: 'The importer directly controls the carrier container and the terminal slot, so demurrage/detention exposure is on your clock.',
+    lcl: 'The consolidated shipment moves through a CFS; storage and handling charges are usually allocated by the forwarder.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Demurrage trigger',
+    fcl: 'Container remains inside the port past terminal free time after discharge.',
+    lcl: 'Cargo remains uncollected at the CFS beyond the CFS free period.',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Detention trigger',
+    fcl: 'Container remains outside the port past the carrier free days after pickup.',
+    lcl: 'Not usually a box-level detention issue for the consignee because the carrier box is returned by the CFS operator.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Best planning rule',
+    fcl: 'Pre-clear, book trucking early and finish unloading inside the combined free-time clock.',
+    lcl: 'Give the forwarder full documents early so deconsolidation is not delayed by paperwork.',
+    note: '待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const portRows = [
+  {
+    port: 'Jeddah Islamic Port',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'SABER holds are the dominant demurrage driver; request the terminal tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Rail transfer to Riyadh Dry Port shifts inland, but coastal clearance delays still count',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Riyadh Dry Port',
+    exposure: 'Inland depot storage/free time — amount not published',
+    note: notPublished,
+    confidence: 'LOW',
+  },
+  {
+    port: 'Jebel Ali (UAE)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'High-volume hub; free-time policy varies by terminal and service',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa Port (UAE)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Request the AD Ports terminal schedule',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sharjah / Port Khalid (UAE)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Confirm local free-time rules; often used for breakbulk/regional distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad (Qatar)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Request the current tariff from Mwani Qatar',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh / Shuaiba (Kuwait)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Two-port routing can change inland exposure',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar / Salalah (Oman)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Salalah is transshipment-heavy; confirm consignee-side free time',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa Bin Salman (Bahrain)',
+    exposure: 'Terminal free time typically 3–7 days after discharge',
+    note: 'Causeway onward trucking adds a separate inland leg',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    layer: 'Ocean freight (FCL/LCL)',
+    charge: 'FCL 20ft $1,500–$6,200; FCL 40ft $1,900–$8,100; LCL $267–$955/CBM',
+    note: 'The headline rate; not the all-in cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Terminal demurrage',
+    charge: '≈ $50 up to $300+ per day; 2025 average ≈ $150–$300',
+    note: 'Charged by the terminal after free time; often uncapped and escalates 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Carrier detention',
+    charge: '≈ $50 up to $300+ per day; 2025 average ≈ $150–$300',
+    note: 'Charged by the carrier after free days; can run simultaneously with demurrage 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'SABER conformity hold',
+    charge: notPublished,
+    note: 'Missing or late SABER SC is the #1 Saudi port-hold and demurrage trigger',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Customs inspection / exam hold',
+    charge: notPublished,
+    note: 'Inspection is not a standard tariff and depends on cargo and declaration risk 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Storage after free time',
+    charge: notPublished,
+    note: 'Separate from demurrage at some terminals; request the storage schedule 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Inland trucking / rail',
+    charge: notPublished,
+    note: 'Dammam rail to Riyadh Dry Port can reduce coastal demurrage exposure but adds its own line 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const complianceRows = [
+  {
+    rule: 'Saudi import VAT',
+    value: '15% on CIF + duty',
+    note: 'Effective since 1 July 2020',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'UAE import VAT',
+    value: '5% on CIF + duty',
+    note: 'Lower VAT market in the GCC',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'GCC Common External Tariff',
+    value: '5% duty on CIF',
+    note: 'Baseline for the six GCC states in the snapshot',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'SABER Shipment Conformity Certificate',
+    value: 'Must be obtained before vessel arrival',
+    note: 'Effective 1 January 2025; after-arrival applications are void',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'Pre-arrival customs filing',
+    value: 'FASAH (Saudi) / Mirsal (UAE)',
+    note: 'Advance filing shortens clearance and protects free time',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between demurrage and detention?',
+    a: 'Demurrage is charged by the terminal while the imported container is still inside the port past the free time after discharge. Detention is charged by the ocean carrier while the container is outside the port past the free days after pickup. The trigger is the same — free time has expired — but the party charging you and the location are different.',
+  },
+  {
+    q: 'Can demurrage and detention run at the same time?',
+    a: 'Yes. A container can miss terminal free time first and then also miss carrier free days after it is eventually picked up, which means the two charges run sequentially and can overlap in your total cost exposure. The practical way to prevent this is to plan against the combined free-time clock, not just one of the two limits.',
+  },
+  {
+    q: 'How much free time do GCC terminals give?',
+    a: 'The verified snapshot puts typical terminal free time at 3–7 days after discharge, but this is a market norm rather than a guaranteed allowance. It varies by terminal, carrier, service and your negotiated terms, so request the exact schedule before booking.',
+  },
+  {
+    q: 'How much is demurrage or detention per day?',
+    a: 'The research snapshot shows a rough range from about $50 up to $300 or more per day, with 2025 market averages around $150–$300 per day. These are indicative market figures, not a fixed tariff; the rate is terminal/carrier-specific and usually escalates the longer the box sits.',
+  },
+  {
+    q: 'Is demurrage covered by marine insurance?',
+    a: 'No. Standard marine cargo insurance covers physical loss or damage to the goods, not time-based container charges from the terminal or carrier. Demurrage and detention are your operational liabilities unless a specific extension or service agreement says otherwise.',
+  },
+  {
+    q: 'Why is missing SABER such a common demurrage cause?',
+    a: 'In Saudi Arabia the SABER Shipment Conformity Certificate must be obtained before vessel arrival — effective 1 January 2025. When it is missing, customs cannot release the cargo and the container sits inside the port. That hold turns directly into demurrage days and then can spill into detention after pickup.',
+  },
+  {
+    q: 'How do Ramadan, Eid and weekends affect my free time?',
+    a: 'GCC working days and customs staffing shift around Ramadan, Eid and weekend schedules, and the days are not automatically excluded from terminal free time unless the tariff says so. The safest planning assumption is to treat calendar days as the clock and finish clearance as early as possible rather than assume holidays pause the meter.',
+  },
+  {
+    q: 'What is “combined free time”?',
+    a: 'Combined free time is the practical total: terminal free days after discharge plus carrier free days after pickup. Your total planning clock is the sum of both windows. If you exhaust seven terminal days and then take ten carrier days, you have used the combined allowance — miss either and the corresponding charge starts.',
+  },
+  {
+    q: 'How can I avoid demurrage and detention?',
+    a: 'Pre-clear before arrival, obtain SABER before sailing, file the FASAH (Saudi) or Mirsal (UAE) pre-arrival declaration early, book trucking before discharge, negotiate free-time extension up front, return empties on time and use a broker who flags compliance issues early. The cheapest demurrage day is the one that never starts.',
+  },
+  {
+    q: 'Is demurrage the same as storage?',
+    a: 'Not exactly. Demurrage is the time-based charge for the container remaining in the terminal after free time; storage is usually a separate cargo/warehouse charge once goods are held beyond a given period, often at a CFS or inland depot. Ask the forwarder to separate the two on the destination schedule.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Demurrage & Detention Charges: China to GCC Guide (August 2026)',
+      description:
+        'Demurrage and detention on the China to GCC corridor explained: free time, terminal vs carrier charges, how they run simultaneously, SABER holds, and the indicative $50–$300+ per day 2025 range.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Demurrage & Detention Charges: China to GCC Guide (August 2026)"
+  description="Demurrage and detention on the China to GCC corridor: free time, terminal vs carrier charges, combined free time, SABER holds, and the indicative $50–$300+ per day 2025 range."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Demurrage & detention China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Demurrage &amp; detention charges: the China-to-GCC free-time guide</h1>
+      <p class="lead">
+        Demurrage and detention are the two destination charges most likely to erase the savings you
+        negotiated on ocean freight. This page separates the two by trigger, location and who bills
+        them, then shows how a single Saudi hold can turn into a multi-day, per-container charge.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified definitions and tax rules from indicative market ranges.
+        Per-day amounts are market estimates, not tariffs — request your terminal and carrier schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Terminal free time</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Carrier free time</span>
+          <span class="fact-value">5–10 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Daily charge range</span>
+          <span class="fact-value">$50–$300+ <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">2025 average</span>
+          <span class="fact-value">$150–$300/day <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER SC rule</span>
+          <span class="fact-value">Before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Insurance cover</span>
+          <span class="fact-value">Not standard <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The rate screen that hides the real risk</h2>
+    <p>
+      A China-to-GCC ocean quote usually leads with the freight line. The verified corridor bracket
+      is <strong>FCL 20ft $1,500–$6,200</strong> and <strong>FCL 40ft $1,900–$8,100</strong>, with
+      LCL around <strong>$267–$955 per CBM</strong> on the Shanghai-to-Riyadh snapshot. Those numbers
+      are useful for screening, but they do not include the destination clock.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Item' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Source basis' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={freightRows}
+      caption="The freight bracket is a screening range. The daily demurrage/detention figure is a 2025 market average range, not a tariff."
+    />
+    <SourceList sources={rateSources} title="Sources — freight brackets & free-time charge range" />
+    <p>
+      The danger is not the headline rate; it is the arithmetic after discharge. At the 2025 average
+      of roughly $150–$300 per day, a container held past free time can consume hundreds of dollars
+      per box per day. A $1,500 FCL negotiation advantage can disappear inside a week of delay.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit time sets the free-time countdown</h2>
+      <p>
+        You cannot manage the destination clock if you do not know when the vessel actually arrives.
+        The research snapshot gives a wide Saudi window of <strong>≈ 20–45 days</strong> and a
+        tighter UAE window of <strong>≈ 14–18 days</strong>. Both are LOW-confidence estimates.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'window', label: 'Transit window' },
+          { key: 'basis', label: 'Source basis' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Wider transit ranges mean the pre-arrival clearance window is less predictable. Confirm the current sailing schedule before relying on any single date."
+      />
+      <SourceList sources={[...rateSources, ...portSources]} title="Sources — transit & port context" />
+      <div class="note mt-2">
+        <strong>Why the width matters:</strong> Red Sea rerouting and schedule volatility lengthen
+        transit and shrink the predictable window in which you can complete SABER, FASAH or Mirsal
+        filing, book trucking and prepare the warehouse. When arrival dates move, the container still
+        starts its free-time countdown at discharge.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL vs LCL: where your free-time exposure lives</h2>
+    <p>
+      FCL and LCL expose you to delay charges in different places. With FCL, the consignee directly
+      controls the carrier box and the terminal slot, so demurrage and detention sit on your clock.
+      With LCL, the consolidated shipment moves through a CFS and the forwarder normally allocates
+      storage and handling, but slow deconsolidation and paperwork can still create avoidable fees.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'note', label: 'Caveat' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclVsLclRows}
+      caption="The 3–7 day terminal free-time norm is verified at corridor level; how the clock is allocated between FCL and LCL parties is forwarder- and terminal-specific."
+    />
+    <SourceList sources={[freightAmigo, ...complianceSources]} title="Sources — FCL vs LCL exposure" />
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose FCL when...">
+        <ul>
+          <li>Your clearance, trucking and warehouse unloading are disciplined enough to beat the combined clock.</li>
+          <li>You have negotiated free-time extension up front, not after the container is already held.</li>
+          <li>You need a sealed, single-consignee move with fewer CFS handling touches.</li>
+        </ul>
+      </Card>
+      <Card title="Choose LCL when...">
+        <ul>
+          <li>Volume is small and the forwarder manages the CFS deconsolidation and release.</li>
+          <li>You can supply complete documents early so the forwarder is not delayed by paperwork.</li>
+          <li>The all-in per-CBM quote remains cheaper after destination handling is itemised.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. GCC ports and their demurrage exposure</h2>
+      <p>
+        Every GCC gateway runs its own terminal tariff, but the corridor norm in the snapshot is
+        <strong>3–7 days of terminal free time after discharge</strong>. The exposure is not the
+        number of days printed on a brochure; it is how quickly your documents, compliance and
+        trucking can release the container before those days run out.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Port' },
+          { key: 'exposure', label: 'Demurrage / charge exposure' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portRows}
+        caption="Terminal free time of 3–7 days is a corridor-level norm, not a uniform guarantee. Charge amounts per port are not published in the research snapshot."
+      />
+      <SourceList sources={portSources} title="Sources — GCC port free-time context" />
+      <div class="note mt-2">
+        <strong>Jeddah vs Dammam vs Jebel Ali:</strong> Jeddah’s dominant delay driver is missing
+        SABER; Dammam often serves Riyadh via rail to Riyadh Dry Port, which reduces the coastal
+        demurrage window but adds an inland leg; Jebel Ali is a high-volume hub where free-time terms
+        vary by terminal and negotiated service. Confirm all three on the destination schedule.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. The cost composition and the combined free-time clock</h2>
+    <p>
+      Demurrage and detention are best understood as the destination cost layer that rewards early
+      compliance and punishes late paperwork. The definitions are verified and stable:
+    </p>
+    <ul>
+      <li><strong>Demurrage</strong> is charged by the <strong>terminal</strong> when an imported container remains <strong>inside the port</strong> beyond free time after discharge.</li>
+      <li><strong>Detention</strong> is charged by the <strong>ocean carrier</strong> when the container remains <strong>outside the port</strong> beyond free days after pickup.</li>
+      <li>The charges are <strong>per container</strong>, often <strong>uncapped</strong>, and <strong>not covered by standard marine cargo insurance</strong>.</li>
+    </ul>
+    <p>
+      The two can run <strong>simultaneously</strong> or back-to-back. A container can miss terminal
+      free time, then after pickup miss carrier free days, producing a continuous billing window.
+      <strong>Combined free time</strong> is the practical planning concept: terminal free days plus
+      carrier free days equal the total clock you are working against.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'layer', label: 'Layer' },
+        { key: 'charge', label: 'Indicative charge' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only the freight brackets and the $50–$300+ per-day demurrage/detention range are quantified. All other fee amounts are LOW confidence and must come from a schedule."
+    />
+    <SourceList sources={costSources} title="Sources — cost composition & fee layers" />
+
+    <h3 class="mt-3">Worked example: a Jeddah container held 12 days</h3>
+    <p>
+      Assume a Jeddah import is allowed <strong>5 free days</strong> after discharge and is held
+      <strong>12 days</strong>. That is <strong>7 chargeable demurrage days</strong>. At the
+      indicative 2025 range of <strong>$150–$300 per day</strong>, the exposure is
+      <strong>$1,050–$2,100 per container</strong>. If the same box then sits at your warehouse past
+      the carrier’s free days, detention starts on top. This is why a freight saving of a few hundred
+      dollars can be erased by one avoidable hold.
+    </p>
+    <div class="note mt-2">
+      <strong>Label the number correctly:</strong> the $150–$300/day figure is an indicative 2025
+      market range from FreightAmigo, not a Jeddah tariff. Your actual rate is terminal- and
+      carrier-specific and typically escalates the longer the box sits.
+    </div>
+
+    <h3 class="mt-3">How to avoid the charge before it starts</h3>
+    <ol>
+      <li>Pre-clear before vessel arrival; do not wait for the arrival notice.</li>
+      <li>Obtain the SABER Shipment Conformity Certificate <strong>before sailing</strong>, not after discharge.</li>
+      <li>File the pre-arrival declaration: <strong>FASAH</strong> for Saudi Arabia and <strong>Mirsal</strong> for the UAE.</li>
+      <li>Book trucking before discharge so collection is not the bottleneck.</li>
+      <li>Negotiate free-time extension up front while the booking is still competitive.</li>
+      <li>Return the empty container on time and document the return gate-in.</li>
+      <li>Use a broker who flags compliance risk early, especially SABER and HS classification.</li>
+    </ol>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance points that trigger or extend the clock</h2>
+      <p>
+        A hold is rarely about the container; it is usually about the paperwork and tax position
+        attached to it. The rules below are the ones that most often determine whether a GCC import
+        clears in hours or sits for days.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'value', label: 'Verified value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="Tax rates and the SABER pre-arrival rule are verified; use them to size the statutory exposure while you keep the operational clock short."
+      />
+      <SourceList sources={complianceSources} title="Sources — GCC customs, VAT & compliance" />
+      <h3 class="mt-3">The realistic failure chain</h3>
+      <ol>
+        <li>Missing or late <strong>SABER SC</strong> → Saudi port hold.</li>
+        <li>Port hold → terminal <strong>demurrage</strong> starts after 3–7 free days.</li>
+        <li>Slow warehouse unloading after pickup → <strong>detention</strong> starts on the carrier clock.</li>
+        <li>Ramadan/Eid or weekend staffing → customs working days shrink; calendar days do not always pause.</li>
+        <li>Red Sea rerouting volatility → arrival dates move, making the pre-clearance window harder to time.</li>
+      </ol>
+      <p>
+        <strong>ISF note:</strong> ISF is a United States importer security filing and does not apply
+        to the GCC lanes covered here. The GCC equivalent is the pre-arrival customs declaration —
+        FASAH for Saudi Arabia and Mirsal for the UAE.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>8. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The definitions
+      (demurrage vs detention), free-time norms and the tax rates are re-checked against port and
+      customs sources; the daily $50–$300+ range is re-checked monthly because it moves with terminal
+      congestion, carrier policy and seasonal demand.
+    </p>
+    <p>
+      If a specific terminal or carrier tariff becomes available, the page will add the exact
+      schedule, raise the confidence badge and update the modified date. Until then, unquantified
+      port-level fees stay LOW confidence with the “request the schedule” note rather than being
+      filled with estimates.
+    </p>
+    <p>
+      Companion page: <a href="/middleeast/hidden-charges-china-to-gcc/">Hidden &amp; destination
+      charges: China-to-GCC freight cost breakdown</a> itemises the full destination fee stack that
+      sits around demurrage and detention.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a China-to-GCC free-time & destination schedule"
+      text="Tell us your destination port, commodity, HS code and container volume, and we will connect you with providers who can itemise free time, demurrage, detention and clearance."
+    />
+  </section>
+</BaseLayout>
