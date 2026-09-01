@@ -288,3 +288,14 @@
 - **QA**：`npm run build` **181 页（+11 详情页）零 error**；50 详情页独立复验；工作区干净。
 - **Git Commit**：`5291d37 feat(directory): expand to 50 freight forwarders (Yiwu + Amazon FBA Middle East angles)`。
 - **Next**：可选继续扩至 100–200 家（下一角度：宁波/青岛专线、义新欧中欧班列、Noon/亚马逊中东仓储）；或开始 verified 分层（对已有 50 家逐一核实执照/联系方式）。
+
+
+## 2026-09-01（Directory 四批扩充 + verified 分层 — 50→103 家）
+
+- **Tasks**：① verified 分层：6 家升级为 verified（第三方审计背书）；② 扩充至 **103 家**（+53）。
+- **verified 升级 6 家**：Honour Ocean(SGS QIP-ASI252103+NVOCC)、Senfeng(Intertek)、East Shipping(Alibaba 验厂)、深圳沃达丰(made-in-china 审计)、广东 Wozka(审计)、Coshipper(Amazon SPN)。contactNote 逐条注明「身份已审计，联系方式待核实」，图例同步更新。
+- **扩充角度**：Yiwu 义乌 / Amazon FBA 中东 / Noon / Shenzhen·Guangzhou·Ningbo·Qingdao / 义新欧铁路 / 中东专线。
+- **新增 53 家**（来源分层）：官网核实（Maskura/Kapoklog/STU/Dantful/EasyChinaWarehouse/YLT/TJ/Yixshipping/Gerudo/Shantou/WideSafe/Topway/SEKO…）+ Alibaba/Made-in-China 店铺 + ddpchain 榜单（Haopeng/Senfeng/DPS/BOSA/宝仕航/Fly/CDT/Cooperate + Ningbo 9 家）+ 目录站（forwardingcompanies/fretador/everychina/clutch）。
+- **QA**：`npm run build` **234 页零 error**；103 详情页独立复验；工作区干净。
+- **Git Commit**：`a60758c`（verified 分层）+ `e879f75`（103 家）。
+- **Next**：可选继续扩至 200（剩余目录 + Noon 中东仓储 + 伊朗/伊拉克专线）；更建议转向「对 97 家 unverified 逐一核执照」的 verified 提级，或开始 Cloudflare 部署。
