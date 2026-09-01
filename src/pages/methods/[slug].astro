@@ -1,5 +1,4 @@
 ---
-import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Cta from '../../components/Cta.astro';
@@ -27,12 +26,6 @@ const costColumns = [
   { key: 'range', label: 'Indicative range (China → GCC)' },
   { key: 'confidence', label: 'Confidence', type: 'confidence' as const },
 ];
-
-const costRows = method.costRows.map((row) => ({
-  label: row.label,
-  range: row.range,
-  confidence: row.confidence,
-}));
 
 const schema = [
   {
@@ -126,7 +119,7 @@ const schema = [
     </p>
     <DataTable
       columns={costColumns}
-      rows={costRows}
+      rows={method.costRows}
       caption="Indicative cost ranges for the China–GCC corridor"
     />
   </section>

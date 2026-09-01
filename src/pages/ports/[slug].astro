@@ -1,11 +1,9 @@
 ---
-import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
-import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import { gccPorts } from '../../data/gcc-ports';
 import { chinaPorts } from '../../data/china-ports';
@@ -37,7 +35,10 @@ const schema = [
     data: {
       name: port.name,
       url: `${SITE_URL}/ports/${port.slug}/`,
-      address: { addressCountry: port.country },
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: port.country,
+      },
     },
   },
   {

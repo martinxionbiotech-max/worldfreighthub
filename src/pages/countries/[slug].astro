@@ -1,5 +1,4 @@
 ---
-import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
@@ -36,7 +35,10 @@ const schema = [
     data: {
       name: country.name,
       url: `${SITE_URL}/countries/${country.slug}/`,
-      address: { addressCountry: country.iso2 },
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: country.iso2,
+      },
     },
   },
   {
