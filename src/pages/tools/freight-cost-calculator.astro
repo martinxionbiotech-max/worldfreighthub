@@ -1,0 +1,1194 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+
+const pageUrl = `${SITE_URL}/tools/freight-cost-calculator/`;
+const title = 'Freight Cost Calculator: China to GCC Landed-Cost Estimator (August 2026)';
+const description =
+  'Estimate the landed cost of a China-to-GCC shipment with this free freight cost calculator — ocean or air freight, GCC duty, VAT, insurance and the destination charges most quotes leave out.';
+
+const notPublished = '待核实 / not published in our research snapshot — request an itemised schedule from your forwarder';
+
+const freightRows = [
+  {
+    port: 'Jeddah Islamic Port',
+    country: 'Saudi Arabia',
+    fcl20: '$1,500–$6,200',
+    fcl40: '$1,900–$8,100',
+    lcl: '$20–$110/CBM',
+    note: 'Red Sea gateway; wide range reflects route and geopolitical risk 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam',
+    country: 'Saudi Arabia',
+    fcl20: '$1,500–$6,200',
+    fcl40: '$1,900–$8,100',
+    lcl: '$20–$110/CBM',
+    note: 'Gulf-side Saudi gateway; Strait of Hormuz routing 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Jebel Ali',
+    country: 'United Arab Emirates',
+    fcl20: '$1,500–$3,250',
+    fcl40: '$2,200–$3,950',
+    lcl: '$60–$180/CBM',
+    note: 'Highest-frequency GCC corridor; most carrier options 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad',
+    country: 'Qatar',
+    fcl20: '$1,700–$2,500',
+    fcl40: '$2,500–$3,600',
+    lcl: '$75–$100/CBM',
+    note: 'Single-gateway Qatar market; transshipment common 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh',
+    country: 'Kuwait',
+    fcl20: '$1,500–$2,500',
+    fcl40: '$2,200–$3,600',
+    lcl: '$70–$100/CBM',
+    note: 'Kuwait gateway; confirm Shuwaikh vs Shuaiba routing 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar',
+    country: 'Oman',
+    fcl20: '$1,500–$2,600',
+    fcl40: '$2,200–$3,800',
+    lcl: '$60–$110/CBM',
+    note: 'Oman gateway outside the Strait of Hormuz 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa bin Salman',
+    country: 'Bahrain',
+    fcl20: '$1,500–$2,500',
+    fcl40: '$2,200–$3,600',
+    lcl: '$75–$100/CBM',
+    note: 'Causeway link to eastern Saudi; niche alternate entry 待核实 / verify with forwarder',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'Sea · China to Saudi Arabia (Jeddah / Dammam)',
+    window: '≈ 20–45 days',
+    basis: 'Corridor estimate',
+    note: 'Red Sea rerouting and schedule volatility keep the window wide 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to UAE (Jebel Ali / Khalifa Port)',
+    window: '≈ 14–18 days',
+    basis: 'Corridor estimate',
+    note: 'The fastest verified GCC sea window in the snapshot 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Sea · China to Qatar / Kuwait / Oman / Bahrain',
+    window: notPublished,
+    basis: 'Research snapshot',
+    note: 'Request the current sailing schedule; use Saudi/UAE windows only as direction 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Air freight · China to GCC',
+    window: notPublished,
+    basis: 'Research snapshot',
+    note: 'Much faster than sea, but destination handling and clearance still add time 待核实 / verify with forwarder',
+    confidence: 'LOW',
+  },
+];
+
+const portRows = [
+  {
+    port: 'Jeddah Islamic Port',
+    country: 'Saudi Arabia',
+    note: "Saudi Arabia's Red Sea gateway for western and central regions.",
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam',
+    country: 'Saudi Arabia',
+    note: 'Gulf gateway serving the Eastern Province and Riyadh by rail/road.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Jebel Ali',
+    country: 'United Arab Emirates',
+    note: "The UAE's largest port, regional re-export hub and JAFZA free-zone anchor.",
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa Port (Abu Dhabi)',
+    country: 'United Arab Emirates',
+    note: 'AD Ports deep-water hub and the Abu Dhabi alternative to Jebel Ali.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad',
+    country: 'Qatar',
+    note: "Qatar's sole commercial container gateway.",
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh',
+    country: 'Kuwait',
+    note: 'Kuwait city-area gateway; Shuaiba serves the south.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar',
+    country: 'Oman',
+    note: 'Northern Oman gateway positioned outside the Strait of Hormuz.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa bin Salman',
+    country: 'Bahrain',
+    note: "Bahrain's main deep-water port with King Fahd Causeway access to Saudi Arabia.",
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    layer: 'Ocean freight',
+    basis: 'Port-specific FCL 20ft / 40ft / LCL brackets from routes.ts',
+    note: 'Headline international move only — not the all-in cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Marine cargo insurance',
+    basis: 'Visible input, default 0.3% of freight-inclusive value',
+    note: 'Industry-norm assumption, not in the research snapshot — 待核实; set to 0 if not required',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'GCC import duty',
+    basis: '5% × CIF',
+    note: 'GCC Common External Tariff baseline; alcohol and tobacco are higher',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Destination VAT',
+    basis: 'Saudi 15% · UAE 5% · Oman 5% · Bahrain 10% · Qatar 0% · Kuwait 0%',
+    note: 'Calculated on CIF plus duty',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'Destination & local charges',
+    basis: notPublished,
+    note: 'THC, port service, docs/DO, ISPS, inspection, brokerage, SABER, storage, inland trucking — request a full schedule',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Demurrage / detention (optional)',
+    basis: '≈ $50–$300+ per day; 2025 average ≈ $150–$300',
+    note: 'The only quantified destination-charge range in the snapshot; applies only after free time',
+    confidence: 'LOW',
+  },
+];
+
+const complianceRows = [
+  {
+    rule: 'GCC Common External Tariff',
+    value: '5% duty on CIF',
+    note: 'Baseline across the GCC; alcohol, tobacco and some agricultural lines are higher',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'Saudi VAT',
+    value: '15% on CIF + duty',
+    note: 'Effective since 1 July 2020',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'UAE VAT',
+    value: '5% on CIF + duty',
+    note: 'Effective since 1 January 2018',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'Oman VAT',
+    value: '5% on CIF + duty',
+    note: 'Effective since 16 April 2021',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'Bahrain VAT',
+    value: '10% on CIF + duty',
+    note: 'Raised from 5% in 2022',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'Qatar / Kuwait VAT',
+    value: 'None at present',
+    note: 'No VAT yet in the research snapshot; monitor local legislation',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'SABER Shipment Conformity Certificate',
+    value: 'Must be obtained before vessel arrival',
+    note: 'Effective 1 January 2025; missing SC is the most common Saudi port-hold trigger',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'Pre-arrival customs filing',
+    value: 'FASAH (Saudi) / Mirsal (UAE)',
+    note: 'Advance filing protects free time and shortens clearance',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'HS classification',
+    value: 'Correct HS code before quoting',
+    note: 'Drives duty, SABER scope and inspection risk',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is this freight cost calculator a real quote?',
+    a: 'No. It is an indicative planning estimate, not a quotation or a contractual offer. Freight rates move weekly, destination charges vary by terminal and carrier, and every result must be confirmed with a licensed forwarder before booking.',
+  },
+  {
+    q: 'Why are freight rates shown as a range?',
+    a: 'The China-to-GCC corridor is volatile. Spot rates move with capacity, seasonality, Red Sea and Strait of Hormuz risk, congestion and fuel. A range shows the realistic spread between a calm market and a stressed market; a single number would pretend the volatility does not exist.',
+  },
+  {
+    q: 'What is CIF and how is duty calculated?',
+    a: 'CIF means cost, insurance and freight. In this calculator, the CIF basis is the goods value plus the freight midpoint plus insurance. GCC duty is then 5% of that CIF value, and VAT is applied to CIF plus duty.',
+  },
+  {
+    q: 'What VAT rate applies to my destination?',
+    a: 'The calculator maps the destination port to the country rate: Saudi Arabia 15%, United Arab Emirates 5%, Oman 5%, Bahrain 10%, Qatar 0%, Kuwait 0%. Qatar and Kuwait currently have no VAT in the research snapshot.',
+  },
+  {
+    q: 'Which charges are NOT included?',
+    a: 'Destination and local charges are not quantified in the snapshot. That includes THC, port service fee, documentation/DO fee, ISPS, inspection, brokerage, SABER PC/SC, storage and inland trucking. The calculator shows them as a request-the-schedule line, not as a made-up number.',
+  },
+  {
+    q: 'How do I estimate demurrage and detention?',
+    a: 'Enter the number of days the container is expected to be held after discharge. The calculator subtracts a 5-free-day planning assumption and applies the snapshot range of roughly $50 to $300+ per day, with the 2025 average at about $150–$300 per day. This is a directional estimate, not a terminal tariff.',
+  },
+  {
+    q: 'Does this include DDP?',
+    a: 'No. This is a landed-cost estimate, not a DDP quote. DDP includes duty, VAT, clearance and delivery in the forwarder\u2019s obligation, but the underlying arithmetic is the same. Use the calculator to sanity-check a DDP price against its cost components.',
+  },
+  {
+    q: 'Why is air freight shown as a range?',
+    a: 'Air rates are published in the research snapshot only as directional benchmarks: Saudi Arabia roughly $8.80–$13.50/kg and the UAE roughly $5.45–$6.40/kg. For other GCC destinations the snapshot has no published air figure, so the calculator uses the Saudi/UAE span as a directional fallback only.',
+  },
+  {
+    q: 'How often is this data updated?',
+    a: 'The page carries the August 2026 update badge. Verified tax rules and port-level freight brackets are re-checked against the data files; volatile market ranges are treated as monthly-review items and kept LOW confidence until a primary source publishes a specific figure.',
+  },
+  {
+    q: 'Is marine insurance included?',
+    a: 'Yes, but only as an explicit assumption. The research snapshot does not publish a standard marine cargo insurance rate, so the calculator defaults to 0.3% of the freight-inclusive value as an industry-norm placeholder. You can set it to 0 or to your actual quoted rate.',
+  },
+  {
+    q: 'What does “待核实” mean?',
+    a: 'It means the figure has not been verified against a primary source in the current research snapshot. WorldFreightHub marks those numbers LOW confidence and directs you to request an itemised schedule from your forwarder rather than presenting an invented amount as fact.',
+  },
+  {
+    q: 'Should I use this for customs declaration values?',
+    a: 'No. Use it for planning and for challenging quotes, not for declaring customs value. The declared value must follow the actual commercial invoice and the destination customs rules for the specific goods and HS code.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'en',
+    },
+  },
+  {
+    type: 'Article',
+    data: {
+      headline: title,
+      description,
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const freightSources = sourcesByIds([
+  'sipg',
+  'ningbo-zhoushan-port',
+  'mawani',
+  'dp-world',
+  'abu-dhabi-ports',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+
+const complianceSources = sourcesByIds([
+  'zatca',
+  'dubai-customs',
+  'mawani',
+  'dp-world',
+  'abu-dhabi-ports',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+
+const costSources = [...new Set([...freightSources, ...complianceSources])];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Tools', href: '/tools/' },
+          { label: 'Freight Cost Calculator' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>China to GCC freight cost calculator</h1>
+      <p class="lead">
+        Estimate the landed cost of a China-to-GCC shipment in one screen: ocean or air freight,
+        GCC import duty, destination VAT, insurance and the destination charges most online quotes
+        leave out.
+      </p>
+      <p class="small muted">
+        Every dollar figure is confidence-badged. Verified tax rules are HIGH; freight brackets are
+        MEDIUM; air freight, insurance and time-based charges are LOW until a forwarder publishes a
+        specific schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">GCC duty</span>
+          <span class="fact-value">5% of CIF <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi VAT</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UAE VAT</span>
+          <span class="fact-value">5% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Insurance rate</span>
+          <span class="fact-value">0.3% input <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Demurrage / detention</span>
+          <span class="fact-value">$50–$300+/day <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Other local fees</span>
+          <span class="fact-value">Schedule only <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Freight cost calculator: China to GCC</h2>
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="freight-cost-form" aria-label="China to GCC freight cost calculator inputs">
+          <div class="form-grid">
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="origin">Origin China port</label>
+                <select id="origin">
+                  <option value="shanghai">Shanghai</option>
+                  <option value="ningbo-zhoushan">Ningbo-Zhoushan</option>
+                  <option value="shenzhen">Shenzhen (Yantian / Shekou)</option>
+                  <option value="guangzhou">Guangzhou</option>
+                  <option value="qingdao">Qingdao</option>
+                  <option value="tianjin">Tianjin</option>
+                  <option value="xiamen">Xiamen</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="destination">Destination GCC port</label>
+                <select id="destination">
+                  <option value="jeddah">Jeddah</option>
+                  <option value="dammam">Dammam</option>
+                  <option value="jebel-ali">Jebel Ali</option>
+                  <option value="khalifa-port-abu-dhabi">Khalifa Port (Abu Dhabi)</option>
+                  <option value="hamad">Hamad</option>
+                  <option value="shuwaikh">Shuwaikh</option>
+                  <option value="sohar">Sohar</option>
+                  <option value="khalifa-bin-salman">Khalifa bin Salman</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="mode">Freight mode</label>
+                <select id="mode">
+                  <option value="fcl20">FCL 20ft</option>
+                  <option value="fcl40">FCL 40ft</option>
+                  <option value="lcl">LCL (per CBM)</option>
+                  <option value="air">Air freight (chargeable kg)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="size">Shipment size</label>
+                <input id="size" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1" />
+                <p class="small muted" id="size-hint">Container count for FCL · CBM for LCL · chargeable kg for air.</p>
+              </div>
+              <div class="field">
+                <label for="goods-value">Goods value (USD)</label>
+                <input id="goods-value" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 50000" />
+              </div>
+              <div class="field">
+                <label for="hold-days">Demurrage/detention hold days</label>
+                <input id="hold-days" type="number" min="0" step="1" inputmode="numeric" value="0" />
+              </div>
+              <div class="field">
+                <label for="insurance-rate">Insurance rate (%)</label>
+                <input id="insurance-rate" type="number" min="0" step="any" inputmode="decimal" value="0.3" />
+                <p class="small muted">
+                  Default ≈0.3% of freight-inclusive value — industry norm, not in snapshot
+                  <ConfidenceBadge level="LOW" />. Set to 0 if you do not need marine cargo cover.
+                </p>
+              </div>
+            </div>
+            <p class="form-error" id="cost-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cost-calculate">Calculate</button>
+              <button type="button" class="btn btn-secondary" id="cost-reset">Reset</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>How the estimate is built</h3>
+          <p><code>CIF = Goods value + Freight midpoint + Insurance</code></p>
+          <p><code>Insurance = (Goods value + Freight midpoint) × Insurance rate</code></p>
+          <p><code>Duty = 5% × CIF</code></p>
+          <p><code>VAT = Destination VAT% × (CIF + Duty)</code></p>
+          <p><code>Demurrage days = max(0, Hold days − 5 free days)</code></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="result-panel" aria-live="polite">
+          <h3 class="result-title">Landed-cost estimate</h3>
+          <div class="result-grid">
+            <div class="result-item result-item--accent">
+              <span class="result-label">Total landed cost</span>
+              <span class="result-value" id="total-range">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Per unit</span>
+              <span class="result-value" id="per-unit">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Freight midpoint</span>
+              <span class="result-value" id="freight-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">CIF midpoint</span>
+              <span class="result-value" id="cif-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Duty</span>
+              <span class="result-value" id="duty-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">VAT</span>
+              <span class="result-value" id="vat-mid">—</span>
+            </div>
+          </div>
+          <p class="result-note" id="result-context">
+            Enter shipment details to generate an indicative breakdown. Total low/mid/high follows
+            the freight range; insurance uses the freight midpoint as its base.
+          </p>
+        </div>
+
+        <div class="table-wrap mt-2">
+          <table class="data-table">
+            <caption>Indicative landed-cost breakdown</caption>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Low</th>
+                <th>Mid</th>
+                <th>High</th>
+                <th>Confidence</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody id="cost-breakdown-body">
+              <tr>
+                <td colspan="6" class="muted">No estimate yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>Indicative planning estimate — not a quote.</strong> Freight rates move weekly;
+      destination charges vary by terminal and carrier. Request an itemised schedule from a
+      forwarder before booking.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>1. Freight rate table: the seven published GCC ports</h2>
+      <p>
+        The calculator\u2019s sea-freight basis is the same per-destination bracket used across
+        WorldFreightHub, sourced from the route data file. These are screening ranges, not tariffs:
+        the spread is the market signal, and a forwarder should compress it to a firm all-in quote
+        for your exact commodity, HS code and sailing week.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Destination port' },
+          { key: 'country', label: 'Country' },
+          { key: 'fcl20', label: 'FCL 20ft' },
+          { key: 'fcl40', label: 'FCL 40ft' },
+          { key: 'lcl', label: 'LCL / CBM' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={freightRows}
+        caption="Seven GCC destination ports have published sea-freight brackets in the research snapshot. Khalifa Port is a UAE fallback from the Jebel Ali range because no separate Abu Dhabi bracket is published."
+      />
+      <SourceList sources={freightSources} title="Sources — China-to-GCC freight brackets" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. Transit-time reference</h2>
+    <p>
+      Transit time matters twice in a landed-cost model: it sets the cash-to-cash cycle, and it
+      determines how precisely you must time clearance, SABER, FASAH or Mirsal filing and trucking.
+      Only Saudi and UAE sea windows are quantified in the snapshot. Every other lane is a
+      request-the-schedule item.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'window', label: 'Transit window' },
+        { key: 'basis', label: 'Source basis' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Transit windows are planning estimates, not schedule commitments. Confirm the current sailing before setting warehouse and customer dates."
+    />
+    <SourceList sources={costSources} title="Sources — transit & GCC corridor context" />
+    <div class="note mt-2">
+      <strong>Red Sea and Hormuz volatility:</strong> Jeddah routes avoid the Strait of Hormuz but
+      carry Red Sea rerouting risk; Dammam, Jebel Ali and the Gulf-side ports transit Hormuz. When
+      those chokepoints tighten, transit windows widen and spot rates reprice — which is exactly why
+      the freight brackets in section 1 are ranges rather than single numbers.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. FCL vs LCL: the ≈15 CBM decision</h2>
+      <p>
+        The most useful pre-quote decision is whether the cargo should move as a full container or a
+        consolidated LCL shipment. The planning break-even on this corridor is roughly
+        <strong>15 CBM</strong>: below that, LCL usually prices by volume and avoids paying for an
+        empty half of a box; above it, FCL becomes cost-competitive and gives you direct control of
+        the container clock.
+      </p>
+      <p>
+        The choice also changes where delay exposure lives. FCL puts terminal demurrage and carrier
+        detention directly on the importer. LCL moves through a CFS, where the forwarder normally
+        allocates handling and storage, but slow deconsolidation or missing documents can still
+        create avoidable fees. The calculator uses the same FCL, LCL and air modes so the number
+        follows the correct pricing logic.
+      </p>
+      <div class="grid grid--2 mt-2">
+        <Card title="FCL fee watchlist">
+          <ul>
+            <li>Box-level origin and destination THC.</li>
+            <li>Port service and documentation/DO lines.</li>
+            <li>Demurrage after terminal free time and detention after carrier free days.</li>
+            <li>Inland trucking or rail to the final address.</li>
+          </ul>
+        </Card>
+        <Card title="LCL fee watchlist">
+          <ul>
+            <li>Allocated THC and port charges.</li>
+            <li>CFS deconsolidation and cargo-service fees.</li>
+            <li>Storage after the CFS free period.</li>
+            <li>Multi-consignee delivery orders and documentation work.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. GCC destination ports covered</h2>
+    <p>
+      The calculator maps each destination to its GCC country so duty and VAT are applied at the
+      correct rate. The port list below is a one-line orientation; the calculator does not treat the
+      origin port as a rate variable, because the research snapshot publishes destination-side
+      freight brackets rather than origin-to-origin differences.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'country', label: 'Country' },
+        { key: 'note', label: 'Gateway note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="All eight selectable GCC destinations are covered; the seven published sea-freight ports use their own brackets, and Khalifa Port uses the UAE/Jebel Ali directional fallback."
+    />
+    <SourceList sources={freightSources} title="Sources — GCC port gateways" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Cost composition: what the headline freight excludes</h2>
+      <p>
+        A landed-cost estimate is only useful if it separates the international move from the
+        statutory stack and the destination-fee stack. The ocean or air line is the first number a
+        forwarder shows, but it is never the final cost. The calculator makes that visible by keeping
+        destination charges as a named, non-numeric line instead of silently hiding them in a lump
+        sum.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'layer', label: 'Cost layer' },
+          { key: 'basis', label: 'Verified / indicative basis' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The statutory layers (duty and VAT) are verified. Insurance and destination-fee amounts are not published and stay LOW confidence until a forwarder itemises them."
+      />
+      <SourceList sources={costSources} title="Sources — landed-cost layers & GCC compliance" />
+      <p class="mt-2">
+        Read the full destination-charge audit in
+        <a href="/middleeast/hidden-charges-china-to-gcc/"> Hidden &amp; destination charges:
+        China-to-GCC freight cost breakdown</a>. It names every line you should ask a forwarder to
+        itemise before booking: THC, port service, cargo service, documentation/DO, ISPS, inspection,
+        brokerage, SABER PC/SC, storage, demurrage/detention and inland trucking.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance points that change the landed cost</h2>
+    <p>
+      Duty and VAT are the predictable statutory layers, but they are only correct if the HS
+      classification and pre-arrival filings are right. Saudi SABER is the highest-leverage item on
+      this corridor: a missing Shipment Conformity Certificate turns a routine clearance into a port
+      hold that generates demurrage and can spill into detention.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'rule', label: 'Rule' },
+        { key: 'value', label: 'Verified value' },
+        { key: 'note', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Tax rates are verified against customs sources; SABER, FASAH/Mirsal and HS classification are operational controls with direct cost consequences."
+    />
+    <SourceList sources={complianceSources} title="Sources — GCC customs, VAT & compliance" />
+    <p class="mt-2">
+      <strong>ISF note:</strong> ISF is a United States importer security filing and does not apply
+      to the GCC lanes covered here. The GCC equivalent is the pre-arrival customs declaration —
+      <strong>FASAH</strong> for Saudi Arabia and <strong>Mirsal</strong> for the UAE.
+    </p>
+    <p>
+      Companion pages:
+      <a href="/middleeast/saso-saber-certification/"> SASO &amp; SABER certification</a>,
+      <a href="/middleeast/saudi-arabia-import-duty-vat/"> Saudi Arabia import duty &amp; VAT</a> and
+      <a href="/middleeast/uae-import-duty-vat/"> UAE import duty &amp; VAT</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How to use this calculator</h2>
+      <ol>
+        <li>
+          <strong>Choose the origin port.</strong> This is context only — it does not change the
+          published freight bracket, because the snapshot is destination-side. It helps you remember
+          which China gateway is loading the cargo.
+        </li>
+        <li>
+          <strong>Choose the destination port.</strong> The calculator maps it to the GCC country so
+          the correct VAT and duty logic is applied. Khalifa Port uses the UAE country rate.
+        </li>
+        <li>
+          <strong>Select the mode.</strong> FCL 20ft, FCL 40ft, LCL or air. The size field changes
+          meaning: containers, cubic metres or chargeable kilograms.
+        </li>
+        <li>
+          <strong>Enter shipment size and goods value.</strong> Goods value is the commercial invoice
+          value in USD. For LCL, use the CBM total from the
+          <a href="/tools/cbm-calculator/">CBM Calculator</a>; for air, use chargeable kg from the
+          <a href="/tools/volumetric-weight-calculator/">Volumetric Weight Calculator</a>.
+        </li>
+        <li>
+          <strong>Set insurance and hold days.</strong> Insurance defaults to 0.3% and can be set to
+          0. Hold days are optional; entering any value above the 5-free-day assumption adds a
+          demurrage/detention range to the estimate.
+        </li>
+        <li>
+          <strong>Read the breakdown and the confidence badges.</strong> Use the total as a
+          negotiation screen, then ask a forwarder to itemise the destination/local line before you
+          book.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Worked example: Shanghai to Jeddah, 1 × 40ft FCL</h2>
+    <p>
+      This example is illustrative and uses the same arithmetic as the interactive calculator. The
+      shipment is one 40ft container from Shanghai to Jeddah with a goods value of
+      <strong>$50,000</strong>. The published Jeddah 40ft freight bracket is
+      <strong>$1,900–$8,100</strong>, so the midpoint is <strong>$5,000</strong>.
+    </p>
+    <p>
+      Insurance is calculated on the freight midpoint: <strong>($50,000 + $5,000) × 0.3% =
+      $165</strong>. CIF is therefore <strong>$50,000 + $5,000 + $165 = $55,165</strong>. Duty is
+      <strong>5% × $55,165 = $2,758.25</strong>. Saudi VAT is then applied to CIF plus duty:
+      <strong>15% × ($55,165 + $2,758.25) = 15% × $57,923.25 = $8,688.49</strong>.
+    </p>
+    <p>
+      Before destination/local charges, the statutory subtotal is
+      <strong>$55,165 + $2,758.25 + $8,688.49 = $66,611.74</strong>. Using the low and high freight
+      endpoints produces an indicative range around that midpoint: roughly
+      <strong>$65,000–$72,000</strong> before the non-published destination-fee block. Add THC, port
+      service, documentation, SABER and inland delivery only when the forwarder returns an itemised
+      schedule.
+    </p>
+    <div class="note mt-2">
+      <strong>Replicate it yourself:</strong> change the destination to Jebel Ali, keep the same
+      $50,000 value and 40ft mode, and the calculator will switch the freight bracket to
+      <strong>$2,200–$3,950</strong> and the VAT rate to <strong>5%</strong> — a much smaller
+      statutory stack, which is why UAE landed cost is usually lower than Saudi Arabia.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Methodology &amp; data integrity</h2>
+      <p>
+        WorldFreightHub separates numbers by confidence for a reason: freight intelligence is only
+        useful when the reader can tell a verified tariff from a market estimate. The calculator
+        follows the same rule.
+      </p>
+      <p>
+        <strong>HIGH</strong> confidence is reserved for rules that can be checked against a customs
+        or port authority: the GCC 5% duty baseline and the country VAT rates. <strong>MEDIUM</strong>
+        confidence marks the published sea-freight brackets from the route data file — directionally
+        reliable, but subject to weekly spot movement. <strong>LOW</strong> confidence marks air
+        benchmarks, the insurance assumption and time-based charges, because the research snapshot
+        either lacks a primary figure or those numbers are inherently tariff-specific.
+      </p>
+      <p>
+        This is an indicative model, not a guarantee. Where the snapshot has no number, the page
+        says <em>待核实 / not published in our research snapshot</em> and points you back to a
+        forwarder. The alternative — inventing a plausible-looking figure — would make the calculator
+        look precise while making the estimate wrong.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. The verified
+      layers — GCC 5% duty, Saudi 15% VAT, UAE 5% VAT, Oman 5% VAT, Bahrain 10% VAT, Qatar/Kuwait 0%
+      VAT and the SABER-before-arrival rule — are re-checked against customs sources. The seven
+      published sea-freight brackets are re-checked monthly because they move with capacity,
+      chokepoint risk and seasonality.
+    </p>
+    <p>
+      Air freight, marine insurance and demurrage/detention remain LOW confidence until a primary
+      source publishes a specific figure. When that happens, the page will replace the directional
+      fallback with the verified number, raise the badge and update the modified date.
+    </p>
+    <p>
+      Companion tool: the <a href="/tools/cbm-calculator/">CBM Calculator</a> gives you the volume
+      figure needed for LCL, and the <a href="/tools/container-loading-calculator/">Container Loading
+      Calculator</a> helps confirm whether the shipment is FCL or LCL.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China-to-GCC quote"
+      text="Tell us your origin port, destination port, commodity, HS code, volume and required free time, and we will connect you with providers who can itemise the freight, duty, VAT and destination charges before you book."
+    />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const USD2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const LOW_BADGE = '<span class="confidence-badge confidence--low">LOW</span>';
+  const MED_BADGE = '<span class="confidence-badge confidence--medium">MEDIUM</span>';
+  const HIGH_BADGE = '<span class="confidence-badge confidence--high">HIGH</span>';
+
+  const DEST = {
+    'jeddah': {
+      country: 'Saudi Arabia',
+      vatRate: 15,
+      fcl20: [1500, 6200],
+      fcl40: [1900, 8100],
+      lcl: [20, 110],
+      air: [8.8, 13.5],
+      airNote: 'Saudi air benchmark from research snapshot (LOW)',
+    },
+    'dammam': {
+      country: 'Saudi Arabia',
+      vatRate: 15,
+      fcl20: [1500, 6200],
+      fcl40: [1900, 8100],
+      lcl: [20, 110],
+      air: [8.8, 13.5],
+      airNote: 'Saudi air benchmark from research snapshot (LOW)',
+    },
+    'jebel-ali': {
+      country: 'United Arab Emirates',
+      vatRate: 5,
+      fcl20: [1500, 3250],
+      fcl40: [2200, 3950],
+      lcl: [60, 180],
+      air: [5.45, 6.4],
+      airNote: 'UAE air benchmark from research snapshot (LOW)',
+    },
+    'khalifa-port-abu-dhabi': {
+      country: 'United Arab Emirates',
+      vatRate: 5,
+      fcl20: [1500, 3250],
+      fcl40: [2200, 3950],
+      lcl: [60, 180],
+      air: [5.45, 6.4],
+      airNote: 'UAE air benchmark from research snapshot (LOW)',
+      fallbackNote: 'Khalifa Port sea-freight range not published; directional fallback to Jebel Ali UAE range — request an itemised schedule (待核实)',
+    },
+    'hamad': {
+      country: 'Qatar',
+      vatRate: 0,
+      fcl20: [1700, 2500],
+      fcl40: [2500, 3600],
+      lcl: [75, 100],
+      air: null,
+      airNote: 'Qatar air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+    },
+    'shuwaikh': {
+      country: 'Kuwait',
+      vatRate: 0,
+      fcl20: [1500, 2500],
+      fcl40: [2200, 3600],
+      lcl: [70, 100],
+      air: null,
+      airNote: 'Kuwait air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+    },
+    'sohar': {
+      country: 'Oman',
+      vatRate: 5,
+      fcl20: [1500, 2600],
+      fcl40: [2200, 3800],
+      lcl: [60, 110],
+      air: null,
+      airNote: 'Oman air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+    },
+    'khalifa-bin-salman': {
+      country: 'Bahrain',
+      vatRate: 10,
+      fcl20: [1500, 2500],
+      fcl40: [2200, 3600],
+      lcl: [75, 100],
+      air: null,
+      airNote: 'Bahrain air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+    },
+  };
+
+  const modeLabels = {
+    'fcl20': 'per container',
+    'fcl40': 'per container',
+    'lcl': 'per CBM',
+    'air': 'per kg',
+  };
+
+  function nonNegative(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) && value >= 0 ? value : null;
+  }
+
+  function positiveNumber(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cost-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function badge(level) {
+    if (level === 'HIGH') return HIGH_BADGE;
+    if (level === 'LOW') return LOW_BADGE;
+    return MED_BADGE;
+  }
+
+  function rowHtml(name, low, mid, high, level, note) {
+    return `<tr><td>${name}</td><td>${low}</td><td>${mid}</td><td>${high}</td><td>${badge(level)}</td><td>${note}</td></tr>`;
+  }
+
+  function calculate() {
+    const destination = el('destination').value;
+    const mode = el('mode').value;
+    const dest = DEST[destination];
+    const size = positiveNumber('size');
+    const goods = nonNegative('goods-value');
+    const holdDaysRaw = nonNegative('hold-days');
+    const insuranceRate = nonNegative('insurance-rate');
+
+    if (!size) {
+      setError('Enter a positive shipment size.');
+      return;
+    }
+    if (goods === null) {
+      setError('Enter a goods value of zero or more.');
+      return;
+    }
+    if (holdDaysRaw === null || insuranceRate === null) {
+      setError('Enter zero or more for hold days and insurance rate.');
+      return;
+    }
+
+    setError();
+    const holdDays = Math.floor(holdDaysRaw);
+
+    let low;
+    let high;
+    let freightLevel = 'MEDIUM';
+    let freightNote = 'Published corridor bracket (MEDIUM)';
+
+    if (mode === 'fcl20') {
+      low = dest.fcl20[0] * size;
+      high = dest.fcl20[1] * size;
+    } else if (mode === 'fcl40') {
+      low = dest.fcl40[0] * size;
+      high = dest.fcl40[1] * size;
+    } else if (mode === 'lcl') {
+      low = dest.lcl[0] * size;
+      high = dest.lcl[1] * size;
+    } else {
+      if (dest.air) {
+        low = dest.air[0] * size;
+        high = dest.air[1] * size;
+      } else {
+        low = 5.45 * size;
+        high = 13.5 * size;
+      }
+      freightLevel = 'LOW';
+      freightNote = dest.airNote;
+    }
+
+    if (dest.fallbackNote && mode !== 'air') {
+      freightLevel = 'LOW';
+      freightNote = dest.fallbackNote;
+    }
+
+    const mid = (low + high) / 2;
+    const insurance = (goods + mid) * (insuranceRate / 100);
+    const cifs = [low, mid, high].map((f) => goods + f + insurance);
+    const duties = cifs.map((cif) => cif * 0.05);
+    const vats = duties.map((duty, index) => (dest.vatRate / 100) * (cifs[index] + duty));
+
+    const chargeableDays = Math.max(0, holdDays - 5);
+    const demLow = chargeableDays * 50;
+    const demMid = chargeableDays * 175;
+    const demHigh = chargeableDays * 300;
+
+    const totals = [0, 1, 2].map((i) => cifs[i] + duties[i] + vats[i]);
+    if (chargeableDays > 0) {
+      totals[0] += demLow;
+      totals[1] += demMid;
+      totals[2] += demHigh;
+    }
+
+    el('total-range').textContent = `${USD.format(totals[0])}–${USD.format(totals[2])}`;
+    el('per-unit').textContent = `${USD.format(totals[0] / size)}–${USD.format(totals[2] / size)} ${modeLabels[mode]}`;
+    el('freight-mid').textContent = USD.format(mid);
+    el('cif-mid').textContent = USD.format(cifs[1]);
+    el('duty-mid').textContent = USD.format(duties[1]);
+    el('vat-mid').textContent = USD.format(vats[1]);
+
+    const rows = [
+      rowHtml('Freight', USD.format(low), USD.format(mid), USD.format(high), freightLevel, freightNote),
+      rowHtml('Marine insurance', USD.format(insurance), USD.format(insurance), USD.format(insurance), 'LOW', '≈0.3% industry norm, not in snapshot — 待核实'),
+      rowHtml('CIF value', USD.format(cifs[0]), USD.format(cifs[1]), USD.format(cifs[2]), 'LOW', 'Derived from MEDIUM freight bracket + LOW insurance assumption'),
+      rowHtml('GCC import duty', USD.format(duties[0]), USD.format(duties[1]), USD.format(duties[2]), 'HIGH', '5% of CIF; alcohol and tobacco are higher'),
+      rowHtml(`${dest.country} VAT`, USD.format(vats[0]), USD.format(vats[1]), USD.format(vats[2]), 'HIGH', dest.vatRate === 0 ? 'No VAT currently in the research snapshot' : `${dest.vatRate}% of CIF + duty`),
+      rowHtml('Destination & local charges', 'not published', 'not published', 'not published', 'LOW', '<a href="/middleeast/hidden-charges-china-to-gcc/">Request an itemised schedule</a>'),
+    ];
+
+    if (holdDays > 0) {
+      rows.push(
+        rowHtml(
+          'Demurrage / detention',
+          USD.format(demLow),
+          USD.format(demMid),
+          USD.format(demHigh),
+          'LOW',
+          chargeableDays > 0
+            ? `${chargeableDays} chargeable day(s) after the 5-free-day assumption; $50–$300+/day range, 2025 average $150–$300/day — 待核实`
+            : 'Within the 5-free-day assumption; no chargeable days',
+        ),
+      );
+    }
+
+    rows.push(
+      rowHtml('Total landed cost', USD.format(totals[0]), USD.format(totals[1]), USD.format(totals[2]), 'LOW', 'Composite; includes LOW-confidence insurance and optional demurrage range'),
+    );
+
+    el('cost-breakdown-body').innerHTML = rows.join('');
+    el('result-context').textContent =
+      `${dest.country} · ${modeLabels[mode]} · ${holdDays} hold day(s) entered. Low/mid/high follows the freight bracket; insurance uses the freight midpoint as its base.`;
+  }
+
+  function clearResults() {
+    el('total-range').textContent = '—';
+    el('per-unit').textContent = '—';
+    el('freight-mid').textContent = '—';
+    el('cif-mid').textContent = '—';
+    el('duty-mid').textContent = '—';
+    el('vat-mid').textContent = '—';
+    el('cost-breakdown-body').innerHTML = '<tr><td colspan="6" class="muted">No estimate yet.</td></tr>';
+    el('result-context').textContent = 'Enter shipment details to generate an indicative breakdown. Total low/mid/high follows the freight range; insurance uses the freight midpoint as its base.';
+    setError();
+  }
+
+  function resetForm() {
+    el('origin').value = 'shanghai';
+    el('destination').value = 'jeddah';
+    el('mode').value = 'fcl20';
+    el('size').value = '';
+    el('goods-value').value = '';
+    el('hold-days').value = '0';
+    el('insurance-rate').value = '0.3';
+    updateSizeHint();
+    clearResults();
+  }
+
+  function updateSizeHint() {
+    const mode = el('mode').value;
+    const hint = el('size-hint');
+    if (mode === 'fcl20' || mode === 'fcl40') {
+      hint.textContent = 'Container count for FCL · CBM for LCL · chargeable kg for air.';
+    } else if (mode === 'lcl') {
+      hint.textContent = 'CBM for LCL · container count for FCL · chargeable kg for air.';
+    } else {
+      hint.textContent = 'Chargeable kg for air · container count for FCL · CBM for LCL.';
+    }
+  }
+
+  el('cost-calculate').addEventListener('click', calculate);
+  el('cost-reset').addEventListener('click', resetForm);
+  el('mode').addEventListener('change', updateSizeHint);
+  updateSizeHint();
+</script>
