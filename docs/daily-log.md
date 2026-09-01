@@ -367,3 +367,26 @@
 - **数据诚信**：HIGH 11 / MEDIUM 19 / LOW 11（静态徽章）；22 处「待核实」；air 基准只用了研究快照两条（沙特 $8.80–13.50/kg = ddpchain；UAE $5.45–6.40/kg = cargofromchina，按 1 USD=3.6725 AED 换算），其余 GCC air 标「not published — 待核实」；工作示例(上海→Jeddah 40ft, 货值 $50,000) 全部算术显式展开并标注 illustrative。无杜撰。
 - **QA**：`npm run build` **332 页零 error**；工作区干净；`1d2d49a feat(tools): add China-to-GCC freight cost calculator` 已推 origin/main。
 - **Next**：① Europe 走廊第二波（每国 Route Pillar 长页 / FCL-LCL Europe 拆解 / 海运铁路成本对比）；② Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；③ Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+
+## 2026-09-02（Europe 走廊第二波 — Germany + UK Route Pillar）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **服务器资源**：远程 load 0.00 / 磁盘 38G 可用 / 内存 2.4G 可用（03:30 实测）；OpenCode shell 执行器健康
+- **Tasks**：STEP 16 内容 —— Europe 走廊第二波，为 Germany、United Kingdom 建立国别 Route Pillar 长页（对标 GCC 的 shipping-from-china-to-X 模式）
+- **Research**：复用已入库 europe-country/port/route 数据 + sources（german-customs/eu-taric/hmrc/port-hamburg/port-rotterdam + 中国港务局 + world-bank）；无新增外部抓取
+- **Verification**：所有税率/关税/港口代码沿用已验证数据（德国 19% VAT + EORI/TARIC；英国 20% VAT + GB EORI + UKCA + £135 de-minimis）；费率标 MEDIUM（复用 europe-routes.ts 区间）、时效标 MEDIUM/LOW（Cape +10-14 天、rail 18-25 天）。查不到的费率一律「Not published — request」+ LOW，零杜撰
+- **Content**：
+  - shipping-from-china-to-germany.astro（9 模块，EORI/19% VAT/Hamburg DEHAM/rail terminus/CE+REACH，SABER/SASO 注明仅沙特）
+  - shipping-from-china-to-united-kingdom.astro（9 模块，post-Brexit 独立海关/GB EORI/UKCA/Felixstowe GBFXT/£135 de-minimis）
+- **Gap Analysis**：延续 Demurrage/Detention + Hidden Charges 口径（两页均含 cost stack + demurrage vs detention 两钟两付费方）；UK 独立海关体系是竞品常混淆的差异点
+- **SEO / AIO / EEAT**：Article + FAQPage + Organization + BreadcrumbList schema；ConfidenceBadge 全覆盖；SourceList 仅真实 source id；September 2026 更新标记；europe/index.astro 新增 2 张卡片内链
+- **Engineering**：复用既有组件，无新组件；index.astro 插一段新 section
+- **QA**：npm run build 334 页 zero error（+2）；工作区干净
+- **Build Result**：✅ 334 pages，clean
+- **Git Commit**：4d79478 content(europe): add China-to-Germany and China-to-UK route pillar pages + index cards（已推 origin/main）
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）
+- **Remaining / Next Priority**：
+  1. Europe 第二波续：Netherlands / France Route Pillar（每国长页），或 FCL vs LCL Europe 拆解、海运铁路成本对比数据页
+  2. Cloudflare Pages 部署 + middleeast / europe 子站 subdomain（需 Martin CF 账号）
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）
