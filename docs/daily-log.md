@@ -390,3 +390,27 @@
   1. Europe 第二波续：Netherlands / France Route Pillar（每国长页），或 FCL vs LCL Europe 拆解、海运铁路成本对比数据页
   2. Cloudflare Pages 部署 + middleeast / europe 子站 subdomain（需 Martin CF 账号）
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）
+
+## 2026-09-02（Europe 走廊第二波续 — Netherlands + France Route Pillar）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成，无剩余 GCC 页面。Europe 走廊第二波此前已交付 Germany + UK Route Pillar；本批续写 **Netherlands + France** 两页 Route Pillar（对标 shipping-from-china-to-X 模式）。
+- **本轮动作**：
+  1. 核对 content-roadmap 顺序 + `ls src/pages/middleeast` 逐页比对 → GCC 无剩余，转向 Europe 第二波续。
+  2. 读 europe-countries / europe-ports / europe-routes / sources 数据 + Germany/UK 模板页，构造自包含 Codex prompt（9 模块公式 + 质量红线 + 差异化打法）。
+  3. 交给 Codex 写 2 页，Codex 自检报告 + 我独立复核（词数 / FAQ 数 / schema / 来源 / build / push）。
+- **Content（commit 11b468a）**：
+  - `src/pages/europe/shipping-from-china-to-netherlands.astro`（**3396 词**，12 FAQ）——Rotterdam (NLRTM) 门户 + **Article 23 VAT 递延**（最高价值差异化：保税仓储延迟缴纳进口 VAT，仅货物实际进入成员国时计征）+ 21% VAT + EU 统一关税 + EORI + Rhine 驳船分拨德国/法国/瑞士 + Cape 绕行 +10–14 天。
+  - `src/pages/europe/shipping-from-china-to-france.astro`（**3411 词**，13 FAQ）——Le Havre (FRLEH) HAROPA（Le Havre·Rouen·Paris）门户 + **Le Havre vs Rotterdam** 差异化（France-only 货 Le Havre 通常胜在省内陆拖运，Seine 驳船直达巴黎）+ 20% VAT + EU 统一关税 + EORI + 直挂班次较稀、地中海枢纽中转常见（诚实口径）。
+  - 两页均 9 模块齐全：费率表（FCL $区间 + LCL $/CBM + rail/air/express/DDP 标 LOW「not published — request」）、时效表（分港口/方式）、FCL vs LCL 决策（含算术示例）、港口清单、成本构成（含隐藏费用/THC/ISF 澄清）、合规要点（EORI/TARIC/CE/REACH/VAT/IOSS/de-minimis）、FAQ、September 2026 更新标记、Schema（Article + FAQPage + BreadcrumbList + Organization）。
+- **数据诚信**：NL HIGH 5 / MEDIUM 36 / LOW 31；FR HIGH 5 / MEDIUM 35 / LOW 31。费率沿用 europe-routes.ts 已验证区间（Rotterdam/Le Havre 20ft $1,200–4,800 / 40ft $1,600–6,800 / LCL $60–150~160，MEDIUM）；rail/air/courier/DDP 与目的地杂费无已验证数字 → 一律 LOW +「not published in verified snapshot — request a quote」，零杜撰。
+- **Engineering**：
+  - `src/data/sources.ts` 新增 2 个政府来源：`french-customs`（douane.gouv.fr）+ `dutch-customs`（belastingdienst.nl），并回填 countrySourceIds / portSourceIds（france→[eu-taric, french-customs]；netherlands→[eu-taric, dutch-customs, port-rotterdam]；le-havre→[french-customs]）。
+  - `src/pages/europe/index.astro` 加 2 张内链卡片。
+  - 复用既有组件（BaseLayout/Breadcrumb/DataTable/FaqBlock/ConfidenceBadge/SourceList/Card/Cta），无新组件、无客户端 JS、无新依赖。
+- **QA**：`npm run build` **526 页零 error**（+2）；FAQ 12/13 条均 ≥8；schema 齐全；工作区干净；`11b468a content(europe): add China-to-Netherlands and China-to-France route pillar pages` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 第二波续：Spain / Italy / Poland / Belgium Route Pillar（每国长页，4 页余量），或 FCL vs LCL Europe 拆解、海运 vs 铁路成本对比数据页。
+  2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
