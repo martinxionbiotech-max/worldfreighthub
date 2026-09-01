@@ -43,6 +43,12 @@ export interface Port {
   note?: string;
 }
 
+export interface RouteCostRow {
+  label: string;
+  range: string;
+  confidence: Confidence;
+}
+
 export interface Route {
   slug: string;
   originPort: string;
@@ -51,6 +57,14 @@ export interface Route {
   transitDays: { typical: number; range: [number, number] };
   confidence: Confidence;
   note?: string;
+  originNote: string;
+  destNote: string;
+  routingNote: string;
+  transitNote: string;
+  costRows: RouteCostRow[];
+  insight: string;
+  faqs: FaqItem[];
+  keyTakeaways: string[];
 }
 
 export interface MethodFaq {

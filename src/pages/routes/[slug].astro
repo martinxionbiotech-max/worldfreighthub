@@ -6,8 +6,8 @@ import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
 import DataTable from '../../components/DataTable.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import { routes } from '../../data/routes';
-import { getRatesByRoute } from '../../data/rates';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
 import { portName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
@@ -23,15 +23,15 @@ const { route } = Astro.props;
 
 const originName = portName(route.originPort);
 const destName = portName(route.destPort);
-const routeRates = getRatesByRoute(route.slug);
 const routeSources = sourcesByIds(countrySourceIds[route.country] ?? []);
 
-const rateRows = routeRates.map((rate) => ({
-  container: rate.container,
-  amount: rate.amount,
-  confidence: rate.confidence,
-  lastUpdated: rate.lastUpdated,
+const costRows = route.costRows.map((row) => ({
+  item: row.label,
+  range: row.range,
+  confidence: row.confidence,
 }));
+
+const tldr = `${originName} to ${destName} typically runs ${route.transitDays.typical} days, with a ${route.transitDays.range[0]}–${route.transitDays.range[1]} day range. ${route.routingNote}`;
 
 const schema = [
   {
@@ -40,6 +40,16 @@ const schema = [
       name: `${originName} to ${destName} freight route`,
       url: `${SITE_URL}/routes/${route.slug}/`,
       description: `Indicative transit time and rate placeholders for the ${originName} to ${destName} corridor.`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: route.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
     },
   },
 ];
@@ -86,35 +96,81 @@ const schema = [
         <span class="fact-value">{route.transitDays.range[0]}–{route.transitDays.range[1]} days</span>
       </div>
     </div>
+  </section>
 
-    <div class="note mt-3">
-      <strong>Transit time confidence: <ConfidenceBadge level={route.confidence} /></strong>
-      <span> {route.note}.</span>
-    </div>
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> {tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Route profile</h2>
+    <p><strong>Origin:</strong> {route.originNote}</p>
+    <p class="mt-2"><strong>Destination:</strong> {route.destNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>Transit time</h2>
+    <p class="lead">
+      <strong>{route.transitDays.typical} days typical</strong>{' '}
+      <ConfidenceBadge level={route.confidence} />
+    </p>
+    <p class="muted">
+      Range {route.transitDays.range[0]}–{route.transitDays.range[1]} days. {route.transitNote}
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Reference cost ranges</h2>
+    <p class="muted">
+      Indicative ranges compiled from multiple public sources — not live quotes.
+      Figures shift weekly with fuel, season and geopolitical risk. Confirm a
+      current quote before booking.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Item' },
+        { key: 'range', label: 'Indicative range (China → GCC)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption={`Indicative cost ranges for ${originName} → ${destName}`}
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Routing &amp; considerations</h2>
+    <p>{route.routingNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>What most guides skip</h2>
+    <p>{route.insight}</p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>Indicative rates</h2>
-      {routeRates.length > 0 ? (
-        <DataTable
-          columns={[
-            { key: 'container', label: 'Container' },
-            { key: 'amount', label: 'Rate (USD)', type: 'amount' },
-            { key: 'confidence', label: 'Confidence', type: 'confidence' },
-            { key: 'lastUpdated', label: 'Last updated' },
-          ]}
-          rows={rateRows}
-          caption="Placeholder rates — a dash indicates no verified figure yet."
-        />
-      ) : (
-        <p class="muted">No rate entries published for this route yet.</p>
-      )}
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={route.faqs} />
     </div>
   </section>
 
   <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      {route.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
     <SourceList sources={routeSources} title="Reference sources" />
+    <p class="muted">
+      Transit times and rate ranges are indicative, not guarantees. Confirm
+      figures with a licensed carrier or freight forwarder before booking.
+    </p>
   </section>
 
   <section class="section container">
