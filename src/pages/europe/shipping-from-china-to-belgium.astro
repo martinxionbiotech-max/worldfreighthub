@@ -1,0 +1,1021 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import { europeCountries } from '../../data/europe-countries';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/europe/shipping-from-china-to-belgium/`;
+
+const antwerpPort = europePorts.find((item) => item.slug === 'antwerp');
+const antwerpUnlocode = antwerpPort?.unlocode ?? '—';
+const belgium = europeCountries.find((item) => item.slug === 'belgium');
+
+const wfhRouteData: Source = {
+  id: 'wfh-belgium-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Antwerp (sea via the Cape roughly 28 days; LOW/MEDIUM confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-belgium-methodology',
+  name: 'WorldFreightHub methodology — China→Europe research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const belgiumCustomsSources = sourcesByIds(['belgian-customs', 'eu-taric']);
+const antwerpPortSources = sourcesByIds(['port-antwerp']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group', 'world-bank']);
+const rateSources: Source[] = [...antwerpPortSources, wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
+const costSources: Source[] = [...belgiumCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...belgiumCustomsSources, wfhMethodology];
+const marketSources: Source[] = [...belgiumCustomsSources, ...antwerpPortSources, wfhMethodology];
+
+const rateRows = [
+  {
+    service: 'FCL ocean — 20GP to Antwerp (BEANR)',
+    benchmark: '$1,200 – $4,700 per 20ft',
+    basis: 'WorldFreightHub Europe route data, Antwerp corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'FCL ocean — 40GP / 40HQ to Antwerp (BEANR)',
+    benchmark: '$1,600 – $6,600 per 40ft',
+    basis: 'WorldFreightHub Europe route data, Antwerp corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'LCL ocean — China to Antwerp (per CBM)',
+    benchmark: '$60 – $150 per CBM',
+    basis: 'WorldFreightHub Europe route data, Antwerp corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Rail — Xi’an / Chengdu to a Europe rail gateway for Belgium',
+    benchmark: 'Not published in verified snapshot — request a per-container $ range',
+    basis: 'Route data notes rail costs roughly 2–3× sea per container; no published Belgium rail $ figure',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — China to Belgium air gateway',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'No verified Belgium air freight rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier — China to Belgium',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door — China to Belgium',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'DDP embeds freight, clearance, EU duty, 21% VAT and delivery to the Belgian chemical cluster or onward barge',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai (CNSHA)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Ningbo-Zhoushan (CNNGB)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Shenzhen Yantian / Shekou (CNSZX)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Guangzhou (CNCAN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Qingdao (CNTAO)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Tianjin (CNTSN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Xiamen (CNXMN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 28 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Xi’an / Chengdu (rail origin)',
+    mode: 'Rail — New Silk Road into Europe',
+    transit: 'Not published in verified snapshot — request a routing quote',
+    basis: 'No verified Belgium-specific rail transit appears in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China air gateway',
+    mode: 'Air freight — China to Belgium',
+    transit: 'Not published in verified snapshot — request a routing quote',
+    basis: 'No verified Belgium air transit appears in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China door-to-door',
+    mode: 'Sea or rail + clearance + trucking/barge',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds discharge, Belgian Customs clearance, EU duty, 21% VAT and Belgian delivery',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea FCL',
+    bestFor: 'Large, heavy, palletised or containerised cargo that can absorb the roughly 28-day Cape window plus a northern-range congestion buffer',
+    indicativeTime: 'Antwerp roughly 28 days via the Cape (MEDIUM)',
+    indicativeCost: '20ft $1,200–$4,700; 40ft $1,600–$6,600 (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Sea LCL',
+    bestFor: 'Smaller consignments that do not fill a container but are not urgent',
+    indicativeTime: 'Antwerp roughly 28 days plus CFS consolidation/breakbulk (MEDIUM)',
+    indicativeCost: '$60–$150 per CBM (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail (New Silk Road)',
+    bestFor: 'Time-sensitive or high-value cargo that needs a faster option than the ~28-day Cape sea window',
+    indicativeTime: 'Not published in verified snapshot — request a routing quote',
+    indicativeCost: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo into the Belgian air gateway',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'Not published — request a per-kg quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const fclLclRows = [
+  {
+    factor: 'Shipment size',
+    fcl: 'A full container load for enough pallets, cartons or machine units to justify exclusive use of the box',
+    lcl: 'Less-than-container load sharing a consolidated container with other importers',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost logic',
+    fcl: 'Priced per container — 20ft $1,200–$4,700, 40ft $1,600–$6,600 to Antwerp (MEDIUM)',
+    lcl: 'Priced per cubic metre — $60–$150 per CBM to Antwerp (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Breakeven rule of thumb',
+    fcl: 'Usually wins once your cube is large enough for the container rate to beat per-CBM pricing',
+    lcl: 'Illustratively, at midpoint 20ft $2,950 and LCL $105/CBM, the split is about 28 CBM; below that LCL is usually cheaper',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling risk',
+    fcl: 'Single sealed unit between shipper and receiver; less handling exposure',
+    lcl: 'Additional CFS handling, deconsolidation and short-term warehousing steps',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit experience',
+    fcl: 'Main carriage timing is the same planning window; container moves on the northern-range corridor',
+    lcl: 'Consolidation and deconsolidation can add variable time before final release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Destination fees',
+    fcl: 'THC, documentation, inspection risk, port storage, demurrage and detention all remain possible',
+    lcl: 'Adds destination CFS/deconsolidation and per-CBM handling to the same hidden-charge stack',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usual fit',
+    fcl: 'Volume-heavy cargo, project goods or buyers who want a single sealed unit',
+    lcl: 'Smaller consignments, trial orders, samples or mixed SKU retail replenishment',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '≈ 47m TEU (2023)',
+    note: 'World’s busiest container port; default East China origin',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '≈ 35m TEU (2023)',
+    note: 'World’s largest port by total cargo tonnage; strong Shanghai alternative',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: '≈ 30m TEU (2023)',
+    note: 'South China electronics and consumer-goods gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: '≈ 24m TEU (2023)',
+    note: 'Pearl River Delta hinterland; less congested South China alternative',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Qingdao (CNTAO)',
+    throughput: '≈ 26m TEU (2023)',
+    note: 'North China gateway for Shandong manufacturing',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Tianjin (CNTSN)',
+    throughput: '≈ 21m TEU (2023)',
+    note: 'Beijing–Tianjin–Hebei industrial belt; northernmost major gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Xiamen (CNXMN)',
+    throughput: '≈ 12m TEU (2023)',
+    note: 'Fujian gateway for footwear, textiles, ceramics and light industry',
+    confidence: 'MEDIUM',
+  },
+];
+
+const antwerpPortRows = [
+  {
+    factor: 'Port role',
+    detail: 'Europe’s second-largest port and its chemicals/breakbulk gateway',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'UN/LOCODE',
+    detail: antwerpUnlocode,
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Country',
+    detail: 'Belgium',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Container throughput',
+    detail: '≈ 12.5m TEU (2023, merged Antwerp-Bruges)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Max draft',
+    detail: '≈ 16 m',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Key terminals',
+    detail: 'MSC PSA, DP World, MPET',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Hinterland',
+    detail: 'Belgium and the European chemicals belt, France and the Rhine basin',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Operational risk',
+    detail: 'Close to Rotterdam, so carriers shift calls when one congests; rates move together',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Rotterdam alternative',
+    detail: 'Rotterdam (NLRTM) suits container-first NW Europe; Antwerp wins for chemicals, breakbulk, project cargo and reefer',
+    confidence: 'MEDIUM',
+  },
+];
+
+const processRows = [
+  {
+    step: 'Confirm the product, HS code and 10-digit TARIC classification',
+    who: 'Shipper / forwarder',
+    note: 'The TARIC code drives EU duty, VAT treatment, permits and restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Register for an EORI number before the goods arrive',
+    who: 'Importer',
+    note: 'Mandatory for any EU import; the number must exist before arrival, not after',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Compare Antwerp-inland total against Rotterdam for the same northern-range call',
+    who: 'Importer / forwarder',
+    note: 'Expect rates to move together, not a structural discount; choose on cargo type and congestion',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Book origin collection and China export clearance',
+    who: 'Forwarder / supplier',
+    note: 'From Shanghai, Ningbo-Zhoushan, Shenzhen or another named China origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Move cargo to the load port and issue the export documents',
+    who: 'Forwarder / carrier',
+    note: 'Commercial invoice, packing list and bill of lading are the core set',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Run the ocean main carriage',
+    who: 'Carrier',
+    note: 'Sea roughly 28 days via the Cape; confirm direct versus transshipped northern-range service',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Discharge at Antwerp (BEANR) across MSC PSA, DP World or MPET',
+    who: 'Terminal / handler',
+    note: 'The Antwerp-Bruges merger created a two-site deep-water system',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Belgian import declaration',
+    who: 'Importer / customs broker',
+    note: 'Attach invoice, packing list, B/L and the TARIC code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay EU common duty and 21% VAT on the duty-inclusive base',
+    who: 'Importer / broker',
+    note: 'Statutory stack is (CIF + duty) × 1.21; duty varies by HS code',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pass CE / REACH checks and clear any regulated goods',
+    who: 'Belgian Customs / agencies',
+    note: 'CE marking for regulated products; REACH for chemical substances',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Collect the container or deconsolidate LCL',
+    who: 'Importer / haulier',
+    note: 'Keep demurrage and detention free time in view',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Deliver to the chemical cluster or onward by barge across Europe',
+    who: 'Barge operator / local trucker',
+    note: 'Antwerp feeds the Belgian chemicals belt, France and the Rhine basin',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight',
+    who: 'Carrier / forwarder',
+    magnitude: '20ft $1,200–$4,700; 40ft $1,600–$6,600 to Antwerp (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL freight',
+    who: 'Forwarder',
+    magnitude: '$60–$150 per CBM to Antwerp (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Rail freight',
+    who: 'Rail operator / forwarder',
+    magnitude: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal handling charge (THC)',
+    who: 'Antwerp terminal / line',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Belgian Customs clearance and brokerage',
+    who: 'Belgian Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs inspection fee',
+    who: 'Belgian Customs / appointed inspector',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Port storage',
+    who: 'Antwerp port / CFS',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty',
+    who: 'Belgian Customs',
+    magnitude: 'EU Common Customs Tariff — typically 0–12% by HS code (varies)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'VAT',
+    who: 'Belgian tax authority',
+    magnitude: '21% standard (12% and 6% reduced); charged on the duty-inclusive value',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier / rail operator (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; priced by value, commodity and cover — not published in snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to Belgium take?',
+    a: 'WorldFreightHub Europe route data records roughly 28 days by sea from Shanghai, Ningbo-Zhoushan or Shenzhen to Antwerp on the current Cape-of-Good-Hope routing, within a 25–45 day planning range. The Red Sea reroute adds about +10–14 days versus the pre-crisis Suez routing (MEDIUM confidence, because these are planning estimates, not carrier promises). No verified Belgium-specific rail or air transit is published in the snapshot — request those from your carrier.',
+  },
+  {
+    q: 'How much does shipping from China to Belgium cost?',
+    a: 'The Antwerp corridor has published ranges in the WorldFreightHub Europe route data: 20ft FCL $1,200–$4,700, 40ft FCL $1,600–$6,600, and LCL $60–$150 per CBM (all MEDIUM confidence). Rail is noted as roughly two to three times sea per container but has no published dollar figure, and air, express and DDP rates were not published in the snapshot — request those as itemised quotes. Rates swing sharply with Red Sea routing, fuel and season, so confirm a live figure before booking.',
+  },
+  {
+    q: 'Should I ship to Antwerp or Rotterdam for Belgium?',
+    a: 'They are effectively one northern-range market, so do not expect a structural discount at either — carriers balance calls between the two and the rates move together. Rotterdam is usually the marginally better default for ordinary container volume, while Antwerp wins when your cargo is chemicals, polymers, breakbulk, project cargo or reefer. Choose Antwerp on cargo type and congestion, and always price the inland leg to the final destination rather than the headline ocean rate.',
+  },
+  {
+    q: 'Why is Antwerp Europe’s chemicals gateway?',
+    a: 'Antwerp hosts Europe’s largest petrochemical cluster, so its specialised terminals, bonded chemical infrastructure and deep inland reach are the real asset. That density of chemical, polymer, breakbulk and reefer terminals is unmatched on the northern range. If you ship chemicals or temperature-controlled goods, Antwerp’s specialised infrastructure is the reason to choose it over a container-first port.',
+  },
+  {
+    q: 'What is the Antwerp-Bruges merger and why does it matter?',
+    a: 'The merged Port of Antwerp-Bruges combined two port sites into a single two-site deep-water system with broader inland reach and coordinated terminal capacity. The port’s container throughput is recorded at roughly 12.5m TEU for 2023 on the merged basis. The practical takeaway is a single commercial and operational system across the two sites, with more flexibility for cargo routing than the older separate-port model.',
+  },
+  {
+    q: 'How does Belgium’s 21% VAT compound on imports?',
+    a: 'Belgium applies a 21% standard VAT rate, with reduced rates of 12% and 6% on some goods. Import VAT is charged on the duty-inclusive value, so the statutory calculation is (CIF + duty) × 1.21 — duty first, then 21% VAT on top of duty and CIF together. That compounding makes the HS code the first cost decision: a higher duty line is magnified by the 21% VAT on the higher duty-inclusive base.',
+  },
+  {
+    q: 'Do I need an EORI before the goods arrive in Belgium?',
+    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is required for any import into the EU and must be registered before your goods arrive. It is the single most common first-import stumbling block for China-to-Belgium cargo, so start the registration before the vessel departs, not while it is discharging.',
+  },
+  {
+    q: 'What is the VAT rate in Belgium?',
+    a: 'Belgium applies a 21% standard VAT rate, with reduced rates of 12% and 6% on some goods. Import VAT is charged on the duty-inclusive value, so budget the compound (CIF + duty) × 1.21 rather than a flat 21% on CIF.',
+  },
+  {
+    q: 'What is the difference between FCL and LCL for China to Belgium?',
+    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ and is usually the fit for large or heavy loads, priced per container. LCL consolidates your cargo with other importers and is priced per cubic metre. Illustratively, at a midpoint 20ft rate of $2,950 and LCL of $105/CBM, the break-even is about 28 CBM; below that LCL is usually cheaper, above it FCL starts to win. Request quotes on both sides of the split before deciding.',
+  },
+  {
+    q: 'What is the €150 de-minimis threshold and how does IOSS work?',
+    a: 'The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro on most consignments. The €150 figure is the VAT-related threshold, and the IOSS (Import One-Stop Shop) scheme simplifies VAT collection on sub-€150 consignments sold to EU buyers. Confirm the current thresholds and whether IOSS applies to your channel with Belgian Customs before relying on these figures.',
+  },
+  {
+    q: 'What documents are needed for Belgian customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC classification, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed Belgian broker.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into Belgium?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems and do not apply to Belgium or the EU. Do not copy a Saudi SABER/SASO step into a Belgian quote. Belgium uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with Belgian Customs or your broker.',
+  },
+  {
+    q: 'What are CE marking and REACH, and do they apply?',
+    a: 'CE marking is the EU conformity mark required for a wide range of regulated products — electronics, toys, machinery and medical devices, among others — declaring the product meets EU requirements. REACH is the EU chemical regulation requiring registration for chemical substances. Whether either applies depends on your product class, so confirm the applicability and the required technical file before shipment.',
+  },
+  {
+    q: 'How do demurrage and detention differ in Belgium?',
+    a: 'Demurrage is the charge the terminal applies when import cargo stays in the port beyond the allowed free time after discharge. Detention is the charge the ocean carrier (or rail operator) applies when the container is kept beyond the equipment free time after collection. They are two separate clocks with two separate payees. Belgian free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to Belgium: Antwerp Gateway, 28-Day Sea Transit, EU Duty, 21% VAT & Europe’s Chemicals Gateway (September 2026)',
+      description:
+        'China to Belgium freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Antwerp (BEANR), roughly 28-day sea transit via the Cape, FCL vs LCL decision, EU common duty, 21% VAT, EORI and the Antwerp-vs-Rotterdam congestion decision.',
+      datePublished: '2026-09-02',
+      dateModified: '2026-09-02',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to Belgium: Antwerp Gateway, 28-Day Sea Transit, EU Duty, 21% VAT &amp; Europe’s Chemicals Gateway (September 2026)"
+  description="China to Belgium freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Antwerp (BEANR), roughly 28-day sea transit via the Cape, FCL vs LCL decision, EU common duty, 21% VAT, EORI and the Antwerp-vs-Rotterdam congestion decision."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Shipping from China to Belgium' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping from China to Belgium: Antwerp gateway, 28-day sea transit, EU duty, 21% VAT &amp; Europe’s chemicals gateway</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        and the wider China origin set to Antwerp and the Belgian market — with the FCL-vs-LCL
+        decision, the roughly 28-day sea window via the Cape, EU common duty plus 21% VAT, the EORI
+        gate, and the Antwerp-vs-Rotterdam congestion decision.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. Belgium’s FCL/LCL
+        ranges come from the WorldFreightHub Europe route data (MEDIUM), while rail, air, express and DDP
+        dollar figures were not published in the snapshot and are shown as request-for-quote markers.
+        Treat every LOW-confidence figure as an indicative planning input and verify with your carrier
+        before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Belgium import duty</span>
+          <span class="fact-value">EU common duty 0–12% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">21% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">EUR <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Destination port</span>
+          <span class="fact-value">Antwerp (BEANR) <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">28 days via Cape <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail transit</span>
+          <span class="fact-value">Not published — request quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EORI</span>
+          <span class="fact-value">Required before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">De-minimis</span>
+          <span class="fact-value">€150 VAT threshold <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Belgium needs its own China routing lens</h2>
+    <p>
+      Belgium is the northern range’s specialist gate, and the country data shows
+      <strong>Brussels</strong> as the capital, the currency as <strong>EUR</strong>, and a
+      <strong>21% standard VAT</strong> layered on top of the <strong>EU Common Customs Tariff</strong>, a
+      duty line that is uniform across every member state and varies only by HS code, typically
+      <strong>0–12% for consumer goods</strong> with no China–EU free-trade agreement in force.
+    </p>
+    <p>
+      The gate is the <strong>EORI number</strong>. It is mandatory for any import into the EU and must
+      exist <em>before</em> the goods arrive — not after. That single administrative step stops more
+      first-time importers than any tariff line, and it is why this page treats EORI as a compliance
+      prerequisite rather than an afterthought.
+    </p>
+    <p>
+      The differentiator is <strong>cargo type, not a rate discount</strong>. Antwerp is Europe’s
+      second-largest port and hosts the continent’s largest petrochemical cluster, which makes it the
+      default choice for chemicals, polymers, breakbulk, project cargo and reefer. But it is close enough
+      to Rotterdam that carriers shift calls between the two when one congests — expect rates to move
+      together, not a structural discount. Pick Antwerp for its specialised infrastructure, not because
+      it looks cheaper than Rotterdam on the same northern range.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight rates from China to Belgium</h2>
+      <p>
+        Antwerp has published benchmark depth in the Europe dataset: the WorldFreightHub Europe route data
+        carries <strong>$1,200–$4,700 for a 20ft</strong>, <strong>$1,600–$6,600 for a 40ft</strong>
+        and <strong>$60–$150 per CBM for LCL</strong>, all MEDIUM confidence. Rail is described in relative
+        terms — roughly two to three times sea per container — but has no published dollar figure, and air,
+        express and DDP were not published in the snapshot, so those stay LOW with a request-for-quote
+        marker.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Antwerp FCL/LCL ranges are MEDIUM confidence from the Europe route data; rail, air, express and DDP dollar figures were not published and remain request-for-quote."
+      />
+      <SourceList sources={rateSources} title="Sources — Belgium rates" />
+
+      <div class="note mt-2">
+        <strong>Why the published lines stop at FCL/LCL:</strong> the research snapshot published Antwerp
+        20ft, 40ft and per-CBM ranges, but no rail, air, express or DDP dollar figure. Ask the forwarder
+        to itemise freight, surcharges, THC, documentation, inspection, clearance, EU duty, 21% VAT and
+        Belgian delivery on the same quote so the price is comparable across modes.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit times by origin port and mode</h2>
+    <p>
+      The China-to-Belgium clock is a planning range, not a promise, and 2026 made the Cape routing a new
+      normal rather than a blip. The WorldFreightHub Europe route data puts sea transit at roughly
+      <strong>28 days via the Cape of Good Hope</strong>, within a <strong>25–45 day range</strong>, with
+      the Red Sea reroute adding about <strong>+10–14 days</strong> versus the pre-crisis Suez routing.
+      No verified Belgium-specific rail or air transit appears in the snapshot, so those stay request-for-
+      quote rather than being estimated.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Belgium transit times" />
+
+    <div class="note mt-2">
+      <strong>Sea planning default:</strong> Shanghai, Ningbo-Zhoushan and Shenzhen to Antwerp are recorded
+      at roughly 28 days on the current Cape routing, with the Red Sea reroute adding about +10–14 days
+      over the old Suez routing. The northern-range congestion shared with Rotterdam is a recurring
+      variable, so add a buffer before committing to a delivery date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL vs LCL: which fits Belgium cargo?</h2>
+      <p>
+        The FCL-vs-LCL decision for Antwerp starts with cube, urgency and handling tolerance. FCL suits
+        cargo large enough to justify a 20GP, 40GP or 40HQ; LCL suits smaller consignments sharing a
+        container. Using the published ranges illustratively, a midpoint 20ft rate of
+        <strong>$2,950</strong> and an assumed LCL midpoint of <strong>$105/CBM</strong> break even at
+        about <strong>28 CBM</strong> — a 15 CBM consignment would cost roughly <strong>$1,575 LCL</strong>
+        versus a full container. That is a planning calculation, not a rate promise, so request quotes on
+        both sides before deciding.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'fcl', label: 'FCL (20GP / 40GP / 40HQ)' },
+          { key: 'lcl', label: 'LCL (per CBM)' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclLclRows}
+        caption="Decision support. Antwerp FCL and LCL prices are MEDIUM confidence; the ~28 CBM illustrative split is a LOW-confidence planning calculation."
+      />
+      <SourceList sources={modeSources} title="Sources — FCL vs LCL decision" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose FCL when...">
+          <ul>
+            <li>The cargo fills, or nearly fills, a 20GP, 40GP or 40HQ.</li>
+            <li>You value a single sealed unit and lower handling exposure.</li>
+            <li>The delivery plan can absorb the roughly 28-day sea window plus a congestion buffer.</li>
+            <li>The cargo is heavy, palletised or machine/project-oriented.</li>
+          </ul>
+        </Card>
+        <Card title="Choose LCL when...">
+          <ul>
+            <li>The consignment is well under a container load — illustratively below ~28 CBM at the midpoint.</li>
+            <li>You are running a trial order, mixed SKU retail fill or samples.</li>
+            <li>You can accept CFS consolidation and deconsolidation time.</li>
+            <li>Per-CBM economics beat paying for an empty container.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports: China origin ports and Antwerp</h2>
+    <p>
+      The origin side is the familiar China port hierarchy: Shanghai and Ningbo-Zhoushan anchor the East
+      China ocean services, while Shenzhen and Guangzhou cover South China and Qingdao, Tianjin and Xiamen
+      provide northern/southeast alternatives. On the Belgian side, the destination dataset has one primary
+      seaport — <strong>Antwerp (BEANR)</strong> — with Rotterdam (NLRTM) as the northern-range
+      alternative when container-first routing is preferred.
+    </p>
+
+    <h3>China origin ports</h3>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence from port authorities; other China throughputs are MEDIUM confidence from the dataset."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+    <h3 class="mt-3">Belgium destination port</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'detail', label: 'Antwerp (BEANR)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={antwerpPortRows}
+      caption="Antwerp is the verified Belgian seaport in the destination data. Throughput and draft figures are MEDIUM confidence from the port authority."
+    />
+    <SourceList sources={marketSources} title="Sources — Belgium destination port" />
+
+    <h3 class="mt-3">Door-to-door process from China to Belgium</h3>
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'who', label: 'Who owns it' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={processRows}
+      caption="The operational chain is directional; the EORI, EU duty + 21% VAT and CE/REACH steps are MEDIUM confidence and operational fee/timing steps are LOW confidence."
+    />
+    <SourceList sources={[...costSources, ...marketSources]} title="Sources — Belgium door-to-door chain" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost composition and the hidden charges that competitors miss</h2>
+      <p>
+        Belgium’s statutory stack is only the visible top layer: <strong>EU common duty on CIF</strong>
+        (typically 0–12% by HS code), then <strong>21% VAT on the duty-inclusive base</strong>. The
+        commercial risk sits below that line in operational charges that the verified snapshot does not
+        quantify — THC, documentation, inspection, port storage, demurrage and detention. Because Antwerp
+        shares congestion pressure with Rotterdam, an unplanned call shift or dwell delay can convert a
+        competitive freight quote into storage, demurrage and detention exposure.
+      </p>
+
+      <div class="note">
+        <strong>Baseline statutory landed cost = (CIF + duty) × 1.21.</strong><br />
+        Duty varies by HS code, so there is no single multiplier like the Gulf’s 5%. For an illustrative
+        USD 10,000 CIF shipment at an assumed 5% duty: USD 500 duty gives a USD 10,500 duty-inclusive
+        base, then 21% VAT of USD 2,205, giving USD 12,705 before destination fees. Rates and duty lines
+        are subject to change — verify the current duty line and VAT treatment with Belgian Customs before
+        relying on this example.
+      </div>
+
+      <h3 class="mt-3">Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The FCL/LCL ranges, EU duty and 21% VAT are MEDIUM confidence from route/customs sources. Unquantified Belgian fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when import cargo remains in the port beyond
+        the allowed free time after discharge. <strong>Detention</strong> is charged by the ocean carrier
+        (or rail operator) when the container is kept beyond the equipment free time after collection.
+        They are separate clocks with separate payees, and Belgian free-time periods and per-day rates are
+        not published in the verified snapshot. Confirm both allowances in writing before booking and file
+        the declaration promptly so neither clock runs.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised quote that lists <strong>origin charges</strong>, <strong>destination
+        THC</strong>, <strong>documentation</strong>, <strong>Belgian clearance and brokerage</strong>,
+        <strong>customs inspection</strong>, <strong>port storage</strong>, and the two free-time clocks —
+        <strong>demurrage/detention</strong>. If the cargo moves inland from Antwerp to the chemical
+        cluster, France or the Rhine basin, ask for the barge or truck leg as a separate line rather than
+        an all-in lump sum.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: Belgium duty, 21% VAT, EORI &amp; conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Belgium applies the <strong>EU Common Customs Tariff</strong>, so duty is identical across member
+      states and depends on the HS code — typically <strong>0–12% for consumer goods</strong>, with no
+      China–EU free-trade agreement in force. Import <strong>21% VAT</strong> (12% and 6% reduced on some
+      goods) is then charged on the <strong>duty-inclusive value</strong>, so the baseline statutory
+      calculation is <code>(CIF + duty) × 1.21</code>. That compound is more punitive than a flat VAT line:
+      a higher duty line is magnified by 21% VAT on the duty-inclusive base, so the HS code is the first
+      cost decision.
+    </p>
+
+    <h3>EORI — register before arrival</h3>
+    <p>
+      The <strong>EORI number</strong> is mandatory for any import into the EU and must be registered
+      <em>before</em> the goods arrive. It is the single most common first-import stumbling block for
+      China-to-Belgium cargo, so start the registration before the vessel departs, not while it is
+      discharging.
+    </p>
+
+    <h3>TARIC classification and documents</h3>
+    <p>
+      Belgium classifies goods under the <strong>10-digit TARIC code</strong>, which drives the duty line,
+      VAT treatment, permits and restricted screening. The standard document set is a commercial invoice,
+      bill of lading (or rail consignment note for rail cargo), packing list and the correct TARIC
+      classification, backed by your EORI number. Confirm the current declaration workflow with a licensed
+      Belgian broker.
+    </p>
+
+    <h3>CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is the EU conformity mark required for a wide range of regulated
+      products — electronics, toys, machinery and medical devices, among others. <strong>REACH</strong> is
+      the EU chemical regulation requiring registration for chemical substances. Whether either applies
+      depends on your product class, so confirm the applicability and the required technical file before
+      shipment — especially relevant for Belgium because the country is Europe’s chemicals gateway.
+    </p>
+
+    <h3>De-minimis and IOSS</h3>
+    <p>
+      The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro
+      on most consignments. The <strong>€150</strong> figure is the VAT-related threshold, and the
+      <strong>IOSS</strong> scheme simplifies VAT on sub-€150 consignments sold to EU buyers. Confirm the
+      current thresholds and whether IOSS applies to your channel with Belgian Customs before relying on
+      these figures.
+    </p>
+
+    <h3>SABER/SASO do not apply</h3>
+    <p>
+      <strong>SABER and SASO are Saudi-only conformity systems.</strong> They do not apply to Belgium or
+      the EU and should not be copied into a Belgian import workflow. Belgium uses CE marking for regulated
+      products and REACH for chemical substances instead; confirm any product-specific approval with
+      Belgian Customs or your broker.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Belgium customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The statutory
+      lines (EU common duty and 21% VAT) are re-checked against Belgian Customs & Excise (FPS Finance)
+      and the European Commission TARIC database; the Antwerp throughput, draft and terminal figures are
+      re-checked against the Port of Antwerp-Bruges authority; and the sea transit windows are re-checked
+      against the WorldFreightHub Europe route data each month.
+    </p>
+    <p>
+      If a Belgian rail, air, express or DDP dollar rate, an Antwerp terminal fee, a congestion-related
+      call-shift schedule or a demurrage/detention fee schedule becomes available from Belgian Customs, a
+      port operator or a carrier, the table is updated, the confidence badge is raised, and the modified
+      date in the page metadata is changed. Until then, unquantified Belgian fees and rates stay LOW
+      confidence with a "not published — verify" note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Belgium quote"
+      text="Tell us your origin, commodity, container or CBM, TARIC/HS code and final Belgian destination, and we will connect you with providers who can quote ocean/rail/air freight, EU duty, 21% VAT, Belgian clearance and Antwerp chemical-cluster or barge delivery together."
+    />
+  </section>
+</BaseLayout>

@@ -13,8 +13,8 @@ export const countrySourceIds: Record<string, string[]> = {
   netherlands: ['eu-taric', 'dutch-customs', 'port-rotterdam'],
   spain: ['eu-taric', 'spanish-customs'],
   italy: ['eu-taric', 'italian-customs'],
-  poland: ['eu-taric', 'port-gdansk'],
-  belgium: ['eu-taric', 'port-antwerp'],
+  poland: ['eu-taric', 'polish-customs', 'port-gdansk'],
+  belgium: ['eu-taric', 'belgian-customs', 'port-antwerp'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -213,5 +213,17 @@ export const sources: Source[] = [
     name: 'Ports of Genoa (Autorità di Sistema Portuale del Mar Ligure Occidentale)',
     url: 'https://www.portsofgenoa.com',
     type: 'port-authority',
+  },
+  {
+    id: 'polish-customs',
+    name: 'Polish National Revenue Administration (Krajowa Administracja Skarbowa — KAS)',
+    url: 'https://www.podatki.gov.pl',
+    type: 'government',
+  },
+  {
+    id: 'belgian-customs',
+    name: 'Belgian Customs & Excise (FPS Finance — Algemene Administratie van de Douane en Accijnzen)',
+    url: 'https://finances.belgium.be',
+    type: 'government',
   },
 ];
