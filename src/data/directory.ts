@@ -321,11 +321,12 @@ export const directoryProviders: DirectoryProvider[] = [
     hqCountry: 'China',
     serviceCountries: ['saudi-arabia', 'united-arab-emirates'],
     methods: ['Sea freight', 'Air freight', 'DDP door-to-door'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://honourocean.en.made-in-china.com/',
     sourceName: 'Made-in-China supplier storefront (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Contact details not independently verified; listed via a Made-in-China storefront.',
+    contactNote:
+      "Business identity independently verified: NVOCC approved by China Ministry of Transport, SGS-audited supplier (report QIP-ASI252103), and a verified badge on Made-in-China. Contact details and specific service claims still to be confirmed.",
     description:
       'China freight agent marketing cheap air and sea DDP door-to-door shipping from China to Saudi Arabia and the UAE via a Made-in-China storefront.',
     selfReportedClaims: [
@@ -527,11 +528,12 @@ export const directoryProviders: DirectoryProvider[] = [
     serviceCountries: ['united-arab-emirates'],
     methods: ['Air freight', 'Sea freight', 'Rail freight', 'Express', 'Sourcing', 'Warehousing & prep'],
     platformFocus: ['Amazon FBA'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://ddpchain.com/best-amazon-fba-freight-forwarders-china',
     sourceName: 'DDPCHAIN top-FBA-forwarders listicle (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Contact details not independently verified; listed as an Amazon SPN provider.',
+    contactNote:
+      'Listed as an Amazon SPN provider (platform-verified). Contact details still to be confirmed.',
     description:
       'China-based freight forwarder and FBA logistics platform combining forwarding, sourcing and warehouse services, shipping to US, UK, EU, Canada, Japan and UAE.',
     selfReportedClaims: [
@@ -566,11 +568,12 @@ export const directoryProviders: DirectoryProvider[] = [
     serviceCountries: ['united-arab-emirates', 'saudi-arabia'],
     methods: ['International express (DHL/UPS/FedEx/TNT/EMS)', 'FBA first-leg', 'Air freight', 'Sea freight', 'DDP'],
     platformFocus: ['Amazon FBA'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://603056459eeff4d1.en.made-in-china.com/',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Contact details not independently verified; listed via a Made-in-China storefront.',
+    contactNote:
+      "Business identity verified via Made-in-China Audited Supplier (third-party inspection; Gold Member since 2024). Contact details still to be confirmed.",
     description:
       'Shenzhen cross-border transport company (est. 2015) covering international express, FBA first-leg, air/sea freight and dedicated DDP lines to Dubai, UAE and Saudi Arabia.',
     selfReportedClaims: [
@@ -586,11 +589,12 @@ export const directoryProviders: DirectoryProvider[] = [
     serviceCountries: ['saudi-arabia', 'qatar', 'kuwait', 'united-arab-emirates'],
     methods: ['Sea freight', 'Air freight', 'DDP door-to-door', 'Amazon FBA'],
     platformFocus: ['Amazon FBA'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://9eab83045575f5a4.en.made-in-china.com/',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Contact details not independently verified; listed via a Made-in-China storefront.',
+    contactNote:
+      "Business identity verified via Made-in-China Audited Supplier (third-party inspection). Contact details still to be confirmed.",
     description:
       'Guangdong-based logistics company offering sea freight from Shenzhen/Shanghai to Saudi Arabia, plus DDP/FBA air and sea shipping to Dubai, Qatar and Kuwait.',
     selfReportedClaims: [
@@ -605,11 +609,12 @@ export const directoryProviders: DirectoryProvider[] = [
     serviceCountries: ['saudi-arabia'],
     methods: ['Air freight', 'Sea freight (FCL/LCL)', 'Express', 'DDP door-to-door'],
     platformFocus: ['Amazon FBA'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://east-shipping.en.alibaba.com/',
     sourceName: 'Alibaba storefront (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
+    contactNote:
+      'Business identity verified on Alibaba (assessed videos, factory inspection reports, verified production lines; 7-year supplier). Contact details still to be confirmed.',
     description:
       'Shenzhen-based logistics partner (founded 2016) specialising in cross-border shipping to Saudi Arabia, the US and Europe, with COSCO/MSC/CMA-CGM agency and DDP door-to-door.',
     selfReportedClaims: [
@@ -644,11 +649,12 @@ export const directoryProviders: DirectoryProvider[] = [
     hqCountry: 'China',
     serviceCountries: ['saudi-arabia', 'united-arab-emirates', 'qatar', 'kuwait', 'oman', 'bahrain'],
     methods: ['Air freight', 'Sea freight', 'Rail freight', 'DDP'],
-    verification: 'unverified',
+    verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
     lastVerified: '2026-09-01',
-    contactNote: 'Website not yet located; listed as "Alibaba Verified" in a third-party listicle.',
+    contactNote:
+      "Business identity verified as an Intertek Verified Supplier (Made-in-China). Website and contact details still to be confirmed.",
     description:
       'Shenzhen freight forwarder positioned for DDP and Middle East routes, offering air, sea, rail and DDP door-to-door.',
     selfReportedClaims: [

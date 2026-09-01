@@ -22,11 +22,11 @@ const countryName = (slug: string) => countryLabels[slug] ?? slug;
 const verificationStatuses = [
   {
     status: 'Verified',
-    description: 'Contact and claims independently confirmed.',
+    description: 'Business identity independently audited by a third party (SGS / Intertek / NVOCC / platform audit). Contact details may still need confirmation.',
   },
   {
     status: 'Unverified',
-    description: 'Found in research, not yet independently confirmed.',
+    description: 'Found in research, business identity not yet independently audited.',
   },
   {
     status: 'Claimed',
@@ -77,7 +77,7 @@ const faqs = [
   },
   {
     q: 'Why are there so few listings right now?',
-    a: 'We only publish providers that have a documented research source. Right now that means fifty entries, all from our 2026 research passes and all still marked unverified; we are actively confirming identities and contact details rather than padding the directory with unconfirmed businesses.',
+    a: 'We only publish providers that have a documented research source. Right now that means fifty entries from our 2026 research passes — six independently audited (verified) and the rest still unverified. We are actively confirming identities and contact details rather than padding the directory with unconfirmed businesses.',
   },
   {
     q: 'How do you decide who to list?',
@@ -156,9 +156,9 @@ const schema = [
       ))}
     </div>
     <div class="note mt-3">
-      <strong>Directory status:</strong> 50 providers are listed, all marked
-      unverified. Each entry is backed by a documented research source and we are
-      actively verifying more — we never fabricate entries or contact details.
+      <strong>Directory status:</strong> 50 providers are listed — 6 verified (third-party
+      audited) and 44 unverified. Every entry is backed by a documented research
+      source; we never fabricate entries or contact details.
     </div>
   </section>
 
