@@ -15,5 +15,5 @@ const { slotLabel, locale = 'en' } = Astro.props;
     <strong>{t(locale, 'ad.headline')}</strong>
   </p>
   <p>{t(locale, 'ad.text')}</p>
-  <a class="btn btn-amber" href={locale === 'ar' ? '/ar/contact/' : '/contact/'}>{t(locale, 'ad.cta')}</a>
+  <a class="btn btn-amber" href="/contact/">{t(locale, 'ad.cta')}</a>
 </aside>

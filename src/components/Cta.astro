@@ -16,12 +16,10 @@ const {
   href,
   locale = 'en',
 } = Astro.props;
-
-const prefix = locale === 'ar' ? '/ar' : '';
 ---
 
 <section class="cta">
   <h2>{title ?? t(locale, 'cta.title')}</h2>
   <p>{text ?? t(locale, 'cta.text')}</p>
-  <a class="btn btn-amber" href={href ?? `${prefix}/get-quote/`}>{label ?? t(locale, 'cta.label')}</a>
+  <a class="btn btn-amber" href={href ?? '/get-quote/'}>{label ?? t(locale, 'cta.label')}</a>
 </section>
