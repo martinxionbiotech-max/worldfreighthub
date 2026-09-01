@@ -234,3 +234,16 @@
 - **QA**：`npm run build` **147 页（+14 详情页）零 error**；所有条目 verification=unverified、lastVerified=2026-09-01、contactNote 显式标注未核实。
 - **Git Commit**：`f027dbc feat(directory): add 14 verified freight forwarder entries (16 total, all unverified)`（已推 origin/main）。
 - **Next**：STEP 19–20（Ad Slots 填充 + get-quote 表单接线）；后续可继续扩充至 100–200 家并逐步 verified 分层。
+
+
+## 2026-09-01（STEP 19–20 — Ad Slots + Quote Framework 接线）
+
+- **Tasks**：完成 Quote Framework 接线 + Ad Slots 填充（手动续跑 08:05–08:08）。
+- **Quote Framework（STEP 20）**：`get-quote/index.astro` 从「Coming soon 禁用表单」升级为**可提交的真实表单**：
+  - action 指向 FormSubmit.co（`hello@worldfreighthub.net`，纯 HTML 无 JS，符合「无客户端 JS」约束）
+  - 字段：name/email/WhatsApp(选)/origin/destination/cargo/weight/CBM/incoterm/method/notes，必填项 `required`
+  - 新增 7 条 Quote FAQ + `ContactPage` + `FAQPage` schema；补「What happens next」+「Good to know before you quote」（SABER/5% 关税/沙特 VAT 15%/阿联酋 VAT 5% 提示）
+- **Ad Slots（STEP 19）**：`AdSlot.astro` 占位（"Reserved placement"）→ **house ad 自营 CTA**（"Advertise with WorldFreightHub" → /contact/），并接入首页 + middleeast hub 两个最高流量页。
+- **QA**：`npm run build` 147 页零 error（表单/AdSlot 均通过）。
+- **Git Commit**：`aa03de9 feat: wire get-quote form to FormSubmit backend + fill AdSlot placements`（已推 origin/main）。
+- **注意**：FormSubmit.co 需邮箱 owner 首次提交时点确认激活；上线后建议实测一次并考虑换 Formspree 或 Cloudflare Pages Functions。
