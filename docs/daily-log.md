@@ -336,3 +336,20 @@
 - **QA**：329 页 zero error；数据诚信口径延续（confidence 徽章 + 来源列表 + "indicative not guarantees" 声明）。
 - **Git Commit**：`dc534c1 feat(europe): add China-to-Europe corridor (8 countries, 8 ports, 56 routes, 5 guides)`（已推 origin/main）
 - **Next**：① Europe 走廊第二波（每国 Route Pillar 长页 / 铁路转运 / FCL-LCL Europe 拆解）；② Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；③ 回填 GCC 的 Demurrage/Detention + Hidden Charges 长页（仍是最高价值 Gap）。
+
+
+## 2026-09-02（GCC 最高价值 Gap 回填批次 — Demurrage/Detention + Hidden Charges）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50：Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）已 100% 完成，无剩余 GCC 页面。按 project-status.md「下一优先级 #1」回填最高价值 Content Gap —— Demurrage/Detention 与 Hidden/Destination Charges 两个长页（竞品 0 覆盖，通向 Freight Cost Calculator §20 Gap→Tool）。
+- **本轮动作**：
+  1. 核对 roadmap 顺序 + `ls src/pages/middleeast` 逐页比对 → 确认无剩余 GCC 页面，转向 Gap 回填。
+  2. 排查并修复 Codex 环境问题：非交互 SSH shell 不 source `~/.profile`，导致 `DEEPSEEK_API_KEY` 缺失 → 改为 `source ~/.profile` + `export PATH="$HOME/.npm-global/bin:$PATH"` 后重跑成功。
+  3. 交给 Codex 写 2 页（严格套 9 模块公式 + 质量红线：2500–5000 词、数据禁杜撰、查不到的数字一律标 LOW confidence 并注明「待核实」）。
+- **Content（commit 405e26b）**：
+  - `src/pages/middleeast/demurrage-detention-china-to-gcc.astro`（**3273 词**）——Demurrage vs Detention 全解：demurrage 免费期 3–7 天（terminal 收）/ detention 免费期 5–10 天（carrier 收）、两者可同时累加、每日 $50–300+（2025 均值 $150–300，FreightAmigo）、SABER 缺失→滞港→滞箱费的失败链、Jeddah「5 免费日滞留 12 日 = 7 日 demurrage」算术示例、避免清单（pre-clear / SABER before sailing / FASAH+Mirsal 预申报 / 提前订拖车 / 谈免费期展期）。
+  - `src/pages/middleeast/hidden-charges-china-to-gcc.astro`（**3177 词**）——Hidden/Destination Charges 拆解：THC(OTHC/DTHC)、港杂费、单证费、ISPS、查验费、清关 broker、SABER PC+SC、仓储、内陆拖车；金额一律标 LOW confidence +「待核实 / not published in research snapshot — request an itemised schedule」，仅 demurrage/detention 给量化区间（$50–300+/day）。
+  - `src/pages/middleeast/index.astro` 加两张卡片（内链）。
+- **QA**：`npm run build` 零 error；两页各 **10 条 FAQ**；confidence 徽章全覆盖（demurrage 页 HIGH 3 / MEDIUM 16 / LOW 15；hidden 页 HIGH 5 / MEDIUM 12 / LOW 23）；Article + FAQPage + BreadcrumbList + Organization schema 齐全；「August 2026」更新标记。两页互为交叉链接。
+- **Git Commit**：`405e26b feat(content): add demurrage-detention and hidden-charges China-to-GCC guide pages`（已推 origin/main）
+- **Next**：① Freight Cost Calculator 工具（这两页已为其铺好 charge 数据口径）；② Europe 走廊第二波（每国 Route Pillar 长页 / FCL-LCL Europe 拆解 / 海运铁路成本对比）；③ Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain。

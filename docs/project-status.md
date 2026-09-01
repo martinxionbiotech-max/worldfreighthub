@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-02 03:30 (Asia/Shanghai)
+> 最后更新：2026-09-02 04:00 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -75,7 +75,7 @@
 
 ## 最高价值 Content Gap（下一阶段建设锚点）
 
-1. **Demurrage/Detention + Hidden Charges**（竞品 0 覆盖）→ 通向 Freight Cost Calculator
+1. **Demurrage/Detention + Hidden Charges**（竞品 0 覆盖）→ 通向 Freight Cost Calculator ✅ 已回填（2026-09-02，commit `405e26b`）
 2. **SASO/SABER 步骤 + SC 新规**（合规权威差异化）
 3. **Jeddah vs Dammam vs Jebel Ali 港口对比**（用户真实问题）
 
@@ -85,7 +85,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. **回填 GCC 最高价值 Gap 长页**：Demurrage/Detention + Hidden Charges（竞品 0 覆盖，通向 Freight Cost Calculator）
+1. **Freight Cost Calculator 工具**（由 Demurrage/Detention + Hidden Charges 两页的 charge 数据口径铺路；Gap 长页已于 2026-09-02 回填）
 2. **Europe 走廊第二波**：每国 Route Pillar 长页（Germany/UK/NL 优先）、铁路转运、FCL vs LCL Europe 拆解、海运/铁路成本对比数据页
 3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
 4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified
