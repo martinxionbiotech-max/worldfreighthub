@@ -268,3 +268,12 @@
 - **改动**：`research-notes` DISCREPANCY→RESOLVED；`project-status`「待核实冲突」→「已解决冲突」；纠正 `saudi-arabia-import-duty-vat.astro` 与 `saudi-customs-clearance.astro` 的 3 处 FAQ + 1 处 duty 表格单元格（"Disputed de minimis"→"Duty-free ≤ SAR 1,000"）。
 - **部署文档**：新增 `docs/deployment.md`（Cloudflare Pages 步骤 + 域名 + FormSubmit 激活 + 上线前 checklist）。
 - **QA**：`npm run build` 147 页零 error。
+
+
+## 2026-09-01（Directory 二批扩充 — 16→23 家）
+
+- **Tasks**：Directory 继续扩充 +7 家真实企业（ZMC Express Cargo、Senghor Logistics、Al Fares Cargo、DocShipper、SINO Shipping、China Global Freight、HINDA 国际物流广州），并修正 Honour Ocean 全称（Honour Ocean International Logistics (Shenzhen)，补 NVOCC + SGS 审计声明）。
+- **Research**：Tavily 搜索（UAE/Qatar/Kuwait/Oman/Bahrain 专线角度）+ Firecrawl scrape 核实 6 家官网首页。零杜撰——每家均有官网 URL 背书。
+- **QA**：`npm run build` 154 页（+7 详情页）零 error；目录状态说明/FAQ/llms.txt 已同步 16→23。
+- **Git Commit**：`28c80ae feat(directory): add 7 more freight forwarders (23 total) + fix Honour Ocean naming`。
+- **Next**：可继续按 100–200 家目标扩充（建议下一批角度：Yiwu/义乌市场货代、Amazon FBA 中东专线、义新欧中欧班列中东支线），并逐步 verified 分层。
