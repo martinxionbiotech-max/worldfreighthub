@@ -1,0 +1,1018 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import { europeCountries } from '../../data/europe-countries';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/europe/shipping-from-china-to-netherlands/`;
+
+const rotterdamPort = europePorts.find((item) => item.slug === 'rotterdam');
+const rotterdamUnlocode = rotterdamPort?.unlocode ?? '—';
+const netherlands = europeCountries.find((item) => item.slug === 'netherlands');
+
+const wfhRouteData: Source = {
+  id: 'wfh-netherlands-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Rotterdam (sea via the Cape roughly 30 days, rail roughly 18–22 days; LOW/MEDIUM confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-netherlands-methodology',
+  name: 'WorldFreightHub methodology — China→Europe research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const netherlandsCustomsSources = sourcesByIds(['dutch-customs', 'eu-taric']);
+const rotterdamPortSources = sourcesByIds(['port-rotterdam']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group', 'world-bank']);
+const rateSources: Source[] = [...rotterdamPortSources, wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
+const costSources: Source[] = [...netherlandsCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...netherlandsCustomsSources, wfhMethodology];
+const marketSources: Source[] = [...netherlandsCustomsSources, ...rotterdamPortSources, wfhMethodology];
+
+const rateRows = [
+  {
+    service: 'FCL ocean — 20GP to Rotterdam (NLRTM)',
+    benchmark: '$1,200 – $4,800 per 20ft',
+    basis: 'WorldFreightHub Europe route data, Rotterdam corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'FCL ocean — 40GP / 40HQ to Rotterdam (NLRTM)',
+    benchmark: '$1,600 – $6,800 per 40ft',
+    basis: 'WorldFreightHub Europe route data, Rotterdam corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'LCL ocean — China to Rotterdam (per CBM)',
+    benchmark: '$60 – $160 per CBM',
+    basis: 'WorldFreightHub Europe route data, Rotterdam corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Rail — Xi\u2019an / Chengdu to a Europe rail gateway for Rotterdam',
+    benchmark: 'Not published in verified snapshot — request a per-container $ range',
+    basis: 'Route data notes rail costs roughly 2–3× sea per container; no published rail $ figure',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — China to Netherlands air gateway',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'No verified Netherlands air freight rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier — China to Netherlands',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door — China to Netherlands',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'DDP embeds freight, clearance, EU duty, 21% VAT (or Article 23 deferral) and delivery',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai (CNSHA)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Ningbo-Zhoushan (CNNGB)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Shenzhen Yantian / Shekou (CNSZX)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Guangzhou (CNCAN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Qingdao (CNTAO)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Tianjin (CNTSN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Xiamen (CNXMN)',
+    mode: 'Sea — via Cape of Good Hope',
+    transit: 'Roughly 30 days',
+    basis: 'WorldFreightHub Europe route data; Cape reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Xi\u2019an / Chengdu (rail origin)',
+    mode: 'Rail — New Silk Road into Europe',
+    transit: 'Roughly 18–22 days',
+    basis: 'WorldFreightHub Europe route data; most China rail terminates in Germany/Poland, then connects to Rotterdam',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'China air gateway',
+    mode: 'Air freight — China to Netherlands',
+    transit: 'Not published in verified snapshot — request a routing quote',
+    basis: 'No verified Netherlands air transit appears in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China door-to-door',
+    mode: 'Sea or rail + clearance + trucking',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds discharge, Dutch Customs clearance, EU duty, 21% VAT and last-mile trucking',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea FCL',
+    bestFor: 'Large, heavy, palletised or containerised cargo that can absorb the roughly 30-day Cape window',
+    indicativeTime: 'Rotterdam roughly 30 days via the Cape (MEDIUM)',
+    indicativeCost: '20ft $1,200–$4,800; 40ft $1,600–$6,800 (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Sea LCL',
+    bestFor: 'Smaller consignments that do not fill a container but are not urgent',
+    indicativeTime: 'Rotterdam roughly 30 days plus CFS consolidation/breakbulk (MEDIUM)',
+    indicativeCost: '$60–$160 per CBM (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail (New Silk Road)',
+    bestFor: 'Time-sensitive or high-value cargo that needs roughly 18–22 days instead of ~30 at sea',
+    indicativeTime: 'China rail into Europe roughly 18–22 days plus the last leg to Rotterdam (MEDIUM)',
+    indicativeCost: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo into the Netherlands air gateway',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'Not published — request a per-kg quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const fclLclRows = [
+  {
+    factor: 'Shipment size',
+    fcl: 'A full container load for enough pallets, cartons or machine units to justify exclusive use of the box',
+    lcl: 'Less-than-container load sharing a consolidated container with other importers',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Cost logic',
+    fcl: 'Priced per container — 20ft $1,200–$4,800, 40ft $1,600–$6,800 to Rotterdam (MEDIUM)',
+    lcl: 'Priced per cubic metre — $60–$160 per CBM to Rotterdam (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Breakeven rule of thumb',
+    fcl: 'Usually wins once your cube is large enough for the container rate to beat per-CBM pricing',
+    lcl: 'Illustratively, at midpoint 20ft $3,000 and LCL $110/CBM, the split is about 27 CBM; below that LCL is usually cheaper',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling risk',
+    fcl: 'Single sealed unit between shipper and receiver; less handling exposure',
+    lcl: 'Additional CFS handling, deconsolidation and short-term warehousing steps',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit experience',
+    fcl: 'Main carriage timing is the same planning window; container moves directly to discharge',
+    lcl: 'Consolidation and deconsolidation can add variable time before final release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Destination fees',
+    fcl: 'THC, documentation, inspection risk, port storage, demurrage and detention all remain possible',
+    lcl: 'Adds destination CFS/deconsolidation and per-CBM handling to the same hidden-charge stack',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usual fit',
+    fcl: 'Volume-heavy cargo, project goods or buyers who want a single sealed unit',
+    lcl: 'Smaller consignments, trial orders, samples or mixed SKU retail replenishment',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '≈ 47m TEU (2023)',
+    note: 'World\u2019s busiest container port; default East China origin',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '≈ 35m TEU (2023)',
+    note: 'World\u2019s largest port by total cargo tonnage; strong Shanghai alternative',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: '≈ 30m TEU (2023)',
+    note: 'South China electronics and consumer-goods gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: '≈ 24m TEU (2023)',
+    note: 'Pearl River Delta hinterland; less congested South China alternative',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Qingdao (CNTAO)',
+    throughput: '≈ 26m TEU (2023)',
+    note: 'North China gateway for Shandong manufacturing',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Tianjin (CNTSN)',
+    throughput: '≈ 21m TEU (2023)',
+    note: 'Beijing–Tianjin–Hebei industrial belt; northernmost major gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Xiamen (CNXMN)',
+    throughput: '≈ 12m TEU (2023)',
+    note: 'Fujian gateway for footwear, textiles, ceramics and light industry',
+    confidence: 'MEDIUM',
+  },
+];
+
+const rotterdamPortRows = [
+  {
+    factor: 'Port role',
+    detail: 'Europe\u2019s largest port and the default China-to-Europe deep-sea gateway',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'UN/LOCODE',
+    detail: rotterdamUnlocode,
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Country',
+    detail: 'Netherlands',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Container throughput',
+    detail: '≈ 13.4m TEU (2023)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Max draft',
+    detail: '≈ 24 m (Maasvlakte 2)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Key terminals',
+    detail: 'Maasvlakte 1 & 2, Euromax, ECT Delta',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Hinterland',
+    detail: 'The Rhine corridor — barge and rail reach Germany, Belgium, France and Switzerland',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'VAT lever',
+    detail: 'Article 23 VAT-deferral licence supports bonded warehousing until goods enter a member state',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Antwerp alternative',
+    detail: 'Antwerp (BEANR) is the same northern-range market and a congestion alternative; ordinary containers usually default to Rotterdam',
+    confidence: 'MEDIUM',
+  },
+];
+
+const processRows = [
+  {
+    step: 'Confirm the product, HS code and 10-digit TARIC classification',
+    who: 'Shipper / forwarder',
+    note: 'The TARIC code drives EU duty, VAT treatment, permits and restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Register for an EORI number before the goods arrive',
+    who: 'Importer',
+    note: 'Mandatory for any EU import; the number must exist before arrival, not after',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Assess Article 23 VAT-deferral eligibility if you will hold or re-export inventory',
+    who: 'Importer / Dutch fiscal representative',
+    note: 'The licence can defer import VAT into bonded storage, but EU duty is still payable',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Book origin collection and China export clearance',
+    who: 'Forwarder / supplier',
+    note: 'From Shanghai, Ningbo-Zhoushan, Shenzhen or another named China origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Move cargo to the load port and issue the export documents',
+    who: 'Forwarder / carrier',
+    note: 'Commercial invoice, packing list and bill of lading are the core set',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Run the ocean or rail main carriage',
+    who: 'Carrier / rail operator',
+    note: 'Sea roughly 30 days via the Cape; rail roughly 18–22 days into Europe',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Discharge at Rotterdam (NLRTM) or connect from the rail gateway',
+    who: 'Terminal / handler',
+    note: 'Rotterdam is primarily a deep-sea gateway; rail arrivals are smaller in share',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'File the Dutch import declaration',
+    who: 'Importer / customs broker',
+    note: 'Attach invoice, packing list, B/L or rail consignment note and the TARIC code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay EU common duty and 21% VAT, or defer VAT under Article 23',
+    who: 'Importer / broker',
+    note: 'Statutory stack is (CIF + duty) × 1.21 when VAT is paid at import; duty varies by HS code',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pass CE / REACH checks and clear any regulated goods',
+    who: 'Dutch Customs / agencies',
+    note: 'CE marking for regulated products; REACH for chemical substances',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Collect the container or deconsolidate LCL',
+    who: 'Importer / haulier',
+    note: 'Keep demurrage and detention free time in view',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Distribute the last mile by truck or Rhine barge',
+    who: 'Local trucker / barge operator',
+    note: 'Rhine barge reaches Germany, France and Switzerland for lower inland cost',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight',
+    who: 'Carrier / forwarder',
+    magnitude: '20ft $1,200–$4,800; 40ft $1,600–$6,800 to Rotterdam (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL freight',
+    who: 'Forwarder',
+    magnitude: '$60–$160 per CBM to Rotterdam (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Rail freight',
+    who: 'Rail operator / forwarder',
+    magnitude: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal handling charge (THC)',
+    who: 'Rotterdam terminal / line',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Dutch Customs clearance and brokerage',
+    who: 'Dutch Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs inspection fee',
+    who: 'Dutch Customs / appointed inspector',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Port storage',
+    who: 'Rotterdam port / CFS',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty',
+    who: 'Dutch Customs',
+    magnitude: 'EU Common Customs Tariff — typically 0–12% by HS code (varies)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'VAT',
+    who: 'Dutch tax authority',
+    magnitude: '21% standard (9% reduced); charged on the duty-inclusive value, or deferred under Article 23',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier / rail operator (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; priced by value, commodity and cover — not published in snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to the Netherlands take?',
+    a: 'WorldFreightHub Europe route data records roughly 30 days by sea from Shanghai, Ningbo-Zhoushan or Shenzhen to Rotterdam on the current Cape-of-Good-Hope routing, with the Red Sea reroute adding about +10–14 days versus the pre-crisis Suez routing (MEDIUM confidence, because these are planning estimates, not carrier promises). Rail from Xi\u2019an or Chengdu into Europe runs roughly 18–22 days, but most China rail terminates in Germany or Poland rather than Rotterdam, so add the last connection. No verified Netherlands air transit is published in the snapshot — request that from your carrier rather than assuming the sea figure applies.',
+  },
+  {
+    q: 'How much does shipping from China to the Netherlands cost?',
+    a: 'The Rotterdam corridor has published ranges in the WorldFreightHub Europe route data: 20ft FCL $1,200–$4,800, 40ft FCL $1,600–$6,800, and LCL $60–$160 per CBM (all MEDIUM confidence). Rail is noted as roughly two to three times sea per container but has no published dollar figure, and air, express and DDP rates were not published in the snapshot — request those as itemised quotes. Rates swing sharply with Red Sea routing, fuel and season, so confirm a live figure before booking.',
+  },
+  {
+    q: 'Should I ship to Rotterdam or Antwerp?',
+    a: 'For most ordinary China-to-Netherlands or Northwest-Europe container cargo, Rotterdam is the default — it has the deepest water in Northwest Europe, the largest container throughput and the strongest direct-call schedule. Antwerp is the same northern-range market rather than a structurally cheaper alternative, but its density of chemical, polymer, breakbulk and reefer terminals makes it the better fit for those cargo types.',
+  },
+  {
+    q: 'What is Article 23 VAT deferral?',
+    a: 'Article 23 is the Dutch licence that lets an eligible importer defer import VAT by placing goods in bonded warehousing at Rotterdam. Import VAT is then accounted for only when the goods actually enter a member state, while EU common duty is still payable at import. It is the single highest-value working-capital lever on this page for importers who hold inventory or re-export across the EU.',
+  },
+  {
+    q: 'Do I need an EORI before the goods arrive in the Netherlands?',
+    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is required for any import into the EU and must be registered before your goods arrive. It is the single most common first-import stumbling block for China-to-Netherlands cargo, so start the registration before the vessel or train departs, not while it is discharging.',
+  },
+  {
+    q: 'What is the VAT rate in the Netherlands?',
+    a: 'The Netherlands applies a 21% standard VAT rate, with a 9% reduced rate on some goods. Import VAT is charged on the duty-inclusive value, so the effective tax is slightly above the headline 21% — budget the compound (CIF + duty) × 1.21 rather than a flat 21% on CIF. If you qualify for Article 23, that import VAT can be deferred.',
+  },
+  {
+    q: 'What is the difference between FCL and LCL for China to the Netherlands?',
+    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ and is usually the fit for large or heavy loads, priced per container. LCL consolidates your cargo with other importers and is priced per cubic metre. Illustratively, at a midpoint 20ft rate of $3,000 and LCL of $110/CBM, the break-even is about 27 CBM; below that LCL is usually cheaper, above it FCL starts to win. Request quotes on both sides of the split before deciding.',
+  },
+  {
+    q: 'What is the €150 de-minimis threshold and how does IOSS work?',
+    a: 'The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro on most consignments. The €150 figure is the VAT-related threshold, and the IOSS (Import One-Stop Shop) scheme simplifies VAT collection on sub-€150 consignments sold to EU buyers. Confirm the current thresholds and whether IOSS applies to your channel with Dutch Customs before relying on these figures.',
+  },
+  {
+    q: 'What documents are needed for Dutch customs clearance?',
+    a: 'The standard set is a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC classification, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed Dutch broker.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into the Netherlands?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems and do not apply to the Netherlands or the EU. Do not copy a Saudi SABER/SASO step into a Dutch quote. The Netherlands uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with Dutch Customs or your broker.',
+  },
+  {
+    q: 'What are CE marking and REACH, and do they apply?',
+    a: 'CE marking is the EU conformity mark required for a wide range of regulated products — electronics, toys, machinery and medical devices, among others — declaring the product meets EU requirements. REACH is the EU chemical regulation requiring registration for chemical substances. Whether either applies depends on your product class, so confirm the applicability and the required technical file before shipment.',
+  },
+  {
+    q: 'How do demurrage and detention differ in the Netherlands?',
+    a: 'Demurrage is the charge the terminal applies when import cargo stays in the port beyond the allowed free time after discharge. Detention is the charge the ocean carrier (or rail operator) applies when the container is kept beyond the equipment free time after collection. They are two separate clocks with two separate payees. Dutch free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to the Netherlands: Rotterdam Gateway, 30-Day Sea & 18–22-Day Rail Transit, EU Duty, 21% VAT & Article 23 VAT Deferral (September 2026)',
+      description:
+        'China to Netherlands freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Rotterdam (NLRTM), roughly 30-day sea transit via the Cape, 18–22-day rail transit into Europe, FCL vs LCL decision, EU common duty, 21% VAT, EORI and Article 23 VAT deferral.',
+      datePublished: '2026-09-02',
+      dateModified: '2026-09-02',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to the Netherlands: Rotterdam Gateway, 30-Day Sea &amp; 18–22-Day Rail Transit, EU Duty, 21% VAT &amp; Article 23 VAT Deferral (September 2026)"
+  description="China to Netherlands freight guide: Shanghai, Ningbo-Zhoushan and Shenzhen to Rotterdam (NLRTM), roughly 30-day sea transit via the Cape, 18–22-day rail transit into Europe, FCL vs LCL decision, EU common duty, 21% VAT, EORI and Article 23 VAT deferral."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Shipping from China to Netherlands' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping from China to the Netherlands: Rotterdam gateway, 30-day sea &amp; 18–22-day rail transit, EU duty, 21% VAT &amp; Article 23 deferral</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        and the wider China origin set to Rotterdam and the Dutch market — with the FCL-vs-LCL decision,
+        the roughly 30-day sea window via the Cape, the 18–22-day rail alternative, EU common duty plus
+        21% VAT, the EORI gate, and Article 23 VAT deferral as the working-capital lever most competitors
+        under-cover.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. The Netherlands\u2019
+        FCL/LCL ranges come from the WorldFreightHub Europe route data (MEDIUM), while rail, air, express
+        and DDP dollar figures were not published in the snapshot and are shown as request-for-quote
+        markers. Treat every LOW-confidence figure as an indicative planning input and verify with your
+        carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Netherlands import duty</span>
+          <span class="fact-value">EU common duty 0–12% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">21% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">EUR <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Destination port</span>
+          <span class="fact-value">Rotterdam (NLRTM) <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">30 days via Cape <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail transit</span>
+          <span class="fact-value">18–22 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EORI</span>
+          <span class="fact-value">Required before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">De-minimis</span>
+          <span class="fact-value">€150 VAT threshold <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why the Netherlands deserves its own China routing lens</h2>
+    <p>
+      The Netherlands is less a country gateway than a <strong>European distribution base</strong>. The
+      country data shows <strong>Amsterdam</strong> as the capital, the currency as <strong>EUR</strong>,
+      and a <strong>21% standard VAT</strong> layered on top of the <strong>EU Common Customs
+      Tariff</strong> — a duty line that is uniform across every member state and varies only by HS code,
+      typically <strong>0–12% for consumer goods</strong> with no China–EU free-trade agreement in force.
+    </p>
+    <p>
+      The commercial gate is the <strong>EORI number</strong>. It is mandatory for any import into the EU
+      and must exist <em>before</em> the goods arrive — not after. That single administrative step stops
+      more first-time importers than any tariff line, and it is why this page treats EORI as a compliance
+      prerequisite rather than an afterthought.
+    </p>
+    <p>
+      The differentiator is <strong>Article 23 VAT deferral</strong>. A licensed importer can hold China
+      inventory in bonded warehousing at Rotterdam without paying import VAT until the goods actually
+      enter a member state; EU common duty is still payable at import. That is a working-capital lever
+      competitors under-cover, especially for importers who re-export across the EU. Rotterdam\u2019s
+      <strong>Rhine barge network</strong> then moves containers cheaply into Germany, France and
+      Switzerland, which is why a Rotterdam landing often serves far more than the Dutch market.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight rates from China to the Netherlands</h2>
+      <p>
+        Rotterdam has the deepest published benchmark depth in the Europe dataset: the WorldFreightHub
+        Europe route data carries <strong>$1,200–$4,800 for a 20ft</strong>,
+        <strong>$1,600–$6,800 for a 40ft</strong> and <strong>$60–$160 per CBM for LCL</strong>, all
+        MEDIUM confidence. Rail is described in relative terms — roughly two to three times sea per
+        container — but has no published dollar figure, and air, express and DDP were not published in the
+        snapshot, so those stay LOW with a request-for-quote marker.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Rotterdam FCL/LCL ranges are MEDIUM confidence from the Europe route data; rail, air, express and DDP dollar figures were not published and remain request-for-quote."
+      />
+      <SourceList sources={rateSources} title="Sources — Netherlands rates" />
+
+      <div class="note mt-2">
+        <strong>Why the published lines stop at FCL/LCL:</strong> the research snapshot published
+        Rotterdam 20ft, 40ft and per-CBM ranges, but no rail, air, express or DDP dollar figure. Ask the
+        forwarder to itemise freight, surcharges, THC, documentation, inspection, clearance, EU duty,
+        21% VAT and delivery on the same quote so the price is comparable across modes.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit times by origin port and mode</h2>
+    <p>
+      The China-to-Netherlands clock is a planning range, not a promise, and 2026 made the Cape routing a
+      new normal rather than a blip. The WorldFreightHub Europe route data puts sea transit at roughly
+      <strong>30 days via the Cape of Good Hope</strong>, with the Red Sea reroute adding about
+      <strong>+10–14 days</strong> versus the pre-crisis Suez routing. China rail into Europe runs roughly
+      <strong>18–22 days</strong>, but most trains terminate in Germany or Poland, so Rotterdam is usually
+      reached by a final rail, barge or truck connection rather than as the primary rail terminus.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Netherlands transit times" />
+
+    <div class="note mt-2">
+      <strong>Sea planning default:</strong> Shanghai, Ningbo-Zhoushan and Shenzhen to Rotterdam are
+      recorded at roughly 30 days on the current Cape routing, with the Red Sea reroute adding about
+      +10–14 days over the old Suez routing. Rail is roughly 18–22 days into Europe before the final
+      Rotterdam connection. Both are planning estimates, not carrier promises — for air, express or a
+      specific door-to-door move, request a routing quote before committing to a date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL vs LCL: which fits Netherlands cargo?</h2>
+      <p>
+        The FCL-vs-LCL decision for Rotterdam starts with cube, urgency and handling tolerance. FCL suits
+        cargo large enough to justify a 20GP, 40GP or 40HQ; LCL suits smaller consignments sharing a
+        container. Using the published ranges illustratively, a midpoint 20ft rate of
+        <strong>$3,000</strong> and an assumed LCL midpoint of <strong>$110/CBM</strong> break even at
+        about <strong>27 CBM</strong> — a 15 CBM consignment would cost roughly <strong>$1,650 LCL</strong>
+        versus a full container. That is a planning calculation, not a rate promise, so request quotes on
+        both sides before deciding.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'fcl', label: 'FCL (20GP / 40GP / 40HQ)' },
+          { key: 'lcl', label: 'LCL (per CBM)' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={fclLclRows}
+        caption="Decision support. Rotterdam FCL and LCL prices are MEDIUM confidence; the ~27 CBM illustrative split is a LOW-confidence planning calculation."
+      />
+      <SourceList sources={modeSources} title="Sources — FCL vs LCL decision" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose FCL when...">
+          <ul>
+            <li>The cargo fills, or nearly fills, a 20GP, 40GP or 40HQ.</li>
+            <li>You value a single sealed unit and lower handling exposure.</li>
+            <li>The delivery plan can absorb the roughly 30-day sea window.</li>
+            <li>The cargo is heavy, palletised or machine/project-oriented.</li>
+          </ul>
+        </Card>
+        <Card title="Choose LCL when...">
+          <ul>
+            <li>The consignment is well under a container load — illustratively below ~27 CBM at the midpoint.</li>
+            <li>You are running a trial order, mixed SKU retail fill or samples.</li>
+            <li>You can accept CFS consolidation and deconsolidation time.</li>
+            <li>Per-CBM economics beat paying for an empty container.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports: China origin ports and Rotterdam</h2>
+    <p>
+      The origin side is the familiar China port hierarchy: Shanghai and Ningbo-Zhoushan anchor the East
+      China ocean services, while Shenzhen and Guangzhou cover South China and Qingdao, Tianjin and Xiamen
+      provide northern/southeast alternatives. On the Dutch side, the destination dataset has one primary
+      seaport — <strong>Rotterdam (NLRTM)</strong> — with Antwerp (BEANR) as the same-range congestion
+      alternative for certain cargo types.
+    </p>
+
+    <h3>China origin ports</h3>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence from port authorities; other China throughputs are MEDIUM confidence from the dataset."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+    <h3 class="mt-3">Netherlands destination port</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'detail', label: 'Rotterdam (NLRTM)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rotterdamPortRows}
+      caption="Rotterdam is the verified Dutch seaport in the destination data. Throughput and draft figures are MEDIUM confidence from the port authority."
+    />
+    <SourceList sources={marketSources} title="Sources — Netherlands destination port" />
+
+    <h3 class="mt-3">Door-to-door process from China to the Netherlands</h3>
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'who', label: 'Who owns it' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={processRows}
+      caption="The operational chain is directional; the EORI, EU duty + 21% VAT/Article 23 and CE/REACH steps are MEDIUM confidence and operational fee/timing steps are LOW confidence."
+    />
+    <SourceList sources={[...costSources, ...marketSources]} title="Sources — Netherlands door-to-door chain" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost composition and the hidden charges that competitors miss</h2>
+      <p>
+        The Netherlands\u2019 statutory stack is only the visible top layer: <strong>EU common duty on
+        CIF</strong> (typically 0–12% by HS code), then <strong>21% VAT on the duty-inclusive
+        base</strong> when VAT is paid at import — or <strong>Article 23 deferral</strong> if the importer
+        is licensed and holds the goods in bonded storage. The commercial risk sits below that line in
+        operational charges that the verified snapshot does not quantify — THC, documentation, inspection,
+        port storage, demurrage and detention. This is where a cheap freight quote can become an expensive
+        clearance.
+      </p>
+
+      <div class="note">
+        <strong>Baseline statutory landed cost when VAT is paid at import = (CIF + duty) × 1.21.</strong><br />
+        Duty varies by HS code, so there is no single multiplier like the Gulf\u2019s 5%. For an
+        illustrative USD 10,000 CIF shipment at an assumed 5% duty: USD 500 duty gives a USD 10,500
+        duty-inclusive base, then 21% VAT of USD 2,205, giving USD 12,705 before destination fees. With
+        Article 23 deferral, the USD 2,205 VAT would be deferred until the goods enter a member state.
+        Rates and duty lines are subject to change — verify the current duty line and VAT treatment with
+        Dutch Customs before relying on this example.
+      </div>
+
+      <h3 class="mt-3">Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The FCL/LCL ranges, EU duty and 21% VAT are MEDIUM confidence from route/customs sources. Unquantified Dutch fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when import cargo remains in the port beyond
+        the allowed free time after discharge. <strong>Detention</strong> is charged by the ocean carrier
+        (or rail operator) when the container is kept beyond the equipment free time after collection.
+        They are separate clocks with separate payees, and Dutch free-time periods and per-day rates are
+        not published in the verified snapshot. Confirm both allowances in writing before booking and file
+        the declaration promptly so neither clock runs.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised quote that lists <strong>origin charges</strong>, <strong>destination
+        THC</strong>, <strong>documentation</strong>, <strong>Dutch clearance and brokerage</strong>,
+        <strong>customs inspection</strong>, <strong>port storage</strong>, and the two free-time clocks —
+        <strong>demurrage/detention</strong>. If the goods will sit in bonded storage, also confirm the
+        Article 23 warehouse, declaration and fiscal-representation costs, because deferral changes the
+        cash timing but not the underlying compliance work.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: Netherlands duty, 21% VAT, EORI &amp; Article 23</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      The Netherlands applies the <strong>EU Common Customs Tariff</strong>, so duty is identical across
+      member states and depends on the HS code — typically <strong>0–12% for consumer goods</strong>, with
+      no China–EU free-trade agreement in force. Import <strong>21% VAT</strong> (9% reduced on some
+      goods) is then charged on the <strong>duty-inclusive value</strong> when VAT is paid at import, so
+      the baseline statutory calculation is <code>(CIF + duty) × 1.21</code>. Specific goods can still
+      carry different duty lines or VAT treatment, so the HS code remains the first compliance decision.
+    </p>
+
+    <h3>EORI — register before arrival</h3>
+    <p>
+      The <strong>EORI number</strong> is mandatory for any import into the EU and must be registered
+      <em>before</em> the goods arrive. It is the single most common first-import stumbling block for
+      China-to-Netherlands cargo, so start the registration before the vessel or train departs, not while
+      it is discharging.
+    </p>
+
+    <h3>Article 23 VAT deferral — the working-capital lever</h3>
+    <p>
+      The <strong>Article 23 licence</strong> lets an eligible importer place goods in bonded warehousing
+      and defer import VAT until they physically enter a member state. EU common duty is still payable at
+      import, but the 21% VAT cash outflow is pushed downstream. This is the highest-value differentiator
+      on the page for importers who hold inventory or re-export across the EU; confirm eligibility,
+      bonded-warehouse requirements and whether you need a Dutch fiscal representative with Dutch Customs
+      before structuring a shipment around it.
+    </p>
+
+    <h3>TARIC classification and documents</h3>
+    <p>
+      The Netherlands classifies goods under the <strong>10-digit TARIC code</strong>, which drives the
+      duty line, VAT treatment, permits and restricted screening. The standard document set is a
+      commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the
+      correct TARIC classification, backed by your EORI number. Confirm the current declaration workflow
+      with a licensed Dutch broker.
+    </p>
+
+    <h3>CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is the EU conformity mark required for a wide range of regulated
+      products — electronics, toys, machinery and medical devices, among others. <strong>REACH</strong> is
+      the EU chemical regulation requiring registration for chemical substances. Whether either applies
+      depends on your product class, so confirm the applicability and the required technical file before
+      shipment.
+    </p>
+
+    <h3>De-minimis and IOSS</h3>
+    <p>
+      The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro
+      on most consignments. The <strong>€150</strong> figure is the VAT-related threshold, and the
+      <strong>IOSS</strong> scheme simplifies VAT on sub-€150 consignments sold to EU buyers. Confirm the
+      current thresholds and whether IOSS applies to your channel with Dutch Customs before relying on
+      these figures.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Netherlands customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The statutory
+      lines (EU common duty, 21% VAT and Article 23 deferral) are re-checked against Dutch Customs
+      (Belastingdienst) and the European Commission TARIC database; the Rotterdam throughput, draft and
+      terminal figures are re-checked against the Port of Rotterdam Authority; and the sea/rail transit
+      windows are re-checked against the WorldFreightHub Europe route data each month.
+    </p>
+    <p>
+      If a Netherlands rail, air, express or DDP dollar rate, a Rotterdam terminal fee, a
+      demurrage/detention schedule or an Article 23 fee schedule becomes available from Dutch Customs, a
+      port operator or a carrier, the table is updated, the confidence badge is raised, and the modified
+      date in the page metadata is changed. Until then, unquantified Dutch fees and rates stay LOW
+      confidence with a "not published — verify" note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Netherlands quote"
+      text="Tell us your origin, commodity, container or CBM, TARIC/HS code and final Dutch destination, and we will connect you with providers who can quote ocean/rail/air freight, EU duty, 21% VAT or Article 23 deferral, Dutch clearance and Rotterdam destination fees together."
+    />
+  </section>
+</BaseLayout>
