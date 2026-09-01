@@ -11,8 +11,8 @@ export const countrySourceIds: Record<string, string[]> = {
   'united-kingdom': ['hmrc'],
   france: ['eu-taric', 'french-customs'],
   netherlands: ['eu-taric', 'dutch-customs', 'port-rotterdam'],
-  spain: ['eu-taric'],
-  italy: ['eu-taric'],
+  spain: ['eu-taric', 'spanish-customs'],
+  italy: ['eu-taric', 'italian-customs'],
   poland: ['eu-taric', 'port-gdansk'],
   belgium: ['eu-taric', 'port-antwerp'],
 };
@@ -42,8 +42,8 @@ export const portSourceIds: Record<string, string[]> = {
   antwerp: ['port-antwerp'],
   felixstowe: ['hmrc'],
   'le-havre': ['french-customs'],
-  valencia: ['eu-taric'],
-  genoa: ['eu-taric'],
+  valencia: ['port-valencia'],
+  genoa: ['port-genoa'],
   gdansk: ['port-gdansk'],
 };
 
@@ -188,6 +188,30 @@ export const sources: Source[] = [
     id: 'port-gdansk',
     name: 'Port of Gdańsk Authority',
     url: 'https://www.portgdansk.pl',
+    type: 'port-authority',
+  },
+  {
+    id: 'spanish-customs',
+    name: 'Spanish Tax Agency (Agencia Tributaria / AEAT)',
+    url: 'https://sede.agenciatributaria.gob.es',
+    type: 'government',
+  },
+  {
+    id: 'italian-customs',
+    name: 'Italian Customs & Monopolies Agency (Agenzia delle Dogane e dei Monopoli / ADM)',
+    url: 'https://www.adm.gov.it',
+    type: 'government',
+  },
+  {
+    id: 'port-valencia',
+    name: 'Port Authority of Valencia (Valenciaport)',
+    url: 'https://www.valenciaport.com',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-genoa',
+    name: 'Ports of Genoa (Autorità di Sistema Portuale del Mar Ligure Occidentale)',
+    url: 'https://www.portsofgenoa.com',
     type: 'port-authority',
   },
 ];
