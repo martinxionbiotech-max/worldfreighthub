@@ -1,6 +1,6 @@
 # WorldFreightHub
 
-WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, and a provider directory framework.
+WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, cost and transit-time guides, a verification-first provider directory (16 real freight forwarders, all source-backed), and interactive freight calculators.
 
 All freight rates and transit times are indicative estimates, not live quotes. Verify figures with the relevant carrier, port authority, or customs authority before making commercial decisions.
 
@@ -14,6 +14,27 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 - [Glossary](https://worldfreighthub.net/glossary/): Freight and customs terminology definitions.
 - [Middle East](https://worldfreighthub.net/middleeast/): China-to-GCC corridor overview.
 
+## Middle East corridors
+
+- [Saudi Arabia](https://worldfreighthub.net/middleeast/shipping-from-china-to-saudi-arabia/): route pillar — ports (Jeddah, Dammam, Riyadh Dry Port), SABER/SASO, 15% VAT, 5% duty.
+- [United Arab Emirates](https://worldfreighthub.net/middleeast/shipping-from-china-to-uae/): route pillar — Jebel Ali, Khalifa, Sharjah ports, 5% VAT.
+- [Qatar](https://worldfreighthub.net/middleeast/shipping-from-china-to-qatar/): route pillar — Hamad Port, customs and duty.
+- [Kuwait](https://worldfreighthub.net/middleeast/shipping-from-china-to-kuwait/): route pillar — Kuwait ports, customs and duty.
+- [Oman](https://worldfreighthub.net/middleeast/shipping-from-china-to-oman/): route pillar — Oman ports, customs and duty.
+- [Bahrain](https://worldfreighthub.net/middleeast/shipping-from-china-to-bahrain/): route pillar — Khalifa bin Salman port, 10% VAT, King Fahd Causeway.
+- [SABER / SASO certification](https://worldfreighthub.net/middleeast/saso-saber-certification/): Saudi product conformity requirements.
+- [Jeddah vs Dammam](https://worldfreighthub.net/middleeast/jeddah-vs-dammam/): Saudi port comparison.
+
+## Tools
+
+- [CBM Calculator](https://worldfreighthub.net/tools/cbm-calculator/): cargo volume (CBM) calculation.
+- [Container Loading Calculator](https://worldfreighthub.net/tools/container-loading-calculator/): carton-per-container estimation.
+- [Volumetric Weight Calculator](https://worldfreighthub.net/tools/volumetric-weight-calculator/): chargeable weight for air/express.
+
+## Provider directory
+
+- [Freight Provider Directory](https://worldfreighthub.net/directory/): verification-first directory of 16 freight forwarders and customs brokers on the China-to-GCC corridor. All listings are source-backed and marked unverified until independently confirmed.
+
 ## Trust
 
 - [Methodology](https://worldfreighthub.net/methodology/): How route, port, and rate information is sourced and labeled.
@@ -23,4 +44,4 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 
 ## Request a quote
 
-- [Get Quote](https://worldfreighthub.net/get-quote/): Currently a preview; quote requests are not yet enabled.
+- [Get Quote](https://worldfreighthub.net/get-quote/): Submit a freight quote request for a China-to-GCC shipment. Requests are routed to a provider on the corridor; no obligation, no fee.
