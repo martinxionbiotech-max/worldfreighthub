@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page not found (404)"
+  description="The page you requested could not be found on WorldFreightHub."
+  noindex={true}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>Page not found</h1>
+      <p class="lead">The page you're looking for doesn't exist or has moved.</p>
+    </div>
+  </div>
+  <section class="section container">
+    <p>Try one of these instead:</p>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/routes/">Shipping routes</a></li>
+      <li><a href="/countries/">GCC country guides</a></li>
+      <li><a href="/directory/">Freight provider directory</a></li>
+      <li><a href="/get-quote/">Get a freight quote</a></li>
+    </ul>
+  </section>
+</BaseLayout>
