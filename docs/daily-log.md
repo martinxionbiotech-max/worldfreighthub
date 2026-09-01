@@ -353,3 +353,17 @@
 - **QA**：`npm run build` 零 error；两页各 **10 条 FAQ**；confidence 徽章全覆盖（demurrage 页 HIGH 3 / MEDIUM 16 / LOW 15；hidden 页 HIGH 5 / MEDIUM 12 / LOW 23）；Article + FAQPage + BreadcrumbList + Organization schema 齐全；「August 2026」更新标记。两页互为交叉链接。
 - **Git Commit**：`405e26b feat(content): add demurrage-detention and hidden-charges China-to-GCC guide pages`（已推 origin/main）
 - **Next**：① Freight Cost Calculator 工具（这两页已为其铺好 charge 数据口径）；② Europe 走廊第二波（每国 Route Pillar 长页 / FCL-LCL Europe 拆解 / 海运铁路成本对比）；③ Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain。
+
+
+## 2026-09-02（Freight Cost Calculator 工具上线 — 最高优先级 #1 回填）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50：Saudi/UAE/Qatar/Kuwait/Oman/Bahrain）已 100% 完成，无剩余 GCC 页面。按 project-status.md「下一优先级 #1」交付 **Freight Cost Calculator** 工具（Demurrage/Detention + Hidden Charges 两页已铺好 charge 数据口径，本页把它们变成可交互的 landed-cost 估算器）。
+- **本轮动作**：核对 roadmap + `ls src/pages` 逐页比对 → 确认无剩余 GCC 页面 → 转向 #1 工具回填。交给 Codex 写 1 页（严格套 9 模块公式 + 质量红线：2500–5000 词、数据禁杜撰、查不到的数字标 LOW +「待核实」）。
+- **Content（commit 1d2d49a）**：
+  - `src/pages/tools/freight-cost-calculator.astro`（**正文 3,388 词**）——中国→GCC 到岸成本（landed cost）估算器：表单输入（中国起运港 × GCC 目的港 × FCL/LCL/Air × 货量/货值/滞留天数），客户端 JS 计算 运费区间 + 保险(0.3% 假设,LOW) + 关税 5%(HIGH) + VAT 按国(HIGH：沙特15/UAE5/阿曼5/巴林10/卡塔尔0/科威特0) + 目的地杂费(待核实) + demurrage/detention 区间($50–$300/天,LOW)。每项带 confidence 徽章 + 总到岸成本区间(low/mid/high) + 显式免责声明「indicative, not a quote」。
+  - 页面配套 9 模块：① 7 目的港运费率表(MEDIUM) ② 时效表(沙特20–45天/UAE14–18天,其余待核实) ③ FCL vs LCL 决策(≈15 CBM 分界) ④ 港口清单 ⑤ 成本构成(含隐藏费用,链 hidden-charges 页) ⑥ 合规要点(关税/VAT/SABER/FASAH·Mirsal/HS/ISF 澄清) ⑦ FAQ 12 条(FAQPage schema) ⑧ "August 2026 updated" 标记 ⑨ Schema(WebApplication+Article+FAQPage+Organization,BreadcrumbList 由 Breadcrumb 组件自动输出)。
+  - `src/pages/tools/index.astro` 加第 4 张工具卡片 + 流程收尾文案（cbm → 装柜 → 计费重 → **到岸成本**）。
+- **数据诚信**：HIGH 11 / MEDIUM 19 / LOW 11（静态徽章）；22 处「待核实」；air 基准只用了研究快照两条（沙特 $8.80–13.50/kg = ddpchain；UAE $5.45–6.40/kg = cargofromchina，按 1 USD=3.6725 AED 换算），其余 GCC air 标「not published — 待核实」；工作示例(上海→Jeddah 40ft, 货值 $50,000) 全部算术显式展开并标注 illustrative。无杜撰。
+- **QA**：`npm run build` **332 页零 error**；工作区干净；`1d2d49a feat(tools): add China-to-GCC freight cost calculator` 已推 origin/main。
+- **Next**：① Europe 走廊第二波（每国 Route Pillar 长页 / FCL-LCL Europe 拆解 / 海运铁路成本对比）；② Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；③ Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
