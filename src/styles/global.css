@@ -914,3 +914,24 @@ code {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Contact buttons (WhatsApp) ---------- */
+.btn-whatsapp {
+  background: #25d366;
+  color: #0b1c2e;
+}
+
+.btn-whatsapp:hover {
+  background: #20bd5a;
+  color: #0b1c2e;
+}
+
+.site-nav a.nav-cta--whatsapp {
+  background: #25d366;
+  color: #0b1c2e;
+}
+
+.site-nav a.nav-cta--whatsapp:hover {
+  background: #20bd5a;
+  color: #0b1c2e;
+}

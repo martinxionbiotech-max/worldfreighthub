@@ -1,6 +1,6 @@
 # WorldFreightHub
 
-WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, cost and transit-time guides, a verification-first provider directory (16 real freight forwarders, all source-backed), and interactive freight calculators.
+WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, cost and transit-time guides, a verification-first provider directory (103 real freight forwarders, all source-backed), and interactive freight calculators.
 
 All freight rates and transit times are indicative estimates, not live quotes. Verify figures with the relevant carrier, port authority, or customs authority before making commercial decisions.
 
@@ -45,3 +45,9 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 ## Request a quote
 
 - [Get Quote](https://worldfreighthub.net/get-quote/): Submit a freight quote request for a China-to-GCC shipment. Requests are routed to a provider on the corridor; no obligation, no fee.
+
+## Contact
+
+- Contact person: Martin.Wong
+- Phone / WhatsApp: +86 13323237275 (https://wa.me/8613323237275)
+- Email: martin@dinweys.com
