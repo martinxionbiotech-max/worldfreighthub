@@ -414,3 +414,27 @@
   1. Europe 第二波续：Spain / Italy / Poland / Belgium Route Pillar（每国长页，4 页余量），或 FCL vs LCL Europe 拆解、海运 vs 铁路成本对比数据页。
   2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-02（Europe 走廊第二波续二 — Spain + Italy Route Pillar）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成。Europe 走廊第二波此前已交付 Germany/UK + Netherlands/France；本批续写 **Spain + Italy** 两页 Route Pillar（对标 shipping-from-china-to-X 模式，共 4 页余量中的 2 页）。
+- **本轮动作**：
+  1. 核对 content-roadmap 顺序 + `ls src/pages` 逐页比对 → GCC 无剩余 → 转向 Europe 第二波续（按 project-status「下一优先级」）。
+  2. 读 europe-countries / europe-ports / europe-routes / sources 数据 + Netherlands/France 模板页，构造自包含 Codex prompt（9 模块公式 + 质量红线 + 差异化打法 + 指定可用验证数据，禁止杜撰）。
+  3. 交给 Codex 写 2 页，Codex 自检报告 + 我独立复核（词数 / FAQ 数 / 9 模块 / 费率与已验证数据逐值比对 / schema / build / push）。
+- **Content（commit eb02b45）**：
+  - `src/pages/europe/shipping-from-china-to-spain.astro`（**4,823 词**，13 FAQ）——Valencia (ESVLC) 伊比利亚门户 + **Valencia-vs-Rotterdam 到岸成本逻辑**（最高价值差异化：Spain/Portugal 货走 Rotterdam 卸柜再横穿法国陆运通常更贵，地中海中转落地 Valencia 更便宜）+ 21% VAT（10%/4% 减档）+ EU 统一关税 + EORI + CE/REACH + €150/IOSS + 高度自动化码头。
+  - `src/pages/europe/shipping-from-china-to-italy.astro`（**4,908 词**，14 FAQ）——Genoa (ITGOA) 意大利北部门户 + **22% VAT 是欧盟最高 + 罢工易发港 = 建缓冲**（最高价值差异化：Milan/Turin/Bologna 货 Genoa 卸柜优于 Rotterdam+翻阿尔卑斯陆运，但须为罢工/末端拥堵建排期缓冲；复合 VAT 计算 duty + 22% 于含税货值）+ Vado Gateway 半自动码头 + EORI/CE/REACH/€150/IOSS。
+  - 两页均 9 模块齐全：费率表（FCL $区间 + LCL $/CBM，MEDIUM；rail/air/courier/DDP 标 LOW「Not published in verified snapshot — request」）、时效表（分中国起运港 × 方式：32/33 天 sea via Cape + 18–22 天 rail，25–45 天区间）、FCL vs LCL 决策（含 CBM 盈亏算术示例）、港口清单、成本构成（含 hidden charges/demurrage-detention）、合规要点（EORI/TARIC/CE/REACH/VAT/IOSS/€150 + **明确 SABER/SASO 仅沙特、不适用于西/意**）、FAQ、September 2026 更新标记、Schema（Article + FAQPage + BreadcrumbList + Organization）。
+- **数据诚信**：两页各 HIGH 5 / MEDIUM 36 / LOW 31（静态徽章）；各 17 处「Not published in verified snapshot — request」标记。费率沿用 europe-routes.ts 已验证区间（Valencia 20ft $1,300–5,000 / 40ft $1,800–7,000 / LCL $70–170；Genoa 20ft $1,300–5,200 / 40ft $1,800–7,200 / LCL $70–170，MEDIUM）；rail/air/courier/DDP 无已验证 $ 数字 → 一律 LOW + request，零杜撰。VAT（西 21% / 意 22%）、EU 统一关税 0–12%、€150/IOSS、EORI 均沿用已验证 europe-countries 数据。
+- **Engineering**：
+  - `src/data/sources.ts` 新增 4 个政府/港务来源：`spanish-customs`（Agencia Tributaria/AEAT）、`italian-customs`（Agenzia delle Dogane e dei Monopoli/ADM）、`port-valencia`（Valenciaport）、`port-genoa`（Ports of Genoa），并回填 countrySourceIds（spain→[eu-taric, spanish-customs]；italy→[eu-taric, italian-customs]）/ portSourceIds（valencia→[port-valencia]；genoa→[port-genoa]）。
+  - `src/pages/europe/index.astro` 加 2 张内链卡片。
+  - 复用既有组件（BaseLayout/Breadcrumb/DataTable/FaqBlock/ConfidenceBadge/SourceList/Card/Cta），无新组件、无客户端 JS、无新依赖。
+- **QA**：`npm run build` **528 页零 error**（+2）；FAQ 13/14 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`eb02b45 content(europe): add China-to-Spain and China-to-Italy route pillar pages` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 第二波续：Poland / Belgium Route Pillar（余 2 页），或 FCL vs LCL Europe 拆解、海运 vs 铁路成本对比数据页。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。

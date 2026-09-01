@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-02 03:30 (Asia/Shanghai)
+> 最后更新：2026-09-02 06:20 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -86,6 +86,6 @@
 ## 下一优先级（明晚 03:30 cron）
 
 1. ~~Freight Cost Calculator 工具~~ ✅ 已上线（2026-09-02，commit `1d2d49a`）
-2. **Europe 走廊第二波**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`：`shipping-from-china-to-netherlands` + `shipping-from-china-to-france`，Article 23 VAT 递延 / HAROPA Le Havre 差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 526 页零 error）；续：Spain/Italy/Poland/Belgium Route Pillar、铁路转运、FCL vs LCL Europe 拆解、海运/铁路成本对比数据页
+2. **Europe 走廊第二波**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`：`shipping-from-china-to-netherlands` + `shipping-from-china-to-france`，Article 23 VAT 递延 / HAROPA Le Havre 差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 526 页零 error）+ Spain/Italy ✅（commit `eb02b45`：`shipping-from-china-to-spain` + `shipping-from-china-to-italy`，Valencia-vs-Rotterdam 到岸成本逻辑 / 意大利 22% VAT + 罢工缓冲差异化，9 模块，费率 MEDIUM、时效 LOW，build 528 页零 error）；续：Poland/Belgium Route Pillar（余 2 页）、FCL vs LCL Europe 拆解、海运/铁路成本对比数据页
 3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
 4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified
