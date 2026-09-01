@@ -1,11 +1,15 @@
 ---
+import { t, type Locale } from '../i18n/ui';
+
 interface Props {
   title: string;
   description?: string;
   href?: string;
+  locale?: Locale;
 }
 
-const { title, description, href } = Astro.props;
+const { title, description, href, locale = 'en' } = Astro.props;
+const arrow = locale === 'ar' ? '←' : '→';
 ---
 
 {
@@ -13,7 +17,7 @@ const { title, description, href } = Astro.props;
     <a class="card" href={href}>
       <h3>{title}</h3>
       {description && <p>{description}</p>}
-      <span class="card-link">Learn more &rarr;</span>
+      <span class="card-link">{t(locale, 'card.learnMore')} {arrow}</span>
     </a>
   ) : (
     <div class="card">

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import { glossaryAr } from '../../../data/glossary.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'مصطلحات الشحن',
+      itemListElement: glossaryAr.map((term, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: term.term,
+        url: `${SITE_URL}/ar/glossary/${term.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="مصطلحات الشحن والجمارك"
+  description="تعريفات المصطلحات الرئيسية في الشحن والجمارك واللوجستيات: FCL وLCL وDDP والإنكوتيرمز وTEU ورمز HS وSASO وSABER والمزيد."
+  canonical={`${SITE_URL}/ar/glossary/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.glossary') }]} />
+      <h1>مصطلحات الشحن والجمارك</h1>
+      <p class="lead">المصطلحات الرئيسية المستخدمة على ممر الشحن من الصين إلى الخليج.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {glossaryAr.map((term) => (
+        <Card
+          locale={locale}
+          title={term.term}
+          description={term.definition}
+          href={`/ar/glossary/${term.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

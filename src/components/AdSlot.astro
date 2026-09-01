@@ -1,16 +1,19 @@
 ---
+import { t, type Locale } from '../i18n/ui';
+
 interface Props {
   slotLabel?: string;
+  locale?: Locale;
 }
 
-const { slotLabel = 'Advertisement' } = Astro.props;
+const { slotLabel, locale = 'en' } = Astro.props;
 ---
 
-<aside class="ad-slot" aria-label={slotLabel}>
-  <span class="ad-label">{slotLabel}</span>
+<aside class="ad-slot" aria-label={slotLabel ?? t(locale, 'ad.label')}>
+  <span class="ad-label">{slotLabel ?? t(locale, 'ad.label')}</span>
   <p class="mt-1" style="font-size:0.9rem; color: var(--ink);">
-    <strong>Advertise with WorldFreightHub</strong>
+    <strong>{t(locale, 'ad.headline')}</strong>
   </p>
-  <p>Reach importers and freight decision-makers on the China&ndash;GCC corridor.</p>
-  <a class="btn btn-amber" href="/contact/">Advertise</a>
+  <p>{t(locale, 'ad.text')}</p>
+  <a class="btn btn-amber" href={locale === 'ar' ? '/ar/contact/' : '/contact/'}>{t(locale, 'ad.cta')}</a>
 </aside>

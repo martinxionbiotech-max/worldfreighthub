@@ -1,5 +1,6 @@
 ---
 import { SITE_NAME, SITE_URL } from '../site';
+import type { Locale } from '../i18n/ui';
 
 interface Props {
   title: string;
@@ -9,6 +10,7 @@ interface Props {
   ogImage?: string;
   ogImageAlt?: string;
   noindex?: boolean;
+  locale?: Locale;
 }
 
 const {
@@ -19,11 +21,13 @@ const {
   ogImage,
   ogImageAlt,
   noindex = false,
+  locale = 'en',
 } = Astro.props;
 
 const fullTitle = title.includes(SITE_NAME) ? title : `${title} — ${SITE_NAME}`;
 const url = canonical ?? new URL(Astro.url.pathname, SITE_URL).toString();
 const robots = noindex ? 'noindex, nofollow' : 'index, follow';
+const ogLocale = locale === 'ar' ? 'ar_SA' : 'en_US';
 ---
 
 <title>{fullTitle}</title>
@@ -36,6 +40,7 @@ const robots = noindex ? 'noindex, nofollow' : 'index, follow';
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={url} />
+<meta property="og:locale" content={ogLocale} />
 {
   ogImage && (
     <>

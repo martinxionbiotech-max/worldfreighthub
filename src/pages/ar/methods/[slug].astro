@@ -1,0 +1,222 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Cta from '../../../components/Cta.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import DataTable from '../../../components/DataTable.astro';
+import SourceList from '../../../components/SourceList.astro';
+import { methodsAr } from '../../../data/methods.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_NAME, SITE_URL } from '../../../site';
+
+export function getStaticPaths() {
+  return methodsAr.map((method) => ({
+    params: { slug: method.slug },
+    props: { method },
+  }));
+}
+
+const { method } = Astro.props;
+const locale = 'ar' as const;
+
+const shortName = method.name.split(' (')[0];
+const related = methodsAr.filter((m) => m.slug !== method.slug);
+
+const costColumns = [
+  { key: 'label', label: t(locale, 'methods.item') },
+  { key: 'range', label: t(locale, 'methods.indicativeRange') },
+  { key: 'confidence', label: t(locale, 'methods.confidence'), type: 'confidence' as const },
+];
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: method.name,
+      url: `${SITE_URL}/ar/methods/${method.slug}/`,
+      description: method.summary,
+      author: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      datePublished: '2026-08-30',
+      dateModified: method.updated,
+      publisher: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE_URL}/og.png`,
+        },
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: method.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={method.name}
+  description={method.summary}
+  canonical={`${SITE_URL}/ar/methods/${method.slug}/`}
+  ogType="article"
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t(locale, 'nav.methods'), href: '/ar/methods/' },
+          { label: method.name },
+        ]}
+      />
+      <h1>{method.name}</h1>
+      <p class="lead">{method.summary}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>{t(locale, 'tldr')}:</strong> {method.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.whatIs', { name: shortName })}</h2>
+    <p>{method.definition}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.whenToUse', { name: shortName })}</h2>
+    <ul>
+      {method.bestFor.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.pricingWorks', { name: shortName })}</h2>
+    <p>{method.pricingLogic}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.referenceCosts')}</h2>
+    <p class="muted">
+      نطاقات استرشادية جمعت من مصادر عامة متعددة — ليست عروض أسعار فورية. تتغير
+      الأرقام أسبوعيًا مع الوقود والموسم والمخاطر الجيوسياسية. أكد عرض سعر حاليًا
+      قبل الحجز.
+    </p>
+    <DataTable
+      columns={costColumns}
+      rows={method.costRows}
+      caption={t(locale, 'methods.costCaption')}
+    />
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.transitTime')}</h2>
+    <p class="lead">
+      <strong>{method.transitTime.range}</strong>{' '}
+      <ConfidenceBadge locale={locale} level={method.transitTime.confidence} />
+    </p>
+    <p class="muted">{method.transitTime.note}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.prosCons')}</h2>
+    <div class="grid grid--2">
+      <div>
+        <h3>{t(locale, 'methods.pros')}</h3>
+        <ul>
+          {method.pros.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3>{t(locale, 'methods.cons')}</h3>
+        <ul>
+          {method.cons.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    {method.compareWith && (
+      <p class="mt-3">
+        <a class="btn btn-secondary" href={`/ar/methods/${method.compareWith.slug}/`}>
+          {method.compareWith.label}
+        </a>
+      </p>
+    )}
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.whatGuidesSkip')}</h2>
+    <p>{method.insight}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.stepByStep', { name: shortName })}</h2>
+    <ol>
+      {method.process.map((step) => (
+        <li>{step}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.relatedMethods')}</h2>
+    <ul>
+      {related.map((m) => (
+        <li>
+          <a href={`/ar/methods/${m.slug}/`}>{m.name}</a> — {m.summary}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.faq')}</h2>
+      <FaqBlock items={method.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.keyTakeaways')}</h2>
+    <ol>
+      {method.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <SourceList locale={locale} sources={method.sources} title={t(locale, 'section.sources')} />
+    <p class="muted">
+      {t(locale, 'methods.lastUpdated', { date: method.updated })} الأسعار ومدد النقل على
+      هذه الصفحة نطاقات استرشادية وليست عروض أسعار فورية — أكد الأرقام مع ناقل مرخص
+      أو وكيل شحن قبل الحجز.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

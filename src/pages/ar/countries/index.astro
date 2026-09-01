@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { gccCountriesAr } from '../../../data/countries.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+const rows = gccCountriesAr.map((country) => ({
+  country: { href: `/ar/countries/${country.slug}/`, label: country.name },
+  iso2: country.iso2,
+  capital: country.capital,
+  currency: country.currency,
+  vat: country.vatRate === null ? t(locale, 'country.none') : `${country.vatRate}%`,
+  ports: country.ports.length,
+}));
+
+const faqs = [
+  {
+    q: 'أي دولة خليجية لديها أدنى ضرائب استيراد؟',
+    a: 'قطر والكويت بلا ضريبة قيمة مضافة حاليًا، لذا هما الوجهتان الأقل ضرائب اليوم — رغم توقع إدخال ضريبة القيمة المضافة في قطر بنحو 5% قريبًا. تفرض الإمارات وعُمان ضريبة 5%، والبحرين 10%، والسعودية الأعلى عند 15% فوق الرسوم القياسية 5%.',
+  },
+  {
+    q: 'السعودية أم الإمارات — أيهما أسهل للاستيراد؟',
+    a: 'الإمارات عمومًا نقطة الدخول الأقل احتكاكًا: ضريبة 5% ورسوم 5% ومناطق حرة تؤجل الرسوم. السعودية بضريبة أعلى (15%) ومطابقة SABER/SASO إلزامية لمعظم البضائع، ما يضيف أوراقًا ومدة. اختر حسب سوق الوجهة — فكل منهما يخدم مناطق مختلفة.',
+  },
+  {
+    q: 'كيف تُحتسب الرسوم الجمركية الخليجية؟',
+    a: 'على قيمة CIF (التكلفة + التأمين + الشحن)، لا على قيمة الفاتورة، بمعدل أساسي 5% وفق التعرفة الجمركية الخليجية الموحدة. وتُطبق معدلات أعلى على الكحول والتبغ وبعض البضائع، وتُضاف ضريبة القيمة المضافة فوق القيمة الشاملة للرسوم.',
+  },
+  {
+    q: 'أي ميناء أختار لكل دولة؟',
+    a: 'لكل دولة خليجية بوابة رئيسية: جدة والدمام للسعودية، جبل علي للإمارات، حمد لقطر، الشويخ/الشعيبة للكويت، صحار لعُمان، وخليفة بن سلمان للبحرين. الميناء الصحيح يعتمد على مكان وجهة بضاعتك داخل الدولة.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'دول الوجهة الخليجية',
+      itemListElement: gccCountriesAr.map((country, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: country.name,
+        url: `${SITE_URL}/ar/countries/${country.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="دول الخليج الوجهة للشحن"
+  description="معدلات ضريبة القيمة المضافة والعواصم والعملات والموانئ للدول الخليجية الست على ممر الشحن من الصين، إضافة إلى إرشادات الرسوم والامتثال."
+  canonical={`${SITE_URL}/ar/countries/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.countries') }]} />
+      <h1>دول الخليج الوجهة</h1>
+      <p class="lead">{t(locale, 'countries.lead')}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>{t(locale, 'countries.atAGlance')}</h2>
+    <DataTable
+      columns={[
+        { key: 'country', label: 'الدولة', type: 'link' },
+        { key: 'iso2', label: 'ISO' },
+        { key: 'capital', label: t(locale, 'country.capital') },
+        { key: 'currency', label: t(locale, 'country.currency') },
+        { key: 'vat', label: t(locale, 'country.vat') },
+        { key: 'ports', label: t(locale, 'section.ports') },
+      ]}
+      rows={rows}
+      caption="معدلات ضريبة القيمة المضافة استرشادية — تحقق مع الجهة المختصة قبل الاعتماد على هذه الأرقام."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'countries.taxStacks')}</h2>
+      <p>
+        تشترك الدول الست جميعها في التعرفة الجمركية الخليجية الموحدة — رسوم أساسية 5%
+        على قيمة CIF — لكنها تختلف بوضوح في ضريبة القيمة المضافة والامتثال. قطر والكويت
+        بلا ضريبة اليوم؛ والإمارات وعُمان تفرضان 5%؛ والبحرين 10%؛ والسعودية 15%
+        زائد مطابقة SABER/SASO إلزامية لمعظم البضائع. يمكن أن تغيّر هذه الفروق التكلفة
+        الإجمالية بنسبة 15% أو أكثر، لذا حدد ملف الوجهة قبل الالتزام بشحنة.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.faq')}</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

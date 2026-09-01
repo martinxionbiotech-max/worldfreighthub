@@ -1,4 +1,6 @@
 ---
+import { t, type Locale } from '../i18n/ui';
+
 interface Crumb {
   label: string;
   href?: string;
@@ -6,12 +8,13 @@ interface Crumb {
 
 interface Props {
   items: Crumb[];
+  locale?: Locale;
 }
 
-const { items } = Astro.props;
+const { items, locale = 'en' } = Astro.props;
 
 const list = [
-  { '@type': 'ListItem', position: 1, name: 'Home', item: '/' },
+  { '@type': 'ListItem', position: 1, name: t(locale, 'breadcrumb.home'), item: '/' },
   ...items.map((item, index) => ({
     '@type': 'ListItem',
     position: index + 2,

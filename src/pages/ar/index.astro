@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
+import { t } from '../../i18n/ui';
+import { SITE_URL } from '../../site';
+
+const locale = 'ar' as const;
+
+const sections = [
+  { title: 'المسارات', description: 'مسارات الشحن من الصين إلى الخليج مع مدد نقل استرشادية.', href: '/ar/routes/' },
+  { title: 'الدول', description: 'ملفات دول الخليج الوجهة: ضريبة القيمة المضافة والرسوم والامتثال.', href: '/ar/countries/' },
+  { title: 'الموانئ', description: 'موانئ التحميل في الصين والموانئ والمحطات الخليجية.', href: '/ar/ports/' },
+  { title: 'طرق الشحن', description: 'FCL وLCL والشحن الجوي وبالسكك وDDP والبريد السريع.', href: '/ar/methods/' },
+  { title: 'المصطلحات', description: 'تعريفات مصطلحات الشحن والجمارك واللوجستيات.', href: '/ar/glossary/' },
+  { title: 'الدليل', description: 'دليل وكلاء الشحن والمخلصين الجمركيين على ممر الصين–الخليج.', href: '/ar/directory/' },
+];
+---
+
+<BaseLayout
+  title="WorldFreightHub — معلومات الشحن من الصين إلى الخليج"
+  description="شبكة معلومات شحن لممر الصين–الخليج: مسارات وموانئ ودول وطرق شحن ودليل مزودين موثوق."
+  canonical={`${SITE_URL}/ar/`}
+  locale={locale}
+>
+  <div class="page-header">
+    <div class="container">
+      <h1>معلومات الشحن من الصين إلى الخليج</h1>
+      <p class="lead">
+        مرجع معلوماتي للشحن على ممر الصين–الخليج: مسارات الشحن والدول الوجهة والموانئ
+        والمحطات وطرق الشحن وتعريفات المصطلحات ودليل مزودين يعتمد التحقق أولًا.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {sections.map((s) => (
+        <Card locale={locale} title={s.title} description={s.description} href={s.href} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

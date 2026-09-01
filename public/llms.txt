@@ -51,3 +51,15 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 - Contact person: Martin.Wong
 - Phone / WhatsApp: +86 13323237275 (https://wa.me/8613323237275)
 - Email: martin@dinweys.com
+
+## Arabic (العربية)
+
+The Arabic version mirrors the China-to-GCC data reference under the /ar/ path (RTL, lang="ar").
+
+- [Arabic home](https://worldfreighthub.net/ar/): China to GCC freight intelligence overview.
+- [Routes — المسارات](https://worldfreighthub.net/ar/routes/): China to GCC shipping routes with indicative transit times.
+- [Countries — الدول](https://worldfreighthub.net/ar/countries/): GCC destination country profiles (VAT, duty, compliance, ports).
+- [Ports — الموانئ](https://worldfreighthub.net/ar/ports/): 19 China loading ports and GCC port profiles.
+- [Methods — طرق الشحن](https://worldfreighthub.net/ar/methods/): FCL, LCL, air, rail, DDP, and express shipping methods.
+- [Glossary — المصطلحات](https://worldfreighthub.net/ar/glossary/): 28 freight and customs terminology definitions.
+- [Directory — الدليل](https://worldfreighthub.net/ar/directory/): verification-first directory of 103 freight forwarders.

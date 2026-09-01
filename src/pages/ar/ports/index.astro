@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { gccPortsAr } from '../../../data/ports.ar';
+import { chinaPortsAr } from '../../../data/ports.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+const chinaRows = chinaPortsAr.map((port) => ({
+  port: { href: `/ar/ports/${port.slug}/`, label: port.name },
+  country: port.country,
+  type: port.type === 'dry-port' ? t(locale, 'country.dryPort') : t(locale, 'country.seaport'),
+  operator: port.operator,
+  unlocode: port.unlocode ?? '—',
+}));
+
+const gccRows = gccPortsAr.map((port) => ({
+  port: { href: `/ar/ports/${port.slug}/`, label: port.name },
+  country: port.country,
+  type: port.type === 'dry-port' ? t(locale, 'country.dryPort') : t(locale, 'country.seaport'),
+  operator: port.operator,
+  unlocode: port.unlocode ?? '—',
+}));
+
+const columns = [
+  { key: 'port', label: 'الميناء', type: 'link' },
+  { key: 'country', label: 'الدولة' },
+  { key: 'type', label: 'النوع' },
+  { key: 'operator', label: 'المشغل' },
+  { key: 'unlocode', label: 'UN/LOCODE' },
+];
+
+const faqs = [
+  {
+    q: 'أي الموانئ يغطيها الدليل؟',
+    a: 'سبعة موانئ منشأ صينية — شنغهاي ونينغبو-تشوشان وشنجن وقوانغتشو وتشينغداو وتيانجين وشيامن — واثنا عشر ميناء خليجيًا، من جدة والدمام في السعودية إلى جبل علي وحمد وصحار وخليفة بن سلمان، إضافة إلى ميناء الرياض الجاف.',
+  },
+  {
+    q: 'ما الفرق بين الميناء البحري والميناء الجاف؟',
+    a: 'الميناء البحري محطة ساحلية تفرغ فيها السفن البضاعة. أما الميناء الجاف فمركز حاويات داخلي — مثل ميناء الرياض الجاف — يُوصل إليه بالسكك أو الطرق من ميناء ساحلي، وتُخلَّص البضاعة فيه أقرب إلى وجهتها النهائية.',
+  },
+  {
+    q: 'كيف أختار ميناء الوجهة الصحيح؟',
+    a: 'حسب منطقة الوجهة النهائية. جدة تخدم غرب السعودية، والدمام الشرق والرياض عبر السكك. وجبل علي هو الإمارات ومركز إعادة التصدير، بينما تخدم حمد والشويخ/الشعيبة وصحار وخليفة بن سلمان قطر والكويت وعُمان والبحرين على التوالي.',
+  },
+  {
+    q: 'ماذا يعني رمز UN/LOCODE؟',
+    a: 'رمز UN/LOCODE هو الرمز القياسي الخماسي للأمم المتحدة الذي يحدد الميناء أو الموقع — مثل SAJED لجدة، وAEJEA لجبل علي، وCNSHA لشنغهاي. وهو المعرّف القاطع المستخدم في بوالص الشحن والمستندات الجمركية.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: t(locale, 'section.chinaLoadingPorts'),
+      itemListElement: chinaPortsAr.map((port, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: port.name,
+        url: `${SITE_URL}/ar/ports/${port.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'ItemList',
+    data: {
+      name: t(locale, 'section.gccPorts'),
+      itemListElement: gccPortsAr.map((port, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: port.name,
+        url: `${SITE_URL}/ar/ports/${port.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="الموانئ والمحطات"
+  description="موانئ التحميل في الصين والموانئ البحرية والجافة الخليجية التي يخدمها ممر الشحن من الصين، من شنغهاي إلى جبل علي، مع تفاصيل المشغل ورمز UN/LOCODE."
+  canonical={`${SITE_URL}/ar/ports/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.ports') }]} />
+      <h1>الموانئ والمحطات</h1>
+      <p class="lead">
+        موانئ التحميل في الصين والوجهات الخليجية على ممر الشحن — 19 ملف ميناء مع
+        المشغلين والمواصفات الرئيسية وملاحظات التوجيه.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.chinaLoadingPorts')}</h2>
+    <DataTable
+      columns={columns}
+      rows={chinaRows}
+      caption="موانئ المنشأ الصينية — تحقق مع الجهة المختصة قبل الاعتماد على هذه التفاصيل."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.gccPorts')}</h2>
+    <DataTable
+      columns={columns}
+      rows={gccRows}
+      caption="موانئ الوجهة الخليجية — تحقق مع الجهة المختصة قبل الاعتماد على هذه التفاصيل."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.faq')}</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { routesAr } from '../../../data/routes.ar';
+import { getArPortBySlug } from '../../../data/ports.ar';
+import { getArCountryBySlug } from '../../../data/countries.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+const portNameAr = (slug: string) => getArPortBySlug(slug)?.name ?? slug;
+const countryNameAr = (slug: string) => getArCountryBySlug(slug)?.name ?? slug;
+
+const rows = routesAr.map((route) => ({
+  route: {
+    href: `/ar/routes/${route.slug}/`,
+    label: `${portNameAr(route.originPort)} → ${portNameAr(route.destPort)}`,
+  },
+  origin: { href: `/ar/ports/${route.originPort}/`, label: portNameAr(route.originPort) },
+  destination: portNameAr(route.destPort),
+  country: { href: `/ar/countries/${route.country}/`, label: countryNameAr(route.country) },
+  transit: `${route.transitDays.typical} يومًا`,
+  confidence: route.confidence,
+}));
+
+const faqs = [
+  {
+    q: 'من أي ميناء صيني أشحن؟',
+    a: 'شنغهاي هي الافتراضي لشرق الصين مع أكثف الإبحارات. ونينغبو-تشوشان بديل قوي لبضائع تشجيانغ، وغالبًا أرخص قليلًا. وشنجن (يانتان) هي المنشأ الطبيعي لجنوب الصين ودلتا نهر اللؤلؤ. اختر الميناء الأقرب إلى مصنعك لتقليل النقل البري الداخلي.',
+  },
+  {
+    q: 'كم تستغرق مدة المسار من الصين إلى الخليج؟',
+    a: 'تستغرق الإبحارات المباشرة إلى الإمارات والسعودية عادةً 14–20 يومًا من ميناء إلى ميناء. أما قطر والكويت والبحرين وعُمان فتُعاد عادةً عبر سنغافورة أو محور إقليمي، ما يضيف 5–10 أيام ليصبح المجموع نحو 20–30 يومًا.',
+  },
+  {
+    q: 'هل هذه المسارات مباشرة أم معاد شحنها؟',
+    a: 'كلاهما. جبل علي وجدة والدمام لديها أكبر عدد من المكالمات المباشرة؛ أما الأسواق الخليجية الأصغر (حمد والشويخ وخليفة بن سلمان) فتُخدم غالبًا عبر إعادة الشحن من سنغافورة أو محور إقليمي. والإبحارات المباشرة أسرع وأقل عرضة للتأخير.',
+  },
+  {
+    q: 'لماذا تتفاوت مدد النقل كثيرًا؟',
+    a: 'نقطتا اختناق جيوسياسيتان تدفعان هذا التفاوت: مضيق هرمز الذي يجب أن تعبره بضائع الخليج، والبحر الأحمر حيث أجبرت أزمة الحوثيين الناقلين على إعادة التوجيه حول رأس الرجاء الصالح — ما أضاف أسابيع لبعض إبحارات جدة. أكد دائمًا التوجيه الحالي مع الناقل.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'مسارات الشحن من الصين إلى الخليج',
+      itemListElement: routesAr.map((route, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: `${portNameAr(route.originPort)} إلى ${portNameAr(route.destPort)}`,
+        url: `${SITE_URL}/ar/routes/${route.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="مسارات الشحن من الصين إلى الخليج"
+  description="مسارات شحن استرشادية من الصين (شنغهاي ونينغبو وشنجن) إلى الموانئ الخليجية، مع تقديرات مدة النقل وملاحظات التوجيه."
+  canonical={`${SITE_URL}/ar/routes/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.routes') }]} />
+      <h1>مسارات الشحن من الصين إلى الخليج</h1>
+      <p class="lead">
+        الممرات الرئيسية من شنغهاي ونينغبو-تشوشان وشنجن إلى الموانئ الخليجية
+        الرئيسية، مع مدد نقل استرشادية ومخاطر التوجيه الكامنة خلفها.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>دليل المسارات</h2>
+    <DataTable
+      columns={[
+        { key: 'route', label: 'المسار', type: 'link' },
+        { key: 'origin', label: 'المنشأ', type: 'link' },
+        { key: 'destination', label: 'الوجهة' },
+        { key: 'country', label: 'الدولة', type: 'link' },
+        { key: 'transit', label: 'مدة النقل النموذجية' },
+        { key: 'confidence', label: t(locale, 'methods.confidence'), type: 'confidence' },
+      ]}
+      rows={rows}
+      caption="مدد نقل استرشادية فقط — تحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>نقطتا اختناق، وخطران</h2>
+      <p>
+        يمر كل مسار من الصين إلى الخليج عبر نقطة اختناق جيوسياسية واحدة على الأقل.
+        تعبر بضائع الخليج مضيق هرمز، حيث تتغذى أقساط مخاطر الحرب مباشرة في السعر
+        عند ارتفاع التوتر. أما بضائع جدة فتواجه البحر الأحمر، حيث أجبرت أزمة
+        الحوثيين الناقلين على إعادة التوجيه حول رأس الرجاء الصالح — ما أضاف أسابيع
+        إلى النقل. هذه المخاطر هي سبب اتساع نطاقات الأسعار على هذا الموقع: فالفارق
+        ليس ضجيجًا، بل علاوة المخاطر المتموجة مع دورة الأخبار.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.faq')}</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

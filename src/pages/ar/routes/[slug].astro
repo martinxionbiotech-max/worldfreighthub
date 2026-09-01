@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import DataTable from '../../../components/DataTable.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Cta from '../../../components/Cta.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { routesAr } from '../../../data/routes.ar';
+import { getArPortBySlug } from '../../../data/ports.ar';
+import { countrySourceIds, sourcesByIds } from '../../../data/sources';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+export function getStaticPaths() {
+  return routesAr.map((route) => ({
+    params: { slug: route.slug },
+    props: { route },
+  }));
+}
+
+const { route } = Astro.props;
+const locale = 'ar' as const;
+const portNameAr = (slug: string) => getArPortBySlug(slug)?.name ?? slug;
+
+const originName = portNameAr(route.originPort);
+const destName = portNameAr(route.destPort);
+const routeSources = sourcesByIds(countrySourceIds[route.country] ?? []);
+
+const costRows = route.costRows.map((row) => ({
+  item: row.label,
+  range: row.range,
+  confidence: row.confidence,
+}));
+
+const tldr = `${originName} إلى ${destName} تستغرق عادةً ${route.transitDays.typical} يومًا، بمدى ${route.transitDays.range[0]}–${route.transitDays.range[1]} يومًا. ${route.routingNote}`;
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      name: `مسار الشحن من ${originName} إلى ${destName}`,
+      url: `${SITE_URL}/ar/routes/${route.slug}/`,
+      description: `مدة النقل الاسترشادية وأسعار مؤقتة لممر ${originName} إلى ${destName}.`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: route.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`مسار الشحن من ${originName} إلى ${destName}`}
+  description={`مسار الشحن من ${originName} إلى ${destName} — مدة نقل استرشادية، أسعار مؤقتة، ومصادر أساسية.`}
+  canonical={`${SITE_URL}/ar/routes/${route.slug}/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t(locale, 'nav.routes'), href: '/ar/routes/' },
+          { label: `${originName} → ${destName}` },
+        ]}
+      />
+      <h1>{originName} → {destName}</h1>
+      <p class="lead">
+        مدة نقل استرشادية وأسعار مؤقتة لممر {originName} إلى {destName}.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">المنشأ</span>
+        <span class="fact-value"><a href={`/ar/ports/${route.originPort}/`}>{originName}</a></span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">الوجهة</span>
+        <span class="fact-value"><a href={`/ar/ports/${route.destPort}/`}>{destName}</a></span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">مدة النقل النموذجية</span>
+        <span class="fact-value">{route.transitDays.typical} يومًا</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">نطاق مدة النقل</span>
+        <span class="fact-value">{route.transitDays.range[0]}–{route.transitDays.range[1]} يومًا</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>{t(locale, 'tldr')}:</strong> {tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>ملف المسار</h2>
+    <p><strong>المنشأ:</strong> {route.originNote}</p>
+    <p class="mt-2"><strong>الوجهة:</strong> {route.destNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.transitTime')}</h2>
+    <p class="lead">
+      <strong>{route.transitDays.typical} يومًا نموذجيًا</strong>{' '}
+      <ConfidenceBadge locale={locale} level={route.confidence} />
+    </p>
+    <p class="muted">
+      النطاق {route.transitDays.range[0]}–{route.transitDays.range[1]} يومًا. {route.transitNote}
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'methods.referenceCosts')}</h2>
+    <p class="muted">
+      نطاقات استرشادية جمعت من مصادر عامة متعددة — ليست عروض أسعار فورية. تتغير
+      الأرقام أسبوعيًا مع الوقود والموسم والمخاطر الجيوسياسية. أكد عرض سعر حاليًا
+      قبل الحجز.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: t(locale, 'methods.item') },
+        { key: 'range', label: t(locale, 'methods.indicativeRange') },
+        { key: 'confidence', label: t(locale, 'methods.confidence'), type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption={`نطاقات التكلفة الاسترشادية لـ${originName} → ${destName}`}
+    />
+  </section>
+
+  <section class="section container">
+    <h2>التوجيه والاعتبارات</h2>
+    <p>{route.routingNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.whatGuidesSkip')}</h2>
+    <p>{route.insight}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.faq')}</h2>
+      <FaqBlock items={route.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.keyTakeaways')}</h2>
+    <ol>
+      {route.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <SourceList locale={locale} sources={routeSources} title="المصادر المرجعية" />
+    <p class="muted">
+      مدد النقل ونطاقات الأسعار استرشادية وليست ضمانات. أكد الأرقام مع ناقل مرخص
+      أو وكيل شحن قبل الحجز.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

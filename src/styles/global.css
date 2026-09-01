@@ -950,3 +950,28 @@ code {
 .tldr p {
   margin: 0;
 }
+
+/* ---------- Arabic / RTL ---------- */
+html[lang="ar"] {
+  font-family: "Tajawal", "Noto Naskh Arabic", -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+
+html[dir="rtl"] .site-header,
+html[dir="rtl"] .site-footer,
+html[dir="rtl"] .breadcrumb,
+html[dir="rtl"] .tldr {
+  direction: rtl;
+}
+
+html[dir="rtl"] .tldr {
+  border-left: none;
+  border-right: 4px solid #0b5cad;
+  border-radius: 8px 0 0 8px;
+}
+
+html[dir="rtl"] .card-link,
+html[dir="rtl"] .breadcrumb,
+html[dir="rtl"] ol,
+html[dir="rtl"] ul {
+  direction: rtl;
+}

@@ -1,16 +1,18 @@
 ---
 import type { Source } from '../data/types';
+import { t, type Locale } from '../i18n/ui';
 
 interface Props {
   sources: Source[];
   title?: string;
+  locale?: Locale;
 }
 
-const { sources, title = 'Primary sources' } = Astro.props;
+const { sources, title, locale = 'en' } = Astro.props;
 ---
 
 <div class="source-list">
-  <h2>{title}</h2>
+  <h2>{title ?? t(locale, 'section.primarySources')}</h2>
   {sources.length > 0 ? (
     <ul>
       {sources.map((source) => (
@@ -23,6 +25,6 @@ const { sources, title = 'Primary sources' } = Astro.props;
       ))}
     </ul>
   ) : (
-    <p class="muted">No verified sources yet.</p>
+    <p class="muted">{t(locale, 'section.noSources')}</p>
   )}
 </div>

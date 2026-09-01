@@ -1,11 +1,13 @@
 ---
 import type { Confidence } from '../data/types';
+import { t, type Locale } from '../i18n/ui';
 
 interface Props {
   level: Confidence;
+  locale?: Locale;
 }
 
-const { level } = Astro.props;
+const { level, locale = 'en' } = Astro.props;
 ---
 
-<span class={`confidence-badge confidence--${level.toLowerCase()}`}>{level}</span>
+<span class={`confidence-badge confidence--${level.toLowerCase()}`}>{t(locale, `confidence.${level}`)}</span>

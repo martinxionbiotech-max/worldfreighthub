@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { directoryProvidersAr } from '../../../data/directory.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../../site';
+
+const locale = 'ar' as const;
+
+const verificationLabels: Record<string, string> = {
+  verified: 'موثق',
+  unverified: 'غير موثق',
+  claimed: 'مطالب به',
+  sponsored: 'مدعوم',
+};
+
+const verificationStatuses = [
+  {
+    status: 'موثق',
+    description: 'هوية العمل مدققة بشكل مستقل بواسطة طرف ثالث (SGS / Intertek / NVOCC / تدقيق منصة). قد تبقى بيانات الاتصال بحاجة إلى تأكيد.',
+  },
+  {
+    status: 'غير موثق',
+    description: 'عُثر عليه في البحث، ولم تُدقق هوية العمل بشكل مستقل بعد.',
+  },
+  {
+    status: 'مطالب به',
+    description: 'أكدت الشركة إدراجها الخاص.',
+  },
+  {
+    status: 'مدعوم',
+    description: 'إدراج مدفوع، يُعلَّم دائمًا. لا يوجد حاليًا.',
+  },
+];
+
+const providerGroups = [
+  ...new Set(directoryProvidersAr.flatMap((provider) => provider.serviceCountries)),
+]
+  .map((country) => ({
+    country,
+    providers: directoryProvidersAr.filter((provider) => provider.serviceCountries.includes(country)),
+  }))
+  .filter((group) => group.providers.length > 0);
+
+const faqs = [
+  {
+    q: 'هل الإدراج في الدليل مجاني؟',
+    a: 'نعم. الإدراج القياسي في الدليل مجاني. لا نطلب أي مدفوعات مقابل النظر في إدراج شركة، وأي إدراج مدفوع — إن أُدخل مستقبلًا — سيُعلَّم بوضوح ويُفصل عن الإدراجات التحريرية.',
+  },
+  {
+    q: 'كيف تتحققون من المزودين؟',
+    a: 'نبدأ بمصادر بحث عامة ثم نعمل على تأكيد كل مزود مباشرة، بما في ذلك هويته وموقعه ونطاق خدمته وبيانات الاتصال. لا يُنشر أي تفصيل كموثق حتى يُفحص بشكل مستقل.',
+  },
+  {
+    q: 'ماذا يعني «غير موثق»؟',
+    a: 'يعني أن المزود عُثر عليه في بحثنا ويوصف فقط من ذلك المصدر، لكننا لم نؤكد بشكل مستقل بعد هويته أو بيانات الاتصال أو ادعاءات الخدمة. تعامل مع إدراجه كخيط بحث، لا كتوصية.',
+  },
+  {
+    q: 'هل يمكن للشركة المطالبة بإدراجها؟',
+    a: 'نعم. يمكن للمزود التواصل معنا للمطالبة بإدراجه وتقديم معلومات داعمة. وتُعلَّم الإدراجات المطالب بها على هذا النحو، وتبقى أي مواد ذاتية الإبلاغ موسومة حتى تُتحقق منها بشكل مستقل.',
+  },
+  {
+    q: 'هل تقبلون الإدراجات المدفوعة؟',
+    a: 'لا توجد حاليًا إدراجات مدفوعة في الدليل. وإن أُدخل الإعلان أو الإدراج المدعوم لاحقًا، فسيُعلَّم بوضوح ولن يُخلط أبدًا بالترتيبات التحريرية.',
+  },
+  {
+    q: 'كيف أبلغ عن إدراج غير صحيح؟',
+    a: 'استخدم صفحة الاتصال وأدرج اسم المزود والتفصيل غير الصحيح ومصدرًا أو تصحيحًا. نراجع البلاغات قبل تحديث المعلومات المنشورة.',
+  },
+  {
+    q: 'لماذا عدد الإدراجات قليل حاليًا؟',
+    a: 'ننشر فقط المزودين الذين لديهم مصدر بحث موثق. ويعني ذلك حاليًا 103 إدراجات من جولات بحث 2026 — اثنا عشر منها مرخّصة أو مدققة بشكل مستقل، والباقي ما يزال غير موثق. نحن نؤكد الهويات وبيانات الاتصال بنشاط بدل حشو الدليل بشركات غير مؤكدة.',
+  },
+  {
+    q: 'كيف تقررون من تُدرجون؟',
+    a: 'نُدرج المزودين ذوي الصلة بممر الشحن من الصين إلى الخليج عندما يظهرون في مصدر يمكننا توثيقه. لا نرتّب حسب المدفوعات، ونفضّل الإدراجات البطيئة المدعومة بالمصادر على الحجم.',
+  },
+  {
+    q: 'هل «غير موثق» يعني أن المزود غير آمن؟',
+    a: 'لا. يعني أننا لم نؤكد بعد ما يكفي لضمان الإدراج. قم دائمًا ببذل العناية الواجبة بنفسك وأكد التراخيص والتأمين والمراجع وشروط العقد قبل الشحن.',
+  },
+];
+
+const schema = [
+  {
+    type: 'Organization',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/og.png` },
+      sameAs: [SITE_URL],
+    },
+  },
+  {
+    type: 'ItemList',
+    data: {
+      name: 'دليل مزودي الشحن',
+      itemListElement: directoryProvidersAr.map((provider) => ({
+        '@type': 'Organization',
+        name: provider.name,
+        url: `${SITE_URL}/ar/directory/${provider.slug}/`,
+        areaServed: provider.serviceCountries,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="دليل مزودي الشحن — الصين إلى الخليج"
+  description="دليل بلا ترتيب مدفوع ويعتمد التحقق أولًا لوكلاء الشحن والمخلصين الجمركيين على ممر الصين إلى الخليج."
+  canonical={`${SITE_URL}/ar/directory/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.directory') }]} />
+      <h1>دليل مزودي الشحن</h1>
+      <p class="lead">
+        دليل بلا ترتيب مدفوع ويعتمد التحقق أولًا لوكلاء الشحن والمخلصين الجمركيين على
+        ممر الصين إلى الخليج.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>حالة التحقق</h2>
+    <p class="lead">
+      يحمل كل إدراج حالة حتى تعرف مقدار التأكيد المستقل الكامن خلفه.
+    </p>
+    <div class="grid grid--2 mt-2">
+      {verificationStatuses.map((item) => (
+        <Card locale={locale} title={item.status} description={item.description} />
+      ))}
+    </div>
+    <div class="note mt-3">
+      <strong>حالة الدليل:</strong> 103 مزودين مدرجون — 12 موثقون (ترخيص / تدقيق
+      طرف ثالث) و91 غير موثقين. كل إدراج مدعوم بمصدر بحث موثق؛ ولا نلفّق أبدًا
+      إدراجات أو بيانات اتصال.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>المزودون حسب دولة الخدمة الخليجية</h2>
+      {providerGroups.map((group) => (
+        <div class="mb-3">
+          <h3>{group.country}</h3>
+          <div class="grid grid--2 mt-2">
+            {group.providers.map((provider) => (
+              <div>
+                <p class="mb-1">
+                  <span class="badge badge--amber">{verificationLabels[provider.verification] ?? provider.verification}</span>
+                </p>
+                <Card
+                  locale={locale}
+                  title={provider.name}
+                  description={provider.description}
+                  href={`/ar/directory/${provider.slug}/`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <p class="muted small">
+        بيانات الدليل روجعت آخر مرة في سبتمبر 2026. وتعكس تجمعات دول الخدمة نطاق
+        كل مزود المعلن ذاتيًا ما لم يُذكر خلاف ذلك.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>أسئلة الدليل الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

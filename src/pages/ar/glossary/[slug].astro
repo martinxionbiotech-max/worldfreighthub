@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import { glossaryAr } from '../../../data/glossary.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+export function getStaticPaths() {
+  return glossaryAr.map((term) => ({
+    params: { slug: term.slug },
+    props: { term },
+  }));
+}
+
+const { term } = Astro.props;
+const locale = 'ar' as const;
+
+const relatedTerms = term.related
+  .map((slug) => glossaryAr.find((t) => t.slug === slug))
+  .filter((t) => t !== undefined);
+
+const schema = [
+  {
+    type: 'DefinedTerm',
+    data: {
+      name: term.term,
+      description: term.definition,
+      url: `${SITE_URL}/ar/glossary/${term.slug}/`,
+      inDefinedTermSet: {
+        '@type': 'DefinedTermSet',
+        name: 'مصطلحات الشحن لدى WorldFreightHub',
+        url: `${SITE_URL}/ar/glossary/`,
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `ما هو ${term.term}؟`,
+          acceptedAnswer: { '@type': 'Answer', text: term.definition },
+        },
+        {
+          '@type': 'Question',
+          name: `لماذا يهم ${term.term} في الشحن من الصين إلى الخليج؟`,
+          acceptedAnswer: { '@type': 'Answer', text: term.whyItMatters },
+        },
+      ],
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${term.term} — مصطلحات الشحن`}
+  description={term.definition}
+  canonical={`${SITE_URL}/ar/glossary/${term.slug}/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t(locale, 'nav.glossary'), href: '/ar/glossary/' },
+          { label: term.term },
+        ]}
+      />
+      <h1>{term.term}</h1>
+      <p class="lead">{term.definition}</p>
+      <span class="badge">{term.category}</span>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.whatItMeans')}</h2>
+    <p>{term.inDetail}</p>
+  </section>
+
+  <section class="section container">
+    <h2>لماذا يهم على مسار الصين–الخليج</h2>
+    <p>{term.whyItMatters}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.example')}</h2>
+      <p>{term.example}</p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.relatedTerms')}</h2>
+    {relatedTerms.length > 0 ? (
+      <div class="grid grid--3 mt-2">
+        {relatedTerms.map((t) => (
+          <Card locale={locale} title={t.term} description={t.definition} href={`/ar/glossary/${t.slug}/`} />
+        ))}
+      </div>
+    ) : (
+      <p class="muted">لا توجد مصطلحات ذات صلة.</p>
+    )}
+  </section>
+
+  <section class="section container">
+    <p>
+      <a class="btn btn-secondary" href="/ar/glossary/">العودة إلى المصطلحات</a>
+    </p>
+  </section>
+</BaseLayout>

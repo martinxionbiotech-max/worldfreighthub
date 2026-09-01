@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { directoryProvidersAr } from '../../../data/directory.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../../site';
+
+export function getStaticPaths() {
+  return directoryProvidersAr.map((provider) => ({
+    params: { slug: provider.slug },
+    props: { provider },
+  }));
+}
+
+const { provider } = Astro.props;
+const locale = 'ar' as const;
+
+const verificationLabels: Record<string, string> = {
+  verified: 'موثق',
+  unverified: 'غير موثق',
+  claimed: 'مطالب به',
+  sponsored: 'مدعوم',
+};
+
+const verificationExplanations: Record<string, string> = {
+  verified: 'أُكدت بيانات الاتصال والادعاءات بشكل مستقل بواسطة WorldFreightHub.',
+  unverified:
+    'عُثر على هذا المزود في البحث، لكن هويته وبيانات الاتصال وادعاءات الخدمة لم تُؤكد بشكل مستقل بعد.',
+  claimed: 'أكدت الشركة إدراجها الخاص؛ وتبقى التفاصيل ذاتية الإبلاغ موسومة حتى تُتحقق منها بشكل مستقل.',
+  sponsored: 'هذا إدراج مدفوع، يُعلَّم دائمًا كمدعوم.',
+};
+
+const tableColumns = [
+  { key: 'serviceCountries', label: 'دول الخدمة' },
+  { key: 'methods', label: 'طرق الشحن' },
+  { key: 'platformFocus', label: 'تركيز المنصة' },
+  { key: 'verification', label: 'التحقق' },
+  { key: 'lastVerified', label: 'آخر تحقق' },
+  { key: 'source', label: 'المصدر', type: 'link' as const },
+];
+
+const tableRows = [
+  {
+    serviceCountries: provider.serviceCountries.join(', '),
+    methods: provider.methods.join(', '),
+    platformFocus:
+      provider.platformFocus && provider.platformFocus.length > 0
+        ? provider.platformFocus.join(', ')
+        : 'غير مذكور',
+    verification: verificationLabels[provider.verification] ?? provider.verification,
+    lastVerified: provider.lastVerified,
+    source: {
+      href: provider.source,
+      label: provider.sourceName,
+    },
+  },
+];
+
+const faqs = [
+  {
+    q: 'كيف يتحقق WorldFreightHub من وكيل الشحن؟',
+    a: 'يُعلَّم المزود كـ«موثق» فقط بعد تأكيد هوية عمله وبيانات الاتصال وادعاءات الخدمة بشكل مستقل مقابل مصدر أساسي — ترخيص رسمي (NVOCC أو FMC أو ما يعادله) أو سجل حكومي أو بيانات اعتماد المزود المنشورة. وحتى يحدث ذلك التأكيد، يبقى الإدراج «غير موثق» ويُعامل كخيط بحث موثق.',
+  },
+  {
+    q: 'ماذا يعني «غير موثق» على الإدراج؟',
+    a: 'يعني أن المزود عُثر عليه أثناء البحث، لكن هويته وبيانات الاتصال وادعاءات الخدمة لم تُؤكد بشكل مستقل بعد. تُنشر الخيوط غير الموثقة للشفافية، لكن ينبغي أن تبذل عنايتك الواجبة — افحص التراخيص واطلب مراجع وأكد الشروط — قبل تسليم البضاعة لأي مزود غير موثق.',
+  },
+  {
+    q: 'كيف أختار وكيل شحن للشحن من الصين إلى الخليج؟',
+    a: 'ابحث عن وكيل بترخيص يمكنك التحقق منه (NVOCC أو FMC أو ما يعادله)، وخبرة مثبتة على مسارك المحدد، وعرض سعر مكتوب واضح يبند الشحن ومناولة المحطة والتخليص والرسوم وضريبة القيمة المضافة. واسأل عن الرسوم الخفية مثل غرامة التأخير ورسوم الاحتجاز قبل الحجز، وأكد من يتولى دور مستورد السجل في شحنات DDP.',
+  },
+  {
+    q: 'لماذا لا تُنشر بيانات الاتصال في بعض الإدراجات؟',
+    a: 'لا ينشر WorldFreightHub بيانات الاتصال إلا بعد تأكيدها مباشرة مع المزود. وبالنسبة للإدراجات غير الموثقة، تُحجب أرقام الهاتف والبريد والعناوين لتجنب توجيهك إلى معلومات قديمة أو غير مؤكدة. يمكنك الوصول إلى المزود عبر موقعه المدرج، أو التواصل معنا إن احتجت مساعدة في تأكيد إدراج.',
+  },
+];
+
+const schema = [
+  {
+    type: 'LocalBusiness',
+    data: {
+      name: provider.name,
+      ...(provider.website ? { url: provider.website } : {}),
+      description: provider.description,
+      areaServed: provider.serviceCountries,
+    },
+  },
+  {
+    type: 'WebSite',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`${provider.name} — دليل مزودي الشحن`}
+  description={provider.description}
+  canonical={`${SITE_URL}/ar/directory/${provider.slug}/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t(locale, 'nav.directory'), href: '/ar/directory/' },
+          { label: provider.name },
+        ]}
+      />
+      <h1>{provider.name}</h1>
+      {provider.nameZh && <p class="lead">{provider.nameZh}</p>}
+      <p class="muted">{provider.description}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">حالة التحقق</span>
+        <span class="fact-value">{verificationLabels[provider.verification] ?? provider.verification}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">المقر الرئيسي</span>
+        <span class="fact-value">{provider.hqCountry}</span>
+      </div>
+    </div>
+    <div class="note mt-3">
+      <strong>ماذا تعني هذه الحالة:</strong>{' '}
+      {verificationExplanations[provider.verification]}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>ملخص الإدراج</h2>
+    <DataTable
+      columns={tableColumns}
+      rows={tableRows}
+      caption="نطاق الخدمة والادعاءات تعكس المصدر المنشور وتُعلَّم حيث تكون غير موثقة."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>الادعاءات ذاتية الإبلاغ</h2>
+      <p>
+        تأتي هذه العبارات من المزود أو من إدراج سوق. وهي ذاتية الإبلاغ و
+        <strong>ليست موثقة بشكل مستقل</strong>.
+      </p>
+      {provider.selfReportedClaims && provider.selfReportedClaims.length > 0 ? (
+        <ul>
+          {provider.selfReportedClaims.map((claim) => (
+            <li>{claim}</li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">لم تُسجل أي ادعاءات ذاتية الإبلاغ بعد.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>الاتصال والتحقق</h2>
+    <div class="note">
+      <strong>لا تُنشر بيانات اتصال موثقة لهذا المزود.</strong>{' '}
+      {provider.contactNote}
+    </div>
+    <p>
+      قبل نشر معلومات الاتصال، يؤكدها WorldFreightHub مباشرة مع المزود ويدقق اسم
+      العمل والموقع ونطاق الخدمة والادعاءات مقابل مصدر السجل. وحتى ذلك الحين، يبقى
+      الإدراج خيط بحث موثقًا فقط.
+    </p>
+    <p class="mt-2">
+      <a class="btn btn-secondary" href="/ar/contact/">الإبلاغ عن إدراج غير صحيح أو قديم</a>
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.faq')}</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

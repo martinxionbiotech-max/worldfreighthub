@@ -1,22 +1,30 @@
 ---
 import { SITE_NAME } from '../site';
+import { t, type Locale } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const prefix = locale === 'ar' ? '/ar' : '';
 
 const explore = [
-  { label: 'Routes', href: '/routes/' },
-  { label: 'Countries', href: '/countries/' },
-  { label: 'Ports', href: '/ports/' },
-  { label: 'Methods', href: '/methods/' },
-  { label: 'Glossary', href: '/glossary/' },
-  { label: 'Data', href: '/data/' },
-  { label: 'Tools', href: '/tools/' },
+  { label: t(locale, 'nav.routes'), href: `${prefix}/routes/` },
+  { label: t(locale, 'nav.countries'), href: `${prefix}/countries/` },
+  { label: t(locale, 'nav.ports'), href: `${prefix}/ports/` },
+  { label: t(locale, 'nav.methods'), href: `${prefix}/methods/` },
+  { label: t(locale, 'nav.glossary'), href: `${prefix}/glossary/` },
+  { label: t(locale, 'footer.data'), href: `${prefix}/data/` },
+  { label: t(locale, 'nav.tools'), href: `${prefix}/tools/` },
 ];
 
 const company = [
-  { label: 'About', href: '/about/' },
-  { label: 'Methodology', href: '/methodology/' },
-  { label: 'Editorial Policy', href: '/editorial-policy/' },
-  { label: 'Contact', href: '/contact/' },
-  { label: 'Middle East', href: '/middleeast/' },
+  { label: t(locale, 'footer.about'), href: `${prefix}/about/` },
+  { label: t(locale, 'footer.methodology'), href: `${prefix}/methodology/` },
+  { label: t(locale, 'footer.editorial'), href: `${prefix}/editorial-policy/` },
+  { label: t(locale, 'footer.contact'), href: `${prefix}/contact/` },
+  { label: t(locale, 'nav.middleeast'), href: `${prefix}/middleeast/` },
 ];
 ---
 
@@ -25,13 +33,10 @@ const company = [
     <div class="footer-grid">
       <div class="footer-col footer-brand">
         <h4>{SITE_NAME}</h4>
-        <p>
-          A freight intelligence network for the China–GCC corridor: routes,
-          ports, countries, methods, and a trusted provider directory.
-        </p>
+        <p>{t(locale, 'footer.brand.tagline')}</p>
       </div>
       <div class="footer-col">
-        <h4>Explore</h4>
+        <h4>{t(locale, 'footer.explore')}</h4>
         <ul>
           {explore.map((item) => (
             <li>
@@ -41,7 +46,7 @@ const company = [
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Company</h4>
+        <h4>{t(locale, 'footer.company')}</h4>
         <ul>
           {company.map((item) => (
             <li>
@@ -51,10 +56,6 @@ const company = [
         </ul>
       </div>
     </div>
-    <p class="footer-disclaimer">
-      Disclaimer: All freight rates and transit times on this site are indicative
-      estimates, not live quotes. Always confirm figures with a licensed carrier
-      or customs broker before making commercial decisions.
-    </p>
+    <p class="footer-disclaimer">{t(locale, 'footer.disclaimer')}</p>
   </div>
 </footer>

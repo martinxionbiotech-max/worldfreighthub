@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import { methodsAr } from '../../../data/methods.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+const faqs = [
+  {
+    q: 'FCL أم LCL — أيهما أستخدم؟',
+    a: 'تقريبًا حسب الحجم: تحت نحو 15 مترًا مكعبًا، يكون LCL أرخص عادةً لأنك تدفع فقط مقابل المساحة التي تستخدمها؛ وفوق 15 مترًا مكعبًا، يصبح سعر FCL الثابت الموزع على بضاعتك أرخص لكل وحدة، وتحصل أيضًا على إبحار أسرع وأكثر قابلية للتنبؤ.',
+  },
+  {
+    q: 'كم تستغرق كل طريقة شحن من الصين إلى الخليج؟',
+    a: 'الشحن الجوي هو الأسرع عند 3–7 أيام، والبريد السريع نحو 3–7 أيام من الباب إلى الباب، ثم FCL عند 14–30 يومًا من ميناء إلى ميناء، والسكك عند 18–25 يومًا على الممرات المناسبة، وLCL عند 15–35 يومًا لأن التجميع وفك التجميع يضيفان وقتًا.',
+  },
+  {
+    q: 'أي طريقة شحن هي الأرخص؟',
+    a: 'FCL هو الأرخص لكل وحدة بمجرد امتلاء الحاوية بشكل معقول. أما LCL فأغلى لكل متر مكعب لكن بلا حد أدنى للحجم. والجو والبريد هما الأغلى لكل كيلوغرام — عادةً 5–10 أضعاف الشحن البحري — ويُخصصان للبضائع العاجلة أو عالية القيمة.',
+  },
+  {
+    q: 'متى أستخدم الشحن الجوي أو البريد السريع؟',
+    a: 'استخدم الشحن الجوي للبضائع التجارية الحساسة للوقت حيث تستحق الحركة من مطار إلى مطار خلال 3–7 أيام العلاوة. واستخدم البريد السريع للطرود الصغيرة تحت نحو 30 كجم حيث تهم راحة الباب إلى الباب والتتبع. وكلاهما يُسعَّر على الوزن القابل للتحصيل، لذا تكلف البضائع الخفيفة الضخمة أكثر مما يوحي وزنها الفعلي.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'طرق الشحن',
+      itemListElement: methodsAr.map((method, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: method.name,
+        url: `${SITE_URL}/ar/methods/${method.slug}/`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="طرق الشحن"
+  description="FCL وLCL والشحن الجوي والشحن بالسكك وDDP والبريد السريع — طرق الشحن مقارنةً بالتكلفة والسرعة وأفضل استخدام على ممر الصين–الخليج."
+  canonical={`${SITE_URL}/ar/methods/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.methods') }]} />
+      <h1>طرق الشحن</h1>
+      <p class="lead">{t(locale, 'methods.lead')}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--3">
+      {methodsAr.map((method) => (
+        <Card
+          locale={locale}
+          title={method.name}
+          description={method.summary}
+          href={`/ar/methods/${method.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'methods.howToChoose')}</h2>
+      <p>
+        يعود الاختيار عادةً إلى ثلاثة أسئلة. <strong>كم الكمية؟</strong>{' '}
+        تحت نحو 15 مترًا مكعبًا تشارك حاوية (LCL)؛ وفوقها تحجز حاوية كاملة (FCL).{' '}
+        <strong>ما السرعة المطلوبة؟</strong> إن كانت الأسابيع غير مقبولة، يسد
+        الشحن الجوي أو البريد السريع الفجوة — بتكلفة 5–10 أضعاف.{' '}
+        <strong>من يتولى التخليص؟</strong> إن أردت سعر وصول واحدًا يتولى فيه البائع
+        الرسوم وضريبة القيمة المضافة، يجمع DDP كل شيء — مقابل سعر. تحمل كل صفحة طريقة
+        نطاقات تكلفة استرشادية ومدد نقل والرسوم الخفية التي يجب الانتباه إليها.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.faq')}</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

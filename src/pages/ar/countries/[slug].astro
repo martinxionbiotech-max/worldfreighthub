@@ -1,0 +1,216 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Cta from '../../../components/Cta.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { gccCountriesAr } from '../../../data/countries.ar';
+import { routesAr } from '../../../data/routes.ar';
+import { getArPortBySlug } from '../../../data/ports.ar';
+import { countrySourceIds, sourcesByIds } from '../../../data/sources';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+export function getStaticPaths() {
+  return gccCountriesAr.map((country) => ({
+    params: { slug: country.slug },
+    props: { country },
+  }));
+}
+
+const { country } = Astro.props;
+const locale = 'ar' as const;
+
+const countryPorts = country.ports
+  .map((slug) => getArPortBySlug(slug))
+  .filter((port) => port !== undefined);
+
+const countryRoutes = routesAr.filter((route) => route.country === country.slug);
+
+const countrySources = sourcesByIds(countrySourceIds[country.slug] ?? []);
+
+const schema = [
+  {
+    type: 'Country',
+    data: {
+      name: country.name,
+      url: `${SITE_URL}/ar/countries/${country.slug}/`,
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: country.iso2,
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: country.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={`الشحن إلى ${country.name} من الصين — الرسوم وضريبة القيمة المضافة والتخليص`}
+  description={`معلومات الشحن والجمارك لـ${country.name}: ${country.vatRate === null ? 'بلا ضريبة قيمة مضافة' : `ضريبة قيمة مضافة ${country.vatRate}%`}، رسوم الاستيراد، حد الإعفاء، الامتثال وموانئ الدخول.`}
+  canonical={`${SITE_URL}/ar/countries/${country.slug}/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: t(locale, 'nav.countries'), href: '/ar/countries/' },
+          { label: country.name },
+        ]}
+      />
+      <h1>{country.name}</h1>
+      <p class="lead">{t(locale, 'country.destinationProfile')}</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">{t(locale, 'country.iso')}</span>
+        <span class="fact-value">{country.iso2}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">{t(locale, 'country.capital')}</span>
+        <span class="fact-value">{country.capital}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">{t(locale, 'country.currency')}</span>
+        <span class="fact-value">{country.currency}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">{t(locale, 'country.vat')}</span>
+        <span class="fact-value">{country.vatRate === null ? t(locale, 'country.none') : `${country.vatRate}%`}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>{t(locale, 'tldr')}:</strong> {country.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'country.dutyVat')}</h2>
+    <p>
+      <strong>{t(locale, 'country.duty')}:</strong> {country.dutyRate}{' '}
+      <ConfidenceBadge locale={locale} level="MEDIUM" />
+    </p>
+    <p class="muted">{country.dutyNote}</p>
+    <p class="mt-2">
+      <strong>{t(locale, 'country.vat')}:</strong>{' '}
+      {country.vatRate === null ? t(locale, 'country.none') : `${country.vatRate}%`}{' '}
+      <ConfidenceBadge locale={locale} level="HIGH" />
+      {country.vatRate !== null && ` — ${country.vatNote}`}
+    </p>
+    {country.vatRate === null && <p class="muted">{country.vatNote}</p>}
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'country.deMinimis')}</h2>
+    <p>
+      <strong>{country.deMinimis}</strong>{' '}
+      <ConfidenceBadge locale={locale} level="LOW" />
+    </p>
+    <p class="muted">{country.deMinimisNote}</p>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'country.compliance')}</h2>
+    <ul>
+      {country.compliance.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'country.clearance')}</h2>
+    <ol>
+      {country.clearanceProcess.map((step) => (
+        <li>{step}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.ports')}</h2>
+      <div class="grid grid--3 mt-2">
+        {countryPorts.map((port) => (
+          <Card
+            locale={locale}
+            title={port.name}
+            description={`${port.type === 'dry-port' ? t(locale, 'country.dryPort') : t(locale, 'country.seaport')} في ${port.country}.`}
+            href={`/ar/ports/${port.slug}/`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.chinaRoutesTo', { country: country.name })}</h2>
+    {countryRoutes.length > 0 ? (
+      <div class="grid grid--3 mt-2">
+        {countryRoutes.map((route) => (
+          <Card
+            locale={locale}
+            title={`${getArPortBySlug(route.originPort)?.name ?? route.originPort} → ${getArPortBySlug(route.destPort)?.name ?? route.destPort}`}
+            description={`مدة النقل النموذجية ${route.transitDays.typical} يومًا (تقديري).`}
+            href={`/ar/routes/${route.slug}/`}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="muted">لا توجد مسارات منشورة لهذه الدولة بعد.</p>
+    )}
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.whatGuidesSkip')}</h2>
+    <p>{country.insight}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>{t(locale, 'section.faq')}</h2>
+      <FaqBlock items={country.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>{t(locale, 'section.keyTakeaways')}</h2>
+    <ol>
+      {country.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <SourceList locale={locale} sources={countrySources} title={t(locale, 'section.officialSources')} />
+    <p class="muted">
+      أرقام الرسوم وضريبة القيمة المضافة وحد الإعفاء استرشادية وتتغير بمرور الوقت.
+      أكد دائمًا المعدلات الحالية مع الجهة الجمركية المختصة قبل اتخاذ قرارات تجارية.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>
