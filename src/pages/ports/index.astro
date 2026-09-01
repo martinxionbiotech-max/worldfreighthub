@@ -10,6 +10,7 @@ const rows = gccPorts.map((port) => ({
   port: { href: `/ports/${port.slug}/`, label: port.name },
   country: port.country,
   type: port.type === 'dry-port' ? 'Dry port' : 'Seaport',
+  operator: port.operator,
   unlocode: port.unlocode ?? '—',
 }));
 
@@ -51,6 +52,7 @@ const schema = [
         { key: 'port', label: 'Port', type: 'link' },
         { key: 'country', label: 'Country' },
         { key: 'type', label: 'Type' },
+        { key: 'operator', label: 'Operator' },
         { key: 'unlocode', label: 'UN/LOCODE' },
       ]}
       rows={rows}

@@ -5,6 +5,8 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import { gccPorts } from '../../data/gcc-ports';
 import { chinaPorts } from '../../data/china-ports';
 import { routes } from '../../data/routes';
@@ -38,12 +40,22 @@ const schema = [
       address: { addressCountry: port.country },
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: port.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
   title={`${port.name} — Port Profile`}
-  description={`Port profile for ${port.name} (${port.country}): type, UN/LOCODE and China freight routes.`}
+  description={`${port.name} (${port.country}) port profile: operator, key specifications, hinterland and China freight routes. ${port.tldr.slice(0, 120)}`}
   canonical={`${SITE_URL}/ports/${port.slug}/`}
   schema={schema}
 >
@@ -80,8 +92,39 @@ const schema = [
         <span class="fact-label">UN/LOCODE</span>
         <span class="fact-value">{port.unlocode ?? '—'}</span>
       </div>
+      <div class="fact">
+        <span class="fact-label">Operator</span>
+        <span class="fact-value">{port.operator}</span>
+      </div>
     </div>
     {port.note && <div class="note mt-3"><strong>Note:</strong> {port.note}</div>}
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> {port.tldr}</p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Key specifications</h2>
+    <div class="fact-grid">
+      {port.specs.map((spec) => (
+        <div class="fact">
+          <span class="fact-label">{spec.label}</span>
+          <span class="fact-value">{spec.value}</span>
+        </div>
+      ))}
+    </div>
+    <p class="muted mt-2">
+      Throughput and draft figures are indicative and change year to year.
+      Confirm current figures with the port authority before relying on them.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Hinterland</h2>
+    <p>{port.hinterland}</p>
   </section>
 
   <section class="section section--alt">
@@ -104,7 +147,33 @@ const schema = [
   </section>
 
   <section class="section container">
+    <h2>What most guides skip</h2>
+    <p>{port.insight}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={port.faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      {port.keyTakeaways.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
     <SourceList sources={portSources} title="Port authority & customs sources" />
+    <p class="muted">
+      Port facts are indicative and change over time. Always confirm current
+      operational details with the relevant port authority before making
+      commercial decisions.
+    </p>
   </section>
 
   <section class="section container">

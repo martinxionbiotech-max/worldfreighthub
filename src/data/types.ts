@@ -33,6 +33,11 @@ export interface Country {
   faqs: FaqItem[];
 }
 
+export interface PortSpec {
+  label: string;
+  value: string;
+}
+
 export interface Port {
   slug: string;
   name: string;
@@ -41,6 +46,14 @@ export interface Port {
   type: 'seaport' | 'dry-port';
   unlocode?: string;
   note?: string;
+  tldr: string;
+  operator: string;
+  specs: PortSpec[];
+  hinterland: string;
+  insight: string;
+  keyTakeaways: string[];
+  faqs: FaqItem[];
+  updated: string;
 }
 
 export interface RouteCostRow {
