@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Card from '../components/Card.astro';
 import Cta from '../components/Cta.astro';
+import AdSlot from '../components/AdSlot.astro';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '../site';
 
 const schema = [
@@ -119,6 +120,10 @@ const schema = [
     <p class="mt-2">
       <a class="btn btn-secondary" href="/middleeast/">Explore the Middle East</a>
     </p>
+  </section>
+
+  <section class="section container">
+    <AdSlot />
   </section>
 
   <section class="section container">

@@ -1,13 +1,73 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
-import { SITE_URL } from '../../site';
+import FaqBlock from '../../components/FaqBlock.astro';
+import { SITE_URL, SITE_NAME } from '../../site';
+
+const faqs = [
+  {
+    q: 'How does the quote request work?',
+    a: 'Fill in the form with your origin, destination, cargo, weight, volume, incoterm and preferred method. Your request is emailed to the WorldFreightHub team, who route it to a provider on the China–GCC corridor. There is no obligation and no fee to request a quote.',
+  },
+  {
+    q: 'Is my information shared with third parties?',
+    a: 'Only the details needed to produce a quote are shared with a provider relevant to your lane, and only after you submit the form. We do not sell or publish your contact details.',
+  },
+  {
+    q: 'What does DDP vs DAP vs FOB mean?',
+    a: 'DDP means the seller (shipper) covers duties, taxes and final delivery; DAP covers delivery to the named place but not import clearance; FOB means the buyer takes responsibility once goods are loaded at origin. Choose DDP for a door-to-door, tax-inclusive landed cost.',
+  },
+  {
+    q: 'Do I need a SABER certificate for Saudi Arabia?',
+    a: 'For most regulated consumer and industrial goods, yes — SABER certification (with a SABER Certificate of Conformity) is required before goods arrive in Saudi Arabia. The provider can advise whether your product class needs it.',
+  },
+  {
+    q: 'What information should I prepare for an accurate quote?',
+    a: 'Product name and HS code, carton count and dimensions, gross weight, cargo value (for insurance and duty), pickup city in China, and the final delivery address. The more precise the volume and weight, the more accurate the rate.',
+  },
+  {
+    q: 'Can I get a quote over WhatsApp instead?',
+    a: 'Yes. If you prefer, email hello@worldfreighthub.net with the same details and we will route your request. We route requests to providers who typically respond by email or WhatsApp.',
+  },
+  {
+    q: 'How fast will I receive a quote?',
+    a: 'Response time depends on the provider and the completeness of your details, but most quote requests on this corridor are answered within 1–2 business days.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ContactPage',
+    data: {
+      name: 'Get a Freight Quote',
+      url: `${SITE_URL}/get-quote/`,
+      description:
+        'Request a freight quote for your China to GCC shipment — origin, destination, cargo, weight, volume, incoterm and method.',
+      provider: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
 ---
 
 <BaseLayout
-  title="Get a Freight Quote"
+  title="Get a Freight Quote — China to GCC"
   description="Request a freight quote for your China to GCC shipment — origin, destination, cargo, weight, volume, incoterm and method."
   canonical={`${SITE_URL}/get-quote/`}
+  schema={schema}
   noindex={true}
 >
   <div class="page-header">
@@ -15,70 +75,129 @@ import { SITE_URL } from '../../site';
       <Breadcrumb items={[{ label: 'Get Quote' }]} />
       <h1>Get a freight quote</h1>
       <p class="lead">
-        Tell us about your shipment and we will route it to a verified provider
-        on the China–GCC corridor.
+        Tell us about your shipment and we will route it to a provider on the
+        China–GCC corridor. No obligation, no fee to request.
       </p>
     </div>
   </div>
 
   <section class="section container">
-    <div class="note">
-      <strong>Coming soon:</strong> quote requests are not yet enabled and this
-      form does not submit data yet.
-    </div>
-
-    <form class="form-card mt-2" action="#" method="post">
-      <div class="form-grid">
-        <div class="field">
-          <label for="origin">Origin (port / city)</label>
-          <input type="text" id="origin" name="origin" placeholder="e.g. Shanghai" />
-        </div>
-        <div class="field">
-          <label for="destination">Destination (port / city)</label>
-          <input type="text" id="destination" name="destination" placeholder="e.g. Jeddah" />
-        </div>
-        <div class="field">
-          <label for="cargo">Cargo description</label>
-          <input type="text" id="cargo" name="cargo" placeholder="e.g. 200 cartons of electronics" />
-        </div>
-        <div class="grid grid--2">
-          <div class="field">
-            <label for="weight">Weight (kg)</label>
-            <input type="number" id="weight" name="weight" min="0" step="any" />
+    <div class="grid grid--2">
+      <div>
+        <h2>Shipment details</h2>
+        <p class="muted small">
+          Fields marked * are required. The more precise the cargo, weight and
+          volume, the more accurate the rate.
+        </p>
+        <form
+          class="form-card mt-2"
+          action="https://formsubmit.co/hello@worldfreighthub.net"
+          method="post"
+        >
+          <input type="hidden" name="_subject" value="New freight quote request — worldfreighthub.net" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Name *</label>
+              <input type="text" id="name" name="name" required placeholder="Your name" />
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label for="whatsapp">WhatsApp / phone (optional)</label>
+              <input type="text" id="whatsapp" name="whatsapp" placeholder="+86 / +966 ..." />
+            </div>
+            <div class="field">
+              <label for="origin">Origin (port / city) *</label>
+              <input type="text" id="origin" name="origin" required placeholder="e.g. Shanghai" />
+            </div>
+            <div class="field">
+              <label for="destination">Destination (port / city) *</label>
+              <input type="text" id="destination" name="destination" required placeholder="e.g. Jeddah" />
+            </div>
+            <div class="field">
+              <label for="cargo">Cargo description *</label>
+              <input type="text" id="cargo" name="cargo" required placeholder="e.g. 200 cartons of electronics" />
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="weight">Weight (kg) *</label>
+                <input type="number" id="weight" name="weight" min="0" step="any" required />
+              </div>
+              <div class="field">
+                <label for="cbm">Volume (CBM) *</label>
+                <input type="number" id="cbm" name="cbm" min="0" step="any" required />
+              </div>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="incoterm">Incoterm *</label>
+                <select id="incoterm" name="incoterm" required>
+                  <option value="DDP">DDP (door-to-door, tax included)</option>
+                  <option value="DAP">DAP (delivered at place)</option>
+                  <option value="FOB">FOB</option>
+                  <option value="CIF">CIF</option>
+                  <option value="EXW">EXW</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="method">Method *</label>
+                <select id="method" name="method" required>
+                  <option value="FCL">FCL (full container)</option>
+                  <option value="LCL">LCL (shared container)</option>
+                  <option value="Air">Air Freight</option>
+                  <option value="Rail">Rail Freight</option>
+                  <option value="Express">Express</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="notes">Additional notes (optional)</label>
+              <textarea id="notes" name="notes" placeholder="Cargo value, target delivery date, SABER/SASO needs, etc."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">Submit quote request</button>
+            <p class="muted small">
+              By submitting you agree to be contacted about this quote request
+              only. See the FAQ below for how your data is handled.
+            </p>
           </div>
-          <div class="field">
-            <label for="cbm">Volume (CBM)</label>
-            <input type="number" id="cbm" name="cbm" min="0" step="any" />
-          </div>
-        </div>
-        <div class="grid grid--2">
-          <div class="field">
-            <label for="incoterm">Incoterm</label>
-            <select id="incoterm" name="incoterm">
-              <option value="DAP">DAP</option>
-              <option value="DDP">DDP</option>
-              <option value="FOB">FOB</option>
-              <option value="CIF">CIF</option>
-              <option value="EXW">EXW</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="method">Method</label>
-            <select id="method" name="method">
-              <option value="FCL">FCL</option>
-              <option value="LCL">LCL</option>
-              <option value="Air">Air Freight</option>
-              <option value="Rail">Rail Freight</option>
-              <option value="Express">Express</option>
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" />
-        </div>
-        <button class="btn btn-primary" type="submit" disabled>Coming soon — requests not yet enabled</button>
+        </form>
       </div>
-    </form>
+
+      <div>
+        <h2>What happens next</h2>
+        <div class="form-card mt-2">
+          <ol class="mt-0" style="display:grid; gap:0.75rem; padding-left:1.25rem;">
+            <li>Your request is emailed to the WorldFreightHub team.</li>
+            <li>We match it to a provider relevant to your China–GCC lane.</li>
+            <li>The provider responds by email or WhatsApp with a rate and transit time.</li>
+          </ol>
+          <p class="mt-2">
+            Prefer email? Write to
+            <a href="mailto:hello@worldfreighthub.net"> hello@worldfreighthub.net</a>
+            with the same shipment details.
+          </p>
+        </div>
+        <div class="form-card mt-2">
+          <h3 class="mt-0">Good to know before you quote</h3>
+          <p class="small">
+            For Saudi Arabia, most regulated goods need SABER certification
+            before arrival. GCC import duty is typically 5% of CIF value; VAT
+            differs by country (Saudi 15%, UAE 5%). These figures are
+            indicative — your provider will confirm the exact landed cost.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Quote FAQ</h2>
+      <FaqBlock items={faqs} />
+    </div>
   </section>
 </BaseLayout>
