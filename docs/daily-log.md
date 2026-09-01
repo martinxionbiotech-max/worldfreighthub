@@ -223,3 +223,14 @@
   2. STEP 19–20：Ad Slots 填充 + Quote Framework（get-quote 表单接线）
   3. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
   4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档；解决 Saudi de minimis 冲突（ZATCA 一手确认）
+
+
+## 2026-09-01（Directory 填充批次 — 手动续跑 07:59–08:05）
+
+- **Tasks**：STEP 18 Directory 从 2 家 seed 扩充至 **16 家**（+14），全部 `unverified` 诚实标注。
+- **Research**：Firecrawl `/v1/search` + `/v1/scrape` 采集真实中国→GCC 货代企业官网首页，逐家核实公司名/总部/服务范围。**零杜撰**——14 家新增均有真实官网 URL 或第三方来源页背书。
+- **新增 14 家**（source 均记录）：DTFU Logistics、GCC Freight（Jebel Ali 仓）、Tonlexing（NVOCC）、ChinaDdpShipping、MOVFF（Amazon SPN）、DDPCHAIN、Cargo From China(CFC)、JMS 苏州、Shenzhen Junqing/Basenton、GCC Freights（沙特+巴林办）、BAFCO、ARABCO、Oriental Commercial、Honor Ocean。
+- **工程**：`directory.ts` 16 条（339 行）；`index.astro` 补 `bahrain` 国家标签 + 更新目录状态说明与 FAQ #7（2→16）。
+- **QA**：`npm run build` **147 页（+14 详情页）零 error**；所有条目 verification=unverified、lastVerified=2026-09-01、contactNote 显式标注未核实。
+- **Git Commit**：`f027dbc feat(directory): add 14 verified freight forwarder entries (16 total, all unverified)`（已推 origin/main）。
+- **Next**：STEP 19–20（Ad Slots 填充 + get-quote 表单接线）；后续可继续扩充至 100–200 家并逐步 verified 分层。

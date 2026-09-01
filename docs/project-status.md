@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-01 07:15 (Asia/Shanghai)
+> 最后更新：2026-09-01 08:05 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -54,7 +54,7 @@
 - [x] STEP 9 Firecrawl 竞品/中文/Primary Sources Research（`docs/research-notes-2026-08-30.md`）
 - [x] STEP 10–12 Competitor Content Matrix + Gap Matrix + Roadmap（`docs/competitor-gap.md` + `docs/content-roadmap.md`）
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
-- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅：六国核心内容页全齐 131 页；工具 3 ✅；**Directory 框架已建**（数据模型 + 列表页 + 详情页模板 + 2 家 unverified seed）；Ad Slots 填充 + Quote 接线未开始）
+- [ ] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅：六国核心内容页全齐 131 页；工具 3 ✅；**Directory 已填充 16 家真实企业**（全部 unverified，零杜撰）；Ad Slots 填充 + Quote 接线未开始）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档
 
 ## 关键交付物（已入库 docs/）
@@ -84,7 +84,7 @@
 
 ## 下一优先级（明晚 03:30 cron）
 
-1. **STEP 18 Directory 框架 ✅**：数据模型 + 列表页 + 详情页模板 + 2 家 unverified seed 已建；下一批用 Firecrawl 爬取真实中国→GCC 货代企业资料（100–200 家，Verified/Unverified/Claimed/Sponsored 分层）填充 directory.ts
+1. **STEP 18 Directory ✅**：框架已建 + 已填充 **16 家真实企业**（全部 unverified，14 家有官网 URL 背书）；后续可继续扩充至 100–200 家并逐步 verified 分层
 2. STEP 19–20：Ad Slots 填充 + Quote Framework（get-quote 表单接线）
 3. Cloudflare Pages 部署 + `middleeast` 子站 subdomain 规划
 4. STEP 21–25：SEO/AIO/EEAT 终审 + 部署文档；解决 Saudi de minimis 冲突（ZATCA 一手确认）
