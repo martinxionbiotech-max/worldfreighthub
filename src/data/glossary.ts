@@ -241,6 +241,186 @@ export const glossary: GlossaryTerm[] = [
     related: ['volumetric-weight', 'cbm'],
     updated: '2026-09-01',
   },
+  {
+    slug: 'fob',
+    term: 'FOB',
+    definition:
+      'Free on Board — the seller delivers goods on board the vessel at the named origin port; the buyer pays freight and insurance from there.',
+    category: 'Trade term',
+    inDetail:
+      'FOB (Free on Board) is one of the most-used Incoterms in China export. Under FOB the seller\u2019s obligation ends the moment the goods cross the ship\u2019s rail at the named origin port — the seller handles export clearance and inland transport to the port, while the buyer arranges and pays the ocean freight, insurance and everything after loading. On the China-to-GCC corridor FOB is the default for many experienced importers because it gives the buyer control over the carrier and the freight rate. The catch is that the buyer also owns the risk the moment the goods are on board: if the container is lost, damaged or delayed at sea, that is the buyer\u2019s problem, not the seller\u2019s. FOB is a buyer-control term — you win by negotiating your own freight, but you carry the ocean risk.',
+    whyItMatters:
+      'FOB lets you control the carrier and freight cost, but transfers ocean risk to you at the origin port — the most common term for China-to-GCC buyers who have their own forwarder.',
+    example:
+      'A Dammam importer buys FOB Shanghai: the Chinese seller clears export and loads the container; the Saudi buyer pays the ocean freight to Dammam and owns the goods from the moment they are on board.',
+    related: ['cif', 'exw', 'incoterms'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'cif',
+    term: 'CIF',
+    definition:
+      'Cost, Insurance and Freight — the seller pays freight and insurance to the named destination port; risk transfers to the buyer once loaded at origin.',
+    category: 'Trade term',
+    inDetail:
+      'CIF (Cost, Insurance and Freight) means the seller pays the ocean freight and a minimum level of marine insurance to the named destination port, while the buyer takes on risk once the goods are loaded at origin. It sounds like the seller does everything, but it is not door-to-door: the buyer still handles import clearance, duties and VAT at the destination. CIF is common on the China-to-GCC lane because it bundles freight into the purchase price, which suits buyers who want a single price and no involvement in arranging ocean transport. The hidden caveat is the insurance — under CIF the seller is only obliged to insure at the minimum ICC(C) level, which covers total loss but little else. If you want real cover, buy supplementary insurance yourself.',
+    whyItMatters:
+      'CIF bundles freight and basic insurance into one price, but covers only minimum-risk loss — add your own insurance if the cargo is valuable or fragile.',
+    example:
+      'A UAE importer buys CIF Jebel Ali: the seller pays freight and minimum insurance to Jebel Ali; the buyer clears import and pays 5% duty plus 5% VAT on arrival.',
+    related: ['fob', 'ddp', 'incoterms'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'exw',
+    term: 'EXW',
+    definition:
+      'Ex Works — the seller makes goods available at their premises; the buyer bears all transport, export clearance and risk from the factory gate.',
+    category: 'Trade term',
+    inDetail:
+      'EXW (Ex Works) is the minimum-obligation term for the seller and the maximum burden for the buyer. The seller simply makes the goods available at their factory or warehouse; the buyer is responsible for everything after that — inland collection, export clearance in China, ocean or air freight, import clearance and final delivery. EXW quotes look cheap because they exclude all logistics, but that saving is an illusion for a GCC buyer: without a China-side agent you cannot even legally export the goods, since Chinese export clearance must be done by a registered entity. On the China-to-GCC lane EXW only makes sense if you already have a forwarder with a China office that can pick up, clear export and ship for you.',
+    whyItMatters:
+      'EXW is the cheapest-looking but most burden-heavy term — it only works for a GCC buyer who already has a forwarder with China-side export capability.',
+    example:
+      'A Qatari buyer quoted EXW Shenzhen must arrange a China forwarder to collect from the factory, clear export and ship to Hamad Port — otherwise the goods never leave China.',
+    related: ['fob', 'incoterms', 'customs-broker'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'free-zone',
+    term: 'Free Zone',
+    definition:
+      'A designated area where goods can be stored, processed or re-exported with import duty deferred or waived until they enter the mainland.',
+    category: 'Customs & compliance',
+    inDetail:
+      'A free zone is a fenced, customs-controlled area where goods can be landed, stored, consolidated and re-exported without paying import duty. The GCC\u2019s free zones are among the most strategically important in world trade — Jebel Ali Free Zone (JAFZA) in Dubai is the largest, and Khalifa Industrial Zone (KIZAD) in Abu Dhabi, plus zones in each GCC state. For a China-to-GCC importer the value is working capital: you can hold inventory in a free zone duty-deferred, pay duty only when goods actually cross into the mainland, and re-export to Saudi, Qatar or elsewhere without ever paying UAE duty. The trade-off is that free-zone operations need a registered free-zone entity or a licensed logistics partner, and goods moved into the mainland are dutiable at that point.',
+    whyItMatters:
+      'Free zones defer or avoid duty until goods enter the mainland — a working-capital lever that lets you hold and re-export China cargo without paying UAE duty.',
+    example:
+      'A distributor holds China-origin electronics in JAFZA, pays no UAE duty, and re-exports to Riyadh and Doha on demand — paying Saudi or Qatari duty only on the portion actually sold into those markets.',
+    related: ['ddp', 'customs-broker', 'dap'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'certificate-of-origin',
+    term: 'Certificate of Origin',
+    definition:
+      'A document certifying the country where goods were manufactured, used to claim preferential duty rates and satisfy import requirements.',
+    category: 'Documentation',
+    inDetail:
+      'A Certificate of Origin (CO) is a document that certifies the country in which the goods were produced. It is issued by a chamber of commerce or authorised body in the exporting country, and it matters in two ways. First, it proves origin for compliance — some GCC imports require a CO as a matter of course. Second, and more valuably, a preferential CO (under a free-trade agreement) can reduce or eliminate import duty. For China-to-GCC trade the base GCC tariff of 5% applies by default, and China currently has no broad FTA with the GCC, so most COs here are non-preferential proof-of-origin documents rather than duty-savers. Still, a CO is frequently requested by GCC customs, especially for re-exports and for goods subject to anti-dumping or origin-specific rules, so it is cheap insurance to obtain one with each shipment.',
+    whyItMatters:
+      'A Certificate of Origin proves where your goods were made and is frequently required by GCC customs — obtain it with each shipment even when no preferential rate applies.',
+    example:
+      'A Kuwaiti importer attaches a Chamber of Commerce Certificate of Origin to a Shenzhen shipment of machinery, satisfying Kuwait Customs origin requirements for the entry.',
+    related: ['hs-code', 'commercial-invoice', 'bill-of-lading'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'ams',
+    term: 'AMS',
+    definition:
+      'Automated Manifest System — the US Customs electronic cargo manifest filed before a shipment sails to the United States.',
+    category: 'Documentation',
+    inDetail:
+      'AMS (Automated Manifest System) is the US Customs and Border Protection electronic system that requires ocean carriers to file cargo manifest data before a shipment departs for the United States. It is a US requirement, not a GCC one — but it appears constantly in China freight quotes because so many forwarders serve both markets and copy the terminology. If your destination is Saudi Arabia, the UAE or anywhere in the GCC, AMS does not apply to your shipment; the GCC equivalent is each state\u2019s own electronic customs declaration (Saudi Fasah, UAE Mirsal, Qatar Al Nadeeb). The practical lesson is to not pay an AMS filing fee on a GCC-bound shipment, and to be wary of forwarders who reflexively add US-centric charges to non-US lanes.',
+    whyItMatters:
+      'AMS is a US-only filing that does not apply to GCC shipments — do not pay an AMS fee on a China-to-GCC lane; the Gulf uses its own customs systems.',
+    example:
+      'A China forwarder\u2019s template quote adds a $30 AMS fee to a Jeddah shipment; a UAE-bound buyer correctly removes it because AMS is US Customs only.',
+    related: ['bill-of-lading', 'customs-broker', 'hs-code'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'telex-release',
+    term: 'Telex Release',
+    definition:
+      'An electronic release of cargo that lets the consignee collect goods without presenting the original bill of lading.',
+    category: 'Documentation',
+    inDetail:
+      'A Telex Release is the electronic message by which a carrier or agent releases cargo to the consignee without requiring the original bill of lading. Instead of couriering the original B/L across the world — which can take days and risks loss in transit — the shipper surrenders the original at origin and the carrier transmits an electronic release to the destination agent, who then delivers the goods to the named consignee. On the China-to-GCC lane this is standard practice for routine FCL shipments, because it collapses the document delay and lets the buyer collect the container as soon as it is discharged. The trade-off is security: a Telex Release is issued against a surrender of the original, so it is only appropriate when payment is already secured or the buyer is trusted.',
+    whyItMatters:
+      'Telex Release removes the original-B/L courier delay so you can collect your container immediately at a GCC port — but only use it once payment is secured.',
+    example:
+      'A Dammam buyer on secured terms asks for a Telex Release, so the container is released at King Abdulaziz Port the day it discharges instead of waiting for the couriered original.',
+    related: ['bill-of-lading', 'sea-waybill', 'customs-broker'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'sea-waybill',
+    term: 'Sea Waybill',
+    definition:
+      'A non-negotiable transport document that evidences the contract of carriage but is not a document of title.',
+    category: 'Documentation',
+    inDetail:
+      'A Sea Waybill is a non-negotiable transport document that records the carriage contract and receipt of goods, but — unlike a negotiable bill of lading — is not a document of title. This means the carrier can deliver to the named consignee without requiring the consignee to present an original document. For China-to-GCC shipments where the goods are already paid for or between trusted parties, a Sea Waybill removes the entire original-document handover problem: no couriered originals, no Telex Release step, just electronic release on arrival. The reason a negotiable B/L still exists is for letter-of-credit trade and for goods that may be sold while in transit, where the title function matters. For most straightforward GCC imports, a Sea Waybill is the simplest and fastest choice.',
+    whyItMatters:
+      'A Sea Waybill drops the original-document requirement entirely for trusted, paid shipments — the simplest release path for routine China-to-GCC imports.',
+    example:
+      'A repeat Qatar importer on prepayment terms ships under a Sea Waybill, so Hamad Port releases the goods to them on arrival with no original document and no Telex step.',
+    related: ['bill-of-lading', 'telex-release', 'commercial-invoice'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'air-waybill',
+    term: 'Air Waybill (AWB)',
+    definition:
+      'The non-negotiable transport document for air freight, issued by the carrier and acting as receipt and contract.',
+    category: 'Documentation',
+    inDetail:
+      'The Air Waybill (AWB) is the transport document for air freight, issued by the airline or its agent. It serves as a receipt for the goods, evidence of the contract of carriage, and carries the routing, chargeable weight and handling instructions — but it is always non-negotiable, meaning it is never a document of title. Cargo is simply released to the named consignee on arrival, which is why air freight clears so quickly compared to ocean. For China-to-GCC air freight the AWB number is your tracking key: it lets you follow the shipment from a Chinese airport through any transit to the GCC arrival airport. Because the AWB is not a title document, air freight between trusted parties is essentially frictionless on the document side.',
+    whyItMatters:
+      'The AWB is your air-freight tracking key and is non-negotiable — cargo releases to the consignee on arrival with no original document, which is why air clears fast.',
+    example:
+      'A Kuwaiti buyer air-freights 200 kg of spare parts from Shanghai; the AWB number tracks it door-to-airport and the goods release to them on arrival in Kuwait with no original document.',
+    related: ['bill-of-lading', 'volumetric-weight', 'chargeable-weight'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'commercial-invoice',
+    term: 'Commercial Invoice',
+    definition:
+      'The seller\u2019s bill describing the goods, their value and the parties — the core document customs uses to assess duty and VAT.',
+    category: 'Documentation',
+    inDetail:
+      'The Commercial Invoice is the seller\u2019s formal bill for the goods, and it is the single most important document in customs clearance. It states the buyer and seller, a full description of the goods, quantities, unit and total values, the Incoterm, currency and HS codes. GCC customs uses it — not the packing list and not the B/L — as the primary basis for assessing import duty and VAT, so its accuracy directly determines what you pay. The most common and costly error on the China-to-GCC lane is an invoice that understates or misstates value or HS codes, which can trigger re-valuation, inspection or penalties. The invoice value should be the real transaction value, consistent with the packing list and B/L.',
+    whyItMatters:
+      'The commercial invoice is what GCC customs reads to calculate your duty and VAT — an accurate, consistent invoice is the difference between smooth clearance and a hold.',
+    example:
+      'A Saudi buyer\u2019s commercial invoice lists the true CIF value and correct HS codes, so ZATCA assesses 5% duty and 15% VAT cleanly instead of flagging the entry for inspection.',
+    related: ['hs-code', 'packing-list', 'bill-of-lading'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'packing-list',
+    term: 'Packing List',
+    definition:
+      'A document detailing how the goods are packed — cartons, weights, dimensions and volumes — used for handling and verification.',
+    category: 'Documentation',
+    inDetail:
+      'The Packing List describes exactly how a shipment is packed: the number and type of packages (cartons, pallets, crates), each package\u2019s dimensions and gross/net weights, and the total volume in cubic metres. It is the document that makes the cargo physically verifiable — customs, carriers and warehouses use it to check that what arrived matches what was declared, and freight forwarders use its dimensions to calculate CBM for LCL billing. On the China-to-GCC lane an accurate packing list is what keeps your freight bill correct: understate the dimensions and your LCL quote is wrong; overstate and you pay for space you are not using. It must be consistent with the commercial invoice and B/L on weights and piece counts.',
+    whyItMatters:
+      'The packing list makes your cargo verifiable and keeps freight billing accurate — its dimensions drive CBM for LCL, so wrong carton sizes mean a wrong freight bill.',
+    example:
+      'A 14.4 CBM shipment of 200 cartons carries a packing list with each carton\u2019s 0.6×0.4×0.3 m dimensions, so the forwarder bills the correct volume for the LCL shipment.',
+    related: ['commercial-invoice', 'cbm', 'bill-of-lading'],
+    updated: '2026-09-01',
+  },
+  {
+    slug: 'fumigation',
+    term: 'Fumigation',
+    definition:
+      'Chemical treatment of wooden packaging to kill pests, required under the ISPM 15 standard for international shipments.',
+    category: 'Customs & compliance',
+    inDetail:
+      'Fumigation is the treatment of wooden packaging — pallets, crates, dunnage — to kill pests, required under the ISPM 15 international standard. Wood packaging moving between countries must be either heat-treated or fumigated and stamped with the ISPM 15 mark, otherwise it can be rejected at the destination and the shipment quarantined or returned at the importer\u2019s cost. For China-to-GCC shipments this matters because so much Chinese cargo moves on wooden pallets: an unmarked pallet at Jeddah or Jebel Ali can hold up clearance. The practical rule is to confirm your supplier uses ISPM 15-stamped wood, or switch to plastic pallets, which are exempt from the requirement entirely.',
+    whyItMatters:
+      'Unmarked wooden packaging can be quarantined at a GCC port — confirm ISPM 15-stamped pallets or use plastic to avoid a fumigation hold on your China cargo.',
+    example:
+      'A Bahrain-bound shipment on unstamped wooden pallets is flagged at Khalifa bin Salman; the importer pays for destination fumigation or re-export, while an ISPM 15-stamped pallet would have cleared cleanly.',
+    related: ['packing-list', 'certificate-of-origin', 'customs-broker'],
+    updated: '2026-09-01',
+  },
 ];
 
 export function getTermBySlug(slug: string): GlossaryTerm | undefined {

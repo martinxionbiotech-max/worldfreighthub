@@ -2,12 +2,14 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
 
 const tools = [
   {
     name: 'CBM Calculator',
-    description: 'Convert dimensions into cubic meters for LCL and volumetric calculations.',
+    description: 'Convert carton dimensions into cubic meters — the pricing basis for LCL sea freight.',
     href: '/tools/cbm-calculator/',
   },
   {
@@ -17,24 +19,73 @@ const tools = [
   },
   {
     name: 'Volumetric Weight Calculator',
-    description: 'Compute volumetric and chargeable weight for air freight.',
+    description: 'Compute volumetric and chargeable weight for air freight and express billing.',
     href: '/tools/volumetric-weight-calculator/',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which tool should I use first?',
+    a: 'Start with the CBM Calculator to get your shipment\u2019s total volume. If the volume is below roughly 15 CBM, you are likely an LCL shipment and the CBM figure is your pricing basis. If it is above 15 CBM, use the Container Loading Calculator to work out how many cartons fill a 20ft or 40ft container, then check the Volumetric Weight Calculator if any part of the move is by air or express.',
+  },
+  {
+    q: 'Do these calculators charge me?',
+    a: 'No. All three tools are free, run entirely in your browser, and never send your data to a server. They are planning aids, not quotes — use them to estimate, then confirm figures with a licensed forwarder before booking.',
+  },
+  {
+    q: 'How accurate are the results?',
+    a: 'They are planning estimates. Real loadable volume depends on packaging, carton rigidity, palletisation and how well cargo stacks, so a container fits less in practice than the raw volume suggests. Treat every result as a starting point, not a commitment.',
+  },
+  {
+    q: 'What is the difference between CBM and volumetric weight?',
+    a: 'CBM measures physical volume in cubic metres and drives LCL sea-freight pricing. Volumetric weight converts dimensions into a notional kilogram figure and drives air-freight and express billing — the carrier charges on the greater of actual and volumetric weight.',
+  },
+  {
+    q: 'Do the calculators apply to the China-to-GCC corridor specifically?',
+    a: 'The formulas are universal, but the calculators are tuned for the corridor\u2019s reality: a 20ft container holds roughly 28 CBM and a 40ft roughly 58 CBM of practical cargo, and air freight uses the IATA \u00f76000 volumetric divisor. Read the relevant corridor pages for the context behind each number.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Freight tools and calculators',
+      itemListElement: tools.map((tool, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: tool.name,
+        url: `${SITE_URL}${tool.href}`,
+      })),
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
   },
 ];
 ---
 
 <BaseLayout
   title="Freight Tools & Calculators"
-  description="CBM, container loading and volumetric weight calculators for the China–GCC freight corridor."
+  description="Free CBM, container loading and volumetric weight calculators for the China–GCC freight corridor, plus guidance on which to use first."
   canonical={`${SITE_URL}/tools/`}
+  schema={schema}
 >
   <div class="page-header">
     <div class="container">
       <Breadcrumb items={[{ label: 'Tools' }]} />
       <h1>Freight tools & calculators</h1>
       <p class="lead">
-        Practical, client-side calculators to support shipment planning across
-        the China–GCC freight corridor.
+        Three free, client-side calculators to plan a China–GCC shipment — volume,
+        container loading and chargeable weight, in the order you actually need them.
       </p>
     </div>
   </div>
@@ -43,5 +94,58 @@ const tools = [
     <div class="grid grid--3">
       {tools.map((tool) => <Card title={tool.name} description={tool.description} href={tool.href} />)}
     </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Which tool for which job</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <span class="fact-label">CBM Calculator</span>
+          <span class="fact-value">Your shipment\u2019s volume in cubic metres — the pricing basis for LCL sea freight below ~15 CBM.</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Container Loading Calculator</span>
+          <span class="fact-value">How many cartons or pallets fill a 20ft or 40ft container — the decision basis for FCL above ~15 CBM.</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Volumetric Weight Calculator</span>
+          <span class="fact-value">The chargeable weight for air freight (\u00f76000) and express (\u00f75000) — the billing basis when speed matters.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>A three-step planning flow</h2>
+    <ol>
+      <li>
+        <strong>Measure the volume.</strong> Enter carton dimensions into the CBM Calculator to get
+        the shipment\u2019s total cubic metres. This single number decides LCL versus FCL: below
+        roughly 15 CBM you share a container (LCL), above it you book a full box (FCL).
+      </li>
+      <li>
+        <strong>Plan the load.</strong> If the volume points to FCL, use the Container Loading
+        Calculator to see how many cartons fit a 20ft or 40ft container — remembering that a 20ft
+        holds about 28 CBM and a 40ft about 58 CBM in practice, not in raw arithmetic.
+      </li>
+      <li>
+        <strong>Check the chargeable weight.</strong> If any leg moves by air or express, run the
+        Volumetric Weight Calculator. Light-but-bulky cargo is the classic trap here — a large box
+        is billed on its volume, not its scale weight, and the calculator makes that visible before
+        you commit to a quote.
+      </li>
+    </ol>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
   </section>
 </BaseLayout>
