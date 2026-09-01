@@ -6,7 +6,7 @@ import { SITE_URL } from '../site';
 
 <BaseLayout
   title="Editorial Policy"
-  description="WorldFreightHub editorial standards: no fake reviews, ratings or prices; transparent sourcing and corrections."
+  description="WorldFreightHub's editorial standards: independence, data integrity, correction process and disclosure of any sponsored content."
   canonical={`${SITE_URL}/editorial-policy/`}
 >
   <div class="page-header">
@@ -14,37 +14,100 @@ import { SITE_URL } from '../site';
       <Breadcrumb items={[{ label: 'Editorial Policy' }]} />
       <h1>Editorial policy</h1>
       <p class="lead">
-        The standards that guide everything published on WorldFreightHub.
+        The standards that govern every page on WorldFreightHub — independence,
+        accuracy, honesty and accountability.
       </p>
     </div>
   </div>
 
   <section class="section container">
-    <h2>No fake data</h2>
+    <h2>Editorial independence</h2>
     <p>
-      We never publish fabricated reviews, ratings, prices, schedules or quotes.
-      Where a figure is not yet verified, it is shown as a placeholder and
-      marked accordingly.
+      WorldFreightHub is an information resource, not a freight forwarder, and
+      does not sell freight services. Content decisions are not influenced by
+      any carrier, forwarder or advertiser: we do not recommend a provider
+      because it pays us, and we do not soften a fact because it is
+      inconvenient. The directory lists providers on a verification-first basis
+      — a listing is marked "verified" only on the evidence, never on payment.
     </p>
+  </section>
 
-    <h2>Transparency</h2>
-    <p>
-      Sourcing is disclosed on the pages where it matters. Confidence levels
-      accompany estimates, and placeholders are never presented as verified
-      facts.
-    </p>
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Accuracy and sourcing</h2>
+      <ul>
+        <li>
+          <strong>Every fact is traceable.</strong> Rates, duty, VAT and transit
+          figures are tied to a primary source — a port authority, customs
+          authority, carrier or official registry — and carry a confidence
+          level.
+        </li>
+        <li>
+          <strong>No fabricated data.</strong> We never invent a rate, a transit
+          time, a review or a rating. A figure that cannot be sourced is
+          labelled LOW confidence and flagged "verify before relying", or
+          withheld entirely.
+        </li>
+        <li>
+          <strong>Estimates are labelled.</strong> Anything that is an estimate
+          rather than a confirmed fact is marked as such, with the confidence
+          level visible on the page.
+        </li>
+      </ul>
+    </div>
+  </section>
 
+  <section class="section container">
     <h2>Corrections</h2>
     <p>
-      If you find an error or an outdated figure, contact us and we will review
-      it. Corrections are prioritized over page retention.
+      Freight rules change — VAT rates are revised, de minimis thresholds move,
+      and port details go out of date. When an error or an outdated figure is
+      found, it is corrected and the correction is traceable through the
+      page's last-updated marker. To report an issue:
     </p>
-
-    <h2>Advertising</h2>
+    <ol>
+      <li>Go to the contact page and describe the error.</li>
+      <li>Include the page URL and, where possible, the correct figure and its source.</li>
+      <li>The entry is checked against the source; if it is wrong, it is corrected and re-labelled.</li>
+    </ol>
     <p>
-      Advertising slots are clearly separated from editorial content. Editorial
-      decisions are never influenced by advertisers, and ad placements are
-      reserved rather than filled with misleading content.
+      <a class="btn btn-secondary" href="/contact/">
+        Report a correction
+      </a>
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Disclosure</h2>
+      <ul>
+        <li>
+          <strong>Sponsored placements are labelled.</strong> If a directory
+          listing is a paid placement, it is always marked "sponsored" and is
+          held to the same accuracy standard as every other listing.
+        </li>
+        <li>
+          <strong>Self-reported claims are labelled.</strong> Statements that
+          come from a provider or a marketplace listing are marked
+          "self-reported" and are not presented as independently verified.
+        </li>
+        <li>
+          <strong>No affiliate steering.</strong> The site does not receive
+          commission for routing a quote request, and the get-quote form is
+          obligation-free for the user.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Update cadence</h2>
+    <p>
+      Data is refreshed when a primary source changes — for example, a revised
+      VAT rate or a new customs rule. Rates and transit times, which move
+      constantly, are deliberately published as labelled estimates rather than
+      fixed values, and each page carries a last-updated marker so you can see
+      how current a figure is.
     </p>
   </section>
 </BaseLayout>

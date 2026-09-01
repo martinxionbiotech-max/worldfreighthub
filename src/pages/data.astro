@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import DataTable from '../components/DataTable.astro';
+import Cta from '../components/Cta.astro';
+import { gccCountries } from '../data/gcc-countries';
+import { methods } from '../data/methods';
+import { routes } from '../data/routes';
+import { portName } from '../data/lookup';
+import { SITE_URL } from '../site';
+
+const dutyRows = gccCountries.map((c) => ({
+  country: { href: `/countries/${c.slug}/`, label: c.name },
+  duty: c.dutyRate,
+  vat: c.vatRate === null ? 'None' : `${c.vatRate}%`,
+  ports: c.ports.length,
+}));
+
+const methodCostRows = methods.map((m) => ({
+  method: { href: `/methods/${m.slug}/`, label: m.name },
+  cost: m.costRows.map((r) => `${r.label}: ${r.range}`).join(' · '),
+  transit: m.transitTime.range,
+}));
+
+const routeTransitRows = routes
+  .filter((r) => r.transitDays && r.transitDays.typical)
+  .map((r) => ({
+    route: { href: `/routes/${r.slug}/`, label: `${portName(r.originPort)} → ${portName(r.destPort)}` },
+    transit: `${r.transitDays.typical} days`,
+    range: `${r.transitDays.range[0]}–${r.transitDays.range[1]} days`,
+    confidence: r.confidence,
+  }));
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'China to GCC freight data',
+      description:
+        'Indicative import duty, VAT, freight cost ranges and transit times for the China-to-GCC corridor, assembled from the WorldFreightHub data layer.',
+      url: `${SITE_URL}/data/`,
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to GCC Freight Data at a Glance"
+  description="Indicative duty, VAT, freight cost ranges and transit times for the China-to-GCC corridor in one place — every figure labelled with a confidence level."
+  canonical={`${SITE_URL}/data/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Data' }]} />
+      <h1>China to GCC freight data at a glance</h1>
+      <p class="lead">
+        Duty, VAT, cost ranges and transit times in one place — every figure an
+        indicative estimate with a confidence level, never a live quote.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Import duty &amp; VAT by destination</h2>
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country', type: 'link' },
+        { key: 'duty', label: 'Duty' },
+        { key: 'vat', label: 'VAT' },
+        { key: 'ports', label: 'Ports covered' },
+      ]}
+      rows={dutyRows}
+      caption="Duty is on CIF value; VAT is charged on top. Qatar and Kuwait have no VAT today. Verify with the relevant authority."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Freight cost ranges by method</h2>
+    <DataTable
+      columns={[
+        { key: 'method', label: 'Method', type: 'link' },
+        { key: 'cost', label: 'Indicative cost range' },
+        { key: 'transit', label: 'Transit time' },
+      ]}
+      rows={methodCostRows}
+      caption="Indicative ranges only — rates move with fuel, season and geopolitical risk. Confirm with a carrier before booking."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Transit times by route</h2>
+    <DataTable
+      columns={[
+        { key: 'route', label: 'Route', type: 'link' },
+        { key: 'transit', label: 'Typical' },
+        { key: 'range', label: 'Range' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={routeTransitRows}
+      caption="Port-to-port estimates. Transshipment via Singapore or a regional hub adds 5–10 days."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How to read this data</h2>
+      <p>
+        Every figure on this page is an <strong>indicative estimate</strong>, not
+        a live quote, and carries a confidence level. Duty and VAT come from
+        national authorities and are the most stable figures here; freight costs
+        and transit times move constantly with fuel, season and the Strait of
+        Hormuz and Red Sea risk picture, which is why their ranges are wide.
+        Use this page to size up a shipment — then confirm the real numbers with
+        a licensed carrier or forwarder.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/get-quote/">Get a firm quote</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

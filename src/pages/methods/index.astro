@@ -2,9 +2,29 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { methods } from '../../data/methods';
 import { SITE_URL } from '../../site';
+
+const faqs = [
+  {
+    q: 'FCL or LCL — which should I use?',
+    a: 'Roughly by volume: below about 15 CBM, LCL is usually cheaper because you only pay for the space you use; above 15 CBM, the flat FCL rate spread across your cargo becomes the cheaper per-unit option, and you also get a faster, more predictable sailing.',
+  },
+  {
+    q: 'How long does each shipping method take from China to the GCC?',
+    a: 'Air freight is fastest at 3–7 days, express about 3–7 days door-to-door, then FCL at 14–30 days port-to-port, rail at 18–25 days on suitable corridors, and LCL at 15–35 days because consolidation and de-consolidation add time.',
+  },
+  {
+    q: 'Which shipping method is cheapest?',
+    a: 'FCL is the cheapest per unit once the container is reasonably full. LCL costs more per CBM but has no minimum volume. Air and express are the most expensive per kilogram — typically 5–10× sea freight — and are reserved for urgent or high-value cargo.',
+  },
+  {
+    q: 'When should I use air freight or express?',
+    a: 'Use air freight for time-critical commercial cargo where a 3–7 day airport-to-airport move is worth the premium. Use express for small parcels under ~30 kg where door-to-door convenience and tracking matter. Both bill on chargeable weight, so light-but-bulky cargo costs more than its scale weight suggests.',
+  },
+];
 
 const schema = [
   {
@@ -19,12 +39,22 @@ const schema = [
       })),
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
   title="Freight Shipping Methods"
-  description="FCL, LCL, air freight, rail freight, DDP and express — shipping methods explained for the China–GCC corridor."
+  description="FCL, LCL, air freight, rail freight, DDP and express — shipping methods compared by cost, speed and best use on the China–GCC corridor."
   canonical={`${SITE_URL}/methods/`}
   schema={schema}
 >
@@ -33,7 +63,8 @@ const schema = [
       <Breadcrumb items={[{ label: 'Methods' }]} />
       <h1>Freight shipping methods</h1>
       <p class="lead">
-        The main ways to move goods from China to the GCC, explained.
+        The main ways to move goods from China to the GCC, compared by cost,
+        speed and the cargo each one suits.
       </p>
     </div>
   </div>
@@ -48,6 +79,26 @@ const schema = [
         />
       ))}
     </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How to choose</h2>
+      <p>
+        The choice usually comes down to three questions. <strong>How much?</strong>{' '}
+        Below ~15 CBM you share a container (LCL); above it you book a full box
+        (FCL). <strong>How fast?</strong> If weeks are unacceptable, air freight
+        or express closes the gap — at 5–10× the cost. <strong>Who clears it?</strong>{' '}
+        If you want one landed price with the seller handling duty and VAT, DDP
+        bundles it all — for a price. Each method page carries indicative cost
+        ranges, transit times and the hidden charges to watch for.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">

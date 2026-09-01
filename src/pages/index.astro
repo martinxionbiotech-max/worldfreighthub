@@ -3,7 +3,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Card from '../components/Card.astro';
 import Cta from '../components/Cta.astro';
 import AdSlot from '../components/AdSlot.astro';
+import FaqBlock from '../components/FaqBlock.astro';
 import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '../site';
+
+const stats = [
+  { value: '6', label: 'GCC countries covered' },
+  { value: '21', label: 'China → GCC shipping routes' },
+  { value: '19', label: 'Port profiles (7 China + 12 GCC)' },
+  { value: '103', label: 'Freight providers in the directory' },
+  { value: '28', label: 'Freight & customs glossary terms' },
+  { value: '46', label: 'Corridor guides & landing pages' },
+];
+
+const faqs = [
+  {
+    q: 'What is WorldFreightHub?',
+    a: 'WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor — a structured, source-backed guide to shipping routes, destination countries, ports, freight methods, costs and a verification-first directory of freight forwarders. It is an information resource, not a freight forwarder itself.',
+  },
+  {
+    q: 'Are the freight rates on this site real quotes?',
+    a: 'No. Every rate, transit time and cost figure is an indicative estimate clearly labelled with a confidence level (HIGH / MEDIUM / LOW), never a live quote. Rates move constantly with fuel, season and geopolitical risk, so always confirm figures with a licensed carrier or forwarder before booking.',
+  },
+  {
+    q: 'How do I ship from China to Saudi Arabia or the UAE?',
+    a: 'Start with the destination country profile to understand duty and VAT, then choose a method (FCL, LCL, air, rail, DDP or express) and a route from a China origin port to a GCC destination port. If you need a firm price, submit a quote request and a provider on the corridor will respond.',
+  },
+  {
+    q: 'How is the data on this site verified?',
+    a: 'Every data point is tied to a primary source — a port authority, customs authority, carrier or official registry — and carries a confidence level. Figures that cannot be verified against a source are explicitly marked LOW confidence and flagged "verify before relying". Nothing is fabricated to fill a gap.',
+  },
+  {
+    q: 'Which countries does WorldFreightHub cover?',
+    a: 'All six Gulf Cooperation Council member states: Saudi Arabia, the United Arab Emirates, Qatar, Kuwait, Oman and Bahrain. Coverage includes duty, VAT, de minimis thresholds, compliance requirements, entry ports and China-origin shipping routes to each.',
+  },
+  {
+    q: 'Can I get a freight quote through this site?',
+    a: 'Yes. The get-quote form routes your request to a provider operating on the China-to-GCC corridor. There is no obligation and no fee — the request is simply passed to a provider who can quote your specific shipment.',
+  },
+];
 
 const schema = [
   {
@@ -34,6 +71,16 @@ const schema = [
       sameAs: [SITE_URL],
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
@@ -59,16 +106,27 @@ const schema = [
   </section>
 
   <section class="section container">
+    <div class="fact-grid">
+      {stats.map((stat) => (
+        <div class="fact">
+          <span class="fact-value">{stat.value}</span>
+          <span class="fact-label">{stat.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section container">
     <h2>What we do</h2>
     <p class="lead">
       A structured, data-driven reference for importers, exporters and
       forwarders moving goods between China and the Gulf Cooperation Council
-      states.
+      states — from duty and VAT rules to port-by-port routing decisions.
     </p>
     <div class="grid grid--3 mt-2">
       <Card
         title="Shipping routes"
-        description="China to GCC corridors with indicative transit times and rate placeholders."
+        description="China to GCC corridors with indicative transit times and cost ranges."
         href="/routes/"
       />
       <Card
@@ -90,7 +148,7 @@ const schema = [
       <div class="grid grid--3 mt-2">
         <Card
           title="Freight methods"
-          description="FCL, LCL, air, rail, DDP and express explained."
+          description="FCL, LCL, air, rail, DDP and express — cost, speed and when each wins."
           href="/methods/"
         />
         <Card
@@ -100,27 +158,66 @@ const schema = [
         />
         <Card
           title="Provider directory"
-          description="A framework for trusted freight and customs partners."
+          description="A verification-first directory of freight forwarders and customs brokers."
           href="/directory/"
         />
       </div>
       <div class="note mt-3">
         <strong>Rate transparency:</strong> all freight rates on this site are
-        indicative estimates and are displayed as placeholders until verified
-        against primary sources. No live pricing is published.
+        indicative estimates, not live quotes, and are shown with a confidence
+        level. Figures that cannot be sourced are marked LOW and flagged
+        "verify before relying" rather than fabricated.
       </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>Middle East focus</h2>
+    <h2>Why the data can be trusted</h2>
     <p class="lead">
-      We cover the China → GCC corridor in depth, including Saudi Arabia, the
-      UAE, Qatar, Kuwait, Oman and Bahrain.
+      Most freight sites are written by freight forwarders selling their own
+      service. WorldFreightHub is built the opposite way — as a neutral
+      reference where every claim is traceable to a source.
     </p>
+    <div class="fact-grid mt-2">
+      <div class="fact">
+        <span class="fact-label">Source-backed</span>
+        <span class="fact-value">Every rate and rule is tied to a port authority, customs authority, carrier or official registry.</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Confidence-labelled</span>
+        <span class="fact-value">Each figure carries a HIGH / MEDIUM / LOW confidence level, so you know what is solid and what needs checking.</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Honest about gaps</span>
+        <span class="fact-value">Unverified data is labelled unverified rather than padded with plausible-looking numbers.</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Provider-verified</span>
+        <span class="fact-value">Directory listings are marked verified only after contact details and claims are independently confirmed.</span>
+      </div>
+    </div>
     <p class="mt-2">
-      <a class="btn btn-secondary" href="/middleeast/">Explore the Middle East</a>
+      <a class="btn btn-secondary" href="/methodology/">Read the methodology</a>
     </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Middle East focus</h2>
+      <p class="lead">
+        We cover the China → GCC corridor in depth, including Saudi Arabia, the
+        UAE, Qatar, Kuwait, Oman and Bahrain — duty and VAT, compliance, ports
+        and transit times for each.
+      </p>
+      <p class="mt-2">
+        <a class="btn btn-secondary" href="/middleeast/">Explore the Middle East</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">

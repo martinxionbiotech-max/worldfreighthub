@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { gccPorts } from '../../data/gcc-ports';
 import { chinaPorts } from '../../data/china-ports';
@@ -31,6 +32,25 @@ const columns = [
   { key: 'unlocode', label: 'UN/LOCODE' },
 ];
 
+const faqs = [
+  {
+    q: 'Which ports does the directory cover?',
+    a: 'Seven China origin ports — Shanghai, Ningbo-Zhoushan, Shenzhen, Guangzhou, Qingdao, Tianjin and Xiamen — and twelve GCC ports, from Jeddah and Dammam in Saudi Arabia to Jebel Ali, Hamad, Sohar and Khalifa bin Salman, plus the Riyadh Dry Port.',
+  },
+  {
+    q: 'What is the difference between a seaport and a dry port?',
+    a: 'A seaport is a coastal terminal where vessels discharge cargo. A dry port is an inland container hub — like Riyadh Dry Port — reached by rail or road from a coastal port, where cargo clears customs closer to its final destination.',
+  },
+  {
+    q: 'How do I choose the right destination port?',
+    a: 'By final destination region. Jeddah serves western Saudi Arabia, Dammam the east and Riyadh via rail. Jebel Ali is the UAE and re-export hub, while Hamad, Shuwaikh/Shuaiba, Sohar and Khalifa bin Salman serve Qatar, Kuwait, Oman and Bahrain respectively.',
+  },
+  {
+    q: 'What does UN/LOCODE mean?',
+    a: 'UN/LOCODE is the UN\u2019s standard five-letter code identifying a port or location — for example, SAJED for Jeddah, AEJEA for Jebel Ali, CNSHA for Shanghai. It is the unambiguous identifier used on bills of lading and customs documents.',
+  },
+];
+
 const schema = [
   {
     type: 'ItemList',
@@ -56,12 +76,22 @@ const schema = [
       })),
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
   title="Ports & Terminals"
-  description="China loading ports and GCC seaports and dry ports served by the China freight corridor, from Shanghai to Jebel Ali."
+  description="China loading ports and GCC seaports and dry ports served by the China freight corridor, from Shanghai to Jebel Ali, with operator and UN/LOCODE details."
   canonical={`${SITE_URL}/ports/`}
   schema={schema}
 >
@@ -70,7 +100,8 @@ const schema = [
       <Breadcrumb items={[{ label: 'Ports' }]} />
       <h1>Ports & terminals</h1>
       <p class="lead">
-        China loading ports and GCC destinations on the freight corridor.
+        China loading ports and GCC destinations on the freight corridor — 19
+        port profiles with operators, key specifications and routing notes.
       </p>
     </div>
   </div>
@@ -91,6 +122,11 @@ const schema = [
       rows={gccRows}
       caption="GCC destination ports — verify with the relevant authority before relying on these details."
     />
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">

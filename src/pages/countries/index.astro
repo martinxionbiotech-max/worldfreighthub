@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { gccCountries } from '../../data/gcc-countries';
 import { SITE_URL } from '../../site';
@@ -14,6 +15,25 @@ const rows = gccCountries.map((country) => ({
   vat: country.vatRate === null ? 'None' : `${country.vatRate}%`,
   ports: country.ports.length,
 }));
+
+const faqs = [
+  {
+    q: 'Which GCC country has the lowest import tax?',
+    a: 'Qatar and Kuwait currently have no VAT, so they are the lowest-tax destinations today — though Qatar is expected to introduce VAT at around 5% soon. The UAE and Oman charge 5% VAT, Bahrain 10%, and Saudi Arabia the highest at 15% on top of the standard 5% duty.',
+  },
+  {
+    q: 'Saudi Arabia or the UAE — which is easier to import into?',
+    a: 'The UAE is generally the lower-friction entry point: 5% VAT, 5% duty, and free zones that defer duty. Saudi Arabia has higher VAT (15%) and mandatory SABER/SASO product conformity for most goods, which adds paperwork and lead time. Choose by destination market — they serve different regions.',
+  },
+  {
+    q: 'How is GCC import duty calculated?',
+    a: 'On the CIF value (cost + insurance + freight), not the invoice value, at a baseline of 5% under the GCC Common Customs Tariff. Higher rates apply to alcohol, tobacco and some goods, and VAT is charged on top of the duty-inclusive value.',
+  },
+  {
+    q: 'Which port should I choose for each country?',
+    a: 'Each GCC state has a primary gateway: Jeddah and Dammam for Saudi Arabia, Jebel Ali for the UAE, Hamad for Qatar, Shuwaikh/Shuaiba for Kuwait, Sohar for Oman, and Khalifa bin Salman for Bahrain. The right port depends on where in the country your goods are destined.',
+  },
+];
 
 const schema = [
   {
@@ -28,12 +48,22 @@ const schema = [
       })),
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
   title="GCC Destination Countries for Freight"
-  description="VAT rates, capitals, currencies and ports for the six GCC states served by the China freight corridor."
+  description="VAT rates, capitals, currencies and ports for the six GCC states served by the China freight corridor, plus duty and compliance guidance."
   canonical={`${SITE_URL}/countries/`}
   schema={schema}
 >
@@ -42,13 +72,15 @@ const schema = [
       <Breadcrumb items={[{ label: 'Countries' }]} />
       <h1>GCC destination countries</h1>
       <p class="lead">
-        The six Gulf Cooperation Council member states covered on the China
-        freight corridor, with VAT and port profiles.
+        The six Gulf Cooperation Council member states on the China freight
+        corridor — each with its own VAT rate, duty rules, compliance
+        requirements and entry ports.
       </p>
     </div>
   </div>
 
   <section class="section container">
+    <h2>Destination at a glance</h2>
     <DataTable
       columns={[
         { key: 'country', label: 'Country', type: 'link' },
@@ -61,6 +93,25 @@ const schema = [
       rows={rows}
       caption="VAT rates are indicative — verify with the relevant authority before relying on these figures."
     />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How the tax stacks up</h2>
+      <p>
+        All six states share the GCC Common Customs Tariff — a 5% baseline duty
+        on CIF value — but they differ sharply on VAT and compliance. Qatar and
+        Kuwait have no VAT today; the UAE and Oman charge 5%; Bahrain 10%; and
+        Saudi Arabia 15% plus mandatory SABER/SASO conformity for most goods.
+        These differences can swing a landed cost by 15% or more, so pick the
+        destination profile before you commit to a shipment.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">

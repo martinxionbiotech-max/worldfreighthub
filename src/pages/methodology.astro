@@ -2,13 +2,47 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import ConfidenceBadge from '../components/ConfidenceBadge.astro';
+import FaqBlock from '../components/FaqBlock.astro';
 import { SITE_URL } from '../site';
+
+const faqs = [
+  {
+    q: 'How is a freight rate figure sourced?',
+    a: 'A rate is first pulled from a primary source — a carrier tariff, a port authority publication or a customs document. If no primary source exists, the figure is marked LOW confidence and labelled "verify before relying". A figure is never invented to fill a gap.',
+  },
+  {
+    q: 'What does a LOW confidence label mean?',
+    a: 'It means the figure is an unverified estimate — often because the underlying rate or rule is not publicly published, or because it changes too quickly to pin down. Treat LOW-confidence figures as a starting point and confirm them with a carrier or authority before relying on them.',
+  },
+  {
+    q: 'How often is the data updated?',
+    a: 'Each page carries a last-updated marker, and data is refreshed when a primary source changes — for example, a new VAT rate or a revised customs rule. Rates and transit times, which move constantly, are deliberately labelled as estimates rather than fixed values.',
+  },
+  {
+    q: 'How do you verify a freight provider in the directory?',
+    a: 'A provider is marked "verified" only after its business identity, contact details and service claims are independently confirmed against a primary source — an official licence (NVOCC, FMC or equivalent), a government registry, or the provider\u2019s own published credentials. Until then it stays "unverified".',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
 ---
 
 <BaseLayout
   title="Methodology"
-  description="How WorldFreightHub sources and verifies freight data, and how confidence levels are assigned."
+  description="How WorldFreightHub sources and verifies freight data, assigns confidence levels, and keeps every figure traceable to a primary source."
   canonical={`${SITE_URL}/methodology/`}
+  schema={schema}
 >
   <div class="page-header">
     <div class="container">
@@ -24,10 +58,33 @@ import { SITE_URL } from '../site';
     <h2>Primary sources first</h2>
     <p>
       We prefer primary sources: government customs and tax authorities, port
-      authorities and carriers. Secondary or aggregated data is used only to
-      cross-check, never as the sole basis for a published figure.
+      authorities, and carriers. Secondary or aggregated data is used only to
+      cross-check, never as the sole basis for a published figure. The source
+      hierarchy is:
     </p>
+    <ul>
+      <li>
+        <strong>Government / port authority</strong> — customs and tax
+        authorities (ZATCA, Dubai Customs, Qatar Customs, and so on), port
+        authorities (Mawani, DP World, SIPG), and official notices.
+      </li>
+      <li>
+        <strong>Carrier / operator</strong> — published tariffs, schedules and
+        service guides from shipping lines and terminal operators.
+      </li>
+      <li>
+        <strong>Industry / organisation</strong> — trade bodies, standards
+        organisations (ICC, IATA, FIATA) and recognised industry references.
+      </li>
+    </ul>
+    <p>
+      Where a fact comes from a marketplace listing, a competitor page or an
+      unattributed source, it is labelled accordingly and treated as
+      unverified.
+    </p>
+  </section>
 
+  <section class="section container">
     <h2>Confidence levels</h2>
     <p>
       Every estimate carries a confidence level so readers know how much weight
@@ -36,28 +93,80 @@ import { SITE_URL } from '../site';
     <ul>
       <li>
         <ConfidenceBadge level="HIGH" /> — confirmed against a primary source.
+        Example: a VAT rate published by a national tax authority.
       </li>
       <li>
-        <ConfidenceBadge level="MEDIUM" /> — corroborated by multiple secondary sources.
+        <ConfidenceBadge level="MEDIUM" /> — corroborated by multiple secondary
+        sources, or a primary source that is a snapshot rather than a live
+        figure. Example: a freight-rate range assembled from several carrier
+        references.
       </li>
       <li>
-        <ConfidenceBadge level="LOW" /> — unverified estimate; treat as a placeholder.
+        <ConfidenceBadge level="LOW" /> — an unverified estimate with no
+        published primary source. Example: a port's free-time allowance that
+        varies by terminal and is not publicly posted.
       </li>
     </ul>
-
-    <h2>Rates and transit times</h2>
     <p>
-      Freight rates and transit times fluctuate. All figures on this site are
-      indicative estimates and are published as placeholders until they are
-      verified against a carrier schedule or tariff. No live pricing is shown.
+      A LOW label is not a failure — it is an honest statement that the figure
+      could not be pinned to a source, and that you should confirm it before
+      relying on it.
     </p>
+  </section>
 
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Rates and transit times</h2>
+      <p>
+        Freight rates and transit times fluctuate with fuel, season and
+        geopolitical risk, so they are published as <strong>indicative
+        estimates with a confidence level</strong>, never as live quotes. A rate
+        range such as "20ft FCL: $1,500–$6,200" is a snapshot of the plausible
+        spread, not a commitment — the wide range on Gulf lanes is itself real
+        information, reflecting how much war-risk premiums and demand move the
+        market.
+      </p>
+      <p>
+        No live pricing is shown anywhere on the site. When you need a firm
+        number, the get-quote form routes your request to a provider who can
+        quote your specific shipment.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
     <h2>Verification workflow</h2>
+    <ol>
+      <li>
+        <strong>Collect.</strong> A fact is pulled from the highest-quality
+        source available, with the source recorded.
+      </li>
+      <li>
+        <strong>Label.</strong> The figure is assigned a confidence level based
+        on how it was sourced — HIGH for primary confirmation, LOW for an
+        unverified estimate.
+      </li>
+      <li>
+        <strong>Cross-check.</strong> Figures that can be corroborated by an
+        independent primary source are upgraded; anything that cannot be
+        verified stays marked as an estimate.
+      </li>
+      <li>
+        <strong>Publish or withhold.</strong> A figure is published only if it
+        is sourced or clearly labelled. If it can be neither sourced nor
+        labelled honestly, it is withheld rather than invented.
+      </li>
+    </ol>
     <p>
-      Before any figure is upgraded from a placeholder, it must pass secondary
-      verification against at least one independent primary source. Anything
-      that cannot be verified remains unpublished or stays marked as an
-      estimate.
+      The same discipline applies to the provider directory: a listing is
+      marked "verified" only after its identity and contact details are
+      independently confirmed, and everything self-reported is labelled as
+      such.
     </p>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 </BaseLayout>

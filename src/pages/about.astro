@@ -7,7 +7,7 @@ import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../site';
 
 <BaseLayout
   title="About WorldFreightHub"
-  description="WorldFreightHub is a freight intelligence network covering the China to GCC corridor with routes, ports, countries, methods and tools."
+  description="WorldFreightHub is a neutral freight intelligence reference for the China-to-GCC corridor — source-backed routes, ports, countries and a verification-first provider directory."
   canonical={`${SITE_URL}/about/`}
 >
   <div class="page-header">
@@ -23,22 +23,111 @@ import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../site';
     <p>
       WorldFreightHub is a data-driven reference for importers, exporters,
       freight forwarders and customs brokers moving goods between China and the
-      Gulf Cooperation Council. We organize routes, ports, destination
-      countries, shipping methods and practical tools into a single,
-      well-structured resource.
+      Gulf Cooperation Council. We organize shipping routes, ports, destination
+      countries, freight methods and practical tools into a single,
+      well-structured resource — so a first-time importer and a seasoned
+      forwarder can both find the same verified facts in one place.
     </p>
+    <p>
+      The coverage spans the entire corridor: six GCC destination countries
+      with their duty, VAT and compliance rules; 21 China-to-GCC routes with
+      indicative transit times and cost ranges; 19 port profiles from Shanghai
+      and Ningbo-Zhoushan to Jeddah and Jebel Ali; a freight glossary; and a
+      directory of 103 freight providers, each marked verified or unverified.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Why WorldFreightHub is different</h2>
+      <p>
+        Most freight websites are written by freight forwarders to sell their
+        own service — which is why so much freight content quietly steers you
+        toward a particular vendor. WorldFreightHub is built the opposite way:
+        it is a neutral reference that does not sell freight. That independence
+        is the whole point.
+      </p>
+      <ul>
+        <li>
+          <strong>No vendor to protect.</strong> We are not a forwarder, so we
+          have no incentive to inflate a route, hide a fee or recommend one
+          provider over another.
+        </li>
+        <li>
+          <strong>Source-backed, not guessed.</strong> Every rate, rule and
+          transit figure is tied to a primary source — a port authority,
+          customs authority, carrier or official registry.
+        </li>
+        <li>
+          <strong>Honest about uncertainty.</strong> Figures that cannot be
+          verified are labelled LOW confidence and flagged "verify before
+          relying" rather than padded with a plausible-looking number.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
     <h2>Our principles</h2>
     <ul>
-      <li>Static first — fast, reliable pages without unnecessary runtime.</li>
-      <li>Data driven — every page is generated from structured source data.</li>
-      <li>Zero fake data — rates and transit times are placeholders until verified.</li>
+      <li>
+        <strong>Static first.</strong> Fast, reliable pages built without
+        unnecessary client-side runtime — the site renders cleanly and loads
+        quickly on any device.
+      </li>
+      <li>
+        <strong>Data driven.</strong> Every page is generated from structured
+        source data, so the same fact is never written twice or contradicted
+        across pages.
+      </li>
+      <li>
+        <strong>Zero fabricated data.</strong> We do not invent rates, transit
+        times, reviews or ratings. Every number is either sourced from a
+        primary authority or explicitly marked as an estimate with a
+        confidence level.
+      </li>
+      <li>
+        <strong>Verification first.</strong> Directory listings and contact
+        details are published only after independent confirmation, and
+        everything self-reported is labelled as such.
+      </li>
     </ul>
+    <p>
+      <a class="btn btn-secondary" href="/methodology/">
+        Read the full methodology
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
     <h2>What we don't do</h2>
     <p>
       We do not publish live prices, schedules or quotes, and we do not invent
-      reviews, ratings or figures. Every number on this site is either sourced
-      from a primary authority or clearly marked as an estimate.
+      reviews, ratings or figures. We are not a freight forwarder, a customs
+      broker or a marketplace — we are an information resource. When you need a
+      firm price, our get-quote form routes your request to a provider on the
+      corridor, and that provider quotes your specific shipment.
     </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Corrections and accountability</h2>
+      <p>
+        If you spot an error, an outdated figure or a listing that needs
+        correcting, we want to hear about it. Corrections are handled against
+        our documented editorial policy, and every fix is traceable.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/editorial-policy/">
+          Read the editorial policy
+        </a>
+        {' '}
+        <a class="btn btn-secondary" href="/contact/">
+          Report an issue
+        </a>
+      </p>
+    </div>
   </section>
 
   <section class="section container">

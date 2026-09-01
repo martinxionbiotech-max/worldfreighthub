@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { routes } from '../../data/routes';
 import { portName, countryName } from '../../data/lookup';
@@ -19,6 +20,25 @@ const rows = routes.map((route) => ({
   confidence: route.confidence,
 }));
 
+const faqs = [
+  {
+    q: 'Which China port should I ship from?',
+    a: 'Shanghai is the default for East China with the densest sailings. Ningbo-Zhoushan is a strong alternative for Zhejiang cargo, often slightly cheaper. Shenzhen (Yantian) is the natural origin for South China and the Pearl River Delta. Choose the port closest to your factory to minimise inland trucking.',
+  },
+  {
+    q: 'How long does a China-to-GCC route take?',
+    a: 'Direct sailings to the UAE and Saudi Arabia typically run 14–20 days port-to-port. Qatar, Kuwait, Bahrain and Oman usually transship via Singapore or a regional hub, adding 5–10 days for a total of roughly 20–30 days.',
+  },
+  {
+    q: 'Do these routes go direct or transship?',
+    a: 'Both. Jebel Ali, Jeddah and Dammam have the most direct calls; the smaller Gulf markets (Hamad, Shuwaikh, Khalifa bin Salman) are often served by transshipment via Singapore or a regional hub. Direct sailings are faster and less likely to be delayed.',
+  },
+  {
+    q: 'Why do transit times vary so much?',
+    a: 'Two geopolitical chokepoints drive the variance: the Strait of Hormuz, which Gulf-bound cargo must transit, and the Red Sea, where the Houthi crisis forced carriers to reroute around the Cape of Good Hope — adding weeks to some Jeddah-bound sailings. Always confirm the current routing with the carrier.',
+  },
+];
+
 const schema = [
   {
     type: 'ItemList',
@@ -32,12 +52,22 @@ const schema = [
       })),
     },
   },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
 ];
 ---
 
 <BaseLayout
   title="China to GCC Freight Routes"
-  description="Indicative shipping routes from China (Shanghai, Ningbo, Shenzhen) to GCC ports, with transit time estimates."
+  description="Indicative shipping routes from China (Shanghai, Ningbo, Shenzhen) to GCC ports, with transit time estimates and routing notes."
   canonical={`${SITE_URL}/routes/`}
   schema={schema}
 >
@@ -47,12 +77,13 @@ const schema = [
       <h1>China to GCC freight routes</h1>
       <p class="lead">
         Main corridors from Shanghai, Ningbo-Zhoushan and Shenzhen to major Gulf
-        ports. Transit times are estimates and must be verified with carriers.
+        ports, with indicative transit times and the routing risks behind them.
       </p>
     </div>
   </div>
 
   <section class="section container">
+    <h2>Route directory</h2>
     <DataTable
       columns={[
         { key: 'route', label: 'Route', type: 'link' },
@@ -65,6 +96,27 @@ const schema = [
       rows={rows}
       caption="Indicative transit times only — verify with the relevant carrier before relying on these figures."
     />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Two chokepoints, two risks</h2>
+      <p>
+        Every China-to-GCC route passes through at least one geopolitical
+        chokepoint. Gulf-bound cargo transits the Strait of Hormuz, where
+        war-risk premiums feed straight into the rate when tensions rise.
+        Jeddah-bound cargo instead faces the Red Sea, where the Houthi crisis
+        forced carriers to reroute around the Cape of Good Hope — adding weeks
+        to transit. These risks are why the rate ranges on this site are wide:
+        the spread is not noise, it is the risk premium flexing with the news
+        cycle.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">
