@@ -33,7 +33,7 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 
 ## Provider directory
 
-- [Freight Provider Directory](https://worldfreighthub.net/directory/): verification-first directory of 16 freight forwarders and customs brokers on the China-to-GCC corridor. All listings are source-backed and marked unverified until independently confirmed.
+- [Freight Provider Directory](https://worldfreighthub.net/directory/): verification-first directory of 23 freight forwarders and customs brokers on the China-to-GCC corridor. All listings are source-backed and marked unverified until independently confirmed.
 
 ## Trust
 
