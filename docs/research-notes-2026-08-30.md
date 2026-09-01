@@ -22,7 +22,7 @@
 - **Fact:** Saudi customs operates **FASAH single-window** electronic system; pre-arrival declarations; documents: commercial invoice, bill of lading, certificate of origin, SABER conformity certificate (regulated goods).
   - **URL:** https://www.commenda.io/saudi-arabia/import-vat ; https://cargofromchina.com/china-saudiarabia/
   - **Confidence:** HIGH
-- **DISCREPANCY to note:** Commenda says "Saudi Arabia does not maintain a low-value (de minimis) exemption"; tariffdutycalculator.com and cargofromchina.com say de minimis = SAR 1,000 for personal courier shipments. Flag as unresolved; needs ZATCA primary confirmation.
+- **RESOLVED (2026-09-01):** the apparent conflict was two different taxes being conflated. **Customs duty de minimis = SAR 1,000** for personal/express courier shipments (HIGH confidence — Avalara table "SAR 1,000 duty / SAR 0 VAT", DHL, GistNet, Traddal, tariffdutycalculator, cargofromchina all agree). **VAT has NO de minimis** — 15% applies to all imports regardless of value (HIGH confidence). Commenda's "no de minimis" statement refers to VAT / commercial imports; the SAR 1,000 figure refers to duty only.
 
 ### Saudi Ports (Mawani)
 - **Fact:** Saudi ports operated by Mawani handled **8.3 million TEU in 2025**, +10.6% YoY (exports, transhipment, cargo tonnage all up).

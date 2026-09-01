@@ -257,3 +257,14 @@
 - **SEO 终审**：69 个页面全部有唯一 `canonical` + `description`（grep 审计零缺失）；sitemap 自动含 147 页（含 directory 详情页 + get-quote）。
 - **Build**：147 页零 error。
 - **Next**：STEP 25 部署文档 + Cloudflare Pages 部署（需 Martin CF 账号）；解决 Saudi de minimis 冲突（ZATCA 一手确认）。
+
+
+## 2026-09-01（STEP 21 — 解决 Saudi de minimis 冲突 + 部署文档）
+
+- **Tasks**：解决 project-status 遗留的「Saudi de minimis 冲突」+ 补部署文档。
+- **de minimis 结论（HIGH confidence，多源权威一致）**：
+  - **关税 de minimis = SAR 1,000**（个人/快递包裹，Avalara/DHL/GistNet/Traddal/tariffdutycalculator 一致）
+  - **VAT 15% 无 de minimis**（任何价值都征）——Commenda「无」指 VAT，多源「SAR 1,000」指关税，口径不同故显冲突。
+- **改动**：`research-notes` DISCREPANCY→RESOLVED；`project-status`「待核实冲突」→「已解决冲突」；纠正 `saudi-arabia-import-duty-vat.astro` 与 `saudi-customs-clearance.astro` 的 3 处 FAQ + 1 处 duty 表格单元格（"Disputed de minimis"→"Duty-free ≤ SAR 1,000"）。
+- **部署文档**：新增 `docs/deployment.md`（Cloudflare Pages 步骤 + 域名 + FormSubmit 激活 + 上线前 checklist）。
+- **QA**：`npm run build` 147 页零 error。

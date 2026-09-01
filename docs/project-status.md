@@ -78,9 +78,9 @@
 2. **SASO/SABER 步骤 + SC 新规**（合规权威差异化）
 3. **Jeddah vs Dammam vs Jebel Ali 港口对比**（用户真实问题）
 
-## 待核实冲突
+## 已解决冲突
 
-- 沙特 de minimis：Commenda「无」vs 多源「SAR 1,000」→ 需 ZATCA 一手确认
+- ~~沙特 de minimis~~（2026-09-01 解决）：**关税 de minimis = SAR 1,000**（个人/快递包裹，HIGH）；**VAT 15% 无 de minimis**（任何价值都征，HIGH）。Commenda「无」指 VAT，多源「SAR 1,000」指关税——口径不同，均已澄清。
 
 ## 下一优先级（明晚 03:30 cron）
 
