@@ -438,3 +438,28 @@
   1. Europe 第二波续：Poland / Belgium Route Pillar（余 2 页），或 FCL vs LCL Europe 拆解、海运 vs 铁路成本对比数据页。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-02（Europe 走廊第二波续三 — Poland + Belgium Route Pillar）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成，无剩余 GCC 页面。Europe 走廊第二波此前已交付 Germany/UK + Netherlands/France + Spain/Italy（6 国 Route Pillar）；本批续写 **Poland + Belgium** 两页，补齐「4 页余量」中的最后 2 页，使 Europe Route Pillar 覆盖全部 8 国（DE/UK/NL/FR/ES/IT/PL/BE）。
+- **本轮动作**：
+  1. 核对 content-roadmap 顺序 + `ls src/pages` 逐页比对 → GCC 无剩余 → 转向 Europe 第二波续（按 project-status「下一优先级」）。
+  2. 读 europe-countries / europe-ports / europe-routes / sources 数据 + Italy 模板页，构造自包含 Codex prompt（9 模块公式 + 质量红线 + 差异化打法 + 指定可用验证数据，禁止杜撰）。
+  3. 交给 Codex 写 2 页，Codex 自检报告 + 我独立复核（词数 / FAQ 数 / 9 模块 / 费率与已验证数据逐值比对 / schema / build / push）。
+  4. **首次运行失败修复**：Codex 报 `Missing DEEPSEEK_API_KEY`——远程 `~/.bashrc` 有交互式 guard，非交互 SSH 会话不加载；改在命令前 `source ~/.profile 2>/dev/null` 后重跑成功。
+- **Content（commit 13f1979）**：
+  - `src/pages/europe/shipping-from-china-to-poland.astro`（**渲染 5,119 词**，15 FAQ）——Gdańsk (PLGDN) 深水 DCT/Baltic Hub + **Małaszewicze 新丝绸之路铁路入口 = 天然海铁分流枢纽**（最高价值差异化：Gdańsk 深水港可停靠最大船型、绕过拥堵的北欧 range，服务波兰/波罗的海/捷克/斯洛伐克/乌克兰）+ 23% VAT（欧盟第二高，仅次于匈牙利 27%）+ EU 统一关税 + EORI + 海铁分流 + Małaszewicze 铁路运力旺季趋紧。
+  - `src/pages/europe/shipping-from-china-to-belgium.astro`（**渲染 4,943 词**，14 FAQ）——Antwerp (BEANR) **欧洲第二大港 + 化工/件杂货门户**（最高价值差异化：承载欧洲最大石化集群，化学品/聚合物/件杂货/冷藏优于 Rotterdam 的集装箱优先布局；Antwerp-Bruges 合并成双港深水体系；Scheldt 潮汐约束小于 Hamburg；与 Rotterdam 同 range 相距近、船司可随拥堵互转挂靠——预期费率联动而非结构性折让）+ 21% VAT + EU 统一关税 + EORI。
+  - 两页均 9 模块齐全：费率表（FCL $区间 + LCL $/CBM，MEDIUM；rail/air/express/DDP 标 LOW「Not published in verified snapshot — request」）、时效表（分中国起运港 × 方式：PL 30 天 sea via Cape + 18–22 天 rail / BE 28 天 sea，25–45 天区间）、FCL vs LCL 决策（含 CBM 盈亏算术示例）、港口清单、成本构成（含 hidden charges / demurrage-detention 两钟两付费方）、合规要点（EORI/TARIC/CE/REACH/VAT/IOSS/€150 + 明确 SABER/SASO 仅沙特不适用）、FAQ、September 2026 更新标记、Schema（Article + FAQPage + BreadcrumbList + Organization）。
+- **数据诚信**：费率沿用 europe-routes.ts 已验证区间（Gdańsk 20ft $1,200–4,800 / 40ft $1,600–6,800 / LCL $60–150；Antwerp 20ft $1,200–4,700 / 40ft $1,600–6,600 / LCL $60–150，MEDIUM）；rail/air/courier/DDP 无已验证 $ 数字 → 一律 LOW + request，零杜撰。VAT（PL 23% / BE 21%）、EU 统一关税 0–12%、€150/IOSS、EORI 均沿用已验证 europe-countries 数据。
+- **Engineering**：
+  - `src/data/sources.ts` 新增 2 个政府来源：`polish-customs`（Krajowa Administracja Skarbowa / KAS, podatki.gov.pl）+ `belgian-customs`（FPS Finance — AD&A, finances.belgium.be），并回填 countrySourceIds（poland→[eu-taric, polish-customs, port-gdansk]；belgium→[eu-taric, belgian-customs, port-antwerp]）。
+  - `src/pages/europe/index.astro` 加 2 张内链卡片（line 141/146）。
+  - 复用既有组件（BaseLayout/Breadcrumb/DataTable/FaqBlock/ConfidenceBadge/SourceList/Card/Cta），无新组件、无客户端 JS、无新依赖。
+- **QA**：`npm run build` **530 页零 error**（+2）；FAQ 15/14 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`13f1979 content(europe): add China-to-Poland and China-to-Belgium route pillar pages` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 走廊 Route Pillar 已覆盖全部 8 国 ✅；后续可做 **FCL vs LCL Europe 拆解**、**海运 vs 铁路成本对比数据页**、或 Europe 深度指南续（类比 GCC 的 Demurrage/Detention、Hidden Charges 页面）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
