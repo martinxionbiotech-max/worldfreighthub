@@ -2,6 +2,7 @@
 import { getStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import Card from '../../components/Card.astro';
 import { glossary } from '../../data/glossary';
 import { SITE_URL } from '../../site';
 
@@ -13,6 +14,10 @@ export function getStaticPaths() {
 }
 
 const { term } = Astro.props;
+
+const relatedTerms = term.related
+  .map((slug) => glossary.find((t) => t.slug === slug))
+  .filter((t) => t !== undefined);
 
 const schema = [
   {
@@ -26,6 +31,23 @@ const schema = [
         name: 'WorldFreightHub Freight Glossary',
         url: `${SITE_URL}/glossary/`,
       },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: `What is ${term.term}?`,
+          acceptedAnswer: { '@type': 'Answer', text: term.definition },
+        },
+        {
+          '@type': 'Question',
+          name: `Why does ${term.term} matter for China-to-GCC shipping?`,
+          acceptedAnswer: { '@type': 'Answer', text: term.whyItMatters },
+        },
+      ],
     },
   },
 ];
@@ -47,8 +69,39 @@ const schema = [
       />
       <h1>{term.term}</h1>
       <p class="lead">{term.definition}</p>
+      <span class="badge">{term.category}</span>
     </div>
   </div>
+
+  <section class="section container">
+    <h2>What it means</h2>
+    <p>{term.inDetail}</p>
+  </section>
+
+  <section class="section container">
+    <h2>Why it matters on the China–GCC route</h2>
+    <p>{term.whyItMatters}</p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Example</h2>
+      <p>{term.example}</p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related terms</h2>
+    {relatedTerms.length > 0 ? (
+      <div class="grid grid--3 mt-2">
+        {relatedTerms.map((t) => (
+          <Card title={t.term} description={t.definition} href={`/glossary/${t.slug}/`} />
+        ))}
+      </div>
+    ) : (
+      <p class="muted">No related terms.</p>
+    )}
+  </section>
 
   <section class="section container">
     <p>

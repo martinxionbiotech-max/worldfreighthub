@@ -116,6 +116,12 @@ export interface GlossaryTerm {
   slug: string;
   term: string;
   definition: string;
+  category: string;
+  inDetail: string;
+  whyItMatters: string;
+  example: string;
+  related: string[];
+  updated: string;
 }
 
 export interface FreightRate {
