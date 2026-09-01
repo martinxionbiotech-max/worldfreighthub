@@ -299,3 +299,20 @@
 - **QA**：`npm run build` **234 页零 error**；103 详情页独立复验；工作区干净。
 - **Git Commit**：`a60758c`（verified 分层）+ `e879f75`（103 家）。
 - **Next**：可选继续扩至 200（剩余目录 + Noon 中东仓储 + 伊朗/伊拉克专线）；更建议转向「对 97 家 unverified 逐一核执照」的 verified 提级，或开始 Cloudflare 部署。
+
+
+## 2026-09-01（执照核实批次 — verified 6→12 家）
+
+- **Tasks**：对 97 家 unverified 中「有官网」的 45 家做执照核实（批量抓官网首页，grep NVOCC/营业执照/FMC/FIATA/WIFFA/ISO/registration 关键词）。
+- **升级 6 家 verified**（有具体执照/认证证据）：
+  - STU Supply Chain —— NVOCC **MOC-NV09192**（交通部）+ FMC **030310**（美国）✅ 最硬
+  - TJ Freight Forwarder —— 交通部 NVOCC 注册 ✅
+  - Shantou Logistics —— WIFFA 汕头港秘书长 ✅
+  - Tonlexing —— FMC compliant + Licensed NVOCC ✅
+  - DTFU Logistics —— FIATA + IATA 认证 ✅
+  - SEKO Logistics —— ISO 9001:2015 + ISO 13485 + FDA + CTPAT ✅
+- **修正**：Prodoer 的 prodoer.com 是待售域名（BrandBucket 停放页），非公司官网 → website 置空。
+- **诚实边界**：其余 91 家未升级——要么纯目录收录（无官网可查），要么仅「自报 ISO/WCA 会员」无具体编号（如 MOVFF 的 ISO 自报、ZMC 的 WCA 会员），不足以上升为「独立核实」。
+- **QA**：`npm run build` 234 页零 error；12 verified + 91 unverified。
+- **Git Commit**：`d890520`。
+- **Next**：要进一步核剩余 91 家，需接 Qichacha/天眼查/国家企业信用信息公示系统 API（或人工逐家查统一社会信用代码）；Web 抓取已到能力边界。
