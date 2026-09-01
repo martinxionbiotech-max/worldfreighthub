@@ -4,9 +4,10 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import Cta from '../../components/Cta.astro';
 import { gccPorts } from '../../data/gcc-ports';
+import { chinaPorts } from '../../data/china-ports';
 import { SITE_URL } from '../../site';
 
-const rows = gccPorts.map((port) => ({
+const chinaRows = chinaPorts.map((port) => ({
   port: { href: `/ports/${port.slug}/`, label: port.name },
   country: port.country,
   type: port.type === 'dry-port' ? 'Dry port' : 'Seaport',
@@ -14,7 +15,35 @@ const rows = gccPorts.map((port) => ({
   unlocode: port.unlocode ?? '—',
 }));
 
+const gccRows = gccPorts.map((port) => ({
+  port: { href: `/ports/${port.slug}/`, label: port.name },
+  country: port.country,
+  type: port.type === 'dry-port' ? 'Dry port' : 'Seaport',
+  operator: port.operator,
+  unlocode: port.unlocode ?? '—',
+}));
+
+const columns = [
+  { key: 'port', label: 'Port', type: 'link' },
+  { key: 'country', label: 'Country' },
+  { key: 'type', label: 'Type' },
+  { key: 'operator', label: 'Operator' },
+  { key: 'unlocode', label: 'UN/LOCODE' },
+];
+
 const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'China loading ports',
+      itemListElement: chinaPorts.map((port, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: port.name,
+        url: `${SITE_URL}/ports/${port.slug}/`,
+      })),
+    },
+  },
   {
     type: 'ItemList',
     data: {
@@ -31,32 +60,36 @@ const schema = [
 ---
 
 <BaseLayout
-  title="GCC Ports & Terminals"
-  description="Major seaports and dry ports across the Gulf Cooperation Council, from Jeddah to Khalifa bin Salman."
+  title="Ports & Terminals"
+  description="China loading ports and GCC seaports and dry ports served by the China freight corridor, from Shanghai to Jebel Ali."
   canonical={`${SITE_URL}/ports/`}
   schema={schema}
 >
   <div class="page-header">
     <div class="container">
       <Breadcrumb items={[{ label: 'Ports' }]} />
-      <h1>GCC ports & terminals</h1>
+      <h1>Ports & terminals</h1>
       <p class="lead">
-        Major seaports and dry ports served by the China freight corridor.
+        China loading ports and GCC destinations on the freight corridor.
       </p>
     </div>
   </div>
 
   <section class="section container">
+    <h2>China loading ports</h2>
     <DataTable
-      columns={[
-        { key: 'port', label: 'Port', type: 'link' },
-        { key: 'country', label: 'Country' },
-        { key: 'type', label: 'Type' },
-        { key: 'operator', label: 'Operator' },
-        { key: 'unlocode', label: 'UN/LOCODE' },
-      ]}
-      rows={rows}
-      caption="Port profiles — verify with the relevant authority before relying on these details."
+      columns={columns}
+      rows={chinaRows}
+      caption="China origin ports — verify with the relevant authority before relying on these details."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>GCC ports & terminals</h2>
+    <DataTable
+      columns={columns}
+      rows={gccRows}
+      caption="GCC destination ports — verify with the relevant authority before relying on these details."
     />
   </section>
 
