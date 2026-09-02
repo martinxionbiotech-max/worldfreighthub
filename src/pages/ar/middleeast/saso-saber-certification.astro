@@ -1,0 +1,728 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/saso-saber-certification/`;
+
+const saso: Source = {
+  id: 'saso',
+  name: 'SASO — Saudi Standards, Metrology and Quality Organization',
+  url: 'https://www.saso.gov.sa',
+  type: 'government',
+};
+const saber: Source = {
+  id: 'saber',
+  name: 'SABER — Saudi Product Safety Program platform',
+  url: 'https://saber.sa',
+  type: 'government',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT & conformity context',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia customs & SABER context',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const complianceSources: Source[] = [
+  saso,
+  saber,
+  fuxinCcpt,
+  sasoInfo,
+  commenda,
+  cargofromchina,
+];
+const ruleSources: Source[] = [fuxinCcpt, sasoInfo, saso, saber];
+const feeSources: Source[] = [saso, saber, fuxinCcpt, sasoInfo];
+const scopeSources: Source[] = [saso, saber, sasoInfo, commenda, cargofromchina];
+const processSources: Source[] = [
+  ...sourcesByIds(['zatca']),
+  saso,
+  saber,
+  fuxinCcpt,
+  sasoInfo,
+  cargofromchina,
+];
+
+const certFeeRows = [
+  {
+    item: 'التسجيل في منصة سابر / تسجيل المنتج',
+    who: 'هيئة SASO / منصة SABER',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر',
+    note: 'وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الاختبار المعملي للمنتج',
+    who: 'مختبر اختبار معتمد',
+    magnitude: 'يختلف حسب المنتج والمعيار وعدد الاختبارات',
+    note: 'وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    item: 'شهادة مطابقة المنتج (PC)',
+    who: 'منصة SABER / جهة تقييم المطابقة',
+    magnitude: 'لكل منتج؛ صلاحية ~ سنة واحدة',
+    note: 'الرسوم غير منشورة في اللقطة الموثقة — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+  {
+    item: 'شهادة مطابقة الشحنة (SC)',
+    who: 'منصة SABER',
+    magnitude: 'لكل شحنة / لكل إرسالية',
+    note: 'الرسوم غير منشورة في اللقطة الموثقة — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الفحص قبل الشحن / إعادة الفحص',
+    who: 'جهة الفحص',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر',
+    note: 'يُحتسب عند اشتراط الفحص أو اختياره',
+    confidence: 'LOW',
+  },
+  {
+    item: 'تعديل المستندات / إعادة الإصدار',
+    who: 'منصة SABER / مزود الخدمة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر',
+    note: 'يعتمد على نوع التعديل ومسار المعالجة',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم خدمات الوكيل / الاستشاري',
+    who: 'وكيل أو وسيط SABER',
+    magnitude: 'غير منشور — اطلب جدول رسوم مفصلاً',
+    note: 'يختلف نطاق الخدمة والرسوم حسب المزود',
+    confidence: 'LOW',
+  },
+];
+
+const certTimelineRows = [
+  {
+    step: 'تأكيد أن المنتج ضمن نطاق SABER',
+    when: 'قبل أي أمر شراء',
+    basis: 'التحقق من قائمة المنتجات الخاضعة للرقابة مقابل عائلة المنتج ورمز HS',
+    confidence: 'LOW',
+  },
+  {
+    step: 'تسجيل المستورد والمنتج على منصة SABER',
+    when: 'قبل الشحن',
+    basis: 'تسجيل المنتج على منصة SABER',
+    confidence: 'LOW',
+  },
+  {
+    step: 'اختبار المنتج وفقًا لمعيار SASO المطبق',
+    when: 'قبل تقديم طلب PC',
+    basis: 'اختبار معملي معتمد وفقًا للمعيار ذي الصلة',
+    confidence: 'LOW',
+  },
+  {
+    step: 'الحصول على شهادة مطابقة المنتج (PC)',
+    when: 'قبل الشحن',
+    basis: 'اختبار المنتج، ثم الفحص قبل الشحن؛ صلاحية ~ سنة واحدة، مرة واحدة لكل منتج',
+    confidence: 'LOW',
+  },
+  {
+    step: 'شحن البضائع واستلام بوليصة الشحن أو سند الشحن الجوي',
+    when: 'بعد الشحن',
+    basis: 'مستند النقل مطلوب لتأكيد حالة العبور',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'التقدم بطلب للحصول على شهادة مطابقة الشحنة (SC)',
+    when: 'بمجرد إصدار بوليصة الشحن أو سند الشحن الجوي',
+    basis: 'شهادة SC واحدة لكل شحنة / لكل إرسالية',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'استلام شهادة SC قبل وصول البضاعة',
+    when: 'قبل الوصول — إلزامي منذ 1 Jan 2025',
+    basis: 'أي شهادة SC تُقدم بعد الوصول تعتبر لاغية ويفشل التخليص الجمركي',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'تقديم البيان المسبق عبر منصة فسح مع إرفاق شهادة SC',
+    when: 'قبل التفريغ',
+    basis: 'بيان النافذة الموحدة السعودية مع إرفاق شهادة SC',
+    confidence: 'LOW',
+  },
+];
+
+const pcVsScRows = [
+  {
+    factor: 'ما الذي تشهد به',
+    pc: 'طراز المنتج أو رقم SKU',
+    sc: 'شحنة أو إرسالية محددة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'تُصدر لكل',
+    pc: 'منتج — مرة واحدة لكل منتج/طراز طالما كانت سارية',
+    sc: 'شحنة — مرة واحدة لكل إرسالية',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الصلاحية',
+    pc: 'حوالي سنة واحدة',
+    sc: 'مرتبطة بالشحنة؛ غير قابلة لإعادة الاستخدام',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'المستند المحفز',
+    pc: 'تقرير اختبار المنتج والفحص',
+    sc: 'بوليصة الشحن أو سند الشحن الجوي',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'متى يجب أن تكون سارية',
+    pc: 'قبل الشحن',
+    sc: 'قبل وصول البضاعة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'إعادة الاستخدام عبر الشحنات',
+    pc: 'نعم، طالما كانت سارية',
+    sc: 'لا — يلزم الحصول على SC جديدة لكل شحنة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'التكلفة',
+    pc: 'لكل منتج — اطلب عرض سعر',
+    sc: 'لكل شحنة — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+];
+
+const productScopeRows = [
+  {
+    category: 'المنتجات الكهربائية والإلكترونية',
+    examples: 'الكابلات، الشواحن، الإضاءة، المحولات، الأجهزة الصغيرة',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'الألعاب ومنتجات الأطفال',
+    examples: 'الألعاب، ألعاب الركوب، مستلزمات الأطفال المتعلقة بالسلامة',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'المنسوجات والملابس والأحذية',
+    examples: 'الملابس، المنسوجات المنزلية، الأحذية',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'مستحضرات التجميل والعناية الشخصية',
+    examples: 'العناية بالبشرة، العناية بالشعر، مستحضرات التجميل، العطور',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'مواد ملامسة الأغذية والمشروبات',
+    examples: 'التغليف، أدوات وحاويات ملامسة الأغذية',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'مواد البناء والسيراميك',
+    examples: 'البلاط، الأدوات الصحية، منتجات الأسمنت، التركيبات',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'الأجهزة المنزلية',
+    examples: 'أجهزة المطبخ والمنزل ضمن النطاق الخاضع للرقابة',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+  {
+    category: 'المكونات الميكانيكية وقطع غيار السيارات ومكونات السلامة',
+    examples: 'قطع الغيار والمكونات المتعلقة بالسلامة',
+    note: 'عائلة توضيحية — تأكد من النطاق الدقيق وفقًا للتوجيهات الرسمية من SASO/SABER',
+    confidence: 'LOW',
+  },
+];
+
+const certCostRows = [
+  {
+    layer: 'الإعداد الأولي للمنتج',
+    component: 'الاختبار المعملي + شهادة PC',
+    nature: 'ثابتة، مرة واحدة لكل منتج؛ تُجدد سنويًا تقريبًا',
+    driver: 'المعايير المطبقة، عدد الاختبارات، تعقيد المنتج',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'امتثال الشحنة',
+    component: 'شهادة SC لكل شحنة',
+    nature: 'متغيرة، مرة واحدة لكل إرسالية',
+    driver: 'كل بوليصة شحن أو سند شحن جوي يستلزم شهادة SC جديدة',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'الفحص',
+    component: 'الفحص قبل الشحن أو إعادة الفحص',
+    nature: 'متغيرة، تُحتسب عند الاشتراط',
+    driver: 'ملف مخاطر المنتج وما إذا كان الفحص مطلوبًا',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'دعم الوكيل',
+    component: 'رسوم وكيل SABER أو الاستشاري',
+    nature: 'متغيرة؛ لكل تقديم أو كرسوم شهرية',
+    driver: 'نطاق الخدمة وتسعير المزود',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'تكلفة التأخير',
+    component: 'التخزين أو غرامة التأخير أو رسوم الاحتجاز بعد فوات شهادة SC',
+    nature: 'متغيرة ويمكن تجنبها',
+    driver: 'تأخر شهادة SC أو نقص المستندات أو رفض الطلب',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'ما الفرق بين SASO وSABER؟',
+    a: 'SASO هي الهيئة السعودية للمواصفات والمقاييس والجودة — جهة المعايير وتقييم المطابقة. أما SABER فهي المنصة الإلكترونية لتقييم المطابقة المستخدمة لتسجيل المنتجات وإصدار الشهادات. عمليًا، تضع SASO المتطلبات الفنية بينما SABER هي النظام الذي تعمل من خلاله لإثبات مطابقة المنتج لهذه المتطلبات.',
+  },
+  {
+    q: 'ما هي شهادة مطابقة المنتج (PC) في SABER؟',
+    a: 'PC تعني شهادة مطابقة المنتج. تُصدر مرة واحدة لكل طراز منتج بعد الاختبار والفحص قبل الشحن عند الاقتضاء، وتكون صالحة لمدة سنة تقريبًا. تثبت أن المنتج نفسه مطابق لمعيار SASO المطبق.',
+  },
+  {
+    q: 'ما هي شهادة مطابقة الشحنة (SC) في SABER؟',
+    a: 'SC تعني شهادة مطابقة الشحنة. تُصدر لكل شحنة أو إرسالية وتربط بوليصة شحن أو سند شحن جوي محدد بشهادة PC سارية. كل شحنة جديدة تتطلب شهادة SC خاصة بها.',
+  },
+  {
+    q: 'هل أحتاج إلى كل من PC وSC؟',
+    a: 'للمنتجات الخاضعة للرقابة، نعم. تغطي PC المنتج وهي قابلة لإعادة الاستخدام طالما كانت سارية؛ بينما تغطي SC كل شحنة ولا يمكن إعادة استخدامها. عادةً تحتاج إلى PC قبل الشحن وSC قبل وصول البضاعة.',
+  },
+  {
+    q: 'ما الذي تغير في 1 January 2025 بخصوص SABER؟',
+    a: 'أصبح الحصول على SC إلزاميًا قبل وصول البضاعة. أي شهادة SC تُقدم بعد وصول البضاعة تعتبر لاغية، مما يعني فشل التخليص الجمركي. هذا غيّر الجدول الزمني العملي: SC أصبحت مهمة قبل الوصول، وليست شيئًا يمكن إصلاحه في الوجهة بعد التفريغ.',
+  },
+  {
+    q: 'متى يجب أن أتقدم بطلب للحصول على شهادة SC؟',
+    a: 'تقدم بالطلب بمجرد إصدار بوليصة الشحن أو سند الشحن الجوي، لأن SC مرتبطة بالشحنة ومستند النقل مطلوب لتأكيد حالة العبور. أكمل أعمال PC الخاصة بالمنتج قبل الشحن، ثم تقدم بطلب SC فور وجود مستند النقل واستلمها قبل الوصول.',
+  },
+  {
+    q: 'ماذا يحدث إذا لم يتم الحصول على SC قبل الوصول؟',
+    a: 'يفشل التخليص الجمركي. منذ 1 January 2025، أي SC تُقدم بعد الوصول تعتبر لاغية، لذا لا يمكن تخليص الشحنة حتى يتم حل مشكلة المطابقة — مما يعني عادةً تكبد تكاليف التخزين وغرامات التأخير. هذه هي النقطة التشغيلية الأهم للبضائع الخاضعة للرقابة المتجهة إلى السعودية.',
+  },
+  {
+    q: 'ما هي المنتجات التي تتطلب شهادة SABER؟',
+    a: 'اللقطة البحثية الموثقة لا تحتوي على قائمة منتجات كاملة وموثوقة، لذا تعرض هذه الصفحة عائلات منتجات توضيحية فقط وتصنفها بثقة منخفضة: المنتجات الكهربائية والإلكترونية، الألعاب، المنسوجات، مستحضرات التجميل، مواد ملامسة الأغذية، مواد البناء، الأجهزة المنزلية وبعض مكونات السلامة. تأكد من منتجك بالضبط مقابل نطاق SABER الرسمي قبل الطلب.',
+  },
+  {
+    q: 'كم تبلغ صلاحية شهادة PC في SABER؟',
+    a: 'حوالي سنة واحدة، وفقًا للقطة البحثية الموثقة. نظرًا لأن الصلاحية حوالي سنة واحدة وأن PC تُصدر مرة واحدة لكل منتج، تابع تاريخ انتهاء الصلاحية قبل شحن طلب متكرر — فشهادة PC منتهية الصلاحية تمنع تقديم طلب SC للشحنة الجديدة.',
+  },
+  {
+    q: 'كم تبلغ تكلفة شهادة SASO/SABER؟',
+    a: 'اللقطة البحثية الموثقة لا تنشر مبالغ محددة للتسجيل أو الاختبار أو PC أو SC أو الفحص، لذا ترفض هذه الصفحة اختلاق رقم واحد لـ"رسوم SABER". تعامل مع هيكل التكلفة بثقة منخفضة واطلب عرض سعر مكتوبًا ومفصلاً من مزود SABER/SASO الخاص بك لمنتجك وحجم شحناتك.',
+  },
+  {
+    q: 'هل يمكن لوكيل الشحن التعامل مع SABER نيابة عني؟',
+    a: 'عمليًا، ينسق العديد من وكلاء الشحن أعمال PC وSC من خلال شركاء محليين، لكن يجب أن يكون هذا الترتيب صريحًا. أكد كتابيًا من المسؤول عن تسجيل المنتج والاختبار وصلاحية PC وتقديم SC قبل الوصول — خاصةً لأن فوات SC بعد 1 January 2025 يمنع التخليص الجمركي.',
+  },
+  {
+    q: 'ما هي الأسباب الأكثر شيوعًا لرفض أو فشل طلبات SABER؟',
+    a: 'أنماط الفشل التشغيلية الأكثر شيوعًا هي: غياب أو انتهاء صلاحية PC، تقديم SC بعد الوصول، تقرير اختبار من مختبر غير معتمد أو لا يطابق المعيار المطبق، عدم تطابق الطراز أو SKU بين PC وفاتورة الشحنة، رمز HS خاطئ، وغياب أو عدم تطابق تفاصيل بوليصة الشحن والمرسل إليه. هذه أنماط عملية من اللقطة البحثية، وليست قائمة رفض رسمية من SASO/SABER — تأكد من متطلبات التقديم الحالية مع SABER.',
+  },
+  {
+    q: 'هل SASO هي نفسها علامة G-Mark الخليجية؟',
+    a: 'لا، هما علامتا مطابقة منفصلتان. تغطي اللقطة البحثية SASO/SABER للسعودية ولا توثق متطلبات علامة G-Mark الخليجية، لذا تعامل مع أي مقارنة مع G-Mark على أنها خارج النطاق الموثق لهذه الصفحة وتأكد من العلامة المحددة المطلوبة لمنتجك مع الجهة المختصة.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'شهادة SASO وSABER في السعودية: PC مقابل SC والرسوم وقاعدة ما قبل الوصول لعام 2025 (August 2026)',
+      description:
+        'شرح SASO مقابل SABER: شهادة مطابقة المنتج (PC) مقابل شهادة مطابقة الشحنة (SC)، المنتجات التي تتطلب SABER، عملية التسجيل، قاعدة SC قبل الوصول منذ 1 Jan 2025، الرسوم وأسباب الرفض الشائعة.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="شهادة SASO وSABER في السعودية: PC مقابل SC والرسوم وقاعدة ما قبل الوصول لعام 2025 (August 2026)"
+  description="شرح SASO مقابل SABER: شهادة مطابقة المنتج (PC) مقابل شهادة مطابقة الشحنة (SC)، المنتجات التي تتطلب SABER، عملية التسجيل، قاعدة SC قبل الوصول منذ 1 Jan 2025، الرسوم وأسباب الرفض الشائعة."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'شهادة SASO وSABER' },
+        ]}
+      />
+      <span class="badge badge--amber">مُحدّث في August 2026</span>
+      <h1>شهادة SASO وSABER: PC مقابل SC وقاعدة ما قبل الوصول لعام 2025</h1>
+      <p class="lead">
+        الامتثال السعودي للمنتجات له اسمان غالبًا ما يخلط بينهما الشاحنون: <strong>SASO</strong> تضع
+        المعايير، بينما <strong>SABER</strong> هي المنصة الإلكترونية التي تثبت من خلالها المطابقة.
+        البضائع الخاضعة للرقابة تحتاج إلى <strong>PC</strong> لكل منتج و<strong>SC</strong> لكل شحنة —
+        ومنذ 1 January 2025، يجب الحصول على SC <strong>قبل وصول البضاعة</strong> وإلا فشل التخليص الجمركي.
+      </p>
+      <p class="small muted">
+        قاعدة SC قبل الوصول بثقة MEDIUM في اللقطة البحثية الموثقة. رسوم الشهادات والنطاق الدقيق للمنتجات
+        وتفاصيل أيام المعالجة لم تُحدد كميًا، لذا تم تصنيفها بثقة LOW وإرجاعها إلى التوجيهات الرسمية من SASO/SABER —
+        اطلب الأرقام الحالية لمنتجك.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">دور SASO</span>
+          <span class="fact-value">جهة المعايير <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">دور SABER</span>
+          <span class="fact-value">منصة تقييم المطابقة <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">صلاحية PC</span>
+          <span class="fact-value">~ سنة واحدة <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاعدة SC</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">رسوم PC / SC</span>
+          <span class="fact-value">اطلب عرض سعر <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">أيام المعالجة</span>
+          <span class="fact-value">اطلب عرض سعر <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. SASO مقابل SABER: الأولى تضع القواعد والأخرى تثبت التزامك بها</h2>
+    <p>
+      <strong>SASO</strong> — الهيئة السعودية للمواصفات والمقاييس والجودة — هي جهة المعايير وتقييم
+      المطابقة التي تحدد المتطلبات الفنية للبضائع الخاضعة للرقابة.
+      <strong>SABER</strong> هي منصة برنامج السلامة السعودي للمنتجات حيث يسجل المستوردون والمصنعون
+      المنتجات ويديرون أعمال المطابقة ويحصلون على الشهادات التي تتحقق منها الجمارك عند التخليص.
+    </p>
+    <p>
+      النتيجة العملية هي أن "الحصول على SASO" هو في الواقع مهمة ذات مسارين: تأكد من أن المنتج يفي
+      بمعيار SASO المطبق، ثم أكمل سير عمل منصة SABER — تسجيل المنتج، أدلة الاختبار، <strong>PC</strong>
+      للمنتج و<strong>SC</strong> للشحنة. الشهادة ليست ختمًا واحدًا؛ إنها سلسلة يجب أن تكتمل قبل وصول
+      البضاعة إلى الحدود السعودية.
+    </p>
+    <p class="small muted">
+      التقسيم بين SASO/SABER هو سياق تشغيلي من اللقطة البحثية ويصنف بثقة LOW لتفاصيل المنصة الدقيقة —
+      تحقق من سير العمل الحالي مقابل التوجيهات الرسمية من SASO وSABER.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. رسوم الشهادات: ما تدعمه اللقطة الموثقة فعليًا</h2>
+      <p>
+        تؤكد اللقطة البحثية الهيكل — التسجيل والاختبار وPC لكل منتج وSC لكل شحنة — لكنها لا تنشر
+        مبالغ محددة. لذلك ترفض هذه الصفحة اختلاق رقم واحد لـ"تكلفة شهادة SABER". اطلب جدول رسوم مفصلاً
+        لمنتجك.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'عنصر الرسوم' },
+          { key: 'who', label: 'الجهة التي تفرضها' },
+          { key: 'magnitude', label: 'النطاق التقريبي' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={certFeeRows}
+        caption="جميع الرسوم بثقة LOW لأن اللقطة البحثية الموثقة لم تنشر مبالغ محددة. اطلب عرض سعر مكتوبًا ومفصلاً وفقًا للتوجيهات الرسمية من SASO/SABER."
+      />
+      <SourceList locale={locale} sources={feeSources} title="المصادر — رسوم SABER/SASO" />
+
+      <div class="note mt-2">
+        <strong>اطلب هذه البنود في عرض سعر واحد:</strong> تسجيل المنتج، الاختبار المعملي، إصدار PC
+        وصلاحيتها، SC لكل شحنة، أي فحص أو إعادة فحص، رسوم التعديل، ورسوم الوكيل أو الاستشاري — بالإضافة
+        إلى من يتحمل التكلفة إذا تطلب الأمر إعادة اختبار أو إعادة فحص.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. الجدول الزمني للشهادة الذي يجب أن يكتمل قبل الوصول</h2>
+    <p>
+      قاعدة 1 January 2025 تغير مكان أعمال الامتثال. قبل ذلك التاريخ، كان بإمكان الشاحن أن يفكر في
+      ترتيب SC في الوجهة؛ الآن يجب أن تكون SC بحوزته قبل وصول البضاعة. لذلك يعمل الجدول الزمني أدناه
+      بالعكس من تاريخ الوصول.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'step', label: 'الخطوة' },
+        { key: 'when', label: 'التوقيت' },
+        { key: 'basis', label: 'ما تعتمد عليه' },
+        { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+      ]}
+      rows={certTimelineRows}
+      caption="قاعدة SC قبل الوصول ومحفز بوليصة الشحن/سند الشحن الجوي بثقة MEDIUM من اللقطة البحثية. أيام المعالجة الدقيقة وتفاصيل المنصة بثقة LOW — تأكد مع SABER مبكرًا."
+    />
+    <SourceList locale={locale} sources={processSources} title="المصادر — الجدول الزمني للشهادة والتخليص" />
+
+    <div class="note mt-2">
+      <strong>خطط بالعكس، وليس للأمام:</strong> ثبّت PC واختبار المنتج قبل الشحن، وتقدم بطلب SC بمجرد
+      وجود بوليصة الشحن أو سند الشحن الجوي، واترك وقتًا إضافيًا للفحص أو تصحيح المستندات قبل وصول
+      البضاعة. الرحلة البحرية ليست وقتًا فارغًا للأوراق — إنها الموعد النهائي لـ SC.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. PC مقابل SC: الشهادتان في مقارنة واحدة</h2>
+      <p>
+        PC وSC غير قابلتين للتبادل. PC تثبت أن المنتج مطابق؛ SC تثبت أن هذه الشحنة المحددة مغطاة
+        بشهادة PC سارية. الخلط بينهما هو الطريقة الأكثر شيوعًا للوصول بشهادة منتج تبدو سارية
+        ومع ذلك يفشل التخليص الجمركي.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'pc', label: 'PC — مطابقة المنتج' },
+          { key: 'sc', label: 'SC — مطابقة الشحنة' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={pcVsScRows}
+        caption="PC = المنتج، حوالي سنة، قابلة لإعادة الاستخدام. SC = الشحنة، استخدام واحد، مرتبطة ببوليصة الشحن/سند الشحن الجوي ومطلوبة قبل الوصول."
+      />
+      <SourceList locale={locale} sources={ruleSources} title="المصادر — PC مقابل SC" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="PC هي الأصل المرتبط بالمنتج">
+          <ul>
+            <li>واحدة لكل طراز منتج أو SKU.</li>
+            <li>صالحة حوالي سنة؛ تحقق من انتهاء الصلاحية قبل طلب متكرر.</li>
+            <li>تُبنى من اختبار معتمد، ثم فحص قبل الشحن.</li>
+            <li>تُعاد استخدامها عبر الشحنات طالما كانت سارية.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="SC هي الحدث المرتبط بالشحنة">
+          <ul>
+            <li>واحدة لكل شحنة أو إرسالية.</li>
+            <li>مرتبطة ببوليصة شحن أو سند شحن جوي محدد.</li>
+            <li>يُقدم الطلب بعد إصدار مستند النقل.</li>
+            <li>يجب استلامها قبل الوصول — غير قابلة لإعادة الاستخدام أبدًا.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. المنتجات التي عادةً ما تكون ضمن النطاق</h2>
+    <p>
+      اللقطة البحثية الموثقة لا تحتوي على قائمة منتجات كاملة وموثوقة، لذا فإن الجدول أدناه توضيحي فقط.
+      تعامل مع كل عائلة بثقة LOW وتأكد من نطاق المنتج الدقيق مقابل قائمة المنتجات الخاضعة للرقابة
+      الحالية في SABER قبل الطلب.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'category', label: 'عائلة المنتج' },
+        { key: 'examples', label: 'أمثلة نموذجية' },
+        { key: 'note', label: 'متطلب التأكيد' },
+        { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+      ]}
+      rows={productScopeRows}
+      caption="عائلات منتجات توضيحية، وليست قائمة نطاق SABER رسمية. تأكد من التغطية الدقيقة وفقًا للتوجيهات الرسمية من SASO/SABER."
+    />
+    <SourceList locale={locale} sources={scopeSources} title="المصادر — نطاق المنتجات الخاضعة للرقابة" />
+
+    <div class="note mt-2">
+      <strong>تحقق من النطاق قبل تقديم عرض السعر:</strong> أرسل رمز HS وطراز المنتج والاستخدام المقصود
+      والمواصفات الفنية إلى مزود خدمة SABER الخاص بك واسأل عما إذا كان المنتج خاضعًا للرقابة، وما هو
+      معيار SASO المطبق، وما إذا كان الاختبار أو الفحص مطلوبًا.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. هيكل التكلفة: إعداد منتج ثابت بالإضافة إلى امتثال متغير لكل شحنة</h2>
+      <p>
+        تكلفة الشهادة ليست رقمًا واحدًا؛ إنها طبقات مع طبقة ثابتة مرتبطة بالمنتج وطبقة متغيرة مرتبطة
+        بالشحنة. يفصل الجدول أدناه الطبقات حتى تتمكن من توقع تكلفة الاستيراد المتكرر دون مفاجأة
+        بشهادة SC جديدة لكل إرسالية.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'layer', label: 'طبقة التكلفة' },
+          { key: 'component', label: 'المكوّن' },
+          { key: 'nature', label: 'ثابتة أو متغيرة' },
+          { key: 'driver', label: 'ما الذي يحددها' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={certCostRows}
+        caption="هيكل التكلفة بثقة LOW لأن اللقطة البحثية لم تنشر المبالغ. استخدمه لتنظيم عرض سعر مكتوب، وليس لتوقع سعر محدد."
+      />
+      <SourceList locale={locale} sources={feeSources} title="المصادر — هيكل تكلفة الشهادة" />
+
+      <div class="note mt-2">
+        <strong>التكلفة الخفية هي التأخير، وليس الشهادة.</strong> فوات SC أو رفض الطلب يوقف التخليص
+        في المحطة، حيث تتراكم رسوم التخزين أو غرامات التأخير أو رسوم الاحتجاز يوميًا. أرخص مسار
+        للشهادة هو الذي يكتمل قبل الوصول، وليس الذي لديه أقل رسوم تقديم.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. نقاط الامتثال التي يجب وضعها في الاعتبار</h2>
+
+    <h3>SASO وSABER ليسا نفس الشيء</h3>
+    <p>
+      SASO تحدد المعايير الفنية؛ SABER هي منصة تقييم المطابقة. حافظ على هذا التمييز عندما يقول مزود
+      الخدمة "موافقة SASO" — الناتج التشغيلي الذي تحتاجه عند التخليص هو PC وSC من SABER.
+    </p>
+
+    <h3>SC مهمة قبل الوصول منذ 1 January 2025</h3>
+    <p>
+      أي SC تُقدم بعد وصول البضاعة تعتبر لاغية ويفشل التخليص الجمركي. هذه هي نقطة الامتثال التي نادرًا
+      ما يغطيها المنافسون وسبب أن طلب SC يجب أن يكون مدفوعًا بتاريخ بوليصة الشحن أو سند الشحن الجوي،
+      وليس تاريخ الوصول.
+    </p>
+
+    <h3>صلاحية PC تحدد الطلبات المتكررة</h3>
+    <p>
+      PC صالحة حوالي سنة وتُصدر مرة واحدة لكل منتج. قبل شحنة متكررة، تأكد من أن PC لا تزال سارية؛
+      فشهادة PC منتهية الصلاحية تمنع SC وبالتالي تمنع التخليص الجمركي.
+    </p>
+
+    <h3>مستند النقل هو محفز، وليس إجراءً شكليًا</h3>
+    <p>
+      SC مرتبطة بالشحنة وتحتاج إلى بوليصة الشحن أو سند الشحن الجوي لتأكيد حالة العبور. أرسل مستند
+      النقل إلى معالج SABER فورًا، وليس بعد الإبحار.
+    </p>
+
+    <h3>أنماط الفشل الشائعة</h3>
+    <ul>
+      <li>غياب أو انتهاء صلاحية PC.</li>
+      <li>تقديم SC بعد الوصول.</li>
+      <li>تقرير اختبار من مختبر غير معتمد أو لا يطابق المعيار المطبق.</li>
+      <li>عدم تطابق الطراز أو SKU بين PC وفاتورة الشحنة.</li>
+      <li>رمز HS خاطئ أو غياب/عدم تطابق تفاصيل بوليصة الشحن والمرسل إليه.</li>
+    </ul>
+    <p class="small muted">
+      هذه أنماط تشغيلية من اللقطة البحثية، وليست قائمة رفض رسمية من SASO/SABER. تأكد من متطلبات
+      التقديم الحالية مع SABER.
+    </p>
+
+    <h3>فسح هي نقطة التقاء المطابقة بالجمارك</h3>
+    <p>
+      البيان الجمركي قبل الوصول يُقدم عبر منصة فسح مع إرفاق SC. المطابقة والجمارك مساران منفصلان
+      يلتقيان عند الإفراج: يجب أن يكتمل كلاهما قبل أن تغادر البضاعة المحطة.
+    </p>
+
+    <h3>الرسوم بثقة LOW — احصل عليها كتابيًا</h3>
+    <p>
+      رسوم التسجيل والاختبار وPC وSC والفحص والتعديل لم تُحدد كميًا في اللقطة الموثقة. تعامل مع أي
+      رقم واحد لـ"رسوم SABER" كمؤشر فقط واطلب جدول رسوم مكتوبًا ومفصلاً وفقًا للتوجيهات الرسمية من
+      SASO/SABER.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — امتثال SABER/SASO" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على دعم شهادات SABER PC وSC لشحنتك إلى السعودية"
+      text="أخبرنا عن منتجك ورمز HS وحالة الاختبار وتاريخ الشحن المخطط له، وسنوفر لك مزودين يمكنهم تقديم عرض سعر لـ PC وSC والتقديم قبل الوصول معًا."
+    />
+  </section>
+</BaseLayout>

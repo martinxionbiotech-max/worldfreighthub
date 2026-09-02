@@ -1,0 +1,806 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { gccPorts } from '../../../data/gcc-ports';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/hamad-port/`;
+const port = gccPorts.find((item) => item.slug === 'hamad');
+const unlocode = port?.unlocode ?? '—';
+
+const mwani: Source = {
+  id: 'mwani-hamad',
+  name: 'Mwani Qatar — Hamad Port',
+  url: 'https://www.mwani.com.qa/English/ports/hamadport/Pages/default.aspx',
+  type: 'port-authority',
+};
+const meed: Source = {
+  id: 'meed-hamad-opening',
+  name: 'MEED — Doha’s Hamad Port to open on 1 December',
+  url: 'https://www.meed.com/dohas-hamad-port-to-open-on-1-december/',
+  type: 'industry',
+};
+const constructionweek: Source = {
+  id: 'constructionweek-hamad',
+  name: 'Construction Week — Hamad Port container traffic transition',
+  url: 'https://www.constructionweekonline.com/projects-tenders/dohas-hamad-port-to-open-on-1-december',
+  type: 'industry',
+};
+const peninsula: Source = {
+  id: 'peninsula-qatar-ports',
+  name: 'The Peninsula — Qatar ports container throughput hit 1.46 million TEUs in 2025',
+  url: 'http://s.thepeninsula.qa/article/05/01/2026/qatars-ports-container-throughput-hit-146-million-teus-in-2025',
+  type: 'industry',
+};
+const chinabestfreight: Source = {
+  id: 'chinabestfreight-qatar',
+  name: 'China Best Freight — Shipping from China to Qatar',
+  url: 'https://www.chinabestfreight.com/region/middle-east/shipping-to-qatar.html',
+  type: 'industry',
+};
+const presou: Source = {
+  id: 'presou-qatar',
+  name: 'Presou — How much does it cost to ship from China to Qatar',
+  url: 'https://presou.com/how-much-does-it-cost-to-ship-from-china-to-qatar/',
+  type: 'industry',
+};
+const traddal: Source = {
+  id: 'traddal-qatar',
+  name: 'Traddal — Calculate duties and taxes for imports to Qatar',
+  url: 'https://traddal.com/resources/calculate-duties-taxes-imports-qatar',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-qatar-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port (typical 22 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const portSources = sourcesByIds(['qatar-customs']);
+const portFactSources: Source[] = [mwani, meed, constructionweek];
+const transitSources: Source[] = [wfhRouteData, chinabestfreight];
+const decisionSources: Source[] = [mwani, meed, chinabestfreight];
+const facilitySources: Source[] = [mwani, meed, peninsula];
+const costSources: Source[] = [...sourcesByIds(['qatar-customs']), traddal, presou];
+const complianceSources: Source[] = [...sourcesByIds(['qatar-customs']), traddal];
+const throughputSources: Source[] = [peninsula, mwani];
+
+const parameterRows = [
+  {
+    parameter: 'الدولة',
+    value: 'قطر',
+    note: 'عضو في مجلس التعاون الخليجي؛ سوق صغير مرتفع الدخل قائم على النفط والغاز',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'الساحل / المنطقة',
+    value: 'الخليج العربي، جنوب الدوحة',
+    note: 'مجمع مينائي متخصص في المياه العميقة',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'دور الميناء',
+    value: 'الميناء التجاري البحري الرئيسي لقطر',
+    note: 'استلم حركة البضائع التجارية من ميناء الدوحة القديم',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'المشغّل',
+    value: 'مواني قطر',
+    note: 'يُدار تحت إشراف وزارة المواصلات',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    value: unlocode,
+    note: 'رمز الميناء البحري المستخدم في بوليصة الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'العمليات / الافتتاح الرسمي',
+    value: 'العمليات اعتباراً من December 2016؛ الافتتاح الرسمي 5 September 2017',
+    note: 'البديل الحديث لحركة البضائع التجارية في ميناء الدوحة',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'مساحة الميناء',
+    value: '29 كم مربع',
+    note: 'مساحة كبيرة للميناء والخدمات اللوجستية على الساحل القطري',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'محطات الحاويات',
+    value: 'ثلاث محطات مخطط لها؛ محطتان قيد التشغيل بطاقة مثلى تبلغ 5M TEU/سنوياً',
+    note: 'الطاقة طويلة الأجل تتجاوز في النهاية 7.5M TEU/سنوياً',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'طاقة البضائع العامة',
+    value: '7M tonnes',
+    note: 'قدرة على مناولة البضائع السائبة والعامة',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'طاقة الحبوب',
+    value: '1M tonnes',
+    note: 'مناولة الحبوب السائبة في مجمع الميناء',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'طاقة محطة المركبات',
+    value: 'حوالي 500,000 مركبة/سنوياً',
+    note: 'قدرة على مناولة المركبات وRoRo',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'طاقة التفتيش الجمركي',
+    value: '5,600 حاوية/يومياً',
+    note: 'منطقة تفتيش سريع داخل منطقة الميناء',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'إجمالي موانئ قطر 2025',
+    value: 'حوالي 1.46M TEUs',
+    note: 'حصة ميناء حمد وتوزيع الشحن العابر أرقام من الصحافة التجارية — يُرجى التحقق مع مواني قطر',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'شنغهاي',
+    service: 'بحري من ميناء إلى ميناء',
+    transit: 'المدة النموذجية 22 days (نطاق 15–30 day)',
+    basis: 'بيانات مسار WorldFreightHub — يُرجى التحقق مع الناقل',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'نينغبو-تشوشان',
+    service: 'بحري من ميناء إلى ميناء',
+    transit: 'المدة النموذجية 22 days (نطاق 15–30 day)',
+    basis: 'بيانات مسار WorldFreightHub — يُرجى التحقق مع الناقل',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'شنتشن (يانتيان / شيكو)',
+    service: 'بحري من ميناء إلى ميناء',
+    transit: 'المدة النموذجية 22 days (نطاق 15–30 day)',
+    basis: 'بيانات مسار WorldFreightHub — يُرجى التحقق مع الناقل',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'ممر الصين ← قطر',
+    service: 'نطاق السوق البحري',
+    transit: '22–28 days',
+    basis: 'نظرة عامة على الشحن البحري إلى قطر من China Best Freight',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'ممر الصين ← قطر',
+    service: 'الشحن الجوي',
+    transit: '2–4 days',
+    basis: 'نظرة عامة على الشحن الجوي إلى قطر من China Best Freight',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    scenario: 'واردات صينية معبأة في حاويات إلى الدوحة وقطر',
+    bestChoice: 'ميناء حمد',
+    why: 'بوابة حديثة للحاويات والبضائع العامة؛ انتقلت الحركة التجارية من ميناء الدوحة',
+    confidence: 'HIGH',
+  },
+  {
+    scenario: 'ركاب السفن السياحية أو تطوير الواجهة البحرية القديمة',
+    bestChoice: 'ميناء الدوحة',
+    why: 'أُعيد تطويره كمحطة للسفن السياحية بعد انتقال حركة الحاويات',
+    confidence: 'HIGH',
+  },
+  {
+    scenario: 'بضائع حساسة للوقت أو خفيفة أو عالية القيمة',
+    bestChoice: 'مطار الدوحة / الشحن الجوي',
+    why: '2–4 days جواً، لكنه ليس قرار توجيه لميناء بحري',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'بضائع المشاريع أو المركبات أو الحبوب أو البضائع العامة',
+    bestChoice: 'ميناء حمد',
+    why: 'طاقة مخصصة للبضائع العامة والسائبة ومناولة المركبات',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'إعادة التصدير أو الخدمات اللوجستية المرتبطة بالمنطقة الحرة',
+    bestChoice: 'ميناء حمد + المنطقة الحرة المجاورة',
+    why: 'تشمل منطقة الميناء منطقة حرة مجاورة للأنشطة اللوجستية',
+    confidence: 'MEDIUM',
+  },
+];
+
+const facilityRows = [
+  {
+    facility: 'محطات الحاويات',
+    function: 'مناولة الحاويات في المياه العميقة عبر بوابة قطر',
+    note: 'محطتان قيد التشغيل حالياً؛ الطاقة المثلى 5M TEU/سنوياً',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'محطة البضائع العامة',
+    function: 'مناولة البضائع السائبة والعامة',
+    note: 'الطاقة 7M tonnes',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'مناولة الحبوب السائبة',
+    function: 'واردات الحبوب والتفريغ السائب',
+    note: 'الطاقة 1M tonnes',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'محطة المركبات',
+    function: 'قدرة على مناولة المركبات وRoRo',
+    note: 'الطاقة حوالي 500,000 مركبة سنوياً',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'منطقة التفتيش الجمركي',
+    function: 'فحص جمركي سريع وتخليص داخل منطقة الميناء',
+    note: 'الطاقة 5,600 حاوية/يومياً',
+    confidence: 'HIGH',
+  },
+  {
+    facility: 'المنطقة الحرة المجاورة',
+    function: 'أنشطة لوجستية وإعادة تصدير وصناعية مرتبطة بالميناء',
+    note: 'معاملة المنطقة الحرة تعتمد على قواعد المنطقة المحددة',
+    confidence: 'MEDIUM',
+  },
+  {
+    facility: 'الشبكة البرية الخلفية',
+    function: 'النقل بالشاحنات إلى الدوحة وعموم قطر',
+    note: 'قطر دولة متراصة؛ معظم عمليات التسليم النهائية ضمن مسافة برية قصيرة',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'رسوم الميناء والوجهة THC',
+    who: 'محطة ميناء حمد / مواني قطر',
+    magnitude: 'غير منشورة في البيانات الموثقة — يُرجى طلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التخليص الجمركي والوساطة',
+    who: 'الهيئة العامة للجمارك / مخلص جمركي مرخص',
+    magnitude: 'غير منشورة في البيانات الموثقة — يُرجى طلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الرسوم الجمركية على الواردات (الأساسية)',
+    who: 'الهيئة العامة للجمارك',
+    magnitude: '5% من قيمة CIF (التعريفة الجمركية الموحدة لدول مجلس التعاون)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'ضريبة القيمة المضافة العامة',
+    who: 'الإطار الضريبي القطري',
+    magnitude: 'لا توجد ضريبة قيمة مضافة عامة على الواردات في الإطار الحالي',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'غرامة التأخير (Demurrage)',
+    who: 'المحطة (بعد انتهاء المهلة المجانية)',
+    magnitude: 'رسوم يومية؛ المهلة المجانية تختلف حسب المحطة وخط الملاحة',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الاحتجاز (Detention)',
+    who: 'الناقل البحري (بعد انتهاء المهلة المجانية)',
+    magnitude: 'رسوم يومية؛ المهلة المجانية تختلف حسب الناقل',
+    confidence: 'LOW',
+  },
+  {
+    item: 'النقل البري الداخلي إلى الدوحة / قطر',
+    who: 'مشغّل نقل بري محلي',
+    magnitude: 'غير منشورة في البيانات الموثقة — يُرجى طلب عرض سعر الوجهة',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'مسار السفينة والشحن العابر',
+    effect: 'الخط المباشر يوفر الوقت؛ الحاوية المنقولة عبر ميناء وسيط تضيف نقطة مناولة',
+    direction: 'مدة النقل والمناولة متغيرة',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'حجم السوق القطري',
+    effect: 'حجم أقل من دبي أو المنطقة الشرقية السعودية يرفع تكلفة الشحنة الواحدة',
+    direction: 'ارتفاع التكلفة',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'بوابة تجارية واحدة',
+    effect: 'تركيز الحركة في ميناء حمد يمنح تركيزاً لكنه يقلل مرونة اختيار الميناء',
+    direction: 'التوجيه ثابت',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'المستندات وجاهزية النظام',
+    effect: 'المستندات المتأخرة أو الخاطئة تؤخر التخليص وتبدأ احتساب غرامة التأخير',
+    direction: 'زيادة مدة النقل والتكلفة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'فحص السلع المقيدة',
+    effect: 'متطلبات التصاريح قد تضيف وقتاً للتفتيش',
+    direction: 'زيادة مخاطر التخليص',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الانضباط في المهلة المجانية بالميناء',
+    effect: 'تُطبق غرامة التأخير ورسوم الاحتجاز بعد انتهاء المهلة المجانية',
+    note: 'احجز النقل البري قبل التفريغ',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'أين يقع ميناء حمد؟',
+    a: 'يقع ميناء حمد على ساحل الخليج العربي في قطر، جنوب الدوحة. وهو الميناء التجاري البحري الرئيسي للبلاد والوجهة للحاويات والبضائع العامة القادمة إلى قطر.',
+  },
+  {
+    q: 'ما هو رمز UN/LOCODE لميناء حمد؟',
+    a: 'رمز UN/LOCODE هو QAHMD. استخدمه في بوليصة الشحن والمستندات الجمركية عندما تكون الوجهة ميناء حمد.',
+  },
+  {
+    q: 'متى افتُتح ميناء حمد؟',
+    a: 'بدأت العمليات في December 2016، وتم الافتتاح الرسمي للميناء في 5 September 2017. وقد أُنشئ ليحل محل الدور التجاري لميناء الدوحة القديم.',
+  },
+  {
+    q: 'من يدير ميناء حمد؟',
+    a: 'تدير مواني قطر ميناء حمد تحت إشراف وزارة المواصلات. ويُعد الميناء حجر الأساس في نظام الموانئ التجارية الحديث في قطر.',
+  },
+  {
+    q: 'كم تبلغ مساحة ميناء حمد؟',
+    a: 'تغطي مساحة الميناء 29 كيلومتراً مربعاً. وتبلغ طاقته للبضائع العامة 7 million tonnes، وطاقة الحبوب 1 million tonnes، ومحطة مركبات تستوعب حوالي 500,000 مركبة سنوياً.',
+  },
+  {
+    q: 'ما هي طاقة ميناء حمد للحاويات؟',
+    a: 'لدى ميناء حمد ثلاث محطات حاويات مخطط لها، مع تشغيل محطتين حالياً بطاقة مثلى تبلغ 5 million TEU سنوياً. ومن المخطط أن تتجاوز طاقته طويلة الأجل 7.5 million TEU سنوياً.',
+  },
+  {
+    q: 'ما الفرق بين ميناء حمد وميناء الدوحة؟',
+    a: 'كان ميناء الدوحة هو الميناء التجاري القديم لقطر. انتقلت حركة الحاويات والبضائع العامة إلى ميناء حمد الجديد، ومنذ ذلك الحين أُعيد تطوير ميناء الدوحة للاستخدام السياحي والواجهة البحرية. يجب حجز شحنات الحاويات الصينية الجديدة إلى ميناء حمد.',
+  },
+  {
+    q: 'كم تستغرق مدة النقل البحري من الصين إلى ميناء حمد؟',
+    a: 'تسجل بيانات مسار WorldFreightHub مدة نموذجية تبلغ 22 days مع نطاق تخطيط 15–30 day من شنغهاي أو نينغبو-تشوشان أو شنتشن إلى ميناء حمد (ثقة MEDIUM). ويقدم دليل سوق ثانوي نطاقاً أوسع يتراوح بين 22 و28 يوماً للشحن البحري إلى قطر (ثقة LOW). يُرجى التحقق مع الناقل قبل الاعتماد على الرقم.',
+  },
+  {
+    q: 'ما هو حجم مناولة ميناء حمد في 2025؟',
+    a: 'يضع تقرير من الصحافة التجارية إجمالي مناولة الحاويات في موانئ قطر عند حوالي 1.46 million TEUs في 2025، مع الإبلاغ عن أن الشحن العابر عبر ميناء حمد يمثل قرابة نصف حجم الحاويات في البلاد. التوزيع الخاص بالميناء هو رقم ثانوي، لذا يُرجى التحقق من الإحصاءات الحالية مع مواني قطر.',
+  },
+  {
+    q: 'ما هي الرسوم الجمركية المطبقة على الواردات في ميناء حمد؟',
+    a: 'الرسوم الجمركية الأساسية على الواردات هي 5% من قيمة CIF بموجب التعريفة الجمركية الموحدة لدول مجلس التعاون الخليجي. لا توجد ضريبة قيمة مضافة عامة على الواردات في الإطار الحالي في قطر. قد تخضع سلع محددة لبنود رسوم مختلفة، وقد تكون منتجات التبغ والكحول مقيدة بشدة.',
+  },
+  {
+    q: 'ما هي المستندات المطلوبة للتخليص الجمركي في ميناء حمد؟',
+    a: 'المجموعة القياسية هي الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ، مع معلومات صحيحة عن رمز HS وبلد المنشأ. قد تتطلب السلع المقيدة ترخيص استيراد أو تصريحاً قبل الوصول.',
+  },
+  {
+    q: 'كيف تعمل غرامة التأخير ورسوم الاحتجاز في ميناء حمد؟',
+    a: 'تُفرض غرامة التأخير (Demurrage) من قبل المحطة عندما تبقى الحاوية المستوردة داخل الميناء بعد المهلة المجانية التالية للتفريغ. وتُفرض رسوم الاحتجاز (Detention) من قبل الناقل عندما تبقى الحاوية خارج الميناء بعد المهلة المجانية. أكمل التخليص في النظام واحجز النقل البري قبل التفريغ لتجنب كليهما.',
+  },
+  {
+    q: 'هل توجد منطقة حرة في ميناء حمد؟',
+    a: 'نعم، يوجد في ميناء حمد منطقة حرة مجاورة مرتبطة بمنطقة الميناء. تعتمد معاملة المنطقة الحرة على قواعد المنطقة المحددة والنشاط التجاري، لذا يُرجى تأكيد الشروط مع مواني قطر والجهة المختصة قبل افتراض أي ميزة جمركية أو تنظيمية.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'ميناء حمد قطر — دليل الشحن من الصين: البوابة الحديثة، مدة النقل والتخليص (September 2026)',
+      description:
+        'معلومات استخباراتية عن ميناء حمد للشحن من الصين: البوابة التجارية الحديثة لقطر، تشغيل مواني قطر، بديل ميناء الدوحة، نوافذ النقل من الصين، مرافق الميناء وتخليص الرسوم الجمركية 5%.',
+      datePublished: '2026-09-01',
+      dateModified: '2026-09-01',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Hamad Port',
+      url: pageUrl,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Doha',
+        addressCountry: 'QA',
+      },
+      description:
+        'ميناء حمد هو الميناء التجاري البحري الرئيسي في قطر، ويقع جنوب الدوحة على ساحل الخليج العربي. تديره مواني قطر، وقد حل محل ميناء الدوحة كبوابة رئيسية للحاويات والبضائع العامة في البلاد.',
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="ميناء حمد قطر — دليل الشحن من الصين: البوابة الحديثة، مدة النقل والتخليص (September 2026)"
+  description="معلومات استخباراتية عن ميناء حمد للشحن من الصين: البوابة التجارية الحديثة لقطر، تشغيل مواني قطر، بديل ميناء الدوحة، نوافذ النقل من الصين، مرافق الميناء وتخليص الرسوم الجمركية 5%."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'ميناء حمد' },
+        ]}
+      />
+      <span class="badge badge--amber">محدّث September 2026</span>
+      <h1>ميناء حمد: دليل الشحن من الصين إلى البوابة التجارية الحديثة في قطر</h1>
+      <p class="lead">
+        صفحة معلومات استخباراتية للميناء موجهة للشاحنين الذين يوجهون بضائعهم من الصين إلى قطر.
+        تشرح هذه الصفحة ما هو ميناء حمد، ولماذا حل محل ميناء الدوحة للحركة التجارية، وكيف تدير
+        مواني قطر الميناء، والمدة التي يستغرقها النقل البحري من الصين، وشكل تكاليف الوجهة،
+        وقواعد تخليص الرسوم الجمركية 5% المطبقة عند البوابة.
+      </p>
+      <p class="small muted">
+        تفصل شارات الثقة بين حقائق الميناء الموثقة والأرقام السوقية والإرشادية لحجم المناولة.
+        تعامل مع كل ملاحظة حول مدة النقل أو الرسوم أو حجم المناولة بثقة LOW على أنها إرشادية،
+        وتحقق مع مواني قطر أو الناقل قبل الاعتماد عليها.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">دور الميناء</span>
+          <span class="fact-value">الميناء البحري الرئيسي <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">المشغّل</span>
+          <span class="fact-value">مواني قطر <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UN/LOCODE</span>
+          <span class="fact-value">{unlocode} <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الافتتاح</span>
+          <span class="fact-value">افتُتح رسمياً 2017 <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري من الصين</span>
+          <span class="fact-value">المدة النموذجية 22 days <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم الأساسية</span>
+          <span class="fact-value">5% من CIF <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. لماذا يهم ميناء حمد للشحن من الصين</h2>
+    <p>
+      ميناء حمد هو حجر الأساس في التجارة البحرية الحديثة لقطر. أُنشئ خصيصاً كمجمع مينائي
+      في المياه العميقة جنوب الدوحة، وتولى دور البضائع التجارية من ميناء الدوحة القديم،
+      الذي أُعيد توجيهه لاحقاً لاستخدامات السفن السياحية والواجهة البحرية. بالنسبة للشحن
+      البحري من الصين إلى قطر، يزيل هذا الانتقال أي غموض سابق في التوجيه: ميناء حمد هو
+      الوجهة، وميناء الدوحة ليس نقطة تفريغ صالحة للحاويات للشحنات التجارية الجديدة.
+    </p>
+    <p>
+      المنطق الاستراتيجي هو تحديث الميناء وملاءمة السوق معاً. قطر اقتصاد متراص مرتفع الدخل
+      مع طلب قوي مدفوع بالطاقة على بضائع المشاريع والآلات وقطع الغيار والمركبات والحبوب
+      والسلع الاستهلاكية. يركز ميناء حمد هذا الطلب في بوابة حديثة واحدة بطاقة مخصصة
+      للحاويات والبضائع العامة والسائبة والمركبات، بالإضافة إلى منطقة تفتيش جمركي مصممة
+      للفحص السريع للحاويات. وتمتد المنطقة الحرة المجاورة للميناء بهذه البوابة إلى أنشطة
+      لوجستية وإعادة تصدير وصناعية خفيفة.
+    </p>
+    <p>
+      لا توفر البيانات البحثية الموثقة تقسيمًا واضحًا خاصًا بميناء حمد لحاويات 2025.
+      لكنها تؤكد رقمًا إجماليًا من الصحافة التجارية يبلغ حوالي <strong>1.46 million TEUs عبر
+      موانئ قطر في 2025</strong>، مع الإبلاغ عن أن الشحن العابر عبر حمد يمثل قرابة نصف حجم
+      الحاويات في البلاد. هذا الرقم ثانوي ومصنف LOW في جدول المعايير؛ مواني قطر هي المصدر
+      الموثوق للرقم الحالي الخاص بالميناء.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. معايير ميناء حمد</h2>
+      <p>
+        استخدم هذا الجدول كمرجع توجيهي، وليس كضمان للطاقة. تاريخ الافتتاح والمشغّل ومساحة
+        الميناء وطاقات المرافق هي حقائق عالية الثقة من سلطة الميناء؛ إجمالي مناولة قطر لعام
+        2025 هو رقم من الصحافة التجارية مصنف LOW حتى تؤكد مواني قطر التوزيع الخاص بالميناء.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'parameter', label: 'المعيار' },
+          { key: 'value', label: 'القيمة' },
+          { key: 'note', label: 'ملاحظة تخطيطية' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={parameterRows}
+        caption="معايير الميناء — حقائق التشغيل والطاقة مصدرها مواني قطر؛ إجمالي مناولة 2025 رقم من الصحافة التجارية يجب التحقق منه مع مواني قطر."
+      />
+      <SourceList locale={locale} sources={portFactSources} title="المصادر — معايير ميناء حمد" />
+
+      <div class="note mt-2">
+        <strong>بضائع حساسة للطاقة:</strong> إذا كانت شحنتك تعتمد على رصيف معين أو غاطس أو قدرة
+        رافعة أو توفر معدات رفع ثقيل أو نافذة محطة، فاطلب الجدول الزمني الحالي والقيود من مواني
+        قطر أو وكيل الشحن قبل الحجز. لا توفر البيانات الموثقة قيودًا تشغيلية لكل رصيف على حدة.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. نوافذ النقل من الصين إلى ميناء حمد</h2>
+    <p>
+      عادة ما يُعرض النقل إلى حمد كنطاق زمني وليس كوعد. تضع بيانات المسار حمد خلف جبل علي
+      قليلاً على ممر الصين-الخليج: مدة نموذجية تبلغ 22 days مع نطاق تخطيط 15–30 day.
+      لا ينبغي الخلط بين رقم الميناء إلى الميناء ووقت التسليم من الباب إلى الباب إلى الدوحة،
+      الذي يضيف التفريغ والتخليص والنقل البري النهائي.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'origin', label: 'منشأ' },
+        { key: 'service', label: 'الخدمة' },
+        { key: 'transit', label: 'مدة النقل الإرشادية' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="نوافذ نقل إرشادية فقط — يُرجى التحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+    />
+    <SourceList locale={locale} sources={transitSources} title="المصادر — مدة النقل من الصين إلى ميناء حمد" />
+
+    <div class="note mt-2">
+      <strong>من ميناء إلى ميناء مقابل باب الدوحة:</strong> المدة النموذجية 22 days للرحلة
+      البحرية ليست إجمالي وقت التسليم. أضف تفريغ حمد والتخليص في النظام وأي تفتيش والنقل البري
+      النهائي قبل الالتزام بموعد تسليم للمرسل إليه في قطر.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. ميناء حمد مقابل ميناء الدوحة: البديل الحديث</h2>
+      <p>
+        انتقال حمد/الدوحة هو السياق الرئيسي لقرارات شحن قطر. ميناء حمد هو البوابة التجارية
+        الحديثة؛ ميناء الدوحة هو الاسم القديم الذي لا يزال يظهر في بعض مواد الشحن القديمة.
+        يقدم الجدول أدناه السيناريوهات الشائعة، وتلخص البطاقتان القاعدة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'scenario', label: 'السيناريو' },
+          { key: 'bestChoice', label: 'البوابة الأنسب' },
+          { key: 'why', label: 'السبب' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="قواعد توجيهية استرشادية، وليست جداول ناقل مضمونة. أكد المرحلة البرية والخدمة قبل اختيار بوابة التفريغ."
+      />
+      <SourceList locale={locale} sources={decisionSources} title="المصادر — سياق التوجيه حمد مقابل الدوحة" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="احجز إلى ميناء حمد عندما...">
+          <ul>
+            <li>تكون الشحنة حاويات أو بضائع عامة أو بضائع مشاريع أو مركبات أو حبوب.</li>
+            <li>تستورد من الصين إلى الدوحة أو أي وجهة قطرية.</li>
+            <li>تريد البوابة التجارية الحديثة لمواني قطر وارتباطها بالشبكة البرية.</li>
+            <li>تريد قدرة التفتيش السريع والقرب من المنطقة الحرة في الميناء.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="لا تحجز إلى ميناء الدوحة للحاويات التجارية عندما...">
+          <ul>
+            <li>تكون الشحنة واردات صينية جديدة معبأة في حاويات.</li>
+            <li>لا يزال وكيل الشحن يعرض توجيهًا قديمًا إلى "ميناء الدوحة" في عرض السعر.</li>
+            <li>تحتاج إلى محطة حاويات وطاقة تفتيش جمركي.</li>
+            <li>تريد نقطة تفريغ تعكس هيكل الموانئ القطري بعد 2017.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. المحطات والمرافق والشبكة البرية للدوحة</h2>
+    <p>
+      ميناء حمد مجمع متعدد أنواع البضائع وليس محطة واحدة. تغطي أرقام سلطة الميناء مناولة
+      الحاويات والبضائع العامة والحبوب السائبة والمركبات، بينما تمتد المنطقة الحرة المجاورة
+      بالبوابة إلى أنشطة لوجستية وإعادة تصدير. أكد تخصيص المحطة المحددة وتوفر الخدمة مع مواني
+      قطر للنداء الفعلي.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'facility', label: 'المرفق' },
+        { key: 'function', label: 'الوظيفة' },
+        { key: 'note', label: 'ملاحظة تخطيطية' },
+        { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="توجيه المرافق من مواني قطر، وليس دليلاً للمحطات. أكد المشغّل والرصيف وتفاصيل النقل الداخلي مع مواني قطر قبل الحجز."
+    />
+    <SourceList locale={locale} sources={facilitySources} title="المصادر — مرافق ومحطات ميناء حمد" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. هيكل التكاليف بعد الوصول في ميناء حمد</h2>
+      <p>
+        تحدد البيانات الموثقة الرسوم الجمركية القانونية 5% وموقف عدم وجود ضريبة
+        قيمة مضافة عامة، لكنها لا تنشر مبالغ رسوم الوجهة THC أو الوساطة أو غرامة التأخير أو
+        النقل البري الداخلي في حمد. تعامل مع البنود التشغيلية بثقة LOW واطلب جدول رسوم مفصلاً
+        قبل الحجز.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'مكون التكلفة' },
+          { key: 'who', label: 'الجهة المفروضة' },
+          { key: 'magnitude', label: 'النطاق الإرشادي' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="فقط الرسوم الأساسية (5% من CIF) وعدم وجود ضريبة قيمة مضافة عامة مذكوران من مصادر موثقة/ثانوية. الرسوم غير المحددة الكمية بثقة LOW لأن البيانات لم تنشر المبالغ."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — تكاليف الوجهة والجمارك في حمد" />
+
+      <h3 class="mt-3">غرامة التأخير ورسوم الاحتجاز</h3>
+      <p>
+        <strong>غرامة التأخير (Demurrage)</strong> تفرضها المحطة عندما تبقى الحاوية المستوردة
+        داخل الميناء بعد المهلة المجانية المسموحة بعد التفريغ. <strong>رسوم الاحتجاز
+        (Detention)</strong> يفرضها الناقل البحري عندما تبقى الحاوية خارج الميناء بعد المهلة
+        المجانية المسموحة بعد الاستلام. تختلف المهل المجانية والأسعار اليومية حسب الخط والمحطة
+        ولم تُنشر في البيانات البحثية، لذا اطلب دائمًا جدول الرسوم قبل الحجز.
+      </p>
+      <p>
+        الطريقة العملية لتجنب كليهما هي إنهاء التخليص قبل وصول السفينة: قدّم إقرار النظام مبكرًا،
+        وحافظ على جاهزية رمز HS والمستندات، وافحص السلع المقيدة، واحجز النقل البري قبل تفريغ
+        الحاوية.
+      </p>
+
+      <h3 class="mt-3">ما الذي يغير التكلفة والوقت</h3>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'effect', label: 'التأثير' },
+          { key: 'direction', label: 'الاتجاه' },
+          { key: 'confidence', label: 'مستوى الثقة', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="عوامل اتجاهية وليست أرقامًا كمية. تأثيرات البوابة الواحدة وجاهزية المستندات بثقة MEDIUM؛ التوجيه والرسوم الإضافية بثقة LOW."
+      />
+      <SourceList locale={locale} sources={[...costSources, ...facilitySources]} title="المصادر — عوامل التكلفة والنقل في حمد" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الامتثال في ميناء حمد: النظام والرسوم الجمركية والسلع المقيدة</h2>
+
+    <h3>الضرائب والرسوم الجمركية</h3>
+    <p>
+      الرسوم الجمركية الأساسية على الواردات في قطر هي <strong>5% من قيمة CIF</strong>
+      بموجب التعريفة الجمركية الموحدة لدول مجلس التعاون الخليجي، مع عدم وجود ضريبة قيمة مضافة
+      عامة على الواردات في الإطار الحالي. وهذا يجعل الهيكل القانوني أبسط من السعودية أو الإمارات:
+      بالنسبة لمعظم السلع، التكلفة الفعلية للوصول مع الرسوم فقط هي
+      <code>CIF × 1.05</code>. قد تخضع منتجات محددة لبنود رسوم مختلفة، كما أن واردات التبغ
+      والكحول مقيدة بشدة وقد تخضع لمعاملة أعلى بكثير حيثما يُسمح بها.
+    </p>
+
+    <h3>النظام بالترتيب الصحيح</h3>
+    <ol>
+      <li>صنّف البضائع برمز <strong>HS</strong> الصحيح قبل تقديم عرض السعر أو الحجز.</li>
+      <li>أكد تسجيل المستورد والتصاريح وأي موافقات للسلع المقيدة قبل الشحن.</li>
+      <li>جهّز الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ.</li>
+      <li>قدّم إقرار <strong>النظام</strong> الجمركي الإلكتروني قبل الوصول أو عند الوصول.</li>
+      <li>ادفع الرسوم الجمركية 5% المحتسبة على CIF، واجتز التفتيش إذا تم اختيارك، ثم أفرج عن الحاوية.</li>
+    </ol>
+
+    <h3>المستندات والتصنيف</h3>
+    <p>
+      المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ، مع
+      معلومات صحيحة عن رموز HS وبلد المنشأ. قد تتطلب السلع المقيدة ترخيص استيراد أو تصريحًا.
+      لاحظ أن <strong>ISF</strong> متطلب أمريكي ولا ينطبق على قطر؛ خطوة التقديم المسبق في قطر
+      هي إقرار النظام من خلال الهيئة العامة للجمارك.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — جمارك قطر وامتثال الميناء" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. حداثة البيانات ودورة التحديث الشهري</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">محدّث September 2026</span>. تتم إعادة
+      التحقق من معايير الميناء وحقائق الافتتاح وطاقات المرافق مقابل مواني قطر؛ ويتم إعادة
+      التحقق من إجمالي مناولة 2025 مقابل إصدارات الصحافة التجارية ومواني قطر. تتم إعادة
+      التحقق من أرقام النقل من الصين مقابل بيانات مسار WorldFreightHub كل شهر.
+    </p>
+    <p>
+      إذا توفر رصيف خاص بحمد أو مناولة محطة أو مبلغ رسوم وجهة أو جدول مهل مجانية من مواني
+      قطر أو ناقل، يتم تحديث الجدول ورفع شارة الثقة وتغيير تاريخ التعديل في بيانات الصفحة.
+      وحتى ذلك الحين، تظل الرسوم غير المحددة الكمية بثقة LOW مع ملاحظة طلب الجدول بدلاً من
+      ملئها بتقديرات.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر شامل من الصين إلى ميناء حمد"
+      text="أخبرنا بمنشأك وسلعتك وحجم الحاوية أو CBM ووجهتك النهائية في قطر، وسنوفر لك التواصل مع مزودين يمكنهم عرض الشحن البحري والتخليص في النظام والرسوم الجمركية 5% ورسوم الوجهة في حمد معًا."
+    />
+  </section>
+</BaseLayout>

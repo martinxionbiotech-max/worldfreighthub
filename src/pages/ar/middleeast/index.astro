@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import Card from '../../../components/Card.astro';
+import AdSlot from '../../../components/AdSlot.astro';
+import { gccCountriesAr } from '../../../data/countries.ar';
+import { t } from '../../../i18n/ui';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+// Pages translated to Arabic so far. Cards for untranslated pages keep pointing
+// to the English URL (matching the header-nav fallback) to avoid 404s.
+const translated = new Set<string>([]);
+
+const hrefFor = (slug: string) =>
+  translated.has(slug) ? `/ar/middleeast/${slug}/` : `/middleeast/${slug}/`;
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'دول الوجهة في الشرق الأوسط',
+      itemListElement: gccCountriesAr.map((country, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: country.name,
+        url: `${SITE_URL}/ar/countries/${country.slug}/`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="الشرق الأوسط — معلومات الشحن من الصين إلى الخليج"
+  description="WorldFreightHub الشرق الأوسط: معلومات شحن لممر الصين إلى الخليج، تغطي السعودية والإمارات وقطر والكويت وعُمان والبحرين."
+  canonical={`${SITE_URL}/ar/middleeast/`}
+  locale={locale}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: t(locale, 'nav.middleeast') }]} />
+      <h1>معلومات الشحن في الشرق الأوسط</h1>
+      <p class="lead">
+        نظرة مخصصة لممر الصين إلى الخليج، تغطي المسارات والموانئ والملفات الجمركية
+        للدول الست الأعضاء في مجلس التعاون الخليجي.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>الدول الوجهة</h2>
+    <div class="grid grid--3 mt-2">
+      {gccCountriesAr.map((country) => (
+        <Card
+          locale={locale}
+          title={country.name}
+          description={`العاصمة ${country.capital} · العملة ${country.currency} · ضريبة القيمة المضافة ${
+            country.vatRate === null ? t(locale, 'country.none') : `${country.vatRate}%`
+          }.`}
+          href={`/ar/countries/${country.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>ابدأ الاستكشاف</h2>
+      <div class="grid grid--3 mt-2">
+        <Card locale={locale} title="ركيزة مسار السعودية" description="أسعار FCL/LCL ومدد النقل ومتطلبات مطابقة SABER واختيار المسار بين جدة والدمام." href={hrefFor('shipping-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="الشحن DDP إلى السعودية" description="ما يشمله التسليم مع دفع الرسوم: الرسوم الجمركية وضريبة القيمة المضافة 15% ورسوم SABER وتكاليف الوجهة الخفية." href={hrefFor('ddp-shipping-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="الشحن FCL إلى السعودية" description="تخطيط حمولة 20GP/40GP/40HQ وVGM وحدود الوزن ودعم القرار بين FCL وLCL." href={hrefFor('fcl-shipping-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="الشحن LCL إلى السعودية" description="التسعير لكل CBM وتجميع الشحنات في محطة CFS ورسوم الوجهة الخفية ونقطة التعادل بين LCL وFCL." href={hrefFor('lcl-shipping-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="الشحن البحري إلى السعودية" description="نظرة عامة على FCL مقابل LCL وإطار القرار بين البحري والجوي ونوافذ النقل والمسارات والتكلفة الإجمالية للوصول." href={hrefFor('sea-freight-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="الشحن الجوي إلى السعودية" description="الوزن القابل للتحصيل مقابل الوزن الحجمي وأسعار استرشادية لكل كيلوغرام ونقل 3–7 أيام وقرار الجوي مقابل البحري." href={hrefFor('air-freight-from-china-to-saudi-arabia')} />
+        <Card locale={locale} title="التخليص الجمركي في السعودية" description="سير عمل منصة فسح والمستندات المطلوبة وتوقيت شهادة SABER SC والتخليص الذاتي مقابل المخلص والرسوم الخفية." href={hrefFor('saudi-customs-clearance')} />
+        <Card locale={locale} title="الرسوم الجمركية وضريبة القيمة المضافة في السعودية" description="كيف تتراكم رسوم 5% على قيمة CIF وضريبة القيمة المضافة 15%: معادلة التكلفة الإجمالية CIF × 1.05 × 1.15 ومثال تطبيقي." href={hrefFor('saudi-arabia-import-duty-vat')} />
+        <Card locale={locale} title="شهادة SASO وSABER" description="الفرق بين PC وSC وسير التسجيل خطوة بخطوة وقاعدة 2025 التي تقضي بالحصول على SC قبل وصول البضاعة." href={hrefFor('saso-saber-certification')} />
+        <Card locale={locale} title="ميناء جدة الإسلامي" description="معلومات بوابة البحر الأحمر: مواصفات الميناء والنقل من الصين واختيار المسار بين جدة والدمام والتكاليف والتخليص عبر SABER/ضريبة القيمة المضافة." href={hrefFor('jeddah-islamic-port')} />
+        <Card locale={locale} title="ميناء الملك عبدالعزيز بالدمام" description="معلومات بوابة الخليج العربي: المنطقة الشرقية والتحويل إلى ميناء الرياض الجاف وبضائع النفط والغاز والتكاليف والتخليص عبر SABER/ضريبة القيمة المضافة." href={hrefFor('king-abdulaziz-port-dammam')} />
+        <Card locale={locale} title="ميناء الرياض الجاف" description="معلومات مستودع الحاويات الداخلي في السعودية: التحويل بالسكك من الدمام والتخليص الداخلي في الرياض والنقل والتكاليف وامتثال SABER/ضريبة القيمة المضافة." href={hrefFor('riyadh-dry-port')} />
+        <Card locale={locale} title="جدة أم الدمام" description="أي ميناء سعودي يناسب شحنتك من الصين؟ البحر الأحمر مقابل الخليج العربي والنقل والتكلفة وإطار قرار النطاق الجغرافي." href={hrefFor('jeddah-vs-dammam')} />
+        <Card locale={locale} title="تكلفة الشحن إلى السعودية" description="تفصيل كامل للتكلفة الإجمالية: الشحن البحري/الجوي وTHC والمستندات والتخليص ورسوم SABER والرسوم 5% وضريبة القيمة المضافة 15%." href={hrefFor('shipping-cost-china-to-saudi-arabia')} />
+        <Card locale={locale} title="مدة النقل إلى السعودية" description="نوافذ النقل البحري بين جدة والدمام والفروق بين FCL وLCL والنقل الجوي/السريع والتأخيرات التي تطيل المدة." href={hrefFor('transit-time-china-to-saudi-arabia')} />
+        <Card locale={locale} title="ركيزة مسار الإمارات" description="أسعار FCL/LCL/الجوي والمسارات عبر جبل علي/خليفة/الشارقة وضريبة القيمة المضافة 5% والرسوم 5% وقرار البحري/الجوي/السريع." href={hrefFor('shipping-from-china-to-uae')} />
+        <Card locale={locale} title="الشحن DDP إلى الإمارات" description="ما يشمله التسليم مع دفع الرسوم: الرسوم 5% وضريبة القيمة المضافة 5% ومعاملة المناطق الحرة مقابل البر الرئيسي وتكاليف الوجهة الخفية." href={hrefFor('ddp-shipping-from-china-to-uae')} />
+        <Card locale={locale} title="الشحن FCL إلى الإمارات" description="تخطيط حمولة 20GP/40GP/40HQ ونقطة التعادل بين تكلفة الوحدة 20 قدم و40 قدم وVGM وحدود الوزن والتحويل عبر جبل علي." href={hrefFor('fcl-shipping-china-to-uae')} />
+        <Card locale={locale} title="الشحن LCL إلى الإمارات" description="التسعير لكل CBM وفخ الـ CBM القابل للتحصيل وتجميع الشحنات في جبل علي ورسوم الوجهة الخفية ونقطة التعادل بين LCL وFCL." href={hrefFor('lcl-shipping-china-to-uae')} />
+        <Card locale={locale} title="الشحن البحري إلى الإمارات" description="المسارات من شنغهاي/نينغبو/شنتشن إلى جبل علي والنقل النموذجي 21 يومًا وسلسلة FCL من 12 خطوة ورسوم THC وB/L." href={hrefFor('sea-freight-from-china-to-uae')} />
+        <Card locale={locale} title="الشحن الجوي إلى الإمارات" description="بوابات DXB/DWC وقاعدة القاسم 6000 للوزن القابل للتحصيل وأسعار استرشادية درهم/كغ ونقل 3–7 أيام وحدود الليثيوم." href={hrefFor('air-freight-from-china-to-uae')} />
+        <Card locale={locale} title="التخليص الجمركي في الإمارات" description="سير عمل نظام مرسال 2 والمستندات المطلوبة وتصنيف HS ومعاملة المناطق الحرة مقابل البر الرئيسي وأسباب الحجز الشائعة." href={hrefFor('uae-customs-clearance')} />
+        <Card locale={locale} title="الرسوم الجمركية وضريبة القيمة المضافة في الإمارات" description="كيف تتراكم رسوم 5% على قيمة CIF وضريبة القيمة المضافة 5%: معادلة التكلفة الإجمالية CIF × 1.05 × 1.05 وآلية الرسوم العكسية ومثال تطبيقي." href={hrefFor('uae-import-duty-vat')} />
+        <Card locale={locale} title="تكلفة الشحن إلى الإمارات" description="تفصيل كامل للتكلفة الإجمالية: الشحن البحري/الجوي وTHC والمستندات وتخليص مرسال 2 وفروق المناطق الحرة والرسوم 5% وضريبة القيمة المضافة 5%." href={hrefFor('shipping-cost-china-to-uae')} />
+        <Card locale={locale} title="مدة النقل إلى الإمارات" description="النافذة البحرية النموذجية لجبل علي (21 يومًا) وملاحظات عن ميناءي خليفة والشارقة والشحن الجوي 3–7 أيام والتأخيرات التي تطيل المدة." href={hrefFor('transit-time-china-to-uae')} />
+        <Card locale={locale} title="الشحن البحري أم الجوي إلى الإمارات" description="التكلفة والنقل 21 يومًا مقابل 3–7 أيام وCBM مقابل الوزن القابل للتحصيل وقاعدة القاسم 6000 ومخاطر الليثيوم وخطة هجينة بحري+جوي." href={hrefFor('sea-vs-air-freight-china-to-uae')} />
+        <Card locale={locale} title="ميناء جبل علي" description="معلومات مركز الحاويات في الشرق الأوسط: DP World والتكامل مع جافزا والنقل من الصين والمسارات الإماراتية والتخليص عبر الرسوم 5% وضريبة القيمة المضافة." href={hrefFor('jebel-ali-port')} />
+        <Card locale={locale} title="ميناء خليفة بأبوظبي" description="معلومات بوابة المياه العميقة في أبوظبي: محطة CSP شبه الآلية وKIZAD والمسارات بين أبوظبي ودبي والرسوم 5% وضريبة القيمة المضافة." href={hrefFor('khalifa-port-abu-dhabi')} />
+        <Card locale={locale} title="ميناء الشارقة (ميناء خالد)" description="معلومات بوابة الإمارة الشمالية: الرمز AESHJ والمسارات بين الشارقة وجبل علي وخليفة والنقل من الصين وقرار LCL/FCL ورسوم الوجهة الخفية." href={hrefFor('sharjah-port')} />
+        <Card locale={locale} title="أمازون FBA الإمارات ونون" description="الشحن من الصين إلى مراكز تلبية amazon.ae FBA ونون: FBA مقابل نون ومدد زمنية للمخزون والتجهيز/الملصقات وتفصيل التكلفة من المصنع إلى المركز." href={hrefFor('amazon-fba-uae-noon')} />
+        <Card locale={locale} title="ركيزة مسار قطر" description="المسارات من شنغهاي/نينغبو/شنتشن إلى ميناء حمد والدوحة: أسعار LCL/الجوي الاسترشادية والنقل البحري النموذجي 22 يومًا والرسوم 5% وبدون ضريبة قيمة مضافة عامة." href={hrefFor('shipping-from-china-to-qatar')} />
+        <Card locale={locale} title="ميناء حمد" description="بوابة قطر التجارية الحديثة: تشغيل موانئ قطر وإحلاله محل ميناء الدوحة ومرافق الميناء والنقل من الصين والتخليص عبر الرسوم 5%." href={hrefFor('hamad-port')} />
+        <Card locale={locale} title="جمارك قطر ورسوم الاستيراد" description="كيف تعمل رسوم 5% على قيمة CIF ووضع عدم وجود ضريبة قيمة مضافة عامة: تقديم نظام النديب ورموز HS والبضائع المقيّدة ومثال التكلفة CIF × 1.05." href={hrefFor('qatar-customs-duty')} />
+        <Card locale={locale} title="ركيزة مسار الكويت" description="اختيار المسار بين الشويخ والشعيبة والنقل البحري التقديري 24 يومًا والرسوم الخليجية 5% بدون ضريبة قيمة مضافة عامة وقرار البحري/الجوي/السريع." href={hrefFor('shipping-from-china-to-kuwait')} />
+        <Card locale={locale} title="جمارك الكويت ورسوم الاستيراد" description="التخليص في الكويت والرسوم الأساسية 5% على قيمة CIF بدون ضريبة قيمة مضافة عامة: المستندات ورموز HS والبضائع المقيّدة ومثال التكلفة CIF × 1.05." href={hrefFor('kuwait-customs-duty')} />
+        <Card locale={locale} title="موانئ الكويت" description="الشويخ (KWSWK) مقابل الشعيبة (KWSHB): أدوار الموانئ والمرافق ونوافذ النقل من الصين والتخليص عبر الرسوم 5% وقرار الاختيار بين الميناءين." href={hrefFor('kuwait-ports')} />
+        <Card locale={locale} title="تكلفة الشحن ومدة النقل إلى الكويت" description="تفصيل كامل للتكلفة الإجمالية من الصين إلى الكويت: النقل النموذجي للشويخ 24 يومًا والرسوم 5% على CIF بدون ضريبة قيمة مضافة عامة والرسوم الخفية وقرار FCL/LCL/الجوي." href={hrefFor('shipping-cost-transit-time-china-to-kuwait')} />
+        <Card locale={locale} title="تكلفة الشحن ومدة النقل إلى قطر" description="تفصيل كامل للتكلفة الإجمالية من الصين إلى قطر: مراجع البحري/الجوي والنقل النموذجي لميناء حمد 22 يومًا والرسوم 5% وتحسين التكلفة في سوق صغير." href={hrefFor('shipping-cost-transit-time-china-to-qatar')} />
+        <Card locale={locale} title="ركيزة مسار عُمان" description="اختيار المسار بين صحار وصلالة والنقل البحري التقديري لصحار 19 يومًا والرسوم الخليجية 5% مع ضريبة القيمة المضافة 5% وقرار البحري/الجوي/السريع." href={hrefFor('shipping-from-china-to-oman')} />
+        <Card locale={locale} title="جمارك عُمان ورسوم الاستيراد" description="التخليص في عُمان وتراكم الرسوم 5% على CIF مع ضريبة القيمة المضافة 5%: تقديم نظام بيان ورموز HS والبضائع المقيّدة ومثال التكلفة CIF × 1.1025." href={hrefFor('oman-customs-duty')} />
+        <Card locale={locale} title="موانئ عُمان" description="صحار (OMSOH) مقابل صلالة (OMSLL): أدوار الموانئ والمرافق ونوافذ النقل من الصين والتخليص عبر الرسوم 5% + ضريبة القيمة المضافة 5% وقرار الاختيار بين الميناءين." href={hrefFor('oman-ports')} />
+        <Card locale={locale} title="تكلفة الشحن ومدة النقل إلى عُمان" description="تفصيل كامل للتكلفة الإجمالية من الصين إلى عُمان: النقل النموذجي لصحار 19 يومًا والرسوم 5% على CIF مع ضريبة القيمة المضافة 5% والرسوم الخفية وقرار FCL/LCL/الجوي." href={hrefFor('shipping-cost-transit-time-china-to-oman')} />
+        <Card locale={locale} title="ركيزة مسار البحرين" description="المسار عبر ميناء خليفة بن سلمان والنقل البحري التقديري 22 يومًا والرسوم الخليجية 5% مع ضريبة القيمة المضافة 10% وقرار FCL/LCL/الجوي." href={hrefFor('shipping-from-china-to-bahrain')} />
+        <Card locale={locale} title="جمارك البحرين ورسوم الاستيراد" description="التخليص في البحرين وتراكم الرسوم 5% على CIF مع ضريبة القيمة المضافة 10%: التقديم الإلكتروني ورموز HS والبضائع المقيّدة ومثال التكلفة CIF × 1.155." href={hrefFor('bahrain-customs-duty')} />
+        <Card locale={locale} title="موانئ البحرين" description="معلومات الميناء الوحيد خليفة بن سلمان (BHKBS): النقل من الصين وسياق جسر الملك فهد والرسوم 5% + ضريبة القيمة المضافة 10% عند البوابة وقرار المسار." href={hrefFor('bahrain-ports')} />
+        <Card locale={locale} title="تكلفة الشحن ومدة النقل إلى البحرين" description="تفصيل كامل للتكلفة الإجمالية من الصين إلى البحرين: النقل النموذجي 22 يومًا والرسوم 5% + ضريبة القيمة المضافة 10% (CIF × 1.155) والرسوم الخفية وقرار FCL/LCL/الجوي." href={hrefFor('shipping-cost-transit-time-china-to-bahrain')} />
+        <Card locale={locale} title="غرامات التأخير ورسوم الاحتجاز من الصين إلى الخليج" description="غرامة التأخير مقابل رسوم الاحتجاز وفترة الإعفاء المجمعة وتوقيفات SABER والنطاق اليومي 2025 من 50 إلى أكثر من 300 دولار." href={hrefFor('demurrage-detention-china-to-gcc')} />
+        <Card locale={locale} title="الرسوم الخفية ورسوم الوجهة من الصين إلى الخليج" description="THC ورسوم خدمات الميناء والمستندات وISPS والمعاينة والسمسرة وSABER والتخزين وتفصيل تكلفة الوجهة الشاملة." href={hrefFor('hidden-charges-china-to-gcc')} />
+        <Card locale={locale} title="مسارات الشحن" description="ممرات الشحن من الصين إلى الخليج مع مدد نقل استرشادية." href="/ar/routes/" />
+        <Card locale={locale} title="الموانئ الخليجية" description="الموانئ البحرية والجافة الرئيسية في المنطقة." href="/ar/ports/" />
+        <Card locale={locale} title="احصل على عرض سعر" description="اطلب عرض سعر لشحنتك من الصين إلى الخليج." href="/get-quote/" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <AdSlot locale={locale} />
+  </section>
+</BaseLayout>

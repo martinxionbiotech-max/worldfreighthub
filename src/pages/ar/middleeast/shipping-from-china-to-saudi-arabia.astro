@@ -1,0 +1,704 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, sinoShipping];
+const transitSources: Source[] = [cargofromchina, ddpchain, freightos, chinaddpshipping];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  freightos,
+];
+
+const fclRows = [
+  {
+    container: 'FCL 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'غير منشور',
+    confidence: 'LOW',
+  },
+];
+
+const lclRows = [
+  {
+    volume: 'LCL 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / CBM',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    destination: 'جدة',
+    mode: 'بحري',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days متوسط (شنتشن–جدة)؛ ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'الدمام / ميناء الرياض الجاف',
+    mode: 'بحري',
+    transit: '30–45 days',
+    basis: 'Freightos شنغهاي–الرياض: FCL 30–40 days، LCL 32–45 days',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'جدة والدمام',
+    mode: 'جوي',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days؛ ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'شنغهاي',
+    throughput: '55.06M TEU (2025)',
+    note: 'الميناء رقم #1 عالميًا للحاويات للعام 16th على التوالي',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'نينغبو-تشوشان',
+    throughput: '43M TEU (2025)',
+    note: 'الميناء رقم #3 للحاويات؛ أول ميناء يتجاوز 1.4bn tonnes بضائع',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'شنتشن (يانتيان / شيكو)',
+    throughput: 'غير منشور في البيانات المتاحة',
+    note: 'بوابة جنوب الصين',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'الساحل / المنطقة',
+    jeddah: 'البحر الأحمر، غرب المملكة العربية السعودية',
+    dammam: 'الخليج العربي، شرق المملكة العربية السعودية',
+    riyadh: 'داخلية (يخدمها موانئ ساحلية)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الدور الرئيسي',
+    jeddah: 'البوابة الرئيسية للحاويات',
+    dammam: 'الميناء الرئيسي على الخليج ويخدم الرياض والمنطقة الشرقية والوسطى',
+    riyadh: 'ميناء جاف داخلي لتوزيع منطقة الرياض الحضرية',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'حالة الاستخدام النموذجية',
+    jeddah: 'المرسل إليهم في غرب ووسط المملكة',
+    dammam: 'المرسل إليهم في الرياض والمنطقة الشرقية',
+    riyadh: 'التوصيل حتى الباب حول الرياض',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'الشحن البحري (FCL أو LCL)',
+    who: 'وكيل الشحن / الناقل البحري',
+    magnitude: 'انظر جدول الأسعار',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المنشأ (الصين)',
+    who: 'وكيل الشحن / المحطات',
+    magnitude: 'غير منشورة في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المناولة في ميناء الوجهة ورسوم الميناء',
+    who: 'محطة جدة / الدمام',
+    magnitude: 'غير منشورة في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم التخليص الجمركي وخدمات البضائع',
+    who: 'المخلص الجمركي / وكيل سعودي',
+    magnitude: 'غير منشورة في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم مطابقة SABER / SASO',
+    who: 'منصة SABER / SASO + المختبرات',
+    magnitude: 'PC لكل منتج + SC لكل شحنة؛ غير منشورة — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+  {
+    item: 'غرامة التأخير (Demurrage)',
+    who: 'المحطة (بعد انتهاء فترة السماح)',
+    magnitude: 'رسوم يومية؛ تختلف فترة السماح حسب المحطة والخط الملاحي',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الاحتجاز (Detention)',
+    who: 'الناقل البحري (بعد انتهاء فترة السماح)',
+    magnitude: 'رسوم يومية؛ تختلف فترة السماح حسب الناقل',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الرسوم الجمركية (الأساسية)',
+    who: 'ZATCA',
+    magnitude: '5% من قيمة CIF (التعريفة الجمركية الموحدة لدول مجلس التعاون)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'ضريبة القيمة المضافة على الواردات',
+    who: 'ZATCA',
+    magnitude: '15% على قيمة CIF + الرسوم الجمركية',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'ضريبة السلع الانتقائية (إن وجدت)',
+    who: 'ZATCA',
+    magnitude: 'التبغ 100%؛ مشروبات الطاقة 50%؛ المشروبات الغازية 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'التأمين على البضائع (اختياري)',
+    who: 'شركة التأمين / وكيل الشحن',
+    magnitude: 'اختياري؛ عادةً نسبة صغيرة من قيمة البضاعة',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كم تستغرق مدة النقل البحري من الصين إلى السعودية؟',
+    a: 'تشير البيانات البحثية على مستوى الممر إلى حوالي 20–45 days. عادةً ما تُذكر جدة بحوالي 20–35 days، بينما تُذكر شحنات الدمام/ميناء الرياض الجاف بحوالي 30–45 days (Freightos FCL 30–40 days، LCL 32–45 days). هذه أرقام استرشادية، تحقق مع الناقل قبل الاعتماد عليها.',
+  },
+  {
+    q: 'كم تبلغ تكلفة الشحن من الصين إلى السعودية؟',
+    a: 'تشير بيانات السوق الاسترشادية لشهر August 2026 إلى أن FCL 20GP حوالي $3,333–$5,085, وFCL 40GP حوالي $4,623–$8,085, وLCL حوالي $267–$955 لكل CBM حسب الحجم. هذه بيانات مجمعة من منصات سوق عامة على أسس مسار/تاريخ مختلفة، وليست عروض أسعار من الناقلين — تحقق مع وكيل الشحن قبل الحجز.',
+  },
+  {
+    q: 'ما هي نسبة ضريبة القيمة المضافة على الواردات في السعودية؟',
+    a: 'ضريبة القيمة المضافة على الواردات السعودية هي 15%، سارية منذ 1 July 2020. تُحتسب على قيمة CIF بالإضافة إلى الرسوم الجمركية، وليس على سعر المنتج فقط.',
+  },
+  {
+    q: 'ما هي الرسوم الجمركية السعودية القياسية؟',
+    a: 'الرسوم الجمركية الأساسية هي 5% من قيمة CIF وفق التعريفة الجمركية الموحدة لدول مجلس التعاون. يمكن أن ترفع الرسوم الحمائية أو رسوم مكافحة الإغراق هذه النسبة إلى 15–25% على سلع محددة، لذا صنّف رمز HS بشكل صحيح قبل تقديم عرض السعر.',
+  },
+  {
+    q: 'ما الفرق بين شهادتي SABER PC وSC؟',
+    a: 'شهادة PC (شهادة مطابقة المنتج) تغطي منتجاً واحداً، وعادةً ما تكون صالحة لمدة عام تقريباً، وتتضمن اختبار المنتج متبوعاً بفحص ما قبل الشحن. أما شهادة SC (شهادة مطابقة الشحنة) فتُصدر لكل شحنة على حدة وتتطلب بوليصة الشحن لتأكيد أن البضاعة في طريقها.',
+  },
+  {
+    q: 'هل أحتاج إلى شهادة SABER SC قبل وصول بضاعتي؟',
+    a: 'نعم. منذ 1 January 2025، يجب الحصول على شهادة SC للسلع الخاضعة للتنظيم قبل وصول البضاعة. أي شهادة SC تُقدم بعد الوصول تُعتبر لاغية ويفشل التخليص، لذا ابدأ عملية SC بمجرد توفر بوليصة الشحن.',
+  },
+  {
+    q: 'أي ميناء سعودي يجب أن أستخدم — جدة أم الدمام؟',
+    a: 'جدة هي البوابة الرئيسية على البحر الأحمر وعادةً ما تناسب المرسل إليهم في غرب ووسط المملكة. الدمام هو الميناء الرئيسي على الخليج العربي وهو الخيار الطبيعي للرياض والمنطقة الشرقية، مع قيام ميناء الرياض الجاف بالتوزيع الداخلي بالسكك الحديدية أو الشاحنات. طابق الميناء مع منطقة المرسل إليه.',
+  },
+  {
+    q: 'ما هما غرامة التأخير ورسوم الاحتجاز، وكيف أتجنبهما؟',
+    a: 'تُفرض غرامة التأخير (Demurrage) من قبل المحطة عندما تبقى الحاوية داخل الميناء بعد فترة السماح؛ وتُفرض رسوم الاحتجاز (Detention) من قبل الناقل عندما تبقى الحاوية خارج الميناء بعد فترة السماح. تجنبهما من خلال تقديم الإقرار المسبق عبر FASAH، واستكمال شهادة SC قبل الوصول، وتجهيز المستندات، وحجز النقل البري قبل تفريغ الحاوية.',
+  },
+  {
+    q: 'ما هي المستندات المطلوبة للاستيراد إلى السعودية؟',
+    a: 'تشمل المجموعة القياسية: الفاتورة التجارية، بوليصة الشحن، قائمة التعبئة، شهادة المنشأ، وشهادة مطابقة SABER للسلع الخاضعة للتنظيم. تدير الجمارك السعودية نظام FASAH كنافذة موحدة تُستخدم للإقرارات المسبقة.',
+  },
+  {
+    q: 'هل أحتاج إلى رمز HS وإيداع ISF؟',
+    a: 'تحتاج إلى رمز HS صحيح لأن الرسوم الجمركية ومتطلبات المطابقة تعتمد على التصنيف. إيداع ISF (إيداع أمن الشحنات للمستورد) هو متطلب أمريكي ولا ينطبق على السعودية؛ الخطوة المكافئة في السعودية هي الإقرار الجمركي المسبق عبر FASAH.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن من الصين إلى السعودية: التكاليف ومدة النقل والامتثال (August 2026)',
+      description:
+        'معلومات استخباراتية موثقة لشحن البضائع لممر الصين-السعودية: ضريبة القيمة المضافة 15%، الرسوم الجمركية الأساسية 5%، قواعد SABER SC، مسار جدة مقابل الدمام، وأسعار استرشادية لـ FCL/LCL.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن من الصين إلى السعودية: التكاليف ومدة النقل والامتثال (August 2026)"
+  description="دليل موثق للشحن من الصين إلى السعودية: ضريبة القيمة المضافة 15%، الرسوم الجمركية الأساسية 5%، SABER SC قبل الوصول، مسار جدة مقابل الدمام، أسعار استرشادية لـ FCL/LCL ومدة النقل."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'الشحن من الصين إلى السعودية' },
+        ]}
+      />
+      <span class="badge badge--amber">مُحدّث August 2026</span>
+      <h1>الشحن من الصين إلى السعودية: التكاليف ومدة النقل والامتثال</h1>
+      <p class="lead">
+        موجز شحن من صفحة واحدة للمستوردين الذين ينقلون بضائعهم من شنغهاي أو نينغبو-تشوشان أو شنتشن
+        إلى جدة والدمام وميناء الرياض الجاف — مع أسعار استرشادية لـ FCL/LCL، وفترات النقل، ومسارات
+        الموانئ، وتفصيل التكلفة الإجمالية للوصول، وقواعد SABER/SASO التي تحدد ما إذا كانت بضاعتك ستُخلّص أم لا.
+      </p>
+      <p class="small muted">
+        شارات الثقة تفصل الأرقام الموثقة عن بيانات السوق الاسترشادية. تعامل مع كل سعر أو مدة نقل
+        بثقة منخفضة (LOW) كرقم استرشادي تحقق منه مع الناقل قبل الاعتماد عليه.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">ضريبة القيمة المضافة على الواردات السعودية</span>
+          <span class="fact-value">15% <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم الجمركية الأساسية</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاعدة SABER SC</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري</span>
+          <span class="fact-value">20–45 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل الجوي</span>
+          <span class="fact-value">2–10 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">شنغهاي 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. أسعار الشحن الاسترشادية من الصين إلى السعودية</h2>
+    <p>
+      تتغير الأسعار البحرية أسبوعياً حسب السعة والوقود والموسم الذروة والوضع الأمني في البحر الأحمر، لذلك
+      تصنف هذه الصفحة أرقام السوق عمداً على أنها منخفضة الثقة بدلاً من تقديمها كأسعار مضمونة. تستخدم
+      اللقطتان أدناه أسس مسار وتاريخ مختلفة وليس المقصود جمعهما معاً.
+    </p>
+    <p>
+      الطلب على هذا الممر يستمر في النمو: الموانئ السعودية التي تديرها موانئ تعاملت مع 8.3 million TEU في
+      2025، بزيادة 10.6% على أساس سنوي، بينما تظل شنغهاي (55.06M TEU) ونينغبو-تشوشان (43M TEU)
+      أكبر بوابات الحاويات في العالم. بالنسبة للمستوردين، هذا يعني أن عمق الجداول عادةً ما يكون جيداً —
+      لكن التسعير لا يزال يجب أن يُثبت بعرض سعر شامل، وليس بسعر إعلاني مبدئي.
+    </p>
+
+    <h3>حاوية كاملة (FCL)</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'container', label: 'الحاوية' },
+        { key: 'freightos', label: 'Freightos · شنغهاي–الرياض' },
+        { key: 'sino', label: 'Sino-shipping · الصين–السعودية (August 2026)' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="بيانات سوق استرشادية، وليست عروض أسعار من الناقلين. تحقق مع وكيل الشحن قبل الاعتماد على هذه الأرقام."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار FCL" />
+
+    <h3 class="mt-3">شحنة أقل من حاوية (LCL)</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'volume', label: 'الحجم' },
+        { key: 'total', label: 'الإجمالي (Freightos · شنغهاي–الرياض)' },
+        { key: 'perCbm', label: 'استرشادي لكل CBM' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={lclRows}
+      caption="تكلفة وحدة LCL تنخفض مع زيادة الحجم. أرقام استرشادية — تحقق مع وكيل الشحن."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار LCL" />
+
+    <div class="note mt-2">
+      <strong>لماذا النطاقات واسعة:</strong> تُسعّر LCL على أساس كل CBM مع حد أدنى للرسوم،
+      لذا فإن الشحنات الصغيرة (1 CBM) تحمل تكلفة وحدة أعلى بكثير من الأحجام المجمعة
+      (10 CBM). اطلب دائماً عرض السعر الشامل: الشحن البحري + رسوم المنشأ والوجهة + الرسوم الجمركية
+      + ضريبة القيمة المضافة، وليس فقط مرحلة الشحن البحري.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. مدة النقل حسب الميناء ووسيلة النقل</h2>
+      <p>
+        تختلف مدة النقل إلى السعودية أكثر مما يوحي به "متوسط" واحد. تُصل جدة من جهة البحر الأحمر، بينما
+        يقع الدمام وميناء الرياض الجاف على جهة الخليج ويضيفان مناولة داخلية لتسليمات الرياض. الأرقام أدناه
+        هي نتائج بحثية على مستوى الممر، وليست ضمانات جدول زمني.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'mode', label: 'وسيلة النقل' },
+          { key: 'transit', label: 'مدة النقل الاسترشادية' },
+          { key: 'basis', label: 'الأساس' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="فترات نقل استرشادية فقط — تحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+      />
+      <SourceList locale={locale} sources={transitSources} title="المصادر — مدة النقل" />
+
+      <div class="note mt-2">
+        <strong>معايير الشحن الجوي وDDP للسياق:</strong> نفس البيانات البحثية تسجل الشحن الجوي
+        حوالي 2–5 business days (cargofromchina) أو 6–10 days (ddpchain/Freightos)، و
+        من الباب إلى الباب DDP حوالي 30–35 days بحراً و10–15 days جواً (chinaddpshipping). جميعها
+        منخفضة الثقة واسترشادية، تحقق مع الناقل.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL مقابل LCL: أيهما يجب أن تحجز؟</h2>
+    <p>
+      القرار هو مسألة تكلفة إجمالية للوصول وأولوية التسليم، وليس مجرد مسألة حجم. FCL
+      يمنحك حاوية حصرية وعادةً تخليصاً أسرع وأبسط؛ LCL يتيح لك الدفع فقط عن
+      المساحة التي تستخدمها للأحجام الأصغر. استخدم جدول LCL لكل CBM أعلاه مقابل عرض سعر FCL
+      الشامل — عند أحجام CBM الأعلى توجد عادةً نقطة تقاطع حيث يصبح FCL الخيار
+      الأرخص لكل CBM.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale} title="اختر FCL عندما...">
+        <ul>
+          <li>تملأ بضاعتك معظم الحاوية أو تكون كثيفة وثقيلة.</li>
+          <li>تحتاج إلى مدة نقل يمكن التنبؤ بها وإدخال تخليص واحد.</li>
+          <li>البضائع هشة أو عالية القيمة أو لا ينبغي دمجها مع بضائع أخرى.</li>
+          <li>تنقل بضائع ضخمة أو خطرة تحتاج إلى وحدة مخصصة.</li>
+        </ul>
+      </Card>
+      <Card locale={locale} title="اختر LCL عندما...">
+        <ul>
+          <li>شحنتك صغيرة — عادةً أقل بكثير من حاوية كاملة.</li>
+          <li>تريد تجنب الدفع مقابل مساحة حاوية غير مستخدمة.</li>
+          <li>تختبر سوقاً أو تعيد التخزين تدريجياً مع وحدات SKU متعددة.</li>
+          <li>تقبل مناولة إضافية للتجميع/فك التجميع ومدة نقل أطول قليلاً.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      بالنسبة لـ LCL، تُجمّع البضائع في مستودع CFS في المنشأ وتُفك في CFS في الوجهة،
+      لذا يشمل وقت من الباب إلى الباب مناولة إضافية في كلا الطرفين. هذه المناولة هي السبب في أن LCL
+      ليس دائماً أبطأ بنفس الهامش في كل ميناء — اسأل وكيل الشحن عما إذا كان يدير تجميعاً مباشراً
+      أو عبر التحويل قبل مقارنة LCL مع FCL.
+    </p>
+
+    <p class="mt-2">
+      لا توجد نقطة تعادل واحدة موثقة بـ CBM في البيانات البحثية، لذا اطلب من وكيل الشحن
+      عرضي سعر: عرض LCL بحجمك الفعلي وعرض FCL شاملاً قبل اتخاذ القرار. نقطة التقاطع
+      تعتمد على المسار والرسوم الإضافية ورسوم الوجهة — وليس على حجم الحاوية فقط.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. الموانئ: شنغهاي ونينغبو-تشوشان وشنتشن إلى جدة والدمام وميناء الرياض الجاف</h2>
+      <p>
+        أكبر ثلاث بوابات حاويات في الصين ترسو على هذا الممر. شنغهاي ونينغبو-تشوشان
+        هما الرائدان في حجم المناولة، بينما شنتشن (يانتيان/شيكو) هي خيار جنوب الصين.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'port', label: 'الميناء الصيني' },
+          { key: 'throughput', label: 'حجم مناولة 2025' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="أرقام شنغهاي ونينغبو-تشوشان موثقة؛ حجم مناولة شنتشن لم يُذكر في البيانات البحثية."
+      />
+      <SourceList locale={locale} sources={primaryPortSources} title="المصادر — الموانئ الصينية" />
+
+      <h3 class="mt-3">موانئ الوجهة السعودية</h3>
+      <p>
+        الموانئ السعودية التي تديرها موانئ تعاملت مع <strong>8.3 million TEU في 2025</strong> (+10.6% على أساس
+        سنوي)، وهو رقم بثقة متوسطة من الصحافة التجارية لأن mawani.gov.sa لم يكن متاحاً
+        أثناء البحث. تمتلك السعودية تسعة موانئ رئيسية (ستة تجارية وثلاثة صناعية)؛
+        جدة والدمام هما الميناءان الأكثر أهمية لمعظم الواردات الصينية.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'jeddah', label: 'جدة' },
+          { key: 'dammam', label: 'الدمام' },
+          { key: 'riyadh', label: 'ميناء الرياض الجاف' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="أدوار الموانئ هي نتائج مصادر ثانوية؛ تحقق من المسار مع وكيل الشحن."
+      />
+      <SourceList locale={locale}
+        sources={[...primaryPortSources, worldcargonews]}
+        title="المصادر — الموانئ السعودية"
+      />
+
+      <div class="note mt-2">
+        <strong>جدة مقابل الدمام في سطر واحد:</strong> اختر جدة للمرسل إليهم في غرب ووسط
+        المملكة، والدمام (ثم ميناء الرياض الجاف بالسكك الحديدية أو الشاحنات) للمرسل إليهم في الرياض
+        والمنطقة الشرقية. أكد المرحلة الداخلية النهائية والتكلفة قبل اختيار ميناء التفريغ.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. التكلفة الإجمالية للوصول: الرسوم التي يتجاهلها المنافسون</h2>
+    <p>
+      السعر البحري هو سطر واحد فقط من التكلفة الإجمالية للوصول. غرامة التأخير ورسوم الاحتجاز ورسوم
+      المناولة ورسوم التخليص ورسوم مطابقة SABER هي التكاليف التي تفاجئ المستوردين لأول مرة — والسبب
+      في أن WorldFreightHub تتعامل مع "الشامل" باعتباره رقم المقارنة الوحيد المفيد.
+    </p>
+
+    <p>
+      <strong>رسوم المناولة في المحطة (THC)</strong> تُفرض في كلا الطرفين لنقل الحاوية
+      عبر المحطة، بينما يمكن أن تشمل رسوم الوجهة السعودية أيضاً رسوم خدمة البضائع،
+      ومناولة التفتيش الجمركي ورسوم التسليم/التخليص. رسوم مطابقة SABER منفصلة
+      مرة أخرى: عادةً ما تدفع مقابل اختبار المنتج وشهادة PC لكل منتج، ثم SC لكل شحنة.
+      لم تُنشر أي من مبالغ رسوم الوجهة هذه في البيانات البحثية الموثقة، لذا اطلب من
+      وكيل الشحن تفصيلها كتابياً.
+    </p>
+
+    <h3>غرامة التأخير ورسوم الاحتجاز</h3>
+    <p>
+      <strong>غرامة التأخير (Demurrage)</strong> تُفرض من قبل المحطة عندما تبقى الحاوية المستوردة داخل
+      الميناء بعد فترة السماح المسموحة بعد التفريغ. <strong>رسوم الاحتجاز (Detention)</strong> تُفرض من قبل
+      الناقل البحري عندما تبقى الحاوية خارج الميناء بعد فترة السماح المسموحة بعد
+      الاستلام. تختلف فترات السماح والأسعار اليومية حسب الخط والمحطة ولم
+      تُنشر في البيانات البحثية الموثقة، لذا اطلب دائماً جدول الرسوم قبل الحجز.
+    </p>
+    <p>
+      الطريقة العملية لتجنبهما هي إنهاء التخليص قبل وصول السفينة: قدم
+      الإقرار المسبق عبر FASAH، واحصل على SABER SC قبل الوصول (إلزامي منذ 1 January
+      2025)، وجهّز الفاتورة التجارية وقائمة التعبئة وبوليصة الشحن وشهادة المنشأ، واحجز النقل البري قبل تفريغ الحاوية. وكلاء DDP مع شريك محلي مرخّص هم بديل مفيد إذا لم تكن مسجلاً في السعودية.
+    </p>
+
+    <h3>هيكل التكلفة الكامل</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'item', label: 'مكون التكلفة' },
+        { key: 'who', label: 'من يفرضها' },
+        { key: 'magnitude', label: 'النطاق الاسترشادي' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="فقط ضريبة القيمة المضافة (15%) والرسوم الجمركية الأساسية (5% CIF) موثقة. الرسوم غير المحددة الكمية منخفضة الثقة لأن البيانات البحثية لم تنشر مبالغ محددة — اطلب جدول الرسوم."
+    />
+    <SourceList locale={locale} sources={costSources} title="المصادر — التكلفة والجمارك" />
+
+    <h3 class="mt-3">DDP (تخليص مزدوج، شامل الضرائب) كبديل</h3>
+    <p>
+      يستخدم العديد من البائعين من الصين إلى السعودية DDP، حيث يتولى وكيل الشحن التخليص التصديري و
+      التخليص الاستيرادي السعودي، ويدفع الرسوم الجمركية وضريبة القيمة المضافة، وينظم التسليم النهائي. تسجل
+      البيانات البحثية معياراً من الباب إلى الباب حوالي 45 RMB/kg لـ DDP من قوانغتشو/شنتشن إلى السعودية،
+      مع DDP بحري من الباب إلى الباب يُسعّر عادةً عند 30–35 days وDDP جوي عند 10–15 days. تعامل
+      معها كأمثلة منخفضة الثقة، وأكد بالضبط الرسوم المشمولة قبل مقارنة DDP
+      بتكلفة الوصول الخاصة بك عبر CIF أو DAP.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. الامتثال: ضريبة القيمة المضافة والرسوم الجمركية وSABER/SASO وFASAH ورموز HS</h2>
+
+      <h3>الضرائب والرسوم الجمركية</h3>
+      <p>
+        ضريبة القيمة المضافة على الواردات السعودية هي <strong>15%</strong>، سارية منذ 1 July 2020، وتُحتسب على
+        قيمة CIF <em>بالإضافة إلى</em> الرسوم الجمركية. الرسوم الجمركية الأساسية هي <strong>5% من CIF</strong>
+        وفق التعريفة الجمركية الموحدة لدول مجلس التعاون، مع إمكانية رسوم حمائية أو رسوم مكافحة إغراق
+        بنسبة 15–25% على سلع محددة. تضيف ضريبة السلع الانتقائية 100% على التبغ و50% على مشروبات الطاقة و50% على
+        المشروبات الغازية حيثما ينطبق ذلك.
+      </p>
+      <p>
+        هناك تباين واحد يُشار إليه بدلاً من إخفائه: بعض المصادر الثانوية تذكر إعفاءً SAR 1,000
+        للشحنات الشخصية السريعة، بينما يقول مصدر آخر إن السعودية لا يوجد لديها مثل هذا
+        الإعفاء. تعامل مع هذه النقطة باعتبارها غير محسومة وأكد مع ZATCA للواردات منخفضة القيمة.
+      </p>
+
+      <h3>SABER / SASO بالترتيب الصحيح</h3>
+      <ol>
+        <li>سجّل المستورد والمنتج على منصة مطابقة SABER.</li>
+        <li>احصل على <strong>PC (شهادة مطابقة المنتج)</strong> — اختبار المنتج أولاً، ثم فحص ما قبل الشحن؛ الصلاحية حوالي عام واحد وتُصدر مرة واحدة لكل منتج.</li>
+        <li>بمجرد توفر بوليصة الشحن، تقدم بطلب <strong>SC (شهادة مطابقة الشحنة)</strong> لتلك الشحنة المحددة.</li>
+        <li>استلم SC <strong>قبل وصول البضاعة</strong> — منذ 1 January 2025، أي SC يُقدم بعد الوصول يُعتبر لاغياً ويفشل التخليص.</li>
+        <li>قدم الإقرار الجمركي المسبق عبر <strong>FASAH</strong>، نظام النافذة الموحدة في السعودية، مع إرفاق SC.</li>
+      </ol>
+
+      <h3>المستندات والتصنيف</h3>
+      <p>
+        المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة
+        المنشأ وشهادة مطابقة SABER للسلع الخاضعة للتنظيم. صنّف البضائع برمز <strong>HS</strong> صحيح
+        قبل تقديم عرض السعر، لأن كلاً من الرسوم الجمركية ومتطلبات المطابقة تعتمد عليه. لاحظ أن <strong>ISF</strong> هو متطلب أمريكي ولا ينطبق
+        على السعودية؛ الخطوة المكافئة في السعودية هي الإقرار المسبق عبر FASAH.
+      </p>
+    <p>
+      FASAH هو النافذة الموحدة التي تربط المستوردين والمخلصين الجمركيين والمحطات وZATCA، لذا
+      فإن الإقرار المسبق وتقييم الرسوم/ضريبة القيمة المضافة وحالة التخليص كلها في مسار واحد. عملياً،
+      هذا يعني أن التخليص قبل التفريغ أمر واقعي عندما تكون SC والمستندات جاهزة،
+      وهي الطريقة الأكثر فعالية لإبقاء غرامة التأخير ورسوم الاحتجاز خارج الفاتورة النهائية.
+    </p>
+
+      <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك والموانئ السعودية" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر شامل من الصين إلى السعودية"
+      text="أخبرنا بمنشأك ووجهتك وحجمك ونوع منتجك، وسنوصلك بمزودين يمكنهم تسعير الشحن البحري وSABER ورسوم الوجهة معاً."
+    />
+  </section>
+</BaseLayout>

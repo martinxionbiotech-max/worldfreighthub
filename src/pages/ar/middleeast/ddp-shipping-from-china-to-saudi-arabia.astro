@@ -1,0 +1,899 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/ddp-shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const globalimporter: Source = {
+  id: 'globalimporter',
+  name: 'Global Importer — Guangzhou/Shenzhen to Saudi DDP sample quote',
+  url: 'https://www.globalimporter.net/cdetail_753_8551690.html',
+  type: 'industry',
+};
+const amz123: Source = {
+  id: 'amz123',
+  name: 'AMZ123 — China to Saudi double-clearance DDP flow (July 2024)',
+  url: 'https://m.amz123.com/ask/dX9w7vZU',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const ddpRateSources: Source[] = [ddpchain, globalimporter, chinaddpshipping];
+const comparisonRateSources: Source[] = [freightos, sinoShipping];
+const transitSources: Source[] = [chinaddpshipping, cargofromchina, ddpchain, freightos];
+const incotermSources: Source[] = [amz123, ddpchain, chinaddpshipping];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  sasoInfo,
+  ddpchain,
+  globalimporter,
+];
+
+const ddpRows = [
+  {
+    service: 'شحن بحري DDP — حاوية مجمعة حسب الحجم',
+    benchmark: 'من ~1,600 يوان صيني / م³',
+    basis: 'جدول مقارنة ddpchain الصين→السعودية',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي DDP — لكل kg قابل للتحصيل',
+    benchmark: '33–48 يوان صيني / kg',
+    basis: 'أمثلة مسارات ddpchain، مثل شنتشن→الرياض',
+    confidence: 'LOW',
+  },
+  {
+    service: 'عرض سعر DDP من الباب إلى الباب',
+    benchmark: '45 يوان صيني / kg',
+    basis: 'مثال globalimporter قوانغتشو/شنتشن→السعودية',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن بحري DDP من الباب إلى الباب',
+    benchmark: '~30–35 days',
+    basis: 'chinaddpshipping',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي DDP من الباب إلى الباب',
+    benchmark: '~10–15 days',
+    basis: 'chinaddpshipping',
+    confidence: 'LOW',
+  },
+];
+
+const fclRows = [
+  {
+    container: 'حاوية كاملة 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    confidence: 'LOW',
+  },
+  {
+    container: 'حاوية كاملة 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    confidence: 'LOW',
+  },
+  {
+    container: 'حاوية كاملة 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'غير منشور',
+    confidence: 'LOW',
+  },
+];
+
+const lclRows = [
+  {
+    volume: 'حاوية مجمعة 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / م³',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'حاوية مجمعة 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / م³',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'حاوية مجمعة 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / م³',
+    confidence: 'LOW',
+  },
+];
+
+const ddpTransitRows = [
+  {
+    service: 'شحن بحري DDP من الباب إلى الباب',
+    origin: 'قوانغتشو / شنتشن / أي منشأ صيني آخر',
+    destination: 'عنوان محدد في السعودية',
+    transit: '~30–35 days',
+    basis: 'معيار الشحن البحري DDP من chinaddpshipping',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي DDP من الباب إلى الباب',
+    origin: 'قوانغتشو / شنتشن / أي منشأ صيني آخر',
+    destination: 'عنوان محدد في السعودية',
+    transit: '~10–15 days',
+    basis: 'معيار الشحن الجوي DDP من chinaddpshipping',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن بحري من ميناء إلى ميناء',
+    origin: 'جنوب الصين',
+    destination: 'جدة',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days متوسط (شنتشن–جدة)؛ ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن بحري من ميناء إلى ميناء',
+    origin: 'شنغهاي',
+    destination: 'الدمام / ميناء الرياض الجاف',
+    transit: '30–45 days',
+    basis: 'Freightos شنغهاي–الرياض: حاوية كاملة 30–40 days، حاوية مجمعة 32–45 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي من ميناء إلى ميناء',
+    origin: 'الصين',
+    destination: 'جدة والدمام',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days؛ ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const incotermRows = [
+  {
+    term: 'EXW (تسليم من المصنع)',
+    exportClearance: 'المشتري',
+    oceanFreight: 'المشتري',
+    saudiImport: 'المشتري',
+    riskTransfer: 'عندما تكون البضاعة متاحة في مقر البائع',
+  },
+  {
+    term: 'FOB (تسليم على ظهر السفينة)',
+    exportClearance: 'البائع',
+    oceanFreight: 'المشتري',
+    saudiImport: 'المشتري',
+    riskTransfer: 'عند تحميل البضاعة على متن السفينة في الميناء الصيني المحدد',
+  },
+  {
+    term: 'DAP (كان يُعرف سابقًا بـ DDU)',
+    exportClearance: 'البائع',
+    oceanFreight: 'البائع',
+    saudiImport: 'المشتري',
+    riskTransfer: 'في مكان الوجهة المحدد قبل التفريغ',
+  },
+  {
+    term: 'DDP (التسليم مع دفع الرسوم)',
+    exportClearance: 'البائع',
+    oceanFreight: 'البائع',
+    saudiImport: 'البائع',
+    riskTransfer: 'في مكان الوجهة المحدد بعد التخليص الجمركي للاستيراد؛ يستلم المشتري البضاعة',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'شنغهاي',
+    throughput: '55.06M TEU (2025)',
+    note: 'الميناء رقم #1 عالميًا للحاويات، للعام 16th على التوالي',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'نينغبو-تشوشان',
+    throughput: '43M TEU (2025)',
+    note: 'الميناء رقم #3 للحاويات؛ أول ميناء يتجاوز 1.4bn tonnes بضائع',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'شنتشن (يانتيان / شيكو)',
+    throughput: 'غير منشور في البيانات المتاحة',
+    note: 'بوابة جنوب الصين المستخدمة في معيار DDP لقوانغتشو/شنتشن',
+    confidence: 'LOW',
+  },
+  {
+    port: 'قوانغتشو',
+    throughput: 'غير منشور في البيانات المتاحة',
+    note: 'منشأ جنوب الصين المذكور في عينة DDP لـ 45 RMB/kg',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'الساحل / المنطقة',
+    jeddah: 'البحر الأحمر، غرب السعودية',
+    dammam: 'الخليج العربي، شرق السعودية',
+    riyadh: 'داخلية (يخدمها موانئ ساحلية)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الدور الرئيسي',
+    jeddah: 'البوابة الرئيسية للحاويات',
+    dammam: 'الميناء الرئيسي على الخليج لخدمة الرياض والمنطقة الشرقية/الوسطى',
+    riyadh: 'ميناء جاف داخلي لتوزيع منطقة الرياض الحضرية',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'حالة الاستخدام النموذجية لـ DDP',
+    jeddah: 'توصيلات من الباب إلى الباب لغرب/وسط السعودية',
+    dammam: 'توصيلات من الباب إلى الباب للرياض والمنطقة الشرقية',
+    riyadh: 'توزيع الميل الأخير حول الرياض',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'الشحن البحري أو الجوي',
+    who: 'الناقل / وكيل الشحن',
+    ddpStatus: 'مشمول في عرض سعر DDP حقيقي — تأكد من النطاق',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التخليص الجمركي للتصدير من الصين',
+    who: 'وكيل الشحن / المخلص الجمركي',
+    ddpStatus: 'مشمول في عرض سعر DDP حقيقي',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الرسوم الجمركية للاستيراد (الأساسية)',
+    who: 'هيئة الزكاة والضريبة والجمارك',
+    ddpStatus: 'مشمولة — 5% من قيمة CIF (التعريفة الجمركية الموحدة لدول مجلس التعاون)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'ضريبة القيمة المضافة على الاستيراد',
+    who: 'هيئة الزكاة والضريبة والجمارك',
+    ddpStatus: 'مشمولة — 15% على قيمة CIF + الرسوم الجمركية',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'ضريبة السلع الانتقائية (إن وجدت)',
+    who: 'هيئة الزكاة والضريبة والجمارك',
+    ddpStatus: 'مشمولة حيثما كانت السلع خاضعة للضريبة — التبغ 100%؛ مشروبات الطاقة 50%؛ المشروبات الغازية 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'رسوم شهادات المطابقة SABER (PC / SC)',
+    who: 'منصة SABER + المختبرات',
+    ddpStatus: 'عادةً ما يرتبها وكيل الشحن — أكد الإدراج كتابيًا',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المناولة في ميناء الوجهة ورسوم الميناء',
+    who: 'محطة جدة / الدمام',
+    ddpStatus: 'عادةً ما تكون مشمولة — أكد تفصيل الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم التخليص الجمركي السعودي وخدمات البضائع',
+    who: 'المخلص الجمركي / الوكيل المحلي',
+    ddpStatus: 'مشمولة في عرض سعر DDP حقيقي — أكد تفصيل الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التوصيل للميل الأخير',
+    who: 'شريك النقل بالشاحنات المحلي',
+    ddpStatus: 'مشمول إلى العنوان المحدد — أكد نوع العنوان وإمكانية الوصول',
+    confidence: 'LOW',
+  },
+  {
+    item: 'غرامة التأخير / رسوم الاحتجاز بعد المدة المجانية',
+    who: 'المحطة / الناقل',
+    ddpStatus: 'عادةً ما تكون مستبعدة بعد المدة المجانية — أكد سياسة المدة المجانية',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التأمين على البضائع',
+    who: 'شركة التأمين / وكيل الشحن',
+    ddpStatus: 'اختياري — أكد ما إذا كان عرض سعر DDP يتضمنه',
+    confidence: 'LOW',
+  },
+];
+
+const hiddenFeeRows = [
+  {
+    component: 'الرسوم الجمركية للاستيراد',
+    ddp: 'عادةً ما تكون مشمولة في سعر DDP الشامل',
+    selfPay: 'يدفعها المستورد إلى هيئة الزكاة والضريبة والجمارك بنسبة 5% من قيمة CIF',
+    confidence: 'MEDIUM',
+  },
+  {
+    component: 'ضريبة القيمة المضافة على الاستيراد',
+    ddp: 'مشمولة في سعر DDP الشامل',
+    selfPay: 'يدفعها المستورد إلى هيئة الزكاة والضريبة والجمارك بنسبة 15% على CIF + الرسوم',
+    confidence: 'HIGH',
+  },
+  {
+    component: 'شهادات SABER (PC / SC)',
+    ddp: 'عادةً ما يرتبها وكيل الشحن — أكد الإدراج',
+    selfPay: 'يرتب المستورد أو المخلص مطابقة المنتج والشحنة',
+    confidence: 'LOW',
+  },
+  {
+    component: 'رسوم المناولة في ميناء الوجهة / رسوم الميناء',
+    ddp: 'عادةً ما تكون مشمولة — أكد تفصيل الرسوم',
+    selfPay: 'يدفع المستورد رسوم المحطة ورسوم الخدمات',
+    confidence: 'LOW',
+  },
+  {
+    component: 'التخليص الجمركي والوساطة',
+    ddp: 'مشمول في عرض سعر DDP حقيقي',
+    selfPay: 'يدفع المستورد للمخلص أو يتولى التخليص بنفسه',
+    confidence: 'LOW',
+  },
+  {
+    component: 'غرامة التأخير / رسوم الاحتجاز بعد المدة المجانية',
+    ddp: 'عادةً ما تكون مستبعدة بعد المدة المجانية — أكد السياسة',
+    selfPay: 'يدفع المستورد الرسوم اليومية',
+    confidence: 'LOW',
+  },
+  {
+    component: 'التوصيل للميل الأخير',
+    ddp: 'مشمول إلى العنوان المحدد',
+    selfPay: 'يرتب المستورد النقل بالشاحنات ويدفع تكلفته',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'ماذا يشمل الشحن DDP من الصين إلى السعودية؟',
+    a: 'يجب أن يغطي عرض سعر DDP الحقيقي التخليص الجمركي للتصدير من الصين، والنقل الدولي، والتخليص الجمركي للاستيراد في السعودية، والرسوم الجمركية، وضريبة القيمة المضافة، ورسوم شهادات المطابقة SABER، والتوصيل للميل الأخير إلى العنوان المحدد. عمليًا، يختلف النطاق بين وكلاء الشحن، لذا أكد كتابيًا ما إذا كانت رسوم المناولة في ميناء الوجهة، والمعالجة الجمركية، وغرامة التأخير/رسوم الاحتجاز، والتأمين على البضائع مشمولة قبل مقارنة الأسعار.',
+  },
+  {
+    q: 'من يدفع الرسوم الجمركية وضريبة القيمة المضافة للاستيراد في السعودية بموجب DDP؟',
+    a: 'يدفعها البائع كجزء من ترتيب التسليم مع دفع الرسوم. تبلغ ضريبة القيمة المضافة السعودية 15% على قيمة CIF بالإضافة إلى الرسوم الجمركية، والرسوم الجمركية الأساسية هي 5% من CIF بموجب التعريفة الجمركية الموحدة لدول مجلس التعاون. عادةً ما يقوم وكيل الشحن بتسوية هذه المبالغ نيابة عن البائع أثناء التخليص الجمركي السعودي.',
+  },
+  {
+    q: 'هل يشمل DDP رسوم شهادتي PC و SC في SABER؟',
+    a: 'يجب أن يشملها، لكن الإدراج ليس تلقائيًا. تُصدر شهادة مطابقة المنتج (PC) لكل منتج وعادةً ما تكون صالحة لمدة عام تقريبًا، بينما تُصدر شهادة مطابقة الشحنة (SC) لكل شحنة. منذ 1 January 2025 يجب الحصول على SC قبل وصول البضاعة. اطلب من وكيل الشحن تأكيد أن رسوم كل من PC وSC مشمولة في سعر DDP.',
+  },
+  {
+    q: 'ما الفرق بين DDP و DDU/DAP و EXW/FOB؟',
+    a: 'يضع DDP أكبر قدر من المسؤولية على البائع: يقوم البائع بتخليص التصدير، ويدفع الشحن، ويتولى التخليص الجمركي للاستيراد في السعودية، ويدفع الرسوم وضريبة القيمة المضافة. يقوم DAP (الخلف في شروط التجارة الدولية 2020 لمصطلح DDU القديم) بالتسليم إلى مكان محدد لكنه يترك التخليص الجمركي للاستيراد والضرائب للمشتري. يمنح EXW وFOB المشتري مسؤولية أكبر بكثير، بدءًا من الاستلام من مقر البائع (EXW) أو الاستلام بمجرد تحميل البضاعة على السفينة (FOB).',
+  },
+  {
+    q: 'كم تبلغ تكلفة الشحن DDP من الصين إلى السعودية؟',
+    a: 'تشمل المعايير السوقية الاسترشادية الشحن البحري DDP من حوالي 1,600 يوان صيني لكل م³، والشحن الجوي DDP بسعر 33–48 يوان صيني لكل kg، وعينة من الباب إلى الباب من قوانغتشو/شنتشن إلى السعودية بسعر 45 يوان صيني لكل kg. هذه أمثلة منخفضة الموثوقية تم جمعها من وكلاء شحن وتواريخ مختلفة، وليست عروض أسعار ملزمة — اطلب دائمًا عرض سعر شامل مفصل لمنتجك وعنوانك.',
+  },
+  {
+    q: 'كم تستغرق مدة النقل للشحن البحري والجوي DDP؟',
+    a: 'تتراوح المدد الاسترشادية من الباب إلى الباب لـ DDP حوالي 30–35 days بحرًا و 10–15 days جوًا. يُذكر عادةً أن الشحن البحري من ميناء إلى ميناء يستغرق حوالي 20–35 days إلى جدة و 30–45 days إلى الدمام/ميناء الرياض الجاف، مع شحن جوي من ميناء إلى ميناء حوالي 2–10 days. هذه أرقام منخفضة الموثوقية، تحقق منها مع الناقل.',
+  },
+  {
+    q: 'هل غرامة التأخير ورسوم الاحتجاز مشمولة في عرض سعر DDP؟',
+    a: 'عادةً لا، بعد انتهاء المدة المجانية. تُفرض غرامة التأخير من قبل المحطة ورسوم الاحتجاز من قبل الناقل بمجرد تجاوز الحاوية للمدة المجانية، وعادةً ما تكون هذه الرسوم اليومية مستبعدة أو محدودة السقف في تسعير DDP. أكد سياسة المدة المجانية وأي معدلات يومية كتابيًا قبل الحجز.',
+  },
+  {
+    q: 'هل أحتاج إلى مستورد سعودي مسجل بموجب DDP؟',
+    a: 'عادةً ما يوفر وكيل شحن DDP مع شريك محلي القدرة على التخليص الجمركي السعودي، لكن الإجابة العملية تعتمد على الهيكل المحلي لوكيل الشحن وتراخيص منتجك. يستخدم بعض مزودي DDP مستوردهم المسجل الخاص أو يعملون مع السجل التجاري للمشتري. أكد ذلك قبل الشحنة الأولى لأنه يؤثر على تسجيل SABER وتسوية الرسوم وضريبة القيمة المضافة.',
+  },
+  {
+    q: 'ماذا يحدث إذا لم يتم الحصول على شهادة SC من SABER قبل الوصول؟',
+    a: 'يفشل التخليص الجمركي. منذ 1 January 2025، يعتبر طلب SC المقدم بعد وصول البضاعة لاغيًا، لذا لا يمكن للشحنة التخليص حتى يتم حل مشكلة الشهادة — مما يعني عادةً تأخيرات وتكاليف تخزين وغرامات تأخير. بموجب DDP، لا يزال وكيل الشحن بحاجة إلى بوليصة الشحن وشهادة PC للمنتج قبل أن يتمكن من التقدم بطلب للحصول على SC، لذا أرسل المستندات مبكرًا.',
+  },
+  {
+    q: 'هل يمكن أن تخضع شحنة DDP لضريبة السلع الانتقائية السعودية؟',
+    a: 'نعم. لا يلغي DDP ضريبة السلع الانتقائية السعودية. يخضع التبغ لـ 100%، ومشروبات الطاقة لـ 50%، والمشروبات الغازية لـ 50% بالإضافة إلى ضريبة القيمة المضافة حيثما ينطبق ذلك. يجب أن يعكس عرض سعر DDP المتوافق هذه المبالغ، لكن أكد الحساب لرموز HS الخاصة بك.',
+  },
+  {
+    q: 'هل سعر 45 يوان صيني لكل kg هو سعر DDP حقيقي؟',
+    a: 'إنه مثال حقيقي تم تسجيله أثناء البحث — عرض سعر من الباب إلى الباب من قوانغتشو/شنتشن إلى السعودية. إنه معيار منخفض الموثوقية، وليس تعريفة عامة: الكثافة، ونوع المنتج، ومتطلبات SABER، وعنوان التسليم، وظروف السوق كلها تغير السعر النهائي. استخدمه كفحص منطقي، وليس كسعر حجز.',
+  },
+  {
+    q: 'كيف أقارن DDP بشحنة CIF أو DAP ذاتية الترتيب؟',
+    a: 'قم ببناء نفس هيكل التكلفة الإجمالية للوصول لكل منهما: الشحن، ورسوم المنشأ، ورسوم المناولة في ميناء الوجهة ورسوم الميناء، والتخليص والوساطة، وشهادات SABER PC/SC، والرسوم الجمركية، وضريبة القيمة المضافة، والنقل بالشاحنات للميل الأخير، بالإضافة إلى مخاطر غرامة التأخير/رسوم الاحتجاز. عادةً ما يكون DDP أسهل للمقارنة عندما تطلب عرض سعر شامل مفصل ثم تضيف تكلفة الوقت والامتثال الخاصة بك إلى بديل CIF/DAP.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن DDP من الصين إلى السعودية: ماذا يشمل حقًا مصطلح "الرسوم مدفوعة" (August 2026)',
+      description:
+        'شرح الشحن DDP من الصين إلى السعودية: من يدفع الرسوم الجمركية وضريبة القيمة المضافة ورسوم SABER، والمعايير الاسترشادية الشاملة، ومقارنة DDP مع DAP/EXW/FOB، والرسوم الخفية التي يجب تأكيدها قبل الحجز.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن DDP من الصين إلى السعودية: ماذا يشمل حقًا مصطلح &quot;الرسوم مدفوعة&quot; (August 2026)"
+  description="شرح الشحن DDP من الصين إلى السعودية: من يدفع الرسوم الجمركية وضريبة القيمة المضافة ورسوم SABER، والمعايير الاسترشادية الشاملة، ومقارنة DDP مع DAP/EXW/FOB، والرسوم الخفية التي يجب تأكيدها قبل الحجز."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'الشحن DDP من الصين إلى السعودية' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث August 2026</span>
+      <h1>الشحن DDP من الصين إلى السعودية: ماذا يشمل حقًا مصطلح “الرسوم مدفوعة”</h1>
+      <p class="lead">
+        التسليم مع دفع الرسوم هو الخيار الأسهل شرحًا للشحن من الصين إلى السعودية، والأسهل أيضًا في
+        إساءة التسعير. توضح هذه الصفحة من يدفع فعليًا رسوم 5% الجمركية وضريبة القيمة المضافة 15% ورسوم SABER،
+        وكيف يبدو معيار DDP الشامل الواقعي، وكيف يقارن DDP مع DAP وEXW وFOB،
+        ورسوم الوجهة التي تُخفى خارج السعر الإجمالي “شامل الضريبة”.
+      </p>
+      <p class="small muted">
+        تفصل شارات الموثوقية بين الأرقام الموثقة والبيانات السوقية الاسترشادية. تعامل مع كل سعر
+        ومدة نقل ومعيار DDP منخفض الموثوقية على أنه استرشادي، وتحقق منه مع الناقل أو
+        وكيل الشحن قبل الاعتماد عليه.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">ضريبة القيمة المضافة على الاستيراد في السعودية</span>
+          <span class="fact-value">15% <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم الجمركية الأساسية</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاعدة شهادة SC في SABER</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري DDP</span>
+          <span class="fact-value">30–35 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل الجوي DDP</span>
+          <span class="fact-value">10–15 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">عينة عرض سعر DDP</span>
+          <span class="fact-value">45 RMB/kg <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. معايير أسعار DDP: حاوية كاملة، حاوية مجمعة، ومن الباب إلى الباب شامل</h2>
+    <p>
+      يُسعّر DDP بشكل مختلف عن الشحن من ميناء إلى ميناء لأنه يجمع التخليص الجمركي والضرائب و
+      التوصيل. يسجل الجدول الأول أدناه معايير اليوان الصيني الشاملة الموجودة في
+      البيانات البحثية؛ بينما يظهر الجدول الثاني الشحن البحري من ميناء إلى ميناء للحاويات الكاملة/المجمعة للسياق. وهي غير
+      قابلة للمقارنة سطرًا بسطر — أرقام DDP تشمل بالفعل الرسوم الجمركية وضريبة القيمة المضافة وSABER والميل الأخير، بينما
+      أرقام الحاويات الكاملة/المجمعة هي للرحلة البحرية فقط.
+    </p>
+
+    <h3>معايير DDP الشاملة الاسترشادية</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'service', label: 'خدمة DDP' },
+        { key: 'benchmark', label: 'المعيار الاسترشادي' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={ddpRows}
+      caption="أمثلة سوقية استرشادية، وليست عروض أسعار ملزمة. يختلف النطاق بين وكلاء الشحن — تحقق مع وكيل شحن قبل الاعتماد على هذه الأرقام."
+    />
+    <SourceList locale={locale} sources={ddpRateSources} title="المصادر — معايير DDP" />
+
+    <h3 class="mt-3">سياق الحاويات الكاملة من ميناء إلى ميناء</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'container', label: 'الحاوية' },
+        { key: 'freightos', label: 'Freightos · شنغهاي–الرياض' },
+        { key: 'sino', label: 'Sino-shipping · الصين–السعودية (August 2026)' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="بيانات سوقية للشحن البحري فقط. أضف الرسوم الجمركية وضريبة القيمة المضافة وSABER والتوصيل للمقارنة مع DDP."
+    />
+    <SourceList locale={locale} sources={comparisonRateSources} title="المصادر — أسعار الحاويات الكاملة" />
+
+    <h3 class="mt-3">سياق الحاويات المجمعة من ميناء إلى ميناء</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'volume', label: 'الحجم' },
+        { key: 'total', label: 'الإجمالي (Freightos · شنغهاي–الرياض)' },
+        { key: 'perCbm', label: 'استرشادي لكل م³' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={lclRows}
+      caption="تنخفض تكلفة وحدة الحاوية المجمعة مع زيادة الحجم. هذه أرقام للشحن البحري فقط — أضف الضرائب وSABER والتوصيل."
+    />
+    <SourceList locale={locale} sources={comparisonRateSources} title="المصادر — أسعار الحاويات المجمعة" />
+
+    <div class="note mt-2">
+      <strong>لماذا يصعب مقارنة أسعار DDP:</strong> قد يقتبس أحد وكلاء الشحن سعرًا “شامل الضريبة” لكنه
+      يستبعد رسوم المناولة في ميناء الوجهة وغرامة التأخير بعد المدة المجانية، بينما يقتبس آخر التكلفة الكاملة
+      للوصول. اطلب دائمًا نفس النطاق: أي الرسوم، وأي الضرائب، وأي عنوان توصيل، وأي
+      سياسة مدة مجانية مشمولة في الرقم.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. مدة النقل DDP حسب الميناء ووسيلة النقل</h2>
+      <p>
+        تضيف خدمة DDP من الباب إلى الباب وقت التخليص الجمركي والميل الأخير إلى الرحلة من ميناء إلى ميناء. الأرقام
+        أدناه هي نتائج بحثية على مستوى الممرات، وليست ضمانات جدول زمني، وتعتمد المدة الدقيقة
+        على مدينة المنشأ وميناء التفريغ وجاهزية SABER وعنوان التوصيل النهائي.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'service', label: 'الخدمة' },
+          { key: 'origin', label: 'المنشأ' },
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'transit', label: 'مدة النقل الاسترشادية' },
+          { key: 'basis', label: 'الأساس' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={ddpTransitRows}
+        caption="مدد نقل استرشادية فقط — تحقق مع الناقل أو وكيل الشحن المعني قبل الاعتماد على هذه الأرقام."
+      />
+      <SourceList locale={locale} sources={transitSources} title="المصادر — مدة النقل DDP" />
+
+      <div class="note mt-2">
+        <strong>متغير SABER:</strong> تفترض تقديرات مدة النقل أن شهادة PC موجودة بالفعل وأنه
+        يتم التقدم بطلب للحصول على SC بمجرد توفر بوليصة الشحن. إذا بدأت أوراق المطابقة
+        متأخرة، فقد يتجاوز التأخير في الجانب السعودي بسهولة وقت الإبحار الموفر في
+        الرحلة البحرية.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. DDP مقابل DAP (DDU) وEXW وFOB</h2>
+    <p>
+      توزع شروط التجارة الدولية التكلفة والمخاطر؛ وهي لا تحدد السعر. يركز DDP كلاهما على البائع
+      لتجربة المشتري الأكثر سلاسة، بينما يترك EXW وFOB المستورد لإدارة الجانب السعودي. DAP — الخلف
+      في شروط التجارة الدولية 2020 لمصطلح DDU القديم — يقع في المنتصف: يقوم البائع
+      بالتسليم إلى مكان محدد لكن المشتري يتولى التخليص الجمركي للاستيراد ويدفع الرسوم/ضريبة القيمة المضافة.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'term', label: 'شرط التجارة' },
+        { key: 'exportClearance', label: 'التخليص الجمركي للتصدير من الصين' },
+        { key: 'oceanFreight', label: 'الشحن البحري' },
+        { key: 'saudiImport', label: 'التخليص الجمركي للاستيراد في السعودية والرسوم وضريبة القيمة المضافة' },
+        { key: 'riskTransfer', label: 'انتقال المخاطر' },
+      ]}
+      rows={incotermRows}
+      caption="توزيع المسؤوليات القياسي لشروط التجارة الدولية، وليس مقارنة أسعار. تم استبدال DDU بـ DAP في شروط التجارة الدولية 2020."
+    />
+    <SourceList locale={locale} sources={incotermSources} title="المصادر — ممارسات DDP وشروط التجارة الدولية" />
+
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale} title="DDP هو الأفضل عادةً عندما...">
+        <ul>
+          <li>يريد المشتري سعرًا شاملاً واحدًا ومزودًا واحدًا للمتابعة.</li>
+          <li>لست مسجلاً لدى الجمارك السعودية أو ليس لديك مخلص جمركي محلي.</li>
+          <li>تبيع مباشرة للمستهلكين أو أمازون أو نون، وتحتاج إلى توصيل إلى الباب.</li>
+          <li>تريد أن يتولى وكيل شحن لديه شركاء محليون الرسوم الجمركية وضريبة القيمة المضافة وSABER.</li>
+        </ul>
+      </Card>
+      <Card locale={locale} title="DAP/CIF ذاتي الترتيب أفضل عادةً عندما...">
+        <ul>
+          <li>لديك سجل تجاري سعودي ويمكنك استرداد ضريبة القيمة المضافة.</li>
+          <li>لديك مخلص جمركي حالي وأسعار محطات ونقل بالشاحنات متفاوض عليها.</li>
+          <li>التعرض للرسوم الجمركية/ضريبة القيمة المضافة لمنتجك منخفض وتريد شفافية ضريبية واضحة.</li>
+          <li>يمكنك إدارة شهادات SABER PC/SC مباشرة والتخليص قبل التفريغ.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      السؤال التجاري ليس “أي شرط هو الأرخص” بل “من يمكنه التخليص الأسرع وبأقل
+      تكلفة إجمالية للوصول”. يمكن لمزود DDP ذي انضباط ضعيف في SABER أن يكون أكثر تكلفة في
+      غرامات التأخير من شحنة ذاتية الترتيب مع مخلص قوي — لذا قيم المشغل، وليس
+      الشرط فقط.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. الموانئ: شنغهاي ونينغبو-تشوشان وشنتشن وقوانغتشو إلى جدة والدمام وميناء الرياض الجاف</h2>
+      <p>
+        ترتكز أمثلة معايير DDP في البيانات البحثية على منشآت جنوب الصين —
+        قوانغتشو وشنتشن — لكن شنغهاي ونينغبو-تشوشان هما الرائدان في حجم المناولة على هذا الممر
+        ويظلان منشأين شائعين للأحجام الأكبر.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'port', label: 'الميناء الصيني' },
+          { key: 'throughput', label: 'حجم المناولة 2025' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="أرقام شنغهاي ونينغبو-تشوشان موثقة؛ لم يُذكر حجم مناولة شنتشن وقوانغتشو في البيانات البحثية."
+      />
+      <SourceList locale={locale} sources={primaryPortSources} title="المصادر — الموانئ الصينية" />
+
+      <h3 class="mt-3">موانئ الوجهة السعودية</h3>
+      <p>
+        تعاملت الموانئ السعودية التي تشغلها موانئ <strong>8.3 million TEU في 2025</strong> (+10.6% على أساس
+        سنوي)، وهو رقم متوسط الموثوقية من الصحافة التجارية لأن mawani.gov.sa لم يكن متاحًا
+        أثناء البحث. جدة والدمام هما الميناءان البحريان الأكثر أهمية لمعظم عمليات تسليم DDP؛
+        بينما يتولى ميناء الرياض الجاف الجزء الداخلي لتوزيع منطقة الرياض الحضرية.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'jeddah', label: 'جدة' },
+          { key: 'dammam', label: 'الدمام' },
+          { key: 'riyadh', label: 'ميناء الرياض الجاف' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="أدوار الموانئ هي نتائج مصادر ثانوية؛ تحقق من المسار ومرحلة التوصيل النهائية مع وكيل الشحن الخاص بك."
+      />
+      <SourceList locale={locale}
+        sources={[...primaryPortSources, worldcargonews]}
+        title="المصادر — الموانئ السعودية"
+      />
+
+      <div class="note mt-2">
+        <strong>مسار DDP في سطر واحد:</strong> اسأل وكيل الشحن عن ميناء السعودية الذي يفترضه عرض سعر DDP.
+        تناسب جدة المرسل إليهم في غرب ووسط السعودية؛ بينما يناسب الدمام ثم ميناء الرياض الجاف،
+        الرياض والمنطقة الشرقية. يمكن أن يصبح السعر الأرخص الذي يصل إلى الميناء الخطأ أكثر تكلفة
+        بعد النقل بالشاحنات لمسافات طويلة.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. التكلفة الإجمالية للوصول بموجب DDP: مقارنة الرسوم الخفية التي يتجاهلها المنافسون</h2>
+    <p>
+      “شامل الضريبة” ليس مثل “شامل كل شيء”. يفرز فحص التكلفة الإجمالية للوصول السليم لـ DDP بين
+      الرسوم المضمنة حقًا وتلك التي تظهر لاحقًا — رسوم المناولة في ميناء الوجهة، ورسوم
+      خدمات البضائع، ومعالجة التفتيش الجمركي، وأعمال مطابقة SABER، والتوصيل للمناطق النائية،
+      وغرامة التأخير أو رسوم الاحتجاز بعد المدة المجانية.
+    </p>
+
+    <h3>ما يجب أن يحتويه سعر DDP</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'item', label: 'مكون التكلفة' },
+        { key: 'who', label: 'من يفرضها' },
+        { key: 'ddpStatus', label: 'حالة DDP' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="ضريبة القيمة المضافة (15%) والرسوم الأساسية (5% CIF) موثقة. الرسوم غير المحددة الكمية منخفضة الموثوقية لأن البيانات البحثية لم تنشر مبالغ محددة — اطلب جدول رسوم مفصلاً."
+    />
+    <SourceList locale={locale} sources={costSources} title="المصادر — التكلفة الإجمالية للوصول DDP والجمارك" />
+
+    <h3 class="mt-3">DDP الشامل مقابل الاستيراد الذاتي</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'component', label: 'مكون التكلفة' },
+        { key: 'ddp', label: 'بموجب DDP' },
+        { key: 'selfPay', label: 'CIF/DAP ذاتي الترتيب' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={hiddenFeeRows}
+      caption="مقارنة النطاق، وليست مقارنة أسعار. أكد الإدراج أو الاستبعاد كتابيًا لكل مكون."
+    />
+    <SourceList locale={locale} sources={costSources} title="المصادر — مقارنة الرسوم الخفية" />
+
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale} title="أصر على هذه البنود في عرض سعر DDP">
+        <ul>
+          <li>الرسوم الجمركية وضريبة القيمة المضافة محسوبة على رموز HS الفعلية وقيمة CIF الخاصة بك.</li>
+          <li>رسوم شهادتي PC وSC في SABER، بما في ذلك الاختبار إذا كان منتجك جديدًا.</li>
+          <li>رسوم المناولة في ميناء الوجهة ورسوم الميناء وخدمات البضائع والوساطة.</li>
+          <li>التوصيل إلى عنوان محدد مع بيان نوع الوصول.</li>
+        </ul>
+      </Card>
+      <Card locale={locale} title="انتبه لهذه الاستثناءات">
+        <ul>
+          <li>غرامة التأخير ورسوم الاحتجاز بعد المدة المجانية.</li>
+          <li>رسوم التفتيش الجمركي أو إعادة الفحص.</li>
+          <li>رسوم إضافية للتوصيل للمناطق النائية أو الوصول المقيد.</li>
+          <li>تعديلات الرسوم الجمركية/ضريبة القيمة المضافة إذا تغير تصنيف HS أثناء المراجعة.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      <strong>تكلفة التأخير هي أكبر بند خفي.</strong> إذا لم يتم الحصول على SC قبل
+      الوصول، أو كانت المستندات غير مكتملة، تتوقف الحاوية داخل المحطة وتبدأ غرامة التأخير
+      في التراكم. وكيل شحن DDP مع قائمة تحقق منضبطة قبل الوصول يستحق أكثر من
+      سعر إجمالي أقل قليلاً، لأن رسوم المحطة اليومية يمكن أن تمحو التوفير في غضون أيام
+      قليلة.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. الامتثال: ضريبة القيمة المضافة والرسوم الجمركية وSABER/SASO وفسح ورموز HS</h2>
+
+      <h3>الضرائب والرسوم بموجب DDP</h3>
+      <p>
+        تبلغ ضريبة القيمة المضافة على الاستيراد في السعودية <strong>15%</strong>، سارية منذ 1 July 2020، وتُحسب على
+        قيمة CIF <em>بالإضافة إلى</em> الرسوم الجمركية. الرسوم الجمركية الأساسية هي <strong>5% من CIF</strong>
+        بموجب التعريفة الجمركية الموحدة لدول مجلس التعاون، مع إمكانية فرض رسوم حماية أو رسوم مكافحة إغراق بنسبة 15–25%
+        على سلع محددة. تضيف ضريبة السلع الانتقائية 100% على التبغ و50% على مشروبات الطاقة و50% على
+        المشروبات الغازية حيثما ينطبق ذلك. ينقل DDP الدفع إلى البائع/وكيل الشحن، لكن
+        المعدلات الأساسية لا تتغير.
+      </p>
+      <p>
+        هناك تباين يتم الإشارة إليه بدلاً من إخفائه: تذكر بعض المصادر الثانوية وجود إعفاء SAR 1,000
+        للشحنات الشخصية السريعة، بينما يقول مصدر آخر إن السعودية لا يوجد لديها مثل هذا
+        الإعفاء. تعامل مع هذه النقطة على أنها غير محسومة وتأكد مع هيئة الزكاة والضريبة والجمارك للواردات منخفضة القيمة.
+      </p>
+
+      <h3>SABER / SASO لا تزال سارية على DDP</h3>
+      <ol>
+        <li>سجل المستورد والمنتج على منصة مطابقة SABER.</li>
+        <li>احصل على <strong>شهادة مطابقة المنتج (PC)</strong> — اختبار المنتج أولاً، ثم التفتيش قبل الشحن؛ الصلاحية حوالي عام واحد وتُصدر مرة واحدة لكل منتج.</li>
+        <li>بمجرد توفر بوليصة الشحن، تقدم بطلب للحصول على <strong>شهادة مطابقة الشحنة (SC)</strong> لتلك الشحنة المحددة.</li>
+        <li>استلم شهادة SC <strong>قبل وصول البضاعة</strong> — منذ 1 January 2025، يعتبر طلب SC المقدم بعد الوصول لاغيًا ويفشل التخليص الجمركي.</li>
+        <li>قدم الإقرار الجمركي قبل الوصول من خلال <strong>فسح</strong>، نظام النافذة الموحدة في السعودية، مع إرفاق شهادة SC.</li>
+      </ol>
+
+      <h3>المستندات والتصنيف</h3>
+      <p>
+        المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ و
+        شهادة مطابقة SABER للسلع الخاضعة للتنظيم. صنف البضائع برمز <strong>HS</strong> الصحيح
+        قبل تقديم عرض السعر، لأن كلاً من الرسوم الجمركية ومتطلبات المطابقة تعتمد عليه —
+        وبموجب DDP، يعني رمز HS الخاطئ أن الرسوم الجمركية/ضريبة القيمة المضافة المضمنة في سعرك الشامل
+        خاطئة أيضًا. لاحظ أن <strong>ISF</strong> هو متطلب أمريكي ولا ينطبق
+        على السعودية.
+      </p>
+      <p>
+        فسح هو النافذة الموحدة التي تربط المستوردين والمخلصين الجمركيين والمحطات وهيئة الزكاة والضريبة والجمارك، لذا
+        فإن الإقرار قبل الوصول وتقييم الرسوم/ضريبة القيمة المضافة وحالة التخليص كلها في تدفق واحد. بالنسبة
+        لـ DDP، هذا هو المكان الذي يثبت فيه وكيل الشحن أن الترتيب حقيقي: إذا كانت شهادة SC والمستندات
+        جاهزة قبل التفريغ، يمكن للبضاعة التخليص دون أن يبدأ احتساب غرامة التأخير.
+      </p>
+
+      <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك والموانئ السعودية" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر DDP مفصلاً من الصين إلى السعودية"
+      text="أخبرنا بمنشأك وعنوان وجهتك وحجمك ونوع منتجك، وسنوفر لك التواصل مع مزودين يمكنهم عرض الرسوم الجمركية وضريبة القيمة المضافة وSABER والتوصيل للميل الأخير في نطاق واحد."
+    />
+  </section>
+</BaseLayout>

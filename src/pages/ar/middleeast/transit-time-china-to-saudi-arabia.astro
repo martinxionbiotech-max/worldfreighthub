@@ -1,0 +1,746 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { routes } from '../../../data/routes';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/transit-time-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const sasoInfo: Source = {
+  id: 'saso-info',
+  name: 'SASO conformity process notes — product testing then pre-shipment inspection',
+  url: 'http://www.saso-gov.com/index.php?znhcjwt.html',
+  type: 'industry',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const seaTransitSources: Source[] = [freightos, cargofromchina, ddpchain, chinaddpshipping];
+const airTransitSources: Source[] = [freightos, ddpchain, cargofromchina, chinaddpshipping, sinoShipping];
+const comparisonSources: Source[] = [freightos, ddpchain, cargofromchina];
+const factorSources: Source[] = [
+  ...sourcesByIds(['mawani', 'zatca']),
+  cargofromchina,
+  ddpchain,
+  freightos,
+  fuxinCcpt,
+];
+
+const seaTransitRows = [
+  {
+    destination: 'جدة',
+    service: 'شحن بحري من ميناء إلى ميناء',
+    transit: '~20–35 days',
+    basis: 'cargofromchina متوسط ~20 days (شنتشن–جدة)؛ ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'الدمام / ميناء الرياض الجاف',
+    service: 'شحن بحري من ميناء إلى ميناء',
+    transit: '30–45 days',
+    basis: 'بيانات Freightos لمسار شنغهاي–الرياض',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'الرياض (من شنغهاي)',
+    service: 'FCL',
+    transit: '30–40 days',
+    basis: 'بيانات مسار FCL شنغهاي–الرياض من Freightos',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'الرياض (من شنغهاي)',
+    service: 'LCL',
+    transit: '32–45 days',
+    basis: 'بيانات مسار LCL شنغهاي–الرياض من Freightos',
+    confidence: 'LOW',
+  },
+];
+
+const planningRows = routes
+  .filter((route) => route.country === 'saudi-arabia')
+  .map((route) => ({
+    origin: route.originPort,
+    destination: route.destPort,
+    typical: `${route.transitDays.typical} يوم`,
+    range: `${route.transitDays.range[0]}–${route.transitDays.range[1]} يوم`,
+    note: route.note,
+    confidence: route.confidence,
+  }));
+
+const airTransitRows = [
+  {
+    lane: 'شنغهاي ← الرياض',
+    service: 'شحن جوي من مطار إلى مطار',
+    transit: '6–10 days',
+    basis: 'بيانات المسار الجوي شنغهاي–الرياض من Freightos',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← السعودية (أمثلة مسارات)',
+    service: 'شحن جوي من مطار إلى مطار',
+    transit: '6–10 days',
+    basis: 'أمثلة مسارات ddpchain',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← السعودية (نطاقات السوق)',
+    service: 'الشحن الجوي',
+    transit: '2–5 business days',
+    basis: 'دليل الشحن الجوي من cargofromchina',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← السعودية (تقدير تخطيطي)',
+    service: 'شحن جوي من مطار إلى مطار',
+    transit: '3–7 days',
+    basis: 'نطاق تخطيطي للشحن المباشر من مطار إلى مطار؛ يُرجى التحقق مع الناقل',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← السعودية (شحن جوي DDP)',
+    service: 'شحن جوي DDP من الباب إلى الباب',
+    transit: '10–15 days',
+    basis: 'معيار الشحن الجوي DDP من chinaddpshipping',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'بريد سريع',
+    service: 'توصيل إلى الباب',
+    transit: '3–6 أيام عمل',
+    basis: 'مثال DHL من ddpchain؛ الشحن السريع من Freightos 3–6 days؛ الشحن السريع من Sino 3–5 days',
+    confidence: 'LOW',
+  },
+];
+
+const seaVsAirRows = [
+  {
+    factor: 'مدة النقل الإرشادية',
+    sea: '18–45 days من ميناء إلى ميناء عبر نطاقات التخطيط والبحث',
+    air: '2–10 days من مطار إلى مطار (النطاق البحثي الكامل)',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'تقلب الوقت',
+    sea: 'نطاق أوسع؛ الجدول الزمني وإعادة الشحن والازدحام تمدد الوقت',
+    air: 'نطاق أضيق، لكن التخليص الجمركي وSABER لا تزال تؤخر الإفراج',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'أساس الوحدة',
+    sea: 'لكل حاوية (FCL) أو لكل CBM / الوزن القابل للتحصيل (LCL)',
+    air: 'لكل kg قابل للتحصيل',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'الأنسب لـ',
+    sea: 'البضائع غير العاجلة، كبيرة الحجم، ذات الطلب المستقر',
+    air: 'البضائع العاجلة، القابلة للتلف، الهشة، عالية القيمة أو الحرجة لنفاد المخزون',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'بوابة الامتثال',
+    sea: 'مطلوب PC/SC من SABER وإقرار FASAH قبل الوصول',
+    air: 'تنطبق نفس القواعد؛ الشحن الجوي يقلل وقت النقل وليس الأعمال الورقية',
+    confidence: 'MEDIUM',
+  },
+];
+
+const stageRows = [
+  {
+    stage: 'الاستلام من المنشأ والتخليص الجمركي للتصدير من الصين',
+    effect: 'يضيف وقتًا قبل مغادرة السفينة أو الطائرة',
+    note: 'يعتمد التوقيت على بوابة المنشأ وجاهزية المستندات',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'القطع والتحميل للسفينة / الطائرة',
+    effect: 'البضاعة تنتظر موعد المغادرة المقرر',
+    note: 'قلة الرحلات البحرية أو الجوية تعني مزيدًا من الانتظار',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'النقل الدولي',
+    effect: 'جدة ~20–35 days؛ الدمام/الرياض ~30–45 days بحرًا',
+    note: 'الشحن الجوي 2–10 days بالمقارنة',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'إعادة الشحن (إن وجدت)',
+    effect: 'يضيف مناولة في المحطة وانتظارًا في مركز العبور',
+    note: 'الخدمات المباشرة عادة أسرع لكنها أقل تكرارًا',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'التفريغ وتوفر المحطة',
+    effect: 'تصبح الحاوية أو البضاعة متاحة بعد التفريغ',
+    note: 'ازدحام المحطة يمكن أن يطيل هذه المرحلة',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'الإفراج الجمركي السعودي',
+    effect: 'إقرار FASAH قبل الوصول بالإضافة إلى SC من SABER',
+    note: 'تأخر SC أو احتجاز المستندات يوقف الوقت عند الحدود',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'التسليم الداخلي',
+    effect: 'النقل بالشاحنات من جدة/الدمام إلى العنوان النهائي',
+    note: 'بضائع الرياض قد تُنقل عبر ميناء الرياض الجاف',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'جدول الإبحار / الرحلات الجوية وتكرارها',
+    effect: 'قلة المغادرات تخلق مدة انتظار أطول في المنشأ أو مركز العبور',
+    note: 'تأكد من السفينة والرحلة الفعلية وموعد القطع',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'المسار المباشر مقابل إعادة الشحن',
+    effect: 'إعادة الشحن تضيف مناولة ووقت انتظار',
+    note: 'الخطوط المباشرة أسرع لكنها أقل تكرارًا',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'الموسم الذروة والسعة',
+    effect: 'الازدحام وضغط المساحة يمددان الشحن البحري والجوي',
+    note: 'احجز مبكرًا خلال فترات الذروة',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'ازدحام الميناء',
+    effect: 'ضغط الطاقة الاستيعابية في جدة/الدمام قد يؤخر التفريغ',
+    note: 'موانئ موانئ السعودية تعاملت مع 8.3m TEU في 2025',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الوضع الأمني في البحر الأحمر',
+    effect: 'تغييرات المسارات أدت أحيانًا إلى تمديد مدة النقل',
+    note: 'مؤكد من لقطة البحث',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'جاهزية الجمارك وSABER',
+    effect: 'تأخر SC من SABER أو خطأ في HS أو مستند ناقص يحجز البضاعة',
+    note: 'احصل على SC قبل الوصول؛ وقدّم FASAH مبكرًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'المرحلة البرية إلى الوجهة النهائية',
+    effect: 'الدمام/الرياض والتسليم الداخلي يضيفان وقتًا بعد التفريغ',
+    note: 'طابق ميناء التفريغ مع المرسل إليه',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كم تستغرق مدة الشحن من الصين إلى السعودية؟',
+    a: 'نطاقات التخطيط الإرشادية تقريبًا 20–45 days بحرًا و2–10 days جواً. الشحن البحري إلى جدة عادة حوالي 20–35 days، بينما الدمام وميناء الرياض الجاف حوالي 30–45 days. هذه نتائج بحثية منخفضة الثقة وليست ضمانات جدول زمني — تحقق مع الناقل وتحقق من إعادة الشحن.',
+  },
+  {
+    q: 'ما هي مدة الشحن البحري إلى جدة؟',
+    a: 'تشير لقطات البحث إلى أن الشحن البحري إلى جدة حوالي 20–35 days، مع متوسط مصدر واحد حوالي 20 days على مثال شنتشن–جدة. تعامل مع ذلك كنطاق إرشادي من ميناء إلى ميناء وتأكد من السفينة والرحلة وأي نقاط إعادة شحن قبل الحجز.',
+  },
+  {
+    q: 'كم تستغرق مدة الشحن البحري إلى الدمام أو الرياض؟',
+    a: 'النطاقات الإرشادية هي 30–45 days إلى الدمام / ميناء الرياض الجاف. تُظهر Freightos FCL شنغهاي–الرياض عند 30–40 days وLCL عند 32–45 days. غالبًا ما تُفرغ بضائع الرياض في الدمام ثم تُنقل برًا بالسكك الحديدية أو الطرق، لذا فإن نقطة التسليم النهائية مهمة.',
+  },
+  {
+    q: 'ما مدى سرعة الشحن الجوي من الصين إلى السعودية؟',
+    a: 'الشحن الجوي من مطار إلى مطار عادة 3–7 days كتقدير تخطيطي، مع نطاقات منشورة تبلغ 2–5 business days و6–10 days حسب المصدر والمسار. الشحن الجوي DDP من الباب إلى الباب يضيف وقتًا وغالبًا ما يُقتبس عند 10–15 days.',
+  },
+  {
+    q: 'هل FCL أسرع من LCL من الصين إلى السعودية؟',
+    a: 'نعم، في معظم الحالات يكون FCL أسرع لأن الحاوية المختومة تتحرك كشحنة واحدة. تُظهر Freightos FCL شنغهاي–الرياض عند 30–40 days مقابل LCL عند 32–45 days. يضيف LCL مناولة التجميع والتفكيك، مما قد يضيف أيضًا مخاطر جدولة.',
+  },
+  {
+    q: 'لماذا يوجد فجوة بين وصول السفينة والإفراج عن البضاعة؟',
+    a: 'الوصول ليس إفراجًا. بعد التفريغ، يجب أن تصبح الحاوية متاحة، ثم يجب قبول إقرار FASAH قبل الوصول وSC من SABER، وتسوية الرسوم الجمركية/ضريبة القيمة المضافة، وإتمام أي فحص قبل الإفراج. تأخر SC من SABER أو خطأ في رمز HS أو مستند ناقص يحول فجوة يوم واحد إلى احتجاز لعدة أيام.',
+  },
+  {
+    q: 'ما الذي يؤخر غالبًا شحنة من الصين إلى السعودية؟',
+    a: 'الأسباب الشائعة هي انتظار إعادة الشحن، وازدحام موسم الذروة، وتغييرات مسارات البحر الأحمر، وازدحام الميناء في جدة أو الدمام، واحتجاز التخليص بسبب تأخر SC من SABER أو مستندات غير صحيحة. التخطيط لأعمال الامتثال قبل الوصول يزيل الجزء القابل للتحكم من التأخير.',
+  },
+  {
+    q: 'كيف يمكنني تقصير مدة النقل من الصين إلى السعودية؟',
+    a: 'اختر خدمة مباشرة بدلاً من إعادة الشحن، واحصل على SC من SABER قبل الوصول، وقدّم إقرار FASAH قبل الوصول مبكرًا، وصنف رمز HS بشكل صحيح، واحجز النقل بالشاحنات قبل التفريغ، واستخدم الشحن الجوي فقط عندما تستحق وفرة الوقت القسط الإضافي.',
+  },
+  {
+    q: 'ما الفرق بين مدة النقل من ميناء إلى ميناء ومن الباب إلى الباب؟',
+    a: 'من ميناء إلى ميناء يتوقف عند المحطة السعودية ويترك النقل البري قبل الشحن الرئيسي والتخليص السعودي والتسليم لك، لذا فإن الوقت المذكور أقصر لكنه غير مكتمل. من الباب إلى الباب يشمل السلسلة بأكملها إلى العنوان النهائي وهو التوقيت الوحيد المهم لموعد استلام المشتري للبضاعة فعليًا.',
+  },
+  {
+    q: 'هل يبطئ SABER شحنتي؟',
+    a: 'فقط إذا تم التعامل معه متأخرًا. يجب الحصول على شهادة مطابقة الشحنة (SC) قبل وصول البضاعة — منذ 1 January 2025، تعتبر SC المقدمة بعد الوصول باطلة. إذا تم إنجاز PC وSC بشكل صحيح قبل الوصول، فإن SABER جزء من عملية التخليص وليس سببًا للتأخير.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'مدة النقل من الصين إلى السعودية: بحرًا وجوًا ومن الباب إلى الباب (August 2026)',
+      description:
+        'مدة النقل من الصين إلى السعودية موضحة: نطاقات جدة مقابل الدمام بحرًا، فروق FCL مقابل LCL، النقل الجوي والسريع، من ميناء إلى ميناء مقابل من الباب إلى الباب، والتأخيرات التي تمدد الوقت.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="مدة النقل من الصين إلى السعودية: بحرًا وجوًا ومن الباب إلى الباب (August 2026)"
+  description="مدة النقل من الصين إلى السعودية: نطاقات جدة مقابل الدمام بحرًا، فروق FCL مقابل LCL، النقل الجوي والسريع، من ميناء إلى ميناء مقابل من الباب إلى الباب، والتأخيرات التي تمدد الوقت."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'مدة النقل من الصين إلى السعودية' },
+        ]}
+      />
+      <span class="badge badge--amber">محدث August 2026</span>
+      <h1>مدة النقل من الصين إلى السعودية: بحرًا وجوًا ومن الباب إلى الباب</h1>
+      <p class="lead">
+        رقم واحد مثل “20 days” يخفي ثلاث ساعات مختلفة: جدول الإبحار، والوصول الفعلي،
+        والإفراج الجمركي الذي يسمح للمشتري باستلام البضاعة. تفرّق هذه الصفحة بين
+        جدة والدمام، وFCL وLCL، ومن ميناء إلى ميناء ومن الباب إلى الباب.
+      </p>
+      <p class="small muted">
+        شارات الثقة تفصل الأرقام الموثقة عن لقطات السوق الإرشادية. تعامل مع كل نافذة
+        نقل منخفضة الثقة على أنها إرشادية، وتحقق مع الناقل قبل الاعتماد عليها.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">مدة الشحن البحري</span>
+          <span class="fact-value">20–45 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة الشحن الجوي</span>
+          <span class="fact-value">2–10 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">جدة بحرًا</span>
+          <span class="fact-value">20–35 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الدمام / الرياض</span>
+          <span class="fact-value">30–45 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاعدة SABER SC</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">شنغهاي 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. ثلاث ساعات وليس واحدة</h2>
+    <p>
+      مدة النقل الرئيسية عادة هي <strong>ساعة الجدول الزمني</strong>: وقت الإبحار أو الطيران المنشور
+      من ميناء إلى ميناء. <strong>ساعة الوصول</strong> هي عندما تصل البضاعة فعليًا إلى
+      المحطة أو المطار السعودي بعد تغييرات الجدول وإعادة الشحن والازدحام.
+      <strong>ساعة الإفراج</strong> هي عندما تفرج الجمارك السعودية عن البضاعة بعد معالجة FASAH
+      والتحقق من SABER وتسوية الرسوم الجمركية/ضريبة القيمة المضافة وأي فحص.
+    </p>
+    <p>
+      عادة يخطط الشاحنون وفق الساعة الأولى ويفاجأون بالثالثة. تلك الفجوة بين
+      الوصول والإفراج هي الوقت الخفي في كل عرض نقل، ولهذا فإن رقم من ميناء إلى ميناء
+      ليس مثل وعد التسليم.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. نطاقات الشحن البحري: جدة مقابل الدمام / الرياض</h2>
+      <p>
+        تختلف مدة النقل إلى السعودية أكثر مما يوحي به متوسط واحد. تُصل جدة من جهة البحر
+        الأحمر، بينما تقع الدمام وميناء الرياض الجاف على جهة الخليج وتضيفان مناولة برية
+        لتسليم الرياض. استخدم هذه النطاقات للتخطيط، ثم أكد جدول السفينة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'service', label: 'الخدمة' },
+          { key: 'transit', label: 'مدة النقل الإرشادية' },
+          { key: 'basis', label: 'الأساس' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="نطاقات الشحن البحري الإرشادية فقط — تحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+      />
+      <SourceList locale={locale} sources={seaTransitSources} title="المصادر — مدة الشحن البحري" />
+
+      <h3 class="mt-3">مجموعة بيانات التخطيط من WorldFreightHub</h3>
+      <p>
+        تحتفظ مجموعة بيانات المسارات الداخلية للموقع بتقدير تخطيطي أبسط: مناشئ شنغهاي ونينغبو-
+        تشوشان وشنتشن مرتبطة بجدة والدمام. هذه الأرقام تقديرات تخطيطية وليست
+        ضمانات جدول زمني، وهي أضيق عمدًا من نطاقات البحث الأوسع أعلاه.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'origin', label: 'المنشأ' },
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'typical', label: 'المعتاد' },
+          { key: 'range', label: 'نطاق التخطيط' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={planningRows}
+        caption="تقديرات تخطيط داخلية من src/data/routes.ts. تعامل معها كتقدير تخطيطي منخفض الثقة وتحقق مع الناقل المعني."
+      />
+      <SourceList locale={locale} sources={primaryPortSources} title="المصادر — مناشئ مجموعة بيانات التخطيط" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. نطاقات الشحن الجوي والسريع</h2>
+    <p>
+      الشحن الجوي يقصر ساعة النقل لكن ليس ساعة الامتثال. نطاقات من مطار إلى مطار
+      تقاس بالأيام، لكن نفس إقرار FASAH وSC من SABER وتصنيف HS
+      لا تزال مطلوبة قبل الإفراج.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'lane', label: 'المسار' },
+        { key: 'service', label: 'الخدمة' },
+        { key: 'transit', label: 'مدة النقل الإرشادية' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="نطاقات جوية وسريعة إرشادية على أسس مسارات/تواريخ مختلفة. تحقق مع وكيل الشحن قبل الاعتماد على هذه الأرقام."
+    />
+    <SourceList locale={locale} sources={airTransitSources} title="المصادر — النقل الجوي والسريع" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. البحر مقابل الجو: قرار الوقت</h2>
+      <p>
+        البحر عادة أبطأ لكنه أرخص بكثير لكل وحدة؛ الجو أسرع لكنه مكلف. الاختبار الصحيح
+        ليس “الجو دائمًا أسرع” — بل ما إذا كانت تكلفة المخزون والنقد والمخاطر لانتظار
+        18–45 days تتجاوز القسط الجوي لبضاعتك المحددة.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'sea', label: 'الشحن البحري' },
+          { key: 'air', label: 'الشحن الجوي' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={seaVsAirRows}
+        caption="عوامل القرار استرشادية؛ أرقام مدة النقل منخفضة الثقة. تحقق مع وكيل الشحن للشحنة الفعلية."
+      />
+      <SourceList locale={locale} sources={comparisonSources} title="المصادر — البحر مقابل الجو" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="اختر الشحن الجوي عندما...">
+          <ul>
+            <li>البضاعة عاجلة أو قابلة للتلف أو حرجة لنفاد المخزون.</li>
+            <li>القيمة لكل kg مرتفعة ومخاطر التلف مهمة.</li>
+            <li>دورة وصول 3–7 day تستحق القسط الإضافي.</li>
+            <li>الشحنة صغيرة والحد الأدنى لرسوم الشحن البحري مكلف.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="اختر الشحن البحري عندما...">
+          <ul>
+            <li>البضاعة كبيرة أو كثيفة أو ثقيلة أو ذات طلب مستقر.</li>
+            <li>تكلفة الوحدة أهم من مدة النقل.</li>
+            <li>الشحنة تملأ حصة كبيرة من الحاوية.</li>
+            <li>يمكن للمرسل إليه تحمل نافذة 18–45 day.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. من ميناء إلى ميناء مقابل من الباب إلى الباب: أي ساعة تشتري؟</h2>
+    <p>
+      من ميناء إلى ميناء يتوقف عند المحطة السعودية ويترك النقل البري قبل الشحن الرئيسي والتخليص
+      السعودي والتسليم لك. من الباب إلى الباب يجمع السلسلة بأكملها في مزود واحد وسعر واحد.
+      الرقم المذكور يعني أشياء مختلفة في كل حالة، لذا أكد دائمًا أين تبدأ الساعة وتتوقف.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'factor', label: 'العامل' },
+        { key: 'portToPort', label: 'من ميناء إلى ميناء' },
+        { key: 'doorToDoor', label: 'من الباب إلى الباب' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={[
+        {
+          factor: 'نطاق الخدمة',
+          portToPort: 'من محطة بحرية إلى محطة بحرية (أو من مطار إلى مطار)',
+          doorToDoor: 'من مستودع المنشأ إلى عنوان الوجهة في السعودية',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'ما يتضمنه الوقت',
+          portToPort: 'النقل الرئيسي فقط؛ النقل البري قبل وبعد الشحن الرئيسي منفصل',
+          doorToDoor: 'الاستلام والتصدير والنقل والاستيراد السعودي والتسليم النهائي مجمعة',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'وضوح التوقيت',
+          portToPort: 'مقارنة أوضح، لكن تاريخ التسليم الفعلي غير مكتمل',
+          doorToDoor: 'نافذة واحدة شاملة، لكن يجب تأكيد ما هو مشمول كتابيًا',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'سياق Incoterm',
+          portToPort: 'يناسب مفاوضات FOB / CFR / CIF',
+          doorToDoor: 'يناسب ترتيبات DAP / DDP',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'الأنسب لـ',
+          portToPort: 'المستوردين القائمين مع وسيط جمركي وشركة نقل بري في السعودية',
+          doorToDoor: 'البائعين الذين يريدون مزودًا واحدًا وغير قائمين محليًا',
+          confidence: 'LOW',
+        },
+      ]}
+      caption="مقارنة نطاق الخدمة استرشادية. أكد بالضبط أين تبدأ الساعة وتتوقف في كل عرض سعر."
+    />
+
+    <h3 class="mt-3">الساعة على مراحل</h3>
+    <p>
+      تقسيم الرحلة إلى مراحل يجعل الوقت الخفي مرئيًا. لم تُنشر أعداد الأيام على مستوى المراحل
+      في لقطة البحث الموثقة، لذا يوضح الجدول أدناه أين يُضاف الوقت بدلاً من اختراع أرقام لكل مرحلة.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'stage', label: 'المرحلة' },
+        { key: 'effect', label: 'التأثير على الوقت الإجمالي' },
+        { key: 'note', label: 'ملاحظة تخطيطية' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={stageRows}
+      caption="توقيت المراحل منخفض الثقة لأن لقطة البحث لم تنشر أعداد أيام لكل مرحلة — اطلب جدول المعالم من وكيل الشحن."
+    />
+    <SourceList locale={locale} sources={[...seaTransitSources, ...factorSources]} title="المصادر — مراحل النقل" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. ما الذي يمدد الوقت: الوقت الخفي</h2>
+      <p>
+        الفجوة بين جدول الإبحار واليوم الذي يستلم فيه المشتري البضاعة تأتي من عدد
+        صغير من العوامل القابلة للتحكم وغير القابلة للتحكم. تحكم في المستندات وتوقيت SABER؛
+        وخطط حول متغيرات الجدول والموسم والأمن.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'effect', label: 'التأثير على مدة النقل' },
+          { key: 'note', label: 'ملاحظة تخطيطية' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="عوامل النقل سياق تشغيلي. فقط قاعدة SABER قبل الوصول ورقم 8.3m TEU للميناء أعلى ثقة؛ والباقي منخفض الثقة ويخص الشحنة."
+      />
+      <SourceList locale={locale} sources={factorSources} title="المصادر — عوامل النقل" />
+
+      <div class="note mt-2">
+        <strong>النصف القابل للتحكم:</strong> احصل على SC من SABER قبل الوصول، وقدّم إقرار FASAH
+        قبل الوصول مبكرًا، وصنف رمز HS بشكل صحيح واحجز النقل بالشاحنات قبل
+        التفريغ. هذه الخطوات تزيل احتجاز التخليص الذي يحول وصولًا روتينيًا إلى
+        تسليم متأخر.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. نقاط الامتثال التي تتحكم في الساعة</h2>
+
+    <h3>الضرائب والرسوم الجمركية</h3>
+    <p>
+      ضريبة القيمة المضافة على الاستيراد السعودي هي <strong>15%</strong>، سارية منذ 1 July 2020، وتُحسب على
+      قيمة CIF <em>بالإضافة إلى</em> الرسوم الجمركية. الرسوم الجمركية الأساسية هي <strong>5% من CIF</strong>
+      بموجب التعريفة الجمركية الموحدة لدول مجلس التعاون الخليجي، مع رسوم حماية أو رسوم مكافحة إغراق
+      تتراوح بين 15–25% ممكنة على سلع محددة. ضريبة السلع الانتقائية تضيف 100% على التبغ و50% على مشروبات الطاقة و50% على
+      المشروبات الغازية حيثما ينطبق ذلك.
+    </p>
+    <p>
+      هناك تناقض واحد يتم الإشارة إليه بدلاً من إخفائه: بعض المصادر الثانوية تذكر إعفاءً
+      SAR 1,000 للشحنات الشخصية السريعة، بينما يقول آخر إن السعودية ليس لديها مثل هذا
+      الإعفاء. تعامل مع هذه النقطة على أنها غير محسومة وتأكد مع ZATCA للواردات منخفضة القيمة.
+    </p>
+
+    <h3>SABER / SASO بالترتيب الصحيح</h3>
+    <ol>
+      <li>سجّل المستورد والمنتج على منصة مطابقة SABER.</li>
+      <li>احصل على <strong>PC (شهادة مطابقة المنتج)</strong> — اختبار المنتج أولاً، ثم فحص ما قبل الشحن؛ الصلاحية حوالي سنة واحدة وتُصدر مرة واحدة لكل منتج.</li>
+      <li>بمجرد توفر بوليصة الشحن أو بوليصة الشحن الجوي، تقدم بطلب للحصول على <strong>SC (شهادة مطابقة الشحنة)</strong> لتلك الشحنة المحددة.</li>
+      <li>استلم SC <strong>قبل وصول البضاعة</strong> — منذ 1 January 2025، تعتبر SC المقدمة بعد الوصول باطلة ويفشل التخليص.</li>
+      <li>قدّم الإقرار الجمركي قبل الوصول عبر <strong>FASAH</strong>، نظام النافذة الموحدة في السعودية، مع إرفاق SC.</li>
+    </ol>
+
+    <h3>المستندات والتصنيف</h3>
+    <p>
+      المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن أو بوليصة الشحن الجوي وقائمة التعبئة
+      وشهادة المنشأ وشهادة مطابقة SABER للسلع الخاضعة للتنظيم. صنف البضاعة
+      برمز <strong>HS</strong> الصحيح قبل الشحن، لأن كلاً من الرسوم الجمركية ومتطلبات المطابقة
+      تعتمدان عليه. لاحظ أن <strong>ISF</strong> متطلب أمريكي ولا
+      ينطبق على السعودية؛ الخطوة المكافئة للتقديم المسبق هي إقرار FASAH قبل الوصول.
+    </p>
+    <p>
+      الجو يقصر ساعة النقل، وليس ساعة الامتثال. تأخر SC من SABER أو خطأ في رمز HS
+      يمكن أن يلغي الميزة الزمنية باحتجاز البضاعة في المطار أو الميناء، لذا أكمل أعمال PC/SC
+      قبل الوصول وقدّم إقرار FASAH مبكرًا.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك والموانئ السعودية" />
+  </section>
+
+  <section class="section container">
+    <h2>8. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>9. حداثة البيانات وإيقاع التحديث الشهري</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">محدث August 2026</span>. قاعدة SABER
+      قبل الوصول ومعدلات الرسوم الجمركية/ضريبة القيمة المضافة القانونية يُعاد التحقق منها مقابل ZATCA
+      وإشعار SABER؛ ونطاقات الشحن البحري والجوي هي لقطات سوق يُعاد التحقق منها شهريًا لأن
+      تكرار الإبحار والازدحام والوضع الأمني في البحر الأحمر تغيرها.
+    </p>
+    <p>
+      إذا نشر ناقل جدولًا ثابتًا، أو نشرت محطة أوقات تفريغ حالية، أو نشرت
+      Mawani/ZATCA معالم على مستوى المراحل، يتم تحديث الجداول ورفع شارة الثقة
+      وتغيير تاريخ التعديل في بيانات الصفحة الوصفية. حتى ذلك الحين، يظل توقيت المراحل
+      منخفض الثقة مع ملاحظة طلب الجدول بدلاً من ملئه بتقديرات.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على تقدير مدة النقل من الصين إلى السعودية"
+      text="أخبرنا بمنشأك ووجهتك ونوع البضاعة وحجم الحاوية أو CBM وموعد التسليم النهائي، وسنوصلك بمزودين يمكنهم عرض المسار ونافذة النقل وتوقيت SABER معًا."
+    />
+  </section>
+</BaseLayout>

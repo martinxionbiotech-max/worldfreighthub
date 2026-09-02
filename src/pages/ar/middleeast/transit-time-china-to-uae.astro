@@ -1,0 +1,692 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { routes } from '../../../data/routes';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/transit-time-china-to-uae/`;
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+const fta: Source = {
+  id: 'fta-uae-vat',
+  name: 'UAE Federal Tax Authority — VAT',
+  url: 'https://tax.gov.ae/en/taxes/Vat.aspx',
+  type: 'government',
+};
+const numeral: Source = {
+  id: 'numeral-uae-vat',
+  name: 'Numeral — UAE VAT rates and compliance',
+  url: 'https://www.numeral.com/blog/uae-vat-rates-and-compliance',
+  type: 'organization',
+};
+const wfhRouteData: Source = {
+  id: 'wfh-uae-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Jebel Ali (typical 21 days, range 15–30)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
+const uaePortSources = sourcesByIds(['dp-world', 'abu-dhabi-ports', 'dubai-customs']);
+const complianceSources = [...sourcesByIds(['dubai-customs']), fta, numeral];
+const seaTransitSources: Source[] = [wfhRouteData, cargofromchinaUae, docshipper];
+const airTransitSources: Source[] = [cargofromchinaUae];
+const comparisonSources: Source[] = [wfhRouteData, cargofromchinaUae];
+const factorSources: Source[] = [
+  ...sourcesByIds(['dubai-customs', 'dp-world', 'abu-dhabi-ports']),
+  fta,
+  cargofromchinaUae,
+  docshipper,
+];
+
+const seaTransitRows = [
+  {
+    destination: 'جبل علي (دبي)',
+    service: 'شحن بحري FCL/LCL · شنغهاي، نينغبو-تشوشان، شنتشن',
+    transit: 'نموذجي 21 days (النطاق 15–30)',
+    basis: 'بيانات مسارات WorldFreightHub',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'جبل علي (دبي)',
+    service: 'دليل الإبحار المباشر السريع بحراً',
+    transit: '14–18 days',
+    basis: 'ملخص الشحن البحري من الصين إلى الإمارات — cargofromchina',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'ميناء خليفة — أبوظبي',
+    service: 'شحن بحري من ميناء إلى ميناء',
+    transit: 'غير منشور — يُرجى طلب جدول زمني خاص بالميناء',
+    basis: 'لا يوجد رقم مؤكد خاص بميناء خليفة في ملخص البحث',
+    confidence: 'LOW',
+  },
+  {
+    destination: 'ميناء خالد (الشارقة)',
+    service: 'شحن بحري من ميناء إلى ميناء',
+    transit: 'غير منشور — يُرجى طلب جدول زمني خاص بالميناء',
+    basis: 'لا يوجد رقم مؤكد خاص بالشارقة في ملخص البحث',
+    confidence: 'LOW',
+  },
+];
+
+const planningRows = routes
+  .filter((route) => route.country === 'united-arab-emirates')
+  .map((route) => ({
+    origin: route.originPort,
+    destination: route.destPort,
+    typical: `${route.transitDays.typical} يوم`,
+    range: `${route.transitDays.range[0]}–${route.transitDays.range[1]} يوم`,
+    note: route.note,
+    confidence: 'MEDIUM',
+  }));
+
+const airTransitRows = [
+  {
+    lane: 'الصين ← دبي (DXB/DWC)',
+    service: 'شحن جوي من مطار إلى مطار',
+    transit: '3–7 days',
+    basis: 'نطاق تخطيطي للشحن المباشر من مطار إلى مطار؛ يُرجى التحقق مع الناقل',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← دبي / الإمارات',
+    service: 'شحن جوي سريع',
+    transit: '2–4 days',
+    basis: 'ملخص الشحن السريع من الصين إلى الإمارات — cargofromchina',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'الصين ← دبي / الإمارات',
+    service: 'شحن جوي DDP من الباب إلى الباب',
+    transit: '3–6 days',
+    basis: 'ملاحظة الشحن الجوي DDP — cargofromchina',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'شنغهاي ← جبل علي (مقارنة)',
+    service: 'شحن بحري',
+    transit: 'نموذجي 21 days (النطاق 15–30)',
+    basis: 'بيانات مسارات WorldFreightHub',
+    confidence: 'MEDIUM',
+  },
+];
+
+const seaVsAirRows = [
+  {
+    factor: 'مدة النقل الإرشادية',
+    sea: 'نموذجي 21 days شنغهاي→جبل علي؛ نافذة الدليل السريع 14–18 day',
+    air: '3–7 days من مطار إلى مطار؛ ملخص الشحن السريع 2–4 day',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'تقلب الوقت',
+    sea: 'نطاق أوسع؛ الجدول الزمني وإعادة الشحن والازدحام تمدد الوقت',
+    air: 'نطاق أضيق، لكن التخليص عبر مرسال 2 لا يزال يتحكم في الإفراج',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'الأنسب لـ',
+    sea: 'البضائع غير العاجلة، كبيرة الحجم، ذات الطلب المستقر',
+    air: 'البضائع العاجلة، القابلة للتلف، الهشة، عالية القيمة أو الحرجة لنفاد المخزون',
+    confidence: 'LOW',
+  },
+];
+
+const stageRows = [
+  {
+    stage: 'الاستلام من المنشأ والتخليص الجمركي للتصدير من الصين',
+    effect: 'يضيف وقتاً قبل مغادرة السفينة أو الطائرة',
+    note: 'يعتمد التوقيت على بوابة المنشأ وجاهزية المستندات',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'الموعد النهائي للسفينة / الرحلة والتحميل',
+    effect: 'تنتظر البضاعة موعد المغادرة المقرر',
+    note: 'قلة عدد الرحلات البحرية أو الجوية تعني مزيداً من الانتظار',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'النقل الدولي',
+    effect: 'جبل علي ~21 days نموذجياً؛ جواً 3–7 days بالمقارنة',
+    note: 'الوقت الأكثر وضوحاً، لكنه ليس الوحيد',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'إعادة الشحن (إن وجدت)',
+    effect: 'يضيف مناولة في المحطة وانتظاراً في مركز الشحن',
+    note: 'الخدمات المباشرة عادة أسرع لكنها أقل تكراراً',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'التفريغ وتوفر المحطة',
+    effect: 'تصبح الحاوية أو البضاعة متاحة بعد التفريغ',
+    note: 'ازدحام المحطة يمكن أن يطيل هذه الخطوة',
+    confidence: 'LOW',
+  },
+  {
+    stage: 'الإفراج الجمركي في الإمارات',
+    effect: 'إقرار مرسال 2 المسبق للوصول بالإضافة إلى فحوصات HS والمستندات',
+    note: 'الإقرار المتأخر أو تعليق المستندات يوقف الوقت عند الحدود',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'التسليم الداخلي',
+    effect: 'النقل بالشاحنات من جبل علي / خليفة / الشارقة إلى العنوان النهائي',
+    note: 'نقطة التسليم النهائية جزء من وقت التسليم الفعلي من الباب إلى الباب',
+    confidence: 'LOW',
+  },
+];
+
+const factorRows = [
+  {
+    factor: 'جدول السفن / الرحلات وتكرارها',
+    effect: 'قلة المغادرات تخلق مدة انتظار أطول في المنشأ أو مركز الشحن',
+    note: 'تأكد من السفينة والرحلة والموعد النهائي الفعلي',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'المسار المباشر مقابل إعادة الشحن',
+    effect: 'إعادة الشحن تضيف وقت المناولة والانتظار',
+    note: 'الخطوط المباشرة أسرع لكنها أقل تكراراً',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'الموسم الذروة والسعة',
+    effect: 'الازدحام وضغط المساحة يطيلان مدة الشحن البحري والجوي',
+    note: 'احجز مبكراً خلال فترات الذروة',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'ازدحام الميناء',
+    effect: 'ضغط الطاقة الاستيعابية في جبل علي / خليفة / الشارقة يمكن أن يؤخر التفريغ',
+    note: 'طابق ميناء التفريغ مع المرسل إليه ومرحلة النقل الداخلي',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'تغييرات المسارات الإقليمية',
+    effect: 'تعديلات الجدول يمكن أن تمدد نافذة النقل المنشورة',
+    note: 'تأكد من المسار الحالي قبل الحجز',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'مرسال 2 وجاهزية المستندات',
+    effect: 'الإقرار المتأخر أو خطأ في HS أو مستند مفقود يحجز البضاعة',
+    note: 'قدّم إقرار مرسال 2 مبكراً وحافظ على اتساق المستندات',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'المنطقة الحرة مقابل البر الرئيسي في المرحلة النهائية',
+    effect: 'يغير مسار التخليص والتسليم بعد التفريغ',
+    note: 'أكد حالة المرسل إليه النهائية كتابياً',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كم تستغرق مدة الشحن من الصين إلى الإمارات؟',
+    a: 'تسجل بيانات مسارات WorldFreightHub مدة نموذجية تبلغ 21 days مع نطاق 15–30 day لشنغهاي ونينغبو-تشوشان وشنتشن إلى جبل علي (ثقة MEDIUM). دليل سوق ثانوي يعطي نافذة أسرع تبلغ 14–18 day لممر الصين–الإمارات (ثقة LOW). استخدم نطاق بيانات المسار الأوسع للتخطيط والنافذة السريعة فقط كأفضل حالة.',
+  },
+  {
+    q: 'ما هي مدة النقل البحري إلى جبل علي؟',
+    a: 'تضع مجموعة بيانات المسار شنغهاي ونينغبو-تشوشان وشنتشن إلى جبل علي عند نموذجي 21 days مع نطاق 15–30 day. هذا اختصار تخطيطي وليس ضماناً للجدول — تأكد من السفينة والرحلة وأي نقاط إعادة شحن قبل الحجز.',
+  },
+  {
+    q: 'كم تستغرق مدة الشحن البحري إلى ميناء خليفة أو الشارقة؟',
+    a: 'ملخص البحث الموثق لا ينشر رقماً محدداً لميناء خليفة أو ميناء خالد. النطاق التقريبي لممر الإمارات هو 14–18 days بحراً كنافذة دليل سريع، لكن الجداول الخاصة بكل ميناء تختلف، لذا اطلب مدة النقل الدقيقة للتفريغ في أبوظبي أو الشارقة.',
+  },
+  {
+    q: 'ما مدى سرعة الشحن الجوي من الصين إلى دبي؟',
+    a: 'نطاق تخطيطي يبلغ 3–7 days معقول للشحن المباشر من مطار إلى مطار (ثقة LOW). يسجل ملخص البحث الشحن الجوي السريع عند 2–4 days والشحن الجوي DDP من الباب إلى الباب عند 3–6 days. جميع الأرقام إرشادية — تحقق مع الناقل قبل الاعتماد عليها.',
+  },
+  {
+    q: 'هل الشحن FCL أسرع من LCL من الصين إلى الإمارات؟',
+    a: 'في معظم الحالات يكون FCL أسرع لأن الحاوية المختومة تتحرك كشحنة واحدة. يضيف LCL التجميع في المنشأ وإعادة التجزئة في CFS الوجهة، مما قد يضيف مخاطر جدولة ومناولة حتى عندما يكون وقت النقل الرئيسي مشابهاً.',
+  },
+  {
+    q: 'لماذا يوجد فجوة بين وصول السفينة والإفراج عن البضاعة؟',
+    a: 'الوصول ليس إفراجاً. بعد التفريغ يجب أن تصبح الحاوية متاحة، ثم تتم معالجة إقرار مرسال 2، وتسوية الرسوم الجمركية وضريبة القيمة المضافة، وإكمال أي تفتيش. تقديم مرسال 2 متأخراً أو عدم تطابق المستندات يحجز البضاعة في الميناء حتى لو وصلت السفينة في الموعد.',
+  },
+  {
+    q: 'ما الفرق بين مدة النقل من ميناء إلى ميناء ومن الباب إلى الباب؟',
+    a: 'من ميناء إلى ميناء يتوقف عند محطة الإمارات أو المطار ويترك النقل الأولي والتخليص والتسليم لك. من الباب إلى الباب يجمع الاستلام والتصدير والنقل والاستيراد في الإمارات والتسليم النهائي في نافذة واحدة. تأكد من أين تبدأ وتنتهي المدة في كل عرض سعر — نفس المسار يمكن تسعيره كـ 21 days أو 30 days حسب النطاق.',
+  },
+  {
+    q: 'ما الذي يؤخر النقل في الإمارات أكثر من غيره؟',
+    a: 'العوامل المعتادة هي إعادة الشحن، وسعة الموسم الذروة، وازدحام الميناء، وتقديم مرسال 2 المتأخر، ورمز HS غير صحيح، والتصاريح المفقودة، ومرحلة التسليم الداخلي. النصف الذي يمكن التحكم به هو جاهزية المستندات والتخليص؛ والنصف غير القابل للتحكم هو الجدول والموسم والازدحام.',
+  },
+  {
+    q: 'هل يضيف التخليص الجمركي في الإمارات وقتاً كبيراً؟',
+    a: 'ملخص البحث لا ينشر رقماً موثوقاً بالساعات أو الأيام للتخليص في الإمارات. يعتمد وقت التنفيذ الفعلي على دقة HS واتساق المستندات وما إذا تم اختيار التفتيش ووقت الإفراج المجاني. أكمل العمل المسبق للوصول أولاً؛ التخليص عادة أسرع من إصلاح رمز HS خاطئ أو تصريح مفقود.',
+  },
+  {
+    q: 'كيف يمكنني تقصير مدة النقل من الصين إلى الإمارات؟',
+    a: 'احجز إبحاراً مباشراً أو زوج مطارات مباشراً؛ وقدّم إقرار مرسال 2 المسبق للوصول مبكراً؛ وصنف رمز HS بشكل صحيح؛ وجهز المستندات قبل المغادرة؛ وطابق ميناء التفريغ مع الوجهة النهائية؛ وحوّل إعادة التموين العاجلة إلى الشحن الجوي بينما يتحرك المخزون الرئيسي بحراً.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'مدة النقل من الصين إلى الإمارات: نوافذ الشحن البحري والجوي إلى جبل علي (August 2026)',
+      description:
+        'مدة النقل من الصين إلى الإمارات ودبي موضحة: نافذة الشحن البحري النموذجية البالغة 21 يوماً إلى جبل علي، وملاحظات ميناء خليفة والشارقة، والشحن الجوي 3–7 day، والتأخيرات التي تمدد الوقت.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="مدة النقل من الصين إلى الإمارات: نوافذ الشحن البحري والجوي إلى جبل علي (August 2026)"
+  description="مدة النقل من الصين إلى الإمارات ودبي: نافذة الشحن البحري النموذجية البالغة 21 يوماً إلى جبل علي، وملاحظات ميناء خليفة والشارقة، والشحن الجوي 3–7 day، والتأخيرات التي تمدد الوقت."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'مدة النقل من الصين إلى الإمارات' },
+        ]}
+      />
+      <span class="badge badge--amber">محدث August 2026</span>
+      <h1>مدة النقل من الصين إلى الإمارات: نوافذ الشحن البحري والجوي إلى جبل علي</h1>
+      <p class="lead">
+        رقم واحد مثل “21 days” يخفي ثلاث ساعات مختلفة: جدول الإبحار، والوصول الفعلي،
+        وتخليص مرسال 2 الذي يسمح للمشتري باستلام البضاعة. تفصل هذه الصفحة بين جبل علي
+        وخليفة والشارقة، وبين الشحن البحري والجوي، وبين من ميناء إلى ميناء ومن الباب إلى الباب.
+      </p>
+      <p class="small muted">
+        شارات الثقة تفصل الأرقام الموثقة عن الملخصات السوقية الإرشادية. تعامل مع كل نافذة نقل
+        بثقة LOW على أنها إرشادية، وتحقق مع الناقل قبل الاعتماد عليها.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">جبل علي بحراً</span>
+          <span class="fact-value">21 days <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">نطاق التخطيط البحري</span>
+          <span class="fact-value">15–30 days <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة الشحن الجوي</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">دليل الشحن البحري السريع</span>
+          <span class="fact-value">14–18 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">تقديم مرسال 2</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">شنغهاي 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. ثلاث ساعات وليس ساعة واحدة</h2>
+    <p>
+      مدة النقل الرئيسية عادة هي <strong>ساعة الجدول</strong>: وقت الإبحار أو الطيران المنشور
+      من ميناء إلى ميناء. <strong>ساعة الوصول</strong> هي عندما تصل البضاعة فعلياً إلى محطة
+      الإمارات أو المطار بعد تغييرات الجدول وإعادة الشحن والازدحام. <strong>ساعة الإفراج</strong>
+      هي عندما يفرج الجمارك في الإمارات عن البضاعة بعد معالجة مرسال 2 وتسوية الرسوم/ضريبة القيمة
+      المضافة وأي تفتيش.
+    </p>
+    <p>
+      عادة يخطط الشاحنون وفق الساعة الأولى ويفاجأون بالثالثة. تلك الفجوة بين الوصول والإفراج هي
+      الوقت الخفي في كل عرض سعر نقل، ولهذا فإن رقم من ميناء إلى ميناء ليس نفس وعد التسليم. في
+      تدفق إعادة التصدير والتجارة الإلكترونية في الإمارات، تحدد هذه الفجوة أيضاً ما إذا كانت
+      طرد المنطقة الحرة سيصل إلى البر الرئيسي قبل انتهاء نافذة التخزين المجاني.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. نوافذ الشحن البحري: جبل علي مقابل خليفة مقابل الشارقة</h2>
+      <p>
+        الإمارات لديها أكثر من نقطة تفريغ، والجدول ليس متطابقاً بينها. جبل علي هي البوابة
+        الرئيسية للاستيراد من الصين، بينما يخدم ميناء خليفة أبا ظبي وميناء خالد الشارقة
+        والإمارات الشمالية. الملخص الموثق يحدد فقط ممر جبل علي، لذا تبقى الموانئ الأخرى
+        “اطلب الجدول” بدلاً من التخمين.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'service', label: 'الخدمة' },
+          { key: 'transit', label: 'مدة النقل الإرشادية' },
+          { key: 'basis', label: 'الأساس' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="نوافذ الشحن البحري الإرشادية فقط — تحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+      />
+      <SourceList locale={locale} sources={seaTransitSources} title="المصادر — مدة الشحن البحري" />
+
+      <h3 class="mt-3">مجموعة بيانات التخطيط WorldFreightHub</h3>
+      <p>
+        مجموعة بيانات المسار الداخلية للموقع تحتفظ باختصار تخطيطي أبسط: مناشئ شنغهاي
+        ونينغبو-تشوشان وشنتشن إلى جبل علي. هذه الأرقام تقديرات تخطيطية وليست ضمانات
+        للجدول، وهي أضيق عمداً من نافذة الدليل السريع السوقية أعلاه.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'origin', label: 'المنشأ' },
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'typical', label: 'النموذجي' },
+          { key: 'range', label: 'نطاق التخطيط' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={planningRows}
+        caption="تقديرات تخطيطية داخلية من src/data/routes.ts. تعامل معها كاختصار تخطيطي بثقة MEDIUM وتحقق مع الناقل المعني."
+      />
+      <SourceList locale={locale} sources={chinaPortSources} title="المصادر — مناشئ مجموعة بيانات التخطيط" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. نوافذ الشحن الجوي والسريع</h2>
+    <p>
+      الشحن الجوي يقصر ساعة النقل لكن ليس ساعة الامتثال. نوافذ من مطار إلى مطار تقاس
+      بالأيام، لكن نفس إقرار مرسال 2 وتصنيف HS وتسوية الرسوم/ضريبة القيمة المضافة
+      لا تزال مطلوبة قبل الإفراج. الوصول إلى DXB أو DWC سريع، لكن تعليق التخليص في
+      المطار يمكن أن يلغي الميزة الزمنية.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'lane', label: 'المسار' },
+        { key: 'service', label: 'الخدمة' },
+        { key: 'transit', label: 'مدة النقل الإرشادية' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={airTransitRows}
+      caption="نوافذ الشحن الجوي هي نطاقات تخطيطية بثقة LOW وليست ضمانات. تحقق مع شركة الطيران أو وكيل الشحن."
+    />
+    <SourceList locale={locale} sources={airTransitSources} title="المصادر — مدة الشحن الجوي" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. الشحن البحري مقابل الجوي: قرار الوقت</h2>
+      <p>
+        القرار ليس “أيهما أسرع” — الجوي أسرع على ساعة النقل. السؤال الحقيقي هو ما إذا كانت
+        التكلفة الإضافية تشتري وقتاً كافياً لتستحق، وما إذا كانت خطوات التخليص في الإمارات
+        والتسليم النهائي ستسيطر على الوقت على أي حال.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'sea', label: 'الشحن البحري' },
+          { key: 'air', label: 'الشحن الجوي' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={seaVsAirRows}
+        caption="المقارنة استرشادية؛ أرقام النقل هي نطاقات تخطيطية بثقة LOW."
+      />
+      <SourceList locale={locale} sources={comparisonSources} title="المصادر — الشحن البحري مقابل الجوي" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="اختر الشحن الجوي عندما...">
+          <ul>
+            <li>الشحنة عاجلة أو قابلة للتلف أو حرجة لنفاد المخزون.</li>
+            <li>دورة وصول 3–7 day تستحق التكلفة الإضافية.</li>
+            <li>الشحنة صغيرة والحد الأدنى لرسوم الشحن البحري مكلف.</li>
+            <li>كثافة القيمة تعني أن التكلفة الإضافية لكل kg ضئيلة.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="اختر الشحن البحري عندما...">
+          <ul>
+            <li>البضاعة كبيرة أو كثيفة أو ثقيلة أو ذات طلب مستقر.</li>
+            <li>تكلفة الوحدة أهم من مدة النقل.</li>
+            <li>الشحنة تملأ حصة كبيرة من الحاوية.</li>
+            <li>يمكن للمرسل إليه استيعاب نافذة تخطيط 15–30 day.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. من ميناء إلى ميناء مقابل من الباب إلى الباب: أي ساعة تشتري؟</h2>
+    <p>
+      من ميناء إلى ميناء يتوقف عند محطة الإمارات ويترك النقل الأولي والتخليص في الإمارات
+      والتسليم لك. من الباب إلى الباب يجمع السلسلة بأكملها في مزود واحد وسعر واحد. الرقم
+      المذكور يعني أشياء مختلفة في كل حالة، لذا تأكد دائماً من أين تبدأ وتنتهي المدة.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'factor', label: 'العامل' },
+        { key: 'portToPort', label: 'من ميناء إلى ميناء' },
+        { key: 'doorToDoor', label: 'من الباب إلى الباب' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={[
+        {
+          factor: 'نطاق الخدمة',
+          portToPort: 'من محطة بحرية إلى محطة بحرية (أو من مطار إلى مطار)',
+          doorToDoor: 'من مستودع المنشأ إلى عنوان الوجهة في الإمارات',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'ما يتضمنه الوقت',
+          portToPort: 'النقل الرئيسي فقط؛ النقل الأولي واللاحق منفصلان',
+          doorToDoor: 'الاستلام والتصدير والنقل والاستيراد في الإمارات والتسليم النهائي مجمعة',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'وضوح التوقيت',
+          portToPort: 'مقارنة أوضح، لكن تاريخ التسليم الفعلي غير مكتمل',
+          doorToDoor: 'نافذة واحدة شاملة، لكن يجب تأكيد التضمينات كتابياً',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'سياق Incoterm',
+          portToPort: 'يناسب مفاوضات FOB / CFR / CIF',
+          doorToDoor: 'يناسب ترتيبات DAP / DDP',
+          confidence: 'LOW',
+        },
+        {
+          factor: 'الأنسب لـ',
+          portToPort: 'المستوردين القائمين مع وسيط وشاحن في الإمارات',
+          doorToDoor: 'البائعين الذين يريدون مزوداً واحداً وغير مستقرين محلياً',
+          confidence: 'LOW',
+        },
+      ]}
+      caption="مقارنة نطاق الخدمة استرشادية. تأكد بالضبط من أين تبدأ وتنتهي المدة في كل عرض سعر."
+    />
+
+    <h3 class="mt-3">الساعة على مراحل</h3>
+    <p>
+      تقسيم الرحلة إلى مراحل يجعل الوقت الخفي مرئياً. لم تنشر عدد الأيام لكل مرحلة في
+      ملخص البحث الموثق، لذا يوضح الجدول أدناه أين يضاف الوقت بدلاً من اختراع أرقام لكل مرحلة.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'stage', label: 'المرحلة' },
+        { key: 'effect', label: 'التأثير على الوقت الإجمالي' },
+        { key: 'note', label: 'ملاحظة التخطيط' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={stageRows}
+      caption="توقيت المراحل بثقة LOW لأن ملخص البحث لم ينشر عدد الأيام لكل مرحلة — اطلب جدول المعالم من وكيل الشحن."
+    />
+    <SourceList locale={locale} sources={[...seaTransitSources, ...factorSources]} title="المصادر — مراحل النقل" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. ما الذي يمدد الوقت: الماء الخفي</h2>
+      <p>
+        الفجوة بين جدول الإبحار واليوم الذي يستلم فيه المشتري البضاعة تأتي من عدد صغير من
+        العوامل القابلة للتحكم وغير القابلة للتحكم. تحكم في المستندات وتوقيت مرسال 2؛
+        وخطط حول متغيرات الجدول والموسم والازدحام.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'effect', label: 'التأثير على النقل' },
+          { key: 'note', label: 'ملاحظة التخطيط' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={factorRows}
+        caption="عوامل النقل هي سياق تشغيلي. فقط قاعدة مرسال 2 المسبقة للوصول والرقم النموذجي البالغ 21 يوماً إلى جبل علي هما بثقة أعلى؛ والباقي بثقة LOW ويعتمد على الشحنة."
+      />
+      <SourceList locale={locale} sources={factorSources} title="المصادر — عوامل النقل" />
+
+      <div class="note mt-2">
+        <strong>النصف القابل للتحكم:</strong> قدّم إقرار مرسال 2 المسبق للوصول مبكراً،
+        وصنف رمز HS بشكل صحيح، وحافظ على اتساق المستندات، وأكد حالة المنطقة الحرة مقابل
+        البر الرئيسي، واحجز النقل بالشاحنات قبل التفريغ. هذه الخطوات تزيل تعليق التخليص الذي
+        يحول وصولاً روتينياً إلى تسليم متأخر.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. نقاط الامتثال التي تتحكم في الساعة</h2>
+
+    <h3>الضرائب والرسوم</h3>
+    <p>
+      ضريبة القيمة المضافة على الاستيراد في الإمارات هي <strong>5%</strong>،
+      سارية منذ 1 January 2018، وتحسب على قيمة CIF <em>زائد</em> الرسوم الجمركية. الرسوم
+      الجمركية الأساسية للاستيراد هي <strong>5% من CIF</strong> بموجب التعريفة
+      الجمركية الموحدة لدول مجلس التعاون الخليجي، مع إمكانية فرض رسوم أعلى أو ضريبة انتقائية
+      على سلع محددة مثل التبغ والكحول والمركبات.
+    </p>
+    <p>
+      تسجل المصادر الثانوية أن البضائع التي تبلغ قيمتها AED 1,000 أو أقل معفاة من
+      الرسوم/الضرائب والهدايا حتى AED 3,000 معفاة. تعامل مع نقطة الحد الأدنى كمعلومة
+      من مصدر ثانوي وتأكد منها مع جمارك دبي أو الهيئة الاتحادية للضرائب للشحنات منخفضة القيمة.
+    </p>
+
+    <h3>مرسال 2 وترتيب التخليص</h3>
+    <ol>
+      <li>صنف البضاعة برمز <strong>HS</strong> الصحيح قبل الشحن.</li>
+      <li>أكد أهلية المستورد والرخصة التجارية وأي تصاريح منتج قبل المغادرة.</li>
+      <li>جهز الفاتورة التجارية وقائمة التعبئة وبوليصة الشحن أو بوليصة الشحن الجوي وشهادة المنشأ.</li>
+      <li>قدّم إقرار <strong>مرسال 2</strong> المسبق للوصول عبر نظام النافذة الموحدة لجمارك دبي.</li>
+      <li>سوِّ الرسوم وضريبة القيمة المضافة، وأكمل التفتيش إذا تم اختياره، ثم احصل على الإفراج.</li>
+    </ol>
+
+    <h3>المستندات والتصنيف</h3>
+    <p>
+      المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن أو بوليصة الشحن الجوي وقائمة
+      التعبئة وشهادة المنشأ، بالإضافة إلى أي تصاريح خاصة بالمنتج. صنف البضاعة برمز
+      <strong>HS</strong> الصحيح قبل الشحن، لأن كلاً من الرسوم ومتطلبات التصاريح تعتمد عليه.
+      لاحظ أن <strong>ISF</strong> متطلب أمريكي ولا ينطبق على الإمارات؛ خطوة التقديم المسبق
+      هنا هي إقرار مرسال 2 المسبق للوصول.
+    </p>
+    <p>
+      الجوي يقصر ساعة النقل وليس ساعة الامتثال. تقديم مرسال 2 متأخراً أو خطأ في رمز HS يمكن
+      أن يلغي الميزة الزمنية بحجز البضاعة في المطار أو الميناء، لذا أكمل الأوراق قبل الوصول.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك والموانئ في الإمارات" />
+  </section>
+
+  <section class="section container">
+    <h2>8. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>9. حداثة البيانات ودورة التحديث الشهري</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">محدث August 2026</span>. يتم إعادة
+      التحقق من معدلات الرسوم/ضريبة القيمة المضافة القانونية وقاعدة مرسال 2 المسبقة للوصول
+      مقابل الهيئة الاتحادية للضرائب وجمارك دبي؛ ونوافذ الشحن البحري والجوي هي ملخصات سوقية
+      يعاد التحقق منها شهرياً لأن تكرار الإبحار والازدحام والموسم يغيرها.
+    </p>
+    <p>
+      إذا نشر ناقل جدولاً ثابتاً، أو نشرت محطة أوقات تفريغ حالية، أو نشرت جمارك دبي معالم
+      لكل مرحلة، يتم تحديث الجداول ورفع شارة الثقة وتغيير تاريخ التعديل في بيانات الصفحة.
+      حتى ذلك الحين، يبقى توقيت المراحل بثقة LOW مع ملاحظة اطلب الجدول بدلاً من ملئه بالتقديرات.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على تقدير مدة النقل من الصين إلى الإمارات"
+      text="أخبرنا بمنشأك ووجهتك ونوع البضاعة والحاوية أو CBM والموعد النهائي للتسليم، وسنوصلك بمزودين يمكنهم تسعير المسار ونافذة النقل وتوقيت مرسال 2 معاً."
+    />
+  </section>
+</BaseLayout>

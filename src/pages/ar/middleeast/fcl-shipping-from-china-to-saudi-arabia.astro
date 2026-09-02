@@ -1,0 +1,854 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/fcl-shipping-from-china-to-saudi-arabia/`;
+
+const freightos: Source = {
+  id: 'freightos',
+  name: 'Freightos — Shanghai to Riyadh route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+const sinoShipping: Source = {
+  id: 'sino-shipping',
+  name: 'Sino Shipping — China to Saudi freight snapshots (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+const cargofromchina: Source = {
+  id: 'cargofromchina',
+  name: 'Cargo From China — China to Saudi Arabia guide',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+const ddpchain: Source = {
+  id: 'ddpchain',
+  name: 'DDP Chain — China to Saudi Arabia',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+const chinaddpshipping: Source = {
+  id: 'chinaddpshipping',
+  name: 'China DDP Shipping — DDP shipping China to Saudi Arabia',
+  url: 'https://www.chinaddpshipping.com/ddp-shipping-from-china-to-saudi-arabia/',
+  type: 'industry',
+};
+const commenda: Source = {
+  id: 'commenda',
+  name: 'Commenda — Saudi Arabia import VAT guide',
+  url: 'https://www.commenda.io/saudi-arabia/import-vat',
+  type: 'organization',
+};
+const fuxinCcpt: Source = {
+  id: 'fuxin-ccpit',
+  name: 'Liaoning CCPIT — SABER SC certificate notice (26 Dec 2024)',
+  url: 'https://www.fuxin.gov.cn/content/2024/962553.html',
+  type: 'government',
+};
+const worldcargonews: Source = {
+  id: 'worldcargonews',
+  name: 'World Cargo News — Mawani ports handle 8.3m TEU in 2025',
+  url: 'https://www.worldcargonews.com/ports-terminals/2026/01/mawani-ports-handle-8-3m-teu-in-2025/',
+  type: 'industry',
+};
+const globalimporter: Source = {
+  id: 'globalimporter',
+  name: 'Global Importer — Guangzhou/Shenzhen to Saudi DDP sample quote',
+  url: 'https://www.globalimporter.net/cdetail_753_8551690.html',
+  type: 'industry',
+};
+const isoContainer: Source = {
+  id: 'iso-668',
+  name: 'ISO 668:2020 — Series 1 freight containers — classification, dimensions and ratings',
+  url: 'https://www.iso.org/standard/76912.html',
+  type: 'organization',
+};
+
+const primaryPortSources = sourcesByIds([
+  'mawani',
+  'sipg',
+  'ningbo-zhoushan-port',
+  'shenzhen-port-group',
+]);
+const complianceSources = sourcesByIds(['zatca', 'mawani']);
+const rateSources: Source[] = [freightos, sinoShipping];
+const transitSources: Source[] = [freightos, cargofromchina, ddpchain, chinaddpshipping];
+const containerSources: Source[] = [isoContainer, freightos];
+const costSources: Source[] = [
+  ...sourcesByIds(['zatca', 'mawani']),
+  commenda,
+  fuxinCcpt,
+  freightos,
+];
+const ddpContextSources: Source[] = [ddpchain, globalimporter, chinaddpshipping];
+
+const fclRows = [
+  {
+    container: 'FCL 20GP',
+    freightos: '$3,333–$4,443',
+    sino: '$5,085–$6,215',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40GP',
+    freightos: '$4,623–$6,164',
+    sino: '$6,615–$8,085',
+    confidence: 'LOW',
+  },
+  {
+    container: 'FCL 40HQ',
+    freightos: '$4,623–$6,164',
+    sino: 'غير منشور',
+    confidence: 'LOW',
+  },
+];
+
+const lclRows = [
+  {
+    volume: 'LCL 1 CBM',
+    total: '$716–$955',
+    perCbm: '$716–$955 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 5 CBM',
+    total: '$1,650–$2,200',
+    perCbm: '$330–$440 / CBM',
+    confidence: 'LOW',
+  },
+  {
+    volume: 'LCL 10 CBM',
+    total: '$2,669–$3,559',
+    perCbm: '$267–$356 / CBM',
+    confidence: 'LOW',
+  },
+];
+
+const ddpContextRows = [
+  {
+    service: 'DDP بحري — LCL حسب الحجم',
+    benchmark: 'من ~1,600 RMB / CBM',
+    basis: 'جدول مقارنة ddpchain الصين→السعودية',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP جوي — لكل kg قابل للتحصيل',
+    benchmark: '33–48 RMB / كغ',
+    basis: 'أمثلة مسارات ddpchain',
+    confidence: 'LOW',
+  },
+  {
+    service: 'عينة DDP من الباب إلى الباب',
+    benchmark: '45 RMB / كغ',
+    basis: 'مثال globalimporter قوانغتشو/شنتشن→السعودية',
+    confidence: 'LOW',
+  },
+];
+
+const fclTransitRows = [
+  {
+    service: 'FCL — شنغهاي إلى الرياض',
+    origin: 'شنغهاي',
+    destination: 'ميناء الرياض الجاف / الدمام',
+    transit: '30–40 days',
+    basis: 'بيانات مسار FCL من Freightos',
+    confidence: 'LOW',
+  },
+  {
+    service: 'LCL — شنغهاي إلى الرياض',
+    origin: 'شنغهاي',
+    destination: 'ميناء الرياض الجاف / الدمام',
+    transit: '32–45 days',
+    basis: 'بيانات مسار LCL من Freightos',
+    confidence: 'LOW',
+  },
+  {
+    service: 'بحري — جنوب الصين إلى جدة',
+    origin: 'شنتشن / جنوب الصين',
+    destination: 'جدة',
+    transit: '~20–35 days',
+    basis: 'cargofromchina ~20 days متوسط؛ ddpchain 20–35 days',
+    confidence: 'LOW',
+  },
+  {
+    service: 'بحري — الدمام / ميناء الرياض الجاف',
+    origin: 'الصين',
+    destination: 'الدمام / ميناء الرياض الجاف',
+    transit: '30–45 days',
+    basis: 'ممر Freightos شنغهاي–الرياض',
+    confidence: 'LOW',
+  },
+  {
+    service: 'جوي — جدة والدمام',
+    origin: 'الصين',
+    destination: 'جدة والدمام',
+    transit: '2–10 days',
+    basis: 'cargofromchina 2–5 business days؛ ddpchain / Freightos 6–10 days',
+    confidence: 'LOW',
+  },
+];
+
+const containerRows = [
+  {
+    type: '20GP (حاوية 20 قدم للأغراض العامة)',
+    interior: '~5.90 × 2.35 × 2.39 م',
+    volume: '~33 CBM',
+    payload: '~28,200 kg',
+    note: 'الأفضل للبضائع الثقيلة والكثيفة',
+    confidence: 'LOW',
+  },
+  {
+    type: '40GP (حاوية 40 قدم للأغراض العامة)',
+    interior: '~12.03 × 2.35 × 2.39 م',
+    volume: '~67 CBM',
+    payload: '~26,500 kg',
+    note: 'تضاعف الحجم بعلاوة سعرية أقل',
+    confidence: 'LOW',
+  },
+  {
+    type: '40HQ (حاوية 40 قدم عالية)',
+    interior: '~12.03 × 2.35 × 2.69 م',
+    volume: '~76 CBM',
+    payload: '~26,300 kg',
+    note: 'ارتفاع إضافي للحجم وليس للوزن',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'شنغهاي',
+    throughput: '55.06M TEU (2025)',
+    note: 'الميناء رقم #1 عالميًا للحاويات للعام 16th على التوالي',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'نينغبو-تشوشان',
+    throughput: '43M TEU (2025)',
+    note: 'الميناء رقم #3 للحاويات؛ أول ميناء يتجاوز 1.4bn tonnes بضائع',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'شنتشن (يانتيان / شيكو)',
+    throughput: 'غير منشور في البيانات المتاحة',
+    note: 'بوابة جنوب الصين',
+    confidence: 'LOW',
+  },
+];
+
+const saudiPortRows = [
+  {
+    factor: 'الساحل / المنطقة',
+    jeddah: 'البحر الأحمر، غرب السعودية',
+    dammam: 'الخليج العربي، شرق السعودية',
+    riyadh: 'داخلية (يخدمها موانئ ساحلية)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الدور الرئيسي',
+    jeddah: 'البوابة الرئيسية للحاويات',
+    dammam: 'الميناء الرئيسي على الخليج لخدمة الرياض والمناطق الشرقية/الوسطى',
+    riyadh: 'ميناء جاف داخلي لتوزيع منطقة الرياض الحضرية',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'حالة الاستخدام النموذجية لـ FCL',
+    jeddah: 'المرسل إليهم في غرب/وسط السعودية',
+    dammam: 'المرسل إليهم في الرياض والمنطقة الشرقية',
+    riyadh: 'تسليمات الباب في محيط الرياض',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'الشحن البحري (FCL)',
+    who: 'وكيل الشحن / الناقل البحري',
+    magnitude: 'انظر جدول أسعار FCL',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المنشأ (الصين)',
+    who: 'وكيل الشحن / المحطات',
+    magnitude: 'غير منشور في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المناولة والميناء في الوجهة',
+    who: 'محطة جدة / الدمام',
+    magnitude: 'غير منشور في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم التخليص الجمركي وخدمات البضائع',
+    who: 'المخلص الجمركي / وكيل سعودي',
+    magnitude: 'غير منشور في البيانات الموثقة — اطلب جدول الرسوم',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم مطابقة SABER / SASO',
+    who: 'SASO / منصة SABER + المختبرات',
+    magnitude: 'PC لكل منتج + SC لكل شحنة؛ غير منشور — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+  {
+    item: 'غرامة التأخير',
+    who: 'المحطة (بعد فترة السماح)',
+    magnitude: 'رسوم يومية؛ تختلف فترة السماح حسب المحطة والخط الملاحي',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الاحتجاز',
+    who: 'الناقل البحري (بعد فترة السماح)',
+    magnitude: 'رسوم يومية؛ تختلف فترة السماح حسب الناقل',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الرسوم الجمركية (الأساسية)',
+    who: 'ZATCA',
+    magnitude: '5% من قيمة CIF (التعريفة الجمركية الموحدة لدول الخليج)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'ضريبة القيمة المضافة على الاستيراد',
+    who: 'ZATCA',
+    magnitude: '15% على قيمة CIF + الرسوم الجمركية',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'ضريبة السلع الانتقائية (إن وجدت)',
+    who: 'ZATCA',
+    magnitude: 'التبغ 100%؛ مشروبات الطاقة 50%؛ المشروبات الغازية 50%',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'التأمين على البضائع (اختياري)',
+    who: 'شركة التأمين / وكيل الشحن',
+    magnitude: 'اختياري؛ عادة نسبة صغيرة من قيمة البضاعة',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كم تبلغ تكلفة الشحن البحري FCL من الصين إلى السعودية؟',
+    a: 'تشير البيانات السوقية الاسترشادية لشهر August 2026 إلى أن FCL 20GP حوالي $3,333–$5,085 وFCL 40GP حوالي $4,623–$8,085, حسب المسار ومصدر البيانات. يعرض Freightos مسار شنغهاي–الرياض لحاوية 20 قدم بسعر $3,333–$4,443 ولحاوية 40 قدم/40HQ بسعر $4,623–$6,164, بينما يعرض Sino-shipping مسار الصين–السعودية 20GP بسعر $5,085–$6,215 و40GP بسعر $6,615–$8,085. هذه أرقام سوقية بثقة منخفضة وليست عروض أسعار من الناقلين — تحقق قبل الحجز.',
+  },
+  {
+    q: 'كم تستغرق مدة النقل FCL من الصين إلى السعودية؟',
+    a: 'الفترات الاسترشادية هي 30–40 days لشحن FCL من شنغهاي إلى الرياض، و32–45 days لشحن LCL من شنغهاي إلى الرياض، وحوالي 20–35 days إلى جدة، و30–45 days إلى الدمام/ميناء الرياض الجاف. الشحن الجوي حوالي 2–10 days. هذه نتائج بحثية بثقة منخفضة، تحقق مع الناقل.',
+  },
+  {
+    q: 'ما هي أبعاد وسعة تحميل حاويات 20GP و40GP و40HQ؟',
+    a: 'الأرقام الاسمية وفق ISO 668/ISO 1496 هي تقريباً 33 CBM وحمولة 28,200 kg لحاوية 20GP، و67 CBM وحمولة 26,500 kg لحاوية 40GP، و76 CBM وحمولة 26,300 kg لحاوية 40HQ. الوزن الفارغ الفعلي والحمولة والأبعاد الداخلية تختلف حسب عمر الحاوية والشركة المصنعة، كما تنطبق حدود الوزن على الطرق السعودية، لذا تحقق مع خطك الملاحي قبل تخطيط التحميل.',
+  },
+  {
+    q: 'FCL أم LCL — أيهما أرخص لبضاعتي؟',
+    a: 'لا توجد نقطة تعادل حجمية ثابتة في البيانات البحثية الموثقة. استخدم جدول تكلفة LCL لكل CBM مقابل عرض سعر شامل لـ FCL لحجمك الفعلي؛ مع زيادة الحجم، يصبح FCL عادة أرخص لكل CBM لأنك تتوقف عن دفع رسوم التجميع وتقليل المساحة غير المستخدمة. اطلب كلا العرضين قبل اتخاذ القرار.',
+  },
+  {
+    q: 'ما هو VGM ومتى يجب تقديمه؟',
+    a: 'VGM هو الوزن الإجمالي الموثق للحاوية المعبأة، وهو مطلوب بموجب قواعد SOLAS ليتمكن الناقل من تخطيط التوزيع الآمن على السفينة. يجب على الشاحن الإعلان عن الوزن الموثق قبل الموعد النهائي للناقل؛ قدمه مبكراً لأن تفويت الموعد يعني تأجيل الحاوية إلى الرحلة التالية.',
+  },
+  {
+    q: 'ما حدود الوزن المطبقة على شحنة FCL إلى السعودية؟',
+    a: 'لكل حاوية حد أقصى للوزن الإجمالي وتصنيف حمولة، لكن الحد الفعلي غالباً هو الوزن القانوني على الطريق في الجزء السعودي. تأكد من حمولة الحاوية وحدود محاور الشاحنة ومسار الطريق قبل التحميل، خاصة للبضائع الكثيفة في حاوية 20GP.',
+  },
+  {
+    q: 'هل يمكنني شحن بضائع خطرة في حاوية FCL؟',
+    a: 'نعم، ولكن فقط مع الإعلان الصحيح عن فئة IMDG ورقم الأمم المتحدة ومجموعة التعبئة وإقرار البضائع الخطرة وشهادة تعبئة الحاوية والملصقات المناسبة. البضائع الخطرة غير المعلنة يمكن رفضها في الميناء وتعريض الشاحن للغرامات والتأخير.',
+  },
+  {
+    q: 'هل يجب تبطين الحاوية بالمنصات أم تحميلها على الأرض؟',
+    a: 'البضائع المبطنة بالمنصات أسرع في التحميل والتفريغ وأسهل في الفحص، لكن المنصات تستهلك حجماً وتضيف وزناً. التحميل على الأرض يزيد الاستفادة من الحجم لكنه يتطلب تثبيتاً ودعماً مناسبين ويكون أبطأ في المناولة. اختر حسب منتجك وعمالة الوجهة وقدرة المرسل إليه على التعامل مع كلا النوعين.',
+  },
+  {
+    q: 'ما الرسوم الخفية التي يجب أن أتوقعها على شحنة FCL؟',
+    a: 'بالإضافة إلى الشحن البحري، توقع رسوم المنشأ ورسوم المناولة والميناء في الوجهة ورسوم التخليص وخدمات البضائع ورسوم مطابقة SABER PC/SC ورسوم غرامة التأخير/الاحتجاز المحتملة بعد فترة السماح. الرسوم الجمركية 5% من CIF وضريبة القيمة المضافة 15% على CIF + الرسوم. المبالغ المحددة للرسوم لم تنشر في البيانات الموثقة — اطلب جدول رسوم مفصلاً.',
+  },
+  {
+    q: 'هل أحتاج شهادات SABER لشحنة FCL؟',
+    a: 'نعم، إذا كانت بضائعك خاضعة للتنظيم. احصل على شهادة مطابقة المنتج (PC) لكل منتج، ثم شهادة مطابقة الشحنة (SC) لكل شحنة. منذ 1 January 2025 يجب الحصول على SC قبل وصول البضاعة وإلا يفشل التخليص.',
+  },
+  {
+    q: 'أي ميناء سعودي يجب أن أستخدم لشحن FCL — جدة أم الدمام؟',
+    a: 'جدة هي البوابة الرئيسية على البحر الأحمر وتناسب المرسل إليهم في غرب ووسط السعودية. الدمام هو الميناء الرئيسي على الخليج العربي ويناسب الرياض والمنطقة الشرقية، مع ميناء الرياض الجاف للجزء الداخلي. طابق ميناء التفريغ مع موقع المرسل إليه وتأكد من تكلفة النقل البري الداخلي.',
+  },
+  {
+    q: 'كيف تعمل غرامة التأخير ورسوم الاحتجاز على حاوية FCL؟',
+    a: 'غرامة التأخير تفرضها المحطة عندما تبقى الحاوية داخل الميناء بعد فترة السماح التالية للتفريغ؛ رسوم الاحتجاز يفرضها الناقل البحري عندما تبقى الحاوية خارج الميناء بعد فترة السماح التالية للاستلام. تجنب كليهما بتقديم الإقرار المسبق عبر FASAH والحصول على SC قبل الوصول وحجز النقل البري قبل التفريغ.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن البحري FCL من الصين إلى السعودية: أحجام الحاويات والأسعار وقواعد التحميل (August 2026)',
+      description:
+        'الشحن البحري FCL من الصين إلى السعودية مشروحاً: أحجام وسعة تحميل 20GP/40GP/40HQ، أسعار FCL/LCL الاسترشادية ومدة النقل، FCL مقابل LCL، VGM، حدود الوزن والبضائع الخطرة.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن البحري FCL من الصين إلى السعودية: أحجام الحاويات والأسعار وقواعد التحميل (August 2026)"
+  description="الشحن البحري FCL من الصين إلى السعودية مشروحاً: أحجام وسعة تحميل 20GP/40GP/40HQ، أسعار FCL/LCL الاسترشادية ومدة النقل، FCL مقابل LCL، VGM، حدود الوزن والبضائع الخطرة."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'الشحن البحري FCL من الصين إلى السعودية' },
+        ]}
+      />
+      <span class="badge badge--amber">محدث August 2026</span>
+      <h1>الشحن البحري FCL من الصين إلى السعودية: أحجام الحاويات والأسعار وقواعد التحميل</h1>
+      <p class="lead">
+        الشحن البحري بالحاوية الكاملة (FCL) هو الخيار الافتراضي للشحنات الأكبر والأثقل من الصين إلى
+        السعودية. تغطي هذه الصفحة تخطيط 20GP و40GP و40HQ، والأسعار
+        الاسترشادية لـ FCL/LCL وفترات النقل، ومتى تبقى مع الحاوية الكاملة بدلاً من مشاركة مساحة LCL،
+        وقواعد جانب التحميل — VGM وحدود الوزن والبضائع الخطرة والتبطين بالمنصات مقابل التحميل على
+        الأرض — التي تحدد ما إذا كانت الحاوية ستتحرك في الوقت المحدد.
+      </p>
+      <p class="small muted">
+        شارات الثقة تفصل الأرقام الموثقة عن اللقطات السوقية الاسترشادية. تعامل مع كل رقم بثقة منخفضة
+        للأسعار ومدة النقل وتخطيط الحاوية كرقم استرشادي، وتحقق مع الناقل قبل الاعتماد عليه.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">ضريبة القيمة المضافة على الاستيراد السعودي</span>
+          <span class="fact-value">15% <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم الجمركية الأساسية</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاعدة شهادة SABER SC</span>
+          <span class="fact-value">قبل الوصول <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري FCL</span>
+          <span class="fact-value">30–40 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري LCL</span>
+          <span class="fact-value">32–45 days <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">شنغهاي 2025</span>
+          <span class="fact-value">55.06M TEU <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. أسعار FCL الاسترشادية من الصين إلى السعودية</h2>
+    <p>
+      يُسعّر FCL لكل حاوية وليس لكل CBM، لذا فإن الرقم الرئيسي هو سعر بحري شامل من ميناء إلى
+      ميناء لحاوية واحدة. الأرقام أدناه لقطات سوقية تم جمعها على أسس مسارات وتواريخ مختلفة وهي
+      مصنفة عمداً بثقة منخفضة — أسعار الشحن البحري تتغير أسبوعياً مع الطاقة والوقود والموسم الذروة.
+    </p>
+
+    <h3>الشحن بالحاوية الكاملة (FCL)</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'container', label: 'الحاوية' },
+        { key: 'freightos', label: 'Freightos · شنغهاي–الرياض' },
+        { key: 'sino', label: 'Sino-shipping · الصين–السعودية (August 2026)' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={fclRows}
+      caption="لقطات سوقية استرشادية وليست عروض أسعار من الناقلين. تحقق مع وكيل الشحن قبل الاعتماد على هذه الأرقام."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار FCL" />
+
+    <h3 class="mt-3">الشحن بأقل من حاوية (LCL) للمقارنة</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'volume', label: 'الحجم' },
+        { key: 'total', label: 'الإجمالي (Freightos · شنغهاي–الرياض)' },
+        { key: 'perCbm', label: 'استرشادي لكل CBM' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={lclRows}
+      caption="تكلفة وحدة LCL تنخفض مع زيادة الحجم. استخدم هذه الأرقام لكل CBM مقابل عرض سعر شامل لـ FCL لإيجاد نقطة التقاطع."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار LCL" />
+
+    <h3 class="mt-3">سياق DDP الشامل</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'service', label: 'خدمة DDP' },
+        { key: 'benchmark', label: 'معيار استرشادي' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={ddpContextRows}
+      caption="معايير DDP من الباب إلى الباب تشمل بالفعل الرسوم الجمركية وضريبة القيمة المضافة وSABER والتوصيل النهائي — لا يمكن مقارنتها سطراً بسطر مع الشحن البحري FCL."
+    />
+    <SourceList locale={locale} sources={ddpContextSources} title="المصادر — سياق DDP" />
+
+    <div class="note mt-2">
+      <strong>لماذا يتداخل سعرا 40HQ و40GP:</strong> بعض المنصات تنشر نفس سعر
+      الحاوية 40 قدم للحاويات العامة والعالية. عملياً، يمكن للحاوية العالية حمل حجم أكبر بنفس تصنيف
+      الوزن، لذا اسأل الخط الملاحي عن الرسوم الإضافية الدقيقة للمعدات والتوافر قبل افتراض تطابق
+      الأسعار.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. مدة النقل FCL حسب الميناء ووسيلة النقل</h2>
+      <p>
+        عادة ما يكون FCL أسرع من LCL على نفس المسار لأنه يتخطى التجميع والتفكيك، لكن الفرق ليس ثابتاً
+        في كل ميناء. الأرقام أدناه نتائج بحثية وليست ضمانات جدول زمني.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'service', label: 'الخدمة' },
+          { key: 'origin', label: 'المنشأ' },
+          { key: 'destination', label: 'الوجهة' },
+          { key: 'transit', label: 'مدة النقل الاسترشادية' },
+          { key: 'basis', label: 'الأساس' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={fclTransitRows}
+        caption="فترات نقل استرشادية فقط — تحقق مع الناقل المعني قبل الاعتماد على هذه الأرقام."
+      />
+      <SourceList locale={locale} sources={transitSources} title="المصادر — مدة النقل FCL" />
+
+      <div class="note mt-2">
+        <strong>سياق من الباب إلى الباب:</strong> تسجل اللقطة البحثية أيضاً DDP بحري من الباب إلى
+        الباب حوالي 30–35 days وDDP جوي من الباب إلى الباب حوالي 10–15 days. تلك تضيف وقت
+        التخليص والتوصيل النهائي فوق الجزء من ميناء إلى ميناء.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL مقابل LCL: أيهما يجب أن تحجز؟</h2>
+    <p>
+      القرار مسألة تكلفة إجمالية وأولوية تسليم وليس مجرد مسألة حجم. FCL يمنحك حاوية حصرية وإدخال
+      تخليص واحد؛ LCL يتيح لك الدفع فقط عن المساحة التي تستخدمها للأحجام الأصغر. استخدم جدول تكلفة
+      LCL لكل CBM أعلاه مقابل عرض سعر FCL الشامل — عند أحجام CBM الأعلى توجد عادة نقطة تقاطع يصبح
+      عندها FCL الخيار الأرخص لكل CBM.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale} title="اختر FCL عندما...">
+        <ul>
+          <li>تملأ بضاعتك معظم الحاوية أو تكون كثيفة وثقيلة.</li>
+          <li>تحتاج مدة نقل يمكن التنبؤ بها وإدخال تخليص واحد.</li>
+          <li>البضائع هشة أو عالية القيمة أو لا ينبغي دمجها مع بضائع أخرى.</li>
+          <li>تنقل بضائع ضخمة أو خطرة تحتاج وحدة مخصصة.</li>
+        </ul>
+      </Card>
+      <Card locale={locale} title="اختر LCL عندما...">
+        <ul>
+          <li>شحنتك صغيرة — عادة أقل بكثير من حاوية كاملة.</li>
+          <li>تريد تجنب الدفع عن مساحة حاوية غير مستخدمة.</li>
+          <li>تختبر سوقاً أو تعيد التخزين ببطء مع أصناف متعددة.</li>
+          <li>تقبل مناولة تجميع/تفكيك إضافية ومدة نقل أطول قليلاً.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <p class="mt-2">
+      بالنسبة لـ LCL، يتم تجميع البضائع في مستودع CFS في المنشأ وتفكيكها في CFS الوجهة، لذا فإن وقت
+      من الباب إلى الباب يشمل مناولة إضافية في كلا الطرفين. اسأل ما إذا كان وكيل الشحن يدير تجميعاً
+      مباشراً أو عبر إعادة الشحن قبل مقارنة LCL مع FCL.
+    </p>
+
+    <p class="mt-2">
+      لا توجد نقطة تعادل CBM واحدة موثقة في اللقطة البحثية، لذا اطلب كلاً من عرض LCL لحجمك الفعلي
+      وعرض FCL الشامل قبل اتخاذ القرار. نقطة التقاطع تعتمد على المسار والرسوم الإضافية ورسوم الوجهة
+      — وليس على حجم الحاوية وحده.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. الموانئ: شنغهاي ونينغبو-تشوشان وشنتشن إلى جدة والدمام وميناء الرياض الجاف</h2>
+      <p>
+        أكبر ثلاث بوابات حاويات في الصين ترسو على هذا الممر. شنغهاي ونينغبو-تشوشان هما الرائدان في
+        الحركة، بينما شنتشن (يانتيان/شيكو) هي خيار جنوب الصين.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'port', label: 'الميناء الصيني' },
+          { key: 'throughput', label: 'حركة 2025' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={chinaPortRows}
+        caption="أرقام شنغهاي ونينغبو-تشوشان موثقة؛ حركة شنتشن لم تذكر في اللقطة البحثية."
+      />
+      <SourceList locale={locale} sources={primaryPortSources} title="المصادر — الموانئ الصينية" />
+
+      <h3 class="mt-3">موانئ الوجهة السعودية</h3>
+      <p>
+        الموانئ السعودية التي تشغلها Mawani تعاملت مع <strong>8.3 million TEU في 2025</strong>
+        (+10.6% على أساس سنوي)، وهو رقم بثقة متوسطة من الصحافة التجارية لأن mawani.gov.sa
+        لم يكن متاحاً أثناء البحث. جدة والدمام هما الميناءان البحريان الأكثر أهمية لمعظم واردات FCL
+        من الصين.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'jeddah', label: 'جدة' },
+          { key: 'dammam', label: 'الدمام' },
+          { key: 'riyadh', label: 'ميناء الرياض الجاف' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={saudiPortRows}
+        caption="أدوار الموانئ نتائج من مصادر ثانوية؛ تحقق من المسار مع وكيل الشحن."
+      />
+      <SourceList locale={locale}
+        sources={[...primaryPortSources, worldcargonews]}
+        title="المصادر — الموانئ السعودية"
+      />
+
+      <div class="note mt-2">
+        <strong>جدة مقابل الدمام في سطر واحد:</strong> اختر جدة للمرسل إليهم في غرب ووسط السعودية،
+        والدمام (ثم ميناء الرياض الجاف بالسكك الحديدية/الطرق) للمرسل إليهم في الرياض والمنطقة
+        الشرقية. تأكد من الجزء البري النهائي والتكلفة قبل اختيار ميناء التفريغ.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. تخطيط الحاوية: 20GP و40GP و40HQ وVGM والوزن والبضائع الخطرة</h2>
+    <p>
+      أرخص عرض سعر FCL ليس أقل تكلفة إجمالية إذا كان التحميل مخططاً بشكل خاطئ. الحاوية التي تتجاوز
+      الوزن القانوني على الطريق أو تفوت الموعد النهائي لـ VGM أو تخفي بضائع خطرة ستتوقف أو يعاد
+      تجهيزها أو تؤجل — وكل ذلك أغلى من توفير سعر الشحن البحري.
+    </p>
+
+    <h3>الأحجام الاسمية وسعة التحميل</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'type', label: 'نوع الحاوية' },
+        { key: 'interior', label: 'الأبعاد الداخلية الاسمية (ط × ع × ا)' },
+        { key: 'volume', label: 'الحجم الاسمي' },
+        { key: 'payload', label: 'الحمولة النموذجية' },
+        { key: 'note', label: 'ملاحظة تخطيطية' },
+        { key: 'confidence', label: 'الثقة', type: 'confidence' },
+      ]}
+      rows={containerRows}
+      caption="أرقام اسمية وفق ISO 668/ISO 1496 سلسلة 1؛ الوزن الفارغ والحمولة الفعلية تختلف حسب الناقل وسنة الصنع وحدود الوزن على الطرق السعودية. تحقق مع الخط الملاحي قبل تخطيط التحميل."
+    />
+    <SourceList locale={locale} sources={containerSources} title="المصادر — أبعاد الحاويات" />
+
+    <h3 class="mt-3">VGM قبل الموعد النهائي</h3>
+    <p>
+      يجب الإعلان عن <strong>الوزن الإجمالي الموثق (VGM)</strong> للحاوية المعبأة إلى الناقل قبل
+      الموعد النهائي للسفينة بموجب قواعد SOLAS. يحصل الشاحن على الوزن الموثق — عادة عبر ميزان الجسر
+      أو بالطريقة المحسوبة — ويقدمه في نظام حجز الناقل. تفويت الموعد يعني تأجيل الحاوية، لذا تعامل
+      مع VGM كجزء من التحميل وليس فكرة لاحقة.
+    </p>
+
+    <h3>حدود الوزن وجدوى الطريق</h3>
+    <p>
+      لكل حاوية حد أقصى للوزن الإجمالي وتصنيف حمولة، لكن الحد الفعلي لشحنة من الصين إلى السعودية
+      غالباً هو الوزن القانوني على الطريق في الجزء السعودي. تأكد من حمولة الحاوية وحدود محاور
+      الشاحنة ومسار الطريق قبل تحميل البضائع الكثيفة، خاصة في حاوية 20GP حيث يمكن لسلعة
+      ثقيلة أن تصل إلى تصنيف الحمولة قبل امتلاء الحاوية.
+    </p>
+
+    <h3>إقرار البضائع الخطرة</h3>
+    <p>
+      يمكن للبضائع الخطرة أن تنتقل في وحدة FCL فقط مع <strong>فئة IMDG</strong> الصحيحة ورقم الأمم
+      المتحدة واسم الشحن الرسمي ومجموعة التعبئة وإقرار البضائع الخطرة وشهادة تعبئة الحاوية
+      والملصقات المطلوبة. البضائع الخطرة غير المعلنة هي السبب الكلاسيكي لرفض الموانئ، لذا أعلن عن
+      السلعة بدقة في الحجز وبوليصة الشحن.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale} title="البضائع المبطنة بالمنصات">
+        <ul>
+          <li>تحميل وتفريغ أسرع، ومناولة يدوية أكثر أماناً.</li>
+          <li>فحص جمركي وتفتيش أضرار أسهل.</li>
+          <li>تستهلك حجماً وتضيف وزن المنصات.</li>
+          <li>مناسبة لكراتين التجزئة والبضائع الهشة.</li>
+        </ul>
+      </Card>
+      <Card locale={locale} title="البضائع المحملة على الأرض (سائبة)">
+        <ul>
+          <li>تزيد الاستفادة القصوى من الحجم للبضائع الحجمية.</li>
+          <li>تتطلب تثبيتاً ودعماً وتوزيعاً للحمل.</li>
+          <li>أبطأ في التحميل والتفريغ؛ خطر إعادة عمل أعلى.</li>
+          <li>مناسبة للبضائع المتجانسة والقوية.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. التكلفة الإجمالية للوصول FCL: الرسوم التي يتجاهلها المنافسون</h2>
+      <p>
+        سعر الشحن البحري FCL هو سطر واحد فقط من التكلفة الإجمالية للوصول. غرامة التأخير ورسوم
+        الاحتجاز ورسوم المناولة والتخليص ورسوم مطابقة SABER هي التكاليف التي تفاجئ المستوردين لأول
+        مرة — ولهذا فإن "الشامل" هو رقم المقارنة الوحيد المفيد لحاوية كاملة.
+      </p>
+
+      <p>
+        <strong>رسوم المناولة (THC)</strong> تفرض في كلا الطرفين لنقل الحاوية عبر المحطة، بينما قد
+        تشمل رسوم الوجهة السعودية أيضاً رسوم خدمة البضائع ومناولة الفحص الجمركي ورسوم التسليم/التخليص.
+        رسوم مطابقة SABER منفصلة مرة أخرى: عادة تدفع لاختبار المنتج وPC لكل منتج، ثم SC لكل شحنة.
+        لم تنشر أي من مبالغ رسوم الوجهة هذه في اللقطة البحثية الموثقة، لذا اطلب من وكيل الشحن تفصيلها
+        كتابياً.
+      </p>
+
+      <h3>غرامة التأخير ورسوم الاحتجاز</h3>
+      <p>
+        <strong>غرامة التأخير</strong> تفرضها المحطة عندما تبقى الحاوية المستوردة داخل الميناء بعد
+        فترة السماح المسموحة بعد التفريغ. <strong>رسوم الاحتجاز</strong> يفرضها الناقل البحري عندما
+        تبقى الحاوية خارج الميناء بعد فترة السماح المسموحة بعد الاستلام. فترات السماح والأسعار
+        اليومية تختلف حسب الخط والمحطة ولم تنشر في اللقطة البحثية الموثقة، لذا اطلب دائماً جدول
+        الرسوم قبل الحجز.
+      </p>
+
+      <h3>هيكل التكلفة الكامل</h3>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'مكون التكلفة' },
+          { key: 'who', label: 'من يفرضها' },
+          { key: 'magnitude', label: 'النطاق الاسترشادي' },
+          { key: 'confidence', label: 'الثقة', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="فقط ضريبة القيمة المضافة (15%) والرسوم الأساسية (5% CIF) موثقة. الرسوم غير المحددة الكمية بثقة منخفضة لأن اللقطة البحثية لم تنشر مبالغ محددة — اطلب جدول رسوم."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — تكلفة FCL والجمارك" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>7. الامتثال: ضريبة القيمة المضافة والرسوم وSABER/SASO وFASAH ورموز HS</h2>
+
+      <h3>الضريبة والرسوم</h3>
+      <p>
+        ضريبة القيمة المضافة على الاستيراد السعودي هي <strong>15%</strong>، سارية منذ
+        1 July 2020، وتحسب على قيمة CIF <em>بالإضافة إلى</em> الرسوم الجمركية. الرسوم الجمركية
+        الأساسية هي <strong>5% من CIF</strong> بموجب التعريفة الجمركية الموحدة لدول
+        الخليج، مع إمكانية رسوم حماية أو مكافحة إغراق بنسبة 15–25% على سلع محددة.
+        ضريبة السلع الانتقائية تضيف 100% على التبغ و50% على مشروبات الطاقة
+        و50% على المشروبات الغازية حيثما ينطبق ذلك.
+      </p>
+      <p>
+        هناك تباين واحد يتم الإشارة إليه بدلاً من إخفائه: بعض المصادر الثانوية تذكر إعفاءً بقيمة
+        SAR 1,000 للشحنات الشخصية السريعة، بينما يقول آخر إن السعودية لا يوجد لديها مثل هذا
+        الإعفاء. تعامل مع هذه النقطة على أنها غير محسومة وتأكد مع ZATCA للواردات منخفضة القيمة.
+      </p>
+
+      <h3>SABER / SASO بالترتيب الصحيح</h3>
+      <ol>
+        <li>سجل المستورد والمنتج على منصة مطابقة SABER.</li>
+        <li>احصل على <strong>PC (شهادة مطابقة المنتج)</strong> — اختبار المنتج أولاً ثم فحص ما قبل الشحن؛ الصلاحية حوالي سنة واحدة وتصدر مرة واحدة لكل منتج.</li>
+        <li>بمجرد توفر بوليصة الشحن، تقدم بطلب <strong>SC (شهادة مطابقة الشحنة)</strong> لتلك الشحنة المحددة.</li>
+        <li>استلم SC <strong>قبل وصول البضاعة</strong> — منذ 1 January 2025، أي SC تقدم بعد الوصول يعتبر لاغياً ويفشل التخليص.</li>
+        <li>قدم الإقرار الجمركي المسبق عبر <strong>FASAH</strong>، النافذة الموحدة للسعودية، مع إرفاق SC.</li>
+      </ol>
+
+      <h3>المستندات والتصنيف</h3>
+      <p>
+        المستندات القياسية هي الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ وشهادة
+        مطابقة SABER للبضائع الخاضعة للتنظيم. صنف البضائع برمز <strong>HS</strong> الصحيح قبل
+        التسعير، لأن كلاً من الرسوم ومتطلبات المطابقة تعتمد عليه. لاحظ أن <strong>ISF</strong> هو
+        متطلب أمريكي ولا ينطبق على السعودية؛ الخطوة المكافئة للتقديم المسبق في السعودية هي إقرار
+        FASAH المسبق.
+      </p>
+      <p>
+        FASAH هي النافذة الموحدة التي تربط المستوردين والمخلصين الجمركيين والمحطات وZATCA، لذا فإن
+        الإقرار المسبق وتقييم الرسوم/ضريبة القيمة المضافة وحالة التخليص كلها في تدفق واحد. عملياً،
+        هذا يعني أن التخليص قبل التفريغ ممكن عندما تكون SC والمستندات جاهزة، وهي الطريقة الأكثر
+        فعالية لإبقاء غرامة التأخير ورسوم الاحتجاز خارج فاتورة FCL النهائية.
+      </p>
+
+      <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك والموانئ السعودية" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>8. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر شامل FCL من الصين إلى السعودية"
+      text="أخبرنا بمنشأك ووجهتك ونوع الحاوية والسلعة والوزن الإجمالي، وسنوصلك بمزودين يمكنهم تسعير الشحن البحري وSABER ورسوم الوجهة معاً."
+    />
+  </section>
+</BaseLayout>
