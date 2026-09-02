@@ -1,0 +1,827 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+
+const pageUrl = `${SITE_URL}/europe/hidden-charges/`;
+const notPublished = 'Not published in verified snapshot — request an itemised schedule';
+
+const chargeRows = [
+  {
+    charge: 'ISPS security charge',
+    who: 'Carrier / terminal',
+    amount: 'EUR 14 per container',
+    note: 'SOLAS-mandated port security surcharge passed through on the shipment',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Hamburg / Bremerhaven — dry',
+    who: 'Terminal',
+    amount: 'EUR 325 per container',
+    note: 'OOCL Germany local tariff effective 1 January 2026',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Hamburg / Bremerhaven — dangerous goods',
+    who: 'Terminal',
+    amount: 'EUR 365 per container',
+    note: 'Higher handling cost for DG cargo',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Hamburg / Bremerhaven — awkward',
+    who: 'Terminal',
+    amount: 'EUR 590 per container',
+    note: 'Non-standard geometry and crane handling',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Hamburg / Bremerhaven — reefer',
+    who: 'Terminal',
+    amount: 'EUR 475 per container',
+    note: 'Includes reefer monitoring and power access at the terminal',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Wilhelmshaven — dry',
+    who: 'Terminal',
+    amount: 'EUR 295 per container',
+    note: 'Cheaper than Hamburg/Bremerhaven in the same carrier tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Wilhelmshaven — dangerous goods',
+    who: 'Terminal',
+    amount: 'EUR 335 per container',
+    note: 'DG uplift over the dry rate',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Wilhelmshaven — awkward',
+    who: 'Terminal',
+    amount: 'EUR 565 per container',
+    note: 'Non-standard geometry uplift',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Wilhelmshaven — reefer',
+    who: 'Terminal',
+    amount: 'EUR 410 per container',
+    note: 'Reefer uplift over the dry rate',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Belgium + Netherlands — dry',
+    who: 'Terminal',
+    amount: 'EUR 260 per container',
+    note: 'Covers the Antwerp/Rotterdam band in the same tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC Belgium + Netherlands — reefer',
+    who: 'Terminal',
+    amount: 'EUR 355 per container',
+    note: 'Reefer uplift over the dry rate',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'THC indicative by equipment type',
+    who: 'Industry guide',
+    amount: '20ft EUR 220–275 · 40ft EUR 280–330 · reefer EUR 320–400 · OOG EUR 400–600+ · HAZ +50–100%',
+    note: 'hz-containers European THC guide; ranges are planning figures, not one tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Rotterdam export THC',
+    who: 'Xeneta benchmark',
+    amount: '≈ USD 235 per 20ft',
+    note: 'Published Xeneta terminal handling benchmark; export side only',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Documentation / bill of lading fee',
+    who: 'Carrier / agent',
+    amount: 'Outbound EUR 75 · inbound EUR 40',
+    note: 'Bill of lading issuance and release work',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'VGM submission',
+    who: 'Shipper / forwarder',
+    amount: 'Manual EUR 40 · amendment EUR 40 · late EUR 80',
+    note: 'Verified gross mass is mandatory before vessel load',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Manual booking fee',
+    who: 'Carrier',
+    amount: 'EUR 40 per booking',
+    note: 'Non-electronic booking exception',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Switch bill of lading',
+    who: 'Carrier',
+    amount: 'EUR 150',
+    note: 'Document switch or split after issuance',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Cancellation / roll fee',
+    who: 'Carrier',
+    amount: 'Dry EUR 100 · reefer / DG EUR 150',
+    note: 'Charged when a booking is cancelled or rolled after allocation',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Import manifest correction',
+    who: 'Carrier / agent',
+    amount: 'Pre-arrival EUR 40 · post-arrival EUR 80',
+    note: 'Cost rises once the vessel has arrived and release is affected',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Container inspection',
+    who: 'Carrier / surveyor',
+    amount: 'EUR 15',
+    note: 'Basic inspection line; damage handling may add repair lines',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Congestion surcharge — barge Antwerp / Rotterdam',
+    who: 'Carrier',
+    amount: 'EUR 75',
+    note: 'Applied to barge moves at congested terminals',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Congestion surcharge — rail',
+    who: 'Carrier',
+    amount: 'EUR 50 per TEU',
+    note: 'Hamburg rail tariff is split at EUR 150 ICS / EUR 50 ICO; use the relevant leg',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Congestion surcharge — truck',
+    who: 'Carrier',
+    amount: 'EUR 60',
+    note: 'Applied to truck moves subject to terminal congestion',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Container door closing',
+    who: 'Terminal / depot',
+    amount: 'EUR 90',
+    note: 'Labour and sealing for non-sealed or opened containers',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Genset reefer — truck',
+    who: 'Trucking provider',
+    amount: 'EUR 150',
+    note: 'Portable generator for reefer temperature control on road',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Genset reefer — barge',
+    who: 'Barge operator',
+    amount: 'EUR 265',
+    note: 'Barge reefer generator provisioning',
+    confidence: 'MEDIUM',
+  },
+  {
+    charge: 'Origin-side China charges',
+    who: 'China terminal / forwarder / broker',
+    amount: notPublished,
+    note: 'OTHC, China documentation fee, customs broker and export fees are real lines but no verified number is published in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const freeTimeRows = [
+  {
+    item: 'Terminal free storage included in THC',
+    allowance: '3–7 days',
+    note: 'Corridor norm; the exact allowance is terminal-specific',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage free days — dry',
+    allowance: '3 days',
+    note: 'Then the terminal per-day escalation begins',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage free days — reefer',
+    allowance: '2 days',
+    note: 'Reefer boxes get fewer free days before escalation',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Detention / per-day escalation',
+    allowance: 'See companion guide',
+    note: 'Demurrage and detention are separate clocks; the full Hamburg carrier tariff and escalation pattern is on the demurrage-detention page',
+    confidence: 'MEDIUM',
+  },
+];
+
+const fclVsLclRows = [
+  {
+    factor: 'THC and terminal handling',
+    fcl: 'Charged per container using the verified Germany/Belgium/Netherlands EUR bands.',
+    lcl: 'Typically allocated across the consolidated shipment by CBM or weight; the LCL CFS allocation amount is not published in the snapshot.',
+    note: 'LCL CFS unit amount = LOW',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Documentation',
+    fcl: 'Documentation/BL fee applies to the one BL and consignee.',
+    lcl: 'Multiple consignees can add delivery orders and allocation work; unit amount not published.',
+    note: 'Request the LCL schedule',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Demurrage / detention exposure',
+    fcl: 'Consignee directly holds the carrier box and terminal slot; dry 3 / reefer 2 free days then escalation.',
+    lcl: 'CFS storage after the free period is the main time risk; box detention normally sits with the CFS operator.',
+    note: 'FCL free-day figures are MEDIUM',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'VGM',
+    fcl: 'Shipper or forwarder submits the verified gross mass; manual/amendment/late fees apply.',
+    lcl: 'Consolidator manages the aggregate VGM; allocation rules are operational.',
+    note: 'VGM fee values are MEDIUM',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Onward movement',
+    fcl: 'Truck, rail or barge congestion and genset lines apply by mode.',
+    lcl: 'CFS deconsolidation plus local handling per CBM; no verified CFS number is published.',
+    note: 'LCL CFS unit amount = LOW',
+    confidence: 'LOW',
+  },
+];
+
+const portRows = [
+  {
+    port: 'Rotterdam',
+    unlocode: 'NLRTM',
+    thcBand: 'Belgium + Netherlands dry EUR 260 / reefer EUR 355; barge congestion EUR 75',
+    note: 'Europe rail and barge gateway; congestion lines are the main local variable',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamburg',
+    unlocode: 'DEHAM',
+    thcBand: 'Hamburg / Bremerhaven dry EUR 325 / reefer EUR 475; rail congestion EUR 50/TEU',
+    note: 'German deep-sea port and China-rail terminus; use the Hamburg leg of the rail tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Antwerp',
+    unlocode: 'BEANR',
+    thcBand: 'Belgium + Netherlands dry EUR 260 / reefer EUR 355; barge congestion EUR 75',
+    note: 'Chemicals/breakbulk gateway with barge-heavy final mile',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Felixstowe',
+    unlocode: 'GBFXT',
+    thcBand: notPublished,
+    note: 'UK gateway outside the verified German and Benelux tariff bands',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Le Havre',
+    unlocode: 'FRLEH',
+    thcBand: notPublished,
+    note: 'French gateway; request the HAROPA/carrier schedule',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Valencia',
+    unlocode: 'ESVLC',
+    thcBand: notPublished,
+    note: 'Iberian gateway; request the Valenciaport/carrier schedule',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Genoa',
+    unlocode: 'ITGOA',
+    thcBand: notPublished,
+    note: 'North Italy gateway; request the Italian carrier schedule',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Gdańsk',
+    unlocode: 'PLGDN',
+    thcBand: notPublished,
+    note: 'Baltic gateway near Małaszewicze; request the Polish carrier schedule',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    layer: 'Origin China charges',
+    basis: 'OTHC, China documentation fee, customs broker and export fees',
+    note: notPublished,
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Destination Europe carrier/terminal lines',
+    basis: 'EUR 14 ISPS; Hamburg/Bremerhaven, Wilhelmshaven, Belgium/Netherlands THC; documentation; VGM; booking, switch and correction fees',
+    note: 'Single-carrier OOCL Germany tariff plus industry and Xeneta benchmarks',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Congestion and special equipment',
+    basis: 'Barge EUR 75 · rail EUR 50/TEU · truck EUR 60 · door closing EUR 90 · genset EUR 150 truck / EUR 265 barge',
+    note: 'Mode-dependent lines that only appear when that mode is used',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Time-based charges',
+    basis: 'Demurrage free days dry 3 / reefer 2, then per-day escalation; terminal storage separate',
+    note: 'Do not duplicate the full demurrage-detention table here',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'All-in uplift guidance',
+    basis: 'No single verified percentage for Europe ocean accessorials; for rail the companion guide says +15–25% over base',
+    note: 'Use a line-by-line schedule instead of a blanket percentage for ocean',
+    confidence: 'MEDIUM',
+  },
+];
+
+const complianceRows = [
+  {
+    rule: 'ISPS / SOLAS security',
+    value: 'EUR 14 per container',
+    note: 'International Ship and Port Facility Security surcharge; passed through on FCL and LCL',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'VGM / SOLAS verified gross mass',
+    value: 'Mandatory since 2016',
+    note: 'No container loads without VGM; manual EUR 40, amendment EUR 40, late EUR 80',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'Customs manifest / documentation',
+    value: 'Pre-arrival correction EUR 40 · post-arrival EUR 80',
+    note: 'Correct consignee, HS and release data before arrival',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'EORI, TARIC and VAT',
+    value: 'EU import requires EORI and correct TARIC/HS',
+    note: 'Duty follows the EU Common Customs Tariff; import VAT is destination-country based',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'INCOTERMS',
+    value: 'Allocates which party pays each charge',
+    note: 'EXW/FOB leave destination charges with the buyer; CIF/DDP/DAP shift more lines to the seller depending on the term',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is THC in China-to-Europe freight?',
+    a: 'THC is the terminal handling charge for receiving, moving, stacking and loading/discharging the container. It usually appears as OTHC at the China origin and DTHC at the European destination. The verified Europe tariff ranges from EUR 260 dry in Belgium/Netherlands to EUR 325 dry in Hamburg/Bremerhaven, with higher reefer, dangerous goods and awkward-equipment rates.',
+  },
+  {
+    q: 'Why does THC vary by European port?',
+    a: 'Each terminal has its own labour, infrastructure and handling cost base, and carriers publish separate local tariffs. In the verified OOCL Germany schedule, Hamburg/Bremerhaven dry is EUR 325 while Wilhelmshaven dry is EUR 295 and Belgium/Netherlands dry is EUR 260. Port choice therefore changes the destination cost stack before inland delivery begins.',
+  },
+  {
+    q: 'Is ISPS a separate charge from THC?',
+    a: 'Yes. ISPS is the International Ship and Port Facility Security surcharge, verified at EUR 14 per container in the carrier tariff, while THC is terminal handling. They are separate line items and should not be bundled silently into “destination charges”.',
+  },
+  {
+    q: 'What is the documentation or bill of lading fee?',
+    a: 'It covers bill of lading issuance and release work. In the verified carrier tariff it is EUR 75 outbound and EUR 40 inbound. A switch bill of lading is a separate EUR 150 line, so changing the consignee or splitting documents after issuance costs extra.',
+  },
+  {
+    q: 'What are the VGM rules and fees?',
+    a: 'VGM is the SOLAS verified gross mass rule, mandatory since 2016: no container may load without a verified gross mass. In the verified tariff, manual VGM submission is EUR 40, amendment is EUR 40 and late submission is EUR 80.',
+  },
+  {
+    q: 'Why is my final quote higher than the advertised freight rate?',
+    a: 'The advertised rate is usually only the international freight line. The final invoice adds origin China charges, destination THC, ISPS, documentation, VGM, possible congestion lines, special-equipment fees and — if free time is exceeded — demurrage/detention. The Europe destination lines now have verified EUR values, but origin China charges remain unpublished and must be requested as an itemised schedule.',
+  },
+  {
+    q: 'What is the difference between demurrage and detention?',
+    a: 'Demurrage is charged by the terminal after the box uses its free days at the terminal; detention is charged by the carrier after the container is held outside the terminal beyond the carrier free days. The companion Europe guide covers the combined clock, dry 3 / reefer 2 free days and the per-day escalation. Use this page for the fixed accessorial lines and that page for the time-based clock.',
+  },
+  {
+    q: 'Which hidden charges are negotiable?',
+    a: 'Many forwarder and brokerage lines are commercially negotiable, especially documentation, handling and inland allocations, but terminal THC, statutory customs/VAT and mandatory security/VGM rules are not. The best negotiating position is to compare line-by-line schedules, not lump sums, and ask which lines are fixed versus conditional.',
+  },
+  {
+    q: 'How do INCOTERMS determine who pays hidden charges?',
+    a: 'INCOTERMS allocate cost and risk. Under EXW or FOB, most origin and destination charges fall to the buyer; under CIF the seller covers freight and insurance to the named port but the buyer still handles destination THC, clearance and inland; under DDP the seller takes the broadest cost and compliance burden. Match every line in the quote to the chosen term.',
+  },
+  {
+    q: 'How do I spot double-counting in a China-to-Europe quote?',
+    a: 'Ask the forwarder to state whether the freight line is base or all-in, then compare each named charge against that basis. The most common errors are charging THC or ISPS inside an all-in line and again as a separate item, or double-counting documentation and VGM across origin and destination. A written line-by-line schedule is the control.',
+  },
+  {
+    q: 'What is the difference between origin and destination fees?',
+    a: 'Origin-side China fees include OTHC, China documentation, customs brokerage and export charges; the verified research snapshot does not publish their amounts, so they are LOW confidence and must be requested. Destination-side Europe fees are partially verified with EUR tariff values, so the page can quantify THC, ISPS, documentation, VGM, congestion and special-equipment lines.',
+  },
+  {
+    q: 'Why are some Europe THC amounts MEDIUM confidence instead of HIGH?',
+    a: 'The EUR values come from a single-carrier OOCL Germany local tariff plus hz-containers and Xeneta industry benchmarks. They are real and citable, but they are not a universal price. That is why the page marks them MEDIUM, not HIGH, and reminds you to confirm the exact tariff for your carrier, port, equipment type and effective date.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Hidden Charges China to Europe: THC, ISPS, Documentation & Accessorials',
+      description:
+        'The verified China-to-Europe hidden and destination charge breakdown: OOCL Germany THC EUR tariffs, ISPS EUR 14, documentation, VGM, congestion, special equipment, free time and which party pays under INCOTERMS.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const chargeSources = sourcesByIds(['oocl-germany', 'hz-containers', 'xeneta-thc']);
+const freeTimeSources = sourcesByIds(['oocl-germany', 'acl-cargo']);
+const fclSources = sourcesByIds(['oocl-germany', 'hz-containers', 'xeneta-thc']);
+const portSources = sourcesByIds([
+  'oocl-germany',
+  'hz-containers',
+  'xeneta-thc',
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const costSources = sourcesByIds(['oocl-germany', 'hz-containers', 'xeneta-thc', 'freightsurcharge']);
+const complianceSources = sourcesByIds([
+  'oocl-germany',
+  'eu-taric',
+  'german-customs',
+  'hmrc',
+  'french-customs',
+  'dutch-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+]);
+---
+
+<BaseLayout
+  title="Hidden Charges China to Europe: THC, ISPS, Documentation & Accessorials"
+  description="The verified China-to-Europe hidden and destination charge breakdown: OOCL Germany THC EUR tariffs, ISPS EUR 14, documentation, VGM, congestion, special equipment, free time and who pays under INCOTERMS."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Hidden Charges' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Hidden charges China to Europe: THC, ISPS, documentation &amp; accessorials</h1>
+      <p class="lead">
+        The freight line is the first cost, not the final cost. Europe now has
+        verified carrier-tariff EUR values for THC, ISPS, documentation, VGM,
+        congestion and special equipment — so you can audit the destination
+        stack line by line instead of accepting a lump sum.
+      </p>
+      <p class="small muted">
+        Confidence badges separate single-carrier and industry benchmarks from planning notes. The EUR
+        values are MEDIUM confidence from the OOCL Germany local tariff, hz-containers and Xeneta; they
+        are not universal prices. Unpublished origin-side China fees and LCL CFS amounts remain LOW and
+        request-for-quote.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">ISPS</span>
+          <span class="fact-value">EUR 14/container <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Hamburg/Bremerhaven THC</span>
+          <span class="fact-value">EUR 325 dry <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Belgium/Netherlands THC</span>
+          <span class="fact-value">EUR 260 dry <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Wilhelmshaven THC</span>
+          <span class="fact-value">EUR 295 dry <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Documentation / BL</span>
+          <span class="fact-value">EUR 75 out / EUR 40 in <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Origin China fees</span>
+          <span class="fact-value">Schedule only <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> Europe's destination accessorials are no longer
+        a black box. A dry 40ft into Rotterdam or Antwerp starts with EUR 260 THC,
+        plus EUR 14 ISPS, EUR 40 inbound documentation and any mode-specific
+        congestion or special-equipment lines; Hamburg/Bremerhaven is EUR 325 dry.
+        Origin-side China charges and LCL CFS amounts are still unpublished, so
+        request those as separate line items.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>1. The hidden-charge line-item table</h2>
+    <p>
+      This is the Europe analog of the GCC destination-fee page, but with the key difference that the
+      research snapshot now publishes verified carrier-tariff EUR values for the destination lines.
+      The values below are <strong>single-carrier or industry benchmarks</strong> — MEDIUM confidence,
+      never HIGH — and must be confirmed against the effective tariff for your carrier, port,
+      equipment type and date.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'charge', label: 'Charge' },
+        { key: 'who', label: 'Who bills it' },
+        { key: 'amount', label: 'Indicative amount' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chargeRows}
+      caption="EUR amounts are MEDIUM confidence from the OOCL Germany local tariff, hz-containers and Xeneta. Origin-side China lines are unpublished and stay LOW."
+    />
+    <SourceList sources={chargeSources} title="Sources — Europe THC, ISPS and accessorial values" />
+    <div class="note mt-2">
+      <strong>The audit rule:</strong> if a forwarder quotes a lump-sum “destination fee”, ask them to
+      split it into THC, ISPS, documentation, VGM, congestion and special-equipment lines. A lump sum
+      hides which charges are fixed, which are conditional and which accrue by day.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Free time and timing: when the meter starts</h2>
+      <p>
+        THC normally includes <strong>3–7 days of terminal free storage</strong> after discharge. After
+        that, demurrage free days and per-day escalation are separate from the fixed accessorials:
+        dry boxes get <strong>3 free days</strong> and reefers get <strong>2 free days</strong> before
+        escalation. The full tariff and escalation pattern is on the companion page, so this table
+        keeps only the trigger points.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Timing item' },
+          { key: 'allowance', label: 'Indicative allowance' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={freeTimeRows}
+        caption="Terminal free storage and demurrage free days are corridor/carrier norms, not universal guarantees. Confirm them on the same tariff before booking."
+      />
+      <SourceList sources={freeTimeSources} title="Sources — Europe free time and demurrage trigger points" />
+      <div class="note mt-2">
+        <strong>Cross-link:</strong> do not manage the demurrage/detention clock with this page alone.
+        Read
+        <a href="/europe/demurrage-detention/">Demurrage &amp; Detention: China to Europe</a> for the
+        full free-time, combined-clock and per-day escalation detail.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. FCL vs LCL: which charges each mode attracts</h2>
+    <p>
+      FCL gives you a sealed box and puts box-level THC, documentation, VGM and demurrage/detention
+      directly on your account. LCL spreads some lines across consignees but adds CFS deconsolidation
+      and storage. The verified EUR values are FCL-per-container figures; the LCL CFS unit amount is
+      not published, so it stays LOW.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'note', label: 'Caveat' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={fclVsLclRows}
+      caption="The comparison is structural. FCL tariff values are MEDIUM confidence; LCL CFS and allocation amounts are LOW and must be requested."
+    />
+    <SourceList sources={fclSources} title="Sources — FCL vs LCL accessorial logic" />
+    <div class="grid grid--2 mt-2">
+      <Card title="FCL fee watchlist">
+        <ul>
+          <li>Box-level THC at Hamburg/Bremerhaven, Wilhelmshaven or Belgium/Netherlands.</li>
+          <li>ISPS EUR 14 and documentation/BL EUR 75 outbound / EUR 40 inbound.</li>
+          <li>VGM, manual booking, switch BL and manifest-correction lines.</li>
+          <li>Demurrage after 3 dry / 2 reefer free days plus inland congestion/genset lines.</li>
+        </ul>
+      </Card>
+      <Card title="LCL fee watchlist">
+        <ul>
+          <li>Allocated THC and port charges by CBM or weight.</li>
+          <li>CFS deconsolidation and cargo-service fees — amount not published.</li>
+          <li>Storage after the CFS free period.</li>
+          <li>Delivery orders and multi-consignee documentation work — request the schedule.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Eight European ports and which THC band applies</h2>
+      <p>
+        The verified tariff splits into <strong>Hamburg/Bremerhaven</strong>,
+        <strong>Wilhelmshaven</strong> and <strong>Belgium + Netherlands</strong> bands. Ports outside
+        those bands — Felixstowe, Le Havre, Valencia, Genoa and Gdańsk — do not have a published amount
+        in this snapshot, so they stay LOW and request-for-schedule.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Port' },
+          { key: 'unlocode', label: 'UN/LOCODE' },
+          { key: 'thcBand', label: 'THC band / published value' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portRows}
+        caption="Verified THC bands are MEDIUM confidence from the carrier tariff. Unpublished ports are LOW and marked request-for-schedule."
+      />
+      <SourceList sources={portSources} title="Sources — European ports and THC exposure" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Cost composition: origin vs destination and the double-count trap</h2>
+    <p>
+      A proper all-in schedule has an origin block, a destination block and a time-based block. The
+      research snapshot verifies much of the destination block; the origin-side China block remains
+      unpublished. The most expensive mistake is comparing a base freight rate with another quote's
+      all-in figure, or accepting a lump sum that already includes a charge and then paying it again.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'layer', label: 'Layer' },
+        { key: 'basis', label: 'Verified / indicative basis' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Destination Europe carrier/terminal lines are partially verified with EUR values; origin China lines are not."
+    />
+    <SourceList sources={costSources} title="Sources — Europe hidden-charge cost composition" />
+
+    <h3 class="mt-3">How to catch the base-rate-versus-all-in trap</h3>
+    <ol>
+      <li>Ask whether the freight line is <strong>base</strong> or <strong>all-in</strong>.</li>
+      <li>List THC, ISPS, documentation, VGM, congestion and special-equipment lines separately.</li>
+      <li>Confirm the terminal free-time and demurrage free-day allowance in the same quote.</li>
+      <li>Flag any line that appears twice: in the all-in figure and as an additional accessorial.</li>
+      <li>For rail, apply the companion rule of thumb: +15–25% over base; for ocean Europe, prefer an explicit itemisation over a blanket percentage.</li>
+    </ol>
+
+    <div class="note mt-2">
+      <strong>Why itemisation beats a lump sum:</strong> the same shipment can hide different
+      assumptions about free time, congestion, special equipment and inland delivery. Keep the
+      line-by-line schedule so post-arrival additions can be challenged against the original quote.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance points that change the fee stack</h2>
+      <p>
+        Compliance errors are the main reason fixed accessorials become daily holds. ISPS and VGM are
+        mandatory under SOLAS; manifest corrections are cheaper before arrival; EORI/TARIC/VAT still
+        apply at EU clearance; and INCOTERMS decide which party owns each charge.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'value', label: 'Verified / indicative value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="ISPS and VGM fee values are MEDIUM confidence from the carrier tariff; EORI/TARIC/VAT and INCOTERMS are structural requirements."
+      />
+      <SourceList sources={complianceSources} title="Sources — Europe customs, SOLAS and VAT compliance" />
+
+      <h3 class="mt-3">Pre-arrival checklist</h3>
+      <ol>
+        <li>Submit the <strong>VGM</strong> on time; late VGM is EUR 80 in the verified tariff.</li>
+        <li>Correct manifest data before arrival: pre-arrival EUR 40 versus post-arrival EUR 80.</li>
+        <li>Confirm the <strong>EORI</strong> and correct <strong>TARIC/HS</strong> code before release.</li>
+        <li>Match the quote lines to the chosen <strong>INCOTERM</strong>: EXW, FOB, CIF, DAP or DDP.</li>
+        <li>Ask the broker to flag holds early rather than report them after free time has run.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Data freshness and update basis</h2>
+      <p>
+        This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+        destination EUR values are re-checked against the OOCL Germany local surcharges page, the
+        hz-containers European THC guide and the Xeneta terminal handling benchmark. The figures are
+        single-carrier or indicative, so they remain MEDIUM confidence rather than HIGH.
+      </p>
+      <p>
+        Origin-side China fees and LCL CFS amounts are still not published in the verified snapshot, so
+        the page does not invent them. If a carrier, terminal or forwarder publishes those numbers, the
+        page can add them, raise the confidence badge and update the modified date. For the time-based
+        accessorials, read
+        <a href="/europe/demurrage-detention/">Demurrage &amp; Detention: China to Europe</a>; for the
+        freight-mode comparison, read
+        <a href="/europe/sea-vs-rail/">Sea vs Rail Freight: China to Europe</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China-to-Europe destination schedule"
+      text="Tell us your HS code, commodity, destination port, equipment type and volume, and we will connect you with providers who can itemise THC, ISPS, documentation, VGM, congestion and special-equipment charges before you book."
+    />
+  </section>
+</BaseLayout>

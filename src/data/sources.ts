@@ -256,4 +256,22 @@ export const sources: Source[] = [
     url: 'https://china.docshipper.com/en/service-freight-europe/',
     type: 'industry',
   },
+  {
+    id: 'oocl-germany',
+    name: 'OOCL Germany Local Surcharges',
+    url: 'https://www.oocl.com/germany/eng/localinformation/localsurcharges/Pages/default.aspx',
+    type: 'carrier',
+  },
+  {
+    id: 'hz-containers',
+    name: 'Terminal Handling Charges in European Ports',
+    url: 'https://hz-containers.com/en/news/terminal-handling-charges-thc-in-european-and-czech-ports/',
+    type: 'industry',
+  },
+  {
+    id: 'xeneta-thc',
+    name: 'Terminal Handling Charges guide',
+    url: 'https://www.xeneta.com/blog/terminal-handling-charges',
+    type: 'industry',
+  },
 ];
