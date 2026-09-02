@@ -86,6 +86,6 @@
 ## 下一优先级（明晚 03:30 cron）
 
 1. ~~Freight Cost Calculator 工具~~ ✅ 已上线（2026-09-02，commit `1d2d49a`）
-2. **Europe 走廊第二波**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`）+ Spain/Italy ✅（commit `eb02b45`）+ Poland/Belgium ✅（commit `13f1979`）；**Europe Route Pillar 已覆盖全部 8 国 ✅**；FCL vs LCL Europe 拆解 ✅（commit `70c0225`）；**Sea vs Rail 成本对比深化 ✅ + Europe Demurrage/Detention ✅**（commit `7cb3e93`：`europe/sea-vs-rail` 深化 855→3,472 词（rail 分路线 40ft 费率 + 库存占用成本决胜算术，MEDIUM）+ 新建 `europe/demurrage-detention`（ACL Hamburg 逐设备 EUR 关税，MEDIUM），9 模块，build 533 页零 error）；**剩余**：Europe 版 Hidden Charges 类比页（GCC 已交付；Europe 需补欧洲港口 THC/ISPS/单证费具体 € 研究）、`rail.astro` 薄页（855 词）深化为 China-Europe Rail 完整指南
+2. **Europe 走廊第二波（全部完成 ✅）**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`）+ Spain/Italy ✅（commit `eb02b45`）+ Poland/Belgium ✅（commit `13f1979`）；**Europe Route Pillar 已覆盖全部 8 国 ✅**；FCL vs LCL Europe 拆解 ✅（commit `70c0225`）；**Sea vs Rail 成本对比深化 ✅ + Europe Demurrage/Detention ✅**（commit `7cb3e93`）；**Rail 指南深化 ✅ + Europe Hidden Charges ✅**（commit `b1785df`：`europe/rail` 深化 855→3,601 词 + 新建 `europe/hidden-charges`（3,468 词，首次用 OOCL 2026 承运人关税 EUR 值覆盖 THC/ISPS/单证/VGM/拥堵杂费，MEDIUM），9 模块，build 534 页零 error）。Europe 深度指南主要决策轴（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail）已全部交付。
 3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
 4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified

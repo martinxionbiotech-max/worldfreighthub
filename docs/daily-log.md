@@ -510,3 +510,27 @@
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
 
+
+## 2026-09-03（Europe 深度指南续二 — Rail 指南深化 + Hidden Charges 类比页）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成，无剩余 GCC 页面；Europe Route Pillar 覆盖全部 8 国 + fcl-vs-lcl/sea-vs-air 决策指南 + sea-vs-rail 深化 + demurrage-detention。本轮按 project-status「下一优先级」补齐两张此前明确排队的深度页：① 把偏定性（~855 词）的 `rail.astro` 深化为 China-Europe Rail 完整指南；② 新建 Europe 版 Hidden Charges 页（此前因缺欧洲港口 THC/ISPS 数据被标记「须先补充研究」）。
+- **本轮动作**：
+  1. 核对 content-roadmap + `ls src/pages` 逐页比对 → GCC 无剩余 → 转 Europe 深度指南回填。
+  2. **补充研究（Firecrawl）**：抓取 OOCL Germany Local Surcharges 承运人关税（2026 生效 THC/ISPS/单证/VGM/拥堵/查验逐项 EUR 值）+ hz-containers 欧洲 THC 分箱型指示值 + Xeneta Rotterdam 出口 THC 基准，写成 `docs/research-notes-2026-09-03-hidden-charges.md` 入库。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 指定可用验证数据，禁止杜撰）→ 交给 Codex 写 2 页 → Codex 自检 + 我独立复核（git log / status / 词数 / FAQ 数 / schema / 置信度 / dist 产物）。
+- **Content（commit b1785df）**：
+  - `src/pages/europe/rail.astro`（深化 855→**渲染 3,601 词**，13 FAQ）——分路线 rail 40ft 费率表（Xi'an→Duisburg $4,200–5,100 等 5 条，MEDIUM）+ 8 港海运费对照（europe-routes.ts，MEDIUM）+ 空运 LOW/request + sea/rail/air 时效表 + 库存占用成本决胜算术（$80k@12%≈$185/周、约 3 周差≈$555、~$200k 货值 rail 常胜）+ rail 附加费栈（fuel 8–15% / gauge change $150–250 / border $50–150/边 / congestion $200–500 / storage $20–40/天 / 保险 0.3–0.5%）+ CIM/SMGS/T1/制裁合规 + 明确「all-in vs base-rate」+15–25% 陷阱。
+  - `src/pages/europe/hidden-charges.astro`（新建，**渲染 3,468 词**，12 FAQ）——**首次用已验证承运人关税 EUR 值覆盖欧洲港口杂费**：ISPS €14、THC Hamburg/Bremerhaven 干柜 €325/DG €365/Awkward €590/冻柜 €475、Wilhelmshaven €295、比利时+荷兰 €260、20ft 指示 220–275 / 40ft 280–330、Rotterdam 出口 THC ≈$235/20ft、单证费出 €75/进 €40、VGM €40/€40/€80、拥堵附加 barge €75/rail €50/TEU、查验 €15 等（均 MEDIUM，单承运人/指示口径）+ 起源侧中国杂费/LCL CFS 无验证数字 → LOW +「request an itemised schedule」+ INCOTERMS 谁付哪项 + base-rate vs all-in 双重计费陷阱。
+  - 两页均 9 模块齐全 + "September 2026 updated" 标记 + Schema（Article + FAQPage + Organization 内联 + BreadcrumbList 组件）；空运 $ 与未量化项一律 LOW + request，零杜撰。
+- **数据诚信**：rail 费率 5 路线来自 research-notes-2026-09-03（MEDIUM）；hidden-charges 全部 EUR 值来自 OOCL 2026 关税 + hz-containers + Xeneta 实测快照（MEDIUM，单承运人/指示口径不标 HIGH）；hidden-charges 45 MEDIUM + 9 LOW，无 HIGH；无任何杜撰数字。
+- **Engineering**：
+  - `src/data/sources.ts` 新增 3 来源：`oocl-germany` / `hz-containers` / `xeneta-thc`。
+  - `src/pages/europe/index.astro` 新增 hidden-charges 内链卡片（line 83）；rail 与 hidden-charges 互为交叉链接 + 链 sea-vs-rail / demurrage-detention。
+  - 复用既有组件，无新组件、无客户端 JS、无新依赖。
+- **QA**：`npm run build` **534 页零 error**（+1，rail 为深化替换）；FAQ 13/12 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`b1785df Deepen Europe rail guide and add hidden charges page` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 深度指南已覆盖主要决策轴（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail）。后续可做：Europe Route Pillar 的「时效数据页」聚合、或返回 GCC 侧做「Air Freight China→GCC 时效/成本」深化（GCC air 页为薄页，可类比本轮 rail 深化）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
