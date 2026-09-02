@@ -56,6 +56,8 @@
 - [x] STEP 13–15 Codex 架构审查 + 修复（commit `5b6abdc` top-5 fixes 已合并）
 - [x] STEP 16–20 内容 + 工具 + Directory + Ad + Quote（内容✅ 131 页；工具 3 ✅；Directory 16 家真实企业 ✅；**Ad Slots house ad 接入 ✅ + Quote 表单接 FormSubmit ✅**）
 - [ ] STEP 21–25 SEO/AIO/EEAT + Build + Commit + Deploy（Cloudflare）+ 文档（**SEO/AIO 终审 ✅**：llms.txt 全面更新 + robots.txt 放行 AI 爬虫 + 69 页 meta 齐全；Cloudflare 部署 + 部署文档未完成）
+- [x] **Arabic 本地化（/ar/，2026-09-03 收尾 ✅）**：`src/pages/ar/` 全站阿拉伯语版（data/i18n dict/RTL 布局/hreflang 基础 09-02 提交 `2cad88b`+`aab6555`）+ **49 页 `ar/middleeast/` GCC 内容页**（沙特 15 + 阿联酋 12 + 卡/科/阿曼/巴林 16 + gap 页 + index）与 `DataTable.astro` locale prop。build **583 页零 error**，commit `e4e099c` 已推 origin/main。中文→GCC 英文 + 阿拉伯语双语文案齐备。
+
 - [x] **Phase 2 — Europe 走廊（2026-09-02 收尾 ✅）**：`src/data/europe-*`（8 国 + 8 港 + 56 路线）+ `src/pages/europe/`（hub + 3 index + 56 路线详情 + 5 深度指南 rail/sea-vs-rail/netherlands-vs-germany/direct-vs-transshipment/ioss-vs-vat-deferral）。**329 页 zero error**，commit `dc534c1` 已推 origin/main。数据诚信口径延续（VAT 税率/EORI/EU 统一关税/Red Sea Cape 绕行均经核实，费率标 MEDIUM、时效标 LOW）。
 
 ## 关键交付物（已入库 docs/）

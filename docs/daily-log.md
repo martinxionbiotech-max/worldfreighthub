@@ -534,3 +534,18 @@
   1. Europe 深度指南已覆盖主要决策轴（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail）。后续可做：Europe Route Pillar 的「时效数据页」聚合、或返回 GCC 侧做「Air Freight China→GCC 时效/成本」深化（GCC air 页为薄页，可类比本轮 rail 深化）。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+
+## 2026-09-03（Arabic 中东内容页收尾 — 49 页翻译 + DataTable locale）
+
+- **时间窗口**：凌晨 cron（后续轮次）
+- **背景**：China→GCC 英文路线图（Day 8–50）已 100% 完成；Europe 走廊已交付。`src/pages/ar/middleeast/`（49 页 GCC 阿拉伯语内容页）与 `src/components/DataTable.astro` 的 locale prop 改动在此前会话已写入工作区但未 commit（mtimes 09-03 04:44），属中断遗留。本轮为收尾：核对质量 → 提交 → 推送 → 记档。
+- **本轮动作**：
+  1. `ls src/pages/ar/middleeast` 逐页比对 → 与英文 `src/pages/middleeast` 49 页完全一致（48 内容页 + 1 index hub）。
+  2. 逐页质量自检：FAQ 9–15 条（≥8 达标）、Article/FAQPage/BreadcrumbList/Organization schema 齐全、`August 2026 updated` 徽标齐全、词数与英文源页对齐（如 shipping-from-china-to-saudi-arabia AR 3,561 / EN 3,640 词）。
+  3. 数据诚信：费率/时效/关税沿用英文源页已验证数据（沙特 VAT 15%、阿联酋 VAT 5%、GCC 关税 5%、SABER SC 到港前取得、FCL $ 区间 LOW 置信）；未核实项标「待核实 / تحقق مع وكيل الشحن」，零杜撰。
+  4. `npm run build` **583 页零 error**（+49 页）；`DataTable.astro` locale prop 与既有 `ConfidenceBadge` locale 接合，英文页 locale 默认 en 无回归。
+- **Content（commit e4e099c）**：49 页阿拉伯语 GCC 内容（沙特 15 + 阿联酋 12 + 卡/科/阿曼/巴林 16 + demurrage/hidden-charges/jeddah-vs-dammam 等 gap 页 + index），RTL 布局，hreflang 由 BaseLayout 统一输出。
+- **QA**：build 583 页零 error；FAQ 全部 ≥8；9 模块/schema/徽标齐全；`e4e099c feat(ar): add Arabic middleeast content pages (49 pages) + DataTable locale prop` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；Directory verified 提级。
