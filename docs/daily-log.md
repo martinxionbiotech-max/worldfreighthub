@@ -485,3 +485,28 @@
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
 
+
+## 2026-09-03（Europe 深度指南续 — Sea vs Rail 深化 + Demurrage/Detention）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成，无剩余 GCC 页面；Europe Route Pillar 已覆盖全部 8 国 + fcl-vs-lcl/sea-vs-air 决策指南。本轮按 project-status「下一优先级」补齐两张此前明确排队的深度页：① 把偏定性（855 词）的 `sea-vs-rail` 深化为成本对比数据页；② 新建 Europe 版 Demurrage/Detention 页（此前 GCC 已交付，Europe 版本此前缺港口 free-time/THC 数据被标记「须先补充研究」）。
+- **本轮动作**：
+  1. 核对 content-roadmap + `ls src/pages` 逐页比对 → GCC 无剩余 → 转 Europe 深度指南回填。
+  2. **补充研究（Firecrawl）**：抓取 rail 费率（freightsurcharge.com Q1 2026 分路线 40ft 费率表 + 15–25% 附加费结构）+ Europe demurrage 承运人关税（ACL Hamburg free-time/demurrage 逐设备 EUR 值）+ US/FMC per-diem 量级参照 + docshipper 海运费交叉印证，写成 `docs/research-notes-2026-09-03.md` 入库。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 指定可用验证数据，禁止杜撰）→ 交给 Codex 写 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/费率逐值比对/schema/build/push）。
+- **Content（commit 7cb3e93）**：
+  - `src/pages/europe/sea-vs-rail.astro`（深化 855→**3,472 词**，12 FAQ）——分路线 rail 40ft 费率表（Xi'an→Duisburg $4,200–5,100 / Chengdu→Lodz $4,000–4,800 / Yiwu→Madrid $4,800–5,800 / Chongqing→Hamburg $4,300–5,200 / Zhengzhou→Liege $4,500–5,300，MEDIUM）+ 8 港海运费区间（MEDIUM，europe-routes.ts）+ 库存占用成本决胜算术（$80k @12%≈$185/周，海洋多 3 周≈$555；~$200k 货值时 rail 到岸成本常胜）+ rail 附加费栈（fuel 8–15% / gauge change $150–250 / border $50–150/边 / congestion $200–500 / storage $20–40/天 / 保险 0.3–0.5% vs 0.1–0.2%）+ T1/CIM-SMGS/制裁合规 + 明确「all-in vs base-rate 双重计费」陷阱。
+  - `src/pages/europe/demurrage-detention.astro`（新建，**3,362 词**，12 FAQ）——ACL Hamburg 承运人关税逐设备 demurrage 值（20ft 3 免费天→70→130 EUR/天；40ft 3 天→115→180；reefer 2 天→110→150；HAZ 4 天→50/90，MEDIUM）+ demurrage（柜在港内）vs detention（柜离港未还箱）双钟双付费方 + US/FMC per-diem 量级参照（LOW for Europe）+ Felixstowe post-Brexit 清关 demurrage / Genoa 罢工缓冲 / Rotterdam·Antwerp 驳船延迟>72h 定性 + 到港前清关（T1/EORI/申报）避费。
+  - 两页均 9 模块齐全 + September 2026 更新标记 + Schema（Article + FAQPage + Organization 内联 + BreadcrumbList 组件）；空运 $ 与未量化目的地杂费一律 LOW +「request an itemised schedule」，零杜撰。
+- **数据诚信**：rail 费率 5 条路线 / demurrage 逐设备 EUR 全部来自 Firecrawl 实测快照（MEDIUM）；海运费沿用 europe-routes.ts 已验证区间；US/FMC per-diem 仅作量级参照标 LOW for Europe；无任何杜撰数字。sea-vs-rail 12 LOW + 11 request；demurrage-detention 26 LOW + 19 request。
+- **Engineering**：
+  - `src/data/sources.ts` 新增 5 来源：`freightsurcharge` / `acl-cargo` / `esenyel-partners` / `tracecontainer` / `china-docshipper-europe`。
+  - `src/pages/europe/index.astro` 新增 demurrage-detention 内链卡片；sea-vs-rail 交叉链接新页。
+  - 复用既有组件，无新组件、无客户端 JS、无新依赖。
+- **QA**：`npm run build` **533 页零 error**（+1）；FAQ 12/12 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`7cb3e93 content(europe): deepen sea-vs-rail cost comparison + add demurrage-detention guide` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 深度指南续：Europe 版 Hidden Charges 类比页（GCC 已交付；Europe 版需补充欧洲港口 THC/ISPS/单证费具体 € 值研究），或 `rail.astro`（同为 855 词薄页）深化为 China-Europe Rail 完整指南。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
