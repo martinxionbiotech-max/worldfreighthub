@@ -226,4 +226,34 @@ export const sources: Source[] = [
     url: 'https://finances.belgium.be',
     type: 'government',
   },
+  {
+    id: 'freightsurcharge',
+    name: 'FreightSurcharge.com — China-Europe rail freight guide (May 2026)',
+    url: 'https://freightsurcharge.com/blog/china-europe-rail-freight-complete-guide-2026',
+    type: 'industry',
+  },
+  {
+    id: 'acl-cargo',
+    name: 'Atlantic Container Line (ACL) — Free time, Demurrage & Detention tariff',
+    url: 'https://www.aclcargo.com/shipping-info/free-time-demurrage-detention/',
+    type: 'carrier',
+  },
+  {
+    id: 'esenyel-partners',
+    name: 'Esenyel Partners — Container Demurrage Regulations & Cost',
+    url: 'https://www.esenyelpartners.com/container-demurrage-regulations-cost/',
+    type: 'industry',
+  },
+  {
+    id: 'tracecontainer',
+    name: 'TraceContainer — Free Days & Demurrage Explained (2026)',
+    url: 'https://tracecontainer.com/blog/free-days-demurrage-explained-the-complete-2026-guide/',
+    type: 'industry',
+  },
+  {
+    id: 'china-docshipper-europe',
+    name: 'DocShipper — Freight Shipping from China to Europe (Air, Sea, Rail & Customs)',
+    url: 'https://china.docshipper.com/en/service-freight-europe/',
+    type: 'industry',
+  },
 ];

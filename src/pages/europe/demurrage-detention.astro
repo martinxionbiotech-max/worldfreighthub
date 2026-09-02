@@ -1,0 +1,776 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+
+const pageUrl = `${SITE_URL}/europe/demurrage-detention/`;
+
+const aclRows = [
+  {
+    equipment: '20ft dry van & tanks (non-HAZ)',
+    freeTime: '3 calendar days',
+    day1to7: '70 EUR/day',
+    day8plus: '130 EUR/day',
+    note: 'Hamburg import demurrage tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    equipment: '40ft dry / high cube (non-HAZ)',
+    freeTime: '3 calendar days',
+    day1to7: '115 EUR/day',
+    day8plus: '180 EUR/day',
+    note: 'Hamburg import demurrage tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    equipment: '20ft open top / flat rack',
+    freeTime: '3 calendar days',
+    day1to7: '90 EUR/day',
+    day8plus: '155 EUR/day',
+    note: 'Hamburg import demurrage tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    equipment: '40ft open top / flat rack',
+    freeTime: '3 calendar days',
+    day1to7: '140 EUR/day',
+    day8plus: '205 EUR/day',
+    note: 'Hamburg import demurrage tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    equipment: 'Reefer (non-HAZ)',
+    freeTime: '2 calendar days',
+    day1to7: '110 EUR/day',
+    day8plus: '150 EUR/day',
+    note: 'Reefer gets one less free day than dry boxes',
+    confidence: 'MEDIUM',
+  },
+  {
+    equipment: 'HAZ equipment',
+    freeTime: '4 calendar days',
+    day1to7: '50 EUR/day (20ft) / 90 EUR/day (40ft)',
+    day8plus: 'As published in carrier tariff',
+    note: 'Hazmat allowance from the ACL search snippet',
+    confidence: 'MEDIUM',
+  },
+];
+
+const benchmarkRows = [
+  {
+    item: 'US/FMC 40ft demurrage reference',
+    benchmark: '≈ $45/day for the first 5 days, escalating to $110+/day after',
+    basis: 'Esenyel Partners / FMC context',
+    note: 'Global magnitude reference only — not a European tariff',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Hamburg 40ft dry / HC demurrage',
+    benchmark: '3 free days, then 115 EUR/day (day 1–7) → 180 EUR/day (day 8+)',
+    basis: 'ACL Hamburg carrier tariff',
+    note: 'Verified European carrier tariff',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Hamburg reefer demurrage',
+    benchmark: '2 free days, then 110 EUR/day → 150 EUR/day',
+    basis: 'ACL Hamburg carrier tariff',
+    note: 'Shorter free time for reefer equipment',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'Sea · China to Northern Europe',
+    window: '28–45 days',
+    basis: 'Cape-of-Good-Hope routing adds 10–14 days',
+    note: 'The countdown begins at discharge, not at arrival in the anchorage',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'Sea · China to Mediterranean Europe',
+    window: 'Not published in verified snapshot — request current schedule',
+    basis: 'Research snapshot',
+    note: 'Mediterranean gateways can be faster or slower depending on direct versus transshipment service',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'Rail · China to Europe',
+    window: '15–24 days',
+    basis: 'FreightSurcharge corridor snapshot',
+    note: 'Different arrival terminal; confirm free time at the rail terminal',
+    confidence: 'MEDIUM',
+  },
+];
+
+const clockRows = [
+  {
+    factor: 'Location',
+    demurrage: 'Container is still inside the port or terminal.',
+    detention: 'Container has left the port but has not been returned to the depot.',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Who charges',
+    demurrage: 'Terminal or carrier, depending on the terminal tariff.',
+    detention: 'Ocean carrier for equipment use beyond free days.',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Trigger',
+    demurrage: 'Import container remains inside the terminal past free time after discharge.',
+    detention: 'Container is kept outside the terminal past carrier free time after pickup.',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Can they overlap?',
+    demurrage: 'Runs first, then can continue if the box is still inside the terminal.',
+    detention: 'Runs later if the box is outside the terminal beyond the carrier allowance.',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Practical planning rule',
+    demurrage: 'Clear the terminal before terminal free time expires.',
+    detention: 'Unload and return the empty container before carrier free days expire.',
+    confidence: 'MEDIUM',
+  },
+];
+
+const portContext: Record<string, { context: string; note: string; confidence: 'MEDIUM' | 'LOW' }> = {
+  rotterdam: {
+    context: 'Largest European gateway; Rhine barge distribution.',
+    note: 'Rotterdam/Antwerp barge delays have stretched past 72 hours in 2026. Per-port free days not in the verified ACL tariff — request terminal schedule.',
+    confidence: 'LOW',
+  },
+  hamburg: {
+    context: 'German deep-sea and rail terminus.',
+    note: 'ACL Hamburg tariff is the one verified per-port schedule: 3 free days for dry 20ft/40ft, 2 for reefer.',
+    confidence: 'MEDIUM',
+  },
+  antwerp: {
+    context: 'Chemicals and breakbulk gateway.',
+    note: 'Antwerp barge delays have stretched past 72 hours in 2026. Per-port free days not in the verified ACL tariff — request terminal schedule.',
+    confidence: 'LOW',
+  },
+  felixstowe: {
+    context: 'UK gateway under the separate post-Brexit regime.',
+    note: 'Post-Brexit clearance delays have become a recurring demurrage story at Felixstowe; complete the UK declaration and GB EORI before arrival.',
+    confidence: 'LOW',
+  },
+  'le-havre': {
+    context: 'Seine/Paris axis gateway.',
+    note: 'France-only cargo gateway; per-port free days not published in the verified snapshot — request HAROPA/terminal schedule.',
+    confidence: 'LOW',
+  },
+  valencia: {
+    context: 'Iberia gateway with automated terminals.',
+    note: 'Mediterranean transshipment can shift the arrival clock; free days not published — request terminal schedule.',
+    confidence: 'LOW',
+  },
+  genoa: {
+    context: 'North Italy gateway.',
+    note: 'Historically prone to strikes and last-mile congestion; build a schedule buffer and confirm terminal free time in writing.',
+    confidence: 'LOW',
+  },
+  gdansk: {
+    context: 'Baltic deep-water gateway and Małaszewicze rail split hub.',
+    note: 'Poland gateway; per-port free days not published — request DCT/terminal schedule.',
+    confidence: 'LOW',
+  },
+};
+
+const portSlugs = ['rotterdam', 'hamburg', 'antwerp', 'felixstowe', 'le-havre', 'valencia', 'genoa', 'gdansk'];
+
+const portRows = portSlugs.map((slug) => {
+  const port = europePorts.find((item) => item.slug === slug);
+  const context = portContext[slug];
+  return {
+    port: port?.name ?? slug,
+    unlocode: port?.unlocode ?? '—',
+    context: context.context,
+    note: context.note,
+    confidence: context.confidence,
+  };
+});
+
+const costRows = [
+  {
+    layer: 'ACL Hamburg demurrage',
+    charge: 'Dry 20ft 70→130 EUR/day; dry 40ft/HC 115→180 EUR/day; reefer 110→150 EUR/day',
+    note: 'Verified Hamburg import tariff; the charge escalates after day 7',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Carrier detention',
+    charge: 'Not published in verified snapshot — request carrier free-time and per-day schedule',
+    note: 'The detention clock is separate from terminal demurrage and can run after pickup',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Terminal demurrage at other European ports',
+    charge: 'Not published in verified snapshot — request terminal tariff',
+    note: 'The ACL tariff is Hamburg-specific; do not assume it applies elsewhere',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Terminal Handling Charge (THC)',
+    charge: 'Not published in verified snapshot — request fee schedule',
+    note: 'Destination THC is usually quoted separately from demurrage',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Port service fees',
+    charge: 'Not published in verified snapshot — request itemised schedule',
+    note: 'Covers terminal service and can vary by gateway',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Customs inspection / exam hold',
+    charge: 'Not published in verified snapshot — request itemised schedule',
+    note: 'Inspection is not a standard tariff; it depends on cargo and declaration risk',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'Storage after free time',
+    charge: 'Not published in verified snapshot — request storage schedule',
+    note: 'Some terminals charge storage separately from demurrage',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'ISPS security charge',
+    charge: 'Not published in verified snapshot — request fee schedule',
+    note: 'Destination security charge on the port invoice',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'EU import duty',
+    charge: '0–12% by HS/TARIC code',
+    note: 'EU Common Customs Tariff; no China–EU FTA in force',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'Import VAT',
+    charge: '19–23% by country, on the duty-inclusive value',
+    note: 'Destination-country rate; UK is a separate regime',
+    confidence: 'MEDIUM',
+  },
+];
+
+const vatRows = [
+  { country: 'Germany', vat: '19%', note: 'EU member state; Hamburg ACL tariff applies here', confidence: 'MEDIUM' },
+  { country: 'United Kingdom', vat: '20%', note: 'Post-Brexit regime; GB EORI', confidence: 'MEDIUM' },
+  { country: 'France', vat: '20%', note: 'EU member state; Le Havre gateway', confidence: 'MEDIUM' },
+  { country: 'Netherlands', vat: '21%', note: 'EU member state; Rotterdam gateway', confidence: 'MEDIUM' },
+  { country: 'Belgium', vat: '21%', note: 'EU member state; Antwerp gateway', confidence: 'MEDIUM' },
+  { country: 'Spain', vat: '21%', note: 'EU member state; Valencia gateway', confidence: 'MEDIUM' },
+  { country: 'Italy', vat: '22%', note: 'EU member state; Genoa gateway', confidence: 'MEDIUM' },
+  { country: 'Poland', vat: '23%', note: 'EU member state; Gdańsk gateway', confidence: 'MEDIUM' },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between demurrage and detention?',
+    a: 'Demurrage is charged while an import container is still inside the port or terminal past its free time after discharge. Detention is charged by the ocean carrier while the container has left the port but has not been returned to the depot past its free days after pickup. The trigger is the same — free time expired — but the location and the party charging you are different.',
+  },
+  {
+    q: 'Can demurrage and detention run at the same time?',
+    a: 'Yes, in sequence and sometimes in overlap. A container can exhaust terminal free time first, and then, once eventually collected, exhaust carrier free days before the empty box is returned. The practical prevention is to plan against the combined free-time clock, not just one of the two limits.',
+  },
+  {
+    q: 'How much free time does the verified Hamburg tariff give?',
+    a: 'The ACL Hamburg import tariff gives 3 calendar days for non-HAZ 20ft and 40ft dry/high-cube equipment and open-top/flat-rack boxes. Reefers get 2 calendar days, and hazmat equipment gets 4 calendar days. These days count from the first calendar day after vessel discharge, and the tariff is Hamburg-specific rather than an EU-wide norm.',
+  },
+  {
+    q: 'How much does demurrage cost in Europe?',
+    a: 'The verified ACL Hamburg schedule charges 70 EUR/day rising to 130 EUR/day for a 20ft dry box, and 115 EUR/day rising to 180 EUR/day for a 40ft dry/high cube after the 3 free days. Reefers run 110→150 EUR/day after 2 free days. For other European ports, per-day amounts were not published in the verified snapshot and must be requested from the terminal or carrier.',
+  },
+  {
+    q: 'How much does detention cost in Europe?',
+    a: 'The verified snapshot does not publish a European carrier-detention tariff. The US/FMC benchmark — roughly $45/day for the first five days rising to $110+/day — is useful only as a global magnitude reference and is LOW confidence for Europe. Request your carrier free-time and per-day schedule before booking.',
+  },
+  {
+    q: 'Who pays demurrage and detention?',
+    a: 'Normally the importer or consignee pays, because the charge arises after arrival and after the cargo has been made available for collection. The obligation can shift by Incoterm or service contract, so confirm which party controls pickup, clearance and empty return before booking. Do not assume the forwarder absorbs the clock.',
+  },
+  {
+    q: 'How can I avoid demurrage on a China-to-Europe shipment?',
+    a: 'Clear before arrival: have your EORI, T1 transit document where applicable, commercial invoice, packing list and customs declaration ready before the vessel arrives. Submit pre-arrival documents, book trucking early, and arrange the empty return before the container reaches the port. The goal is to complete clearance and pickup inside the free-time window rather than react after discharge.',
+  },
+  {
+    q: 'Does pre-arrival clearance actually reduce demurrage?',
+    a: 'Yes. The free-time countdown starts at discharge, so work completed before the vessel arrives does not consume terminal free days. Filing the declaration, confirming the TARIC/HS code, pre-booking the truck and having the EORI ready means the container can be released and collected soon after discharge instead of waiting on paperwork.',
+  },
+  {
+    q: 'Are European free days calendar days or working days?',
+    a: 'The verified ACL tariff counts calendar days from the first calendar day after discharge, so weekends and holidays run the clock. Always treat calendar days as the planning assumption unless the terminal tariff explicitly says otherwise. Ask for the start day and exclusions in writing, because conventions differ by terminal.',
+  },
+  {
+    q: 'What is a combined demurrage/detention tariff?',
+    a: 'Some carriers use a combined free-time clock — sometimes called a combined or "DD2in1" tariff — under which one pool of days covers both terminal storage and equipment use. That can be easier to manage, but the terms differ by carrier. Confirm whether your quote uses separate demurrage and detention clocks or one combined allowance.',
+  },
+  {
+    q: 'Does marine cargo insurance cover demurrage or detention?',
+    a: 'No. Standard marine cargo insurance covers physical loss or damage to the goods, not time-based terminal or carrier charges. Demurrage and detention are operational liabilities unless a specific extension or service agreement says otherwise. If delay coverage matters to your supply chain, ask for the exact policy wording.',
+  },
+  {
+    q: 'How do European demurrage rules differ from the GCC?',
+    a: 'Europe uses EU/UK customs, EORI/GB EORI, TARIC duty of 0–12% and destination-country VAT. The Saudi FASAH and SABER systems, the GCC 5% customs baseline, Saudi 15% VAT and UAE 5% VAT are Gulf-specific and do not apply to Europe. The core free-time principle is the same, but the documents and regulators are different.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Demurrage & Detention: China to Europe — Free Time, Fees & How to Avoid Them',
+      description:
+        'Demurrage and detention on China-to-Europe shipments: verified Hamburg free-time and per-day tariffs, the two clocks, port congestion context, destination charges and pre-arrival clearance.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const aclSources = sourcesByIds(['acl-cargo']);
+const benchmarkSources = sourcesByIds(['acl-cargo', 'esenyel-partners']);
+const definitionSources = sourcesByIds(['tracecontainer', 'acl-cargo']);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const costSources = sourcesByIds([
+  'acl-cargo',
+  'esenyel-partners',
+  'eu-taric',
+  'german-customs',
+  'hmrc',
+]);
+const complianceSources = sourcesByIds([
+  'eu-taric',
+  'german-customs',
+  'hmrc',
+  'french-customs',
+  'dutch-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+]);
+---
+
+<BaseLayout
+  title="Demurrage & Detention: China to Europe — Free Time, Fees & How to Avoid Them"
+  description="China-to-Europe demurrage and detention guide: verified Hamburg free-time and per-day tariffs, the two clocks, port congestion context, destination charges and pre-arrival clearance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Demurrage & Detention' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Demurrage &amp; detention: China to Europe</h1>
+      <p class="lead">
+        The two clocks that turn a slow customs clearance or late empty return into
+        per-day charges — with the verified Hamburg carrier tariff, the demurrage
+        versus detention distinction, and how to stop the meter before it starts.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from planning notes. The ACL
+        Hamburg free-time and per-day schedule is MEDIUM confidence from the
+        2026-09-03 research snapshot; per-port free days outside Hamburg, carrier
+        detention amounts and destination fees are LOW confidence and marked
+        request-for-quote.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Dry 20ft free time</span>
+          <span class="fact-value">3 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Dry 40ft/HC free time</span>
+          <span class="fact-value">3 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Reefer free time</span>
+          <span class="fact-value">2 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">40ft day 1–7</span>
+          <span class="fact-value">115 EUR/day <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">40ft day 8+</span>
+          <span class="fact-value">180 EUR/day <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Free-time basis</span>
+          <span class="fact-value">Calendar days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> Demurrage is the terminal clock, detention is the
+        equipment clock. The verified ACL Hamburg tariff gives 3 free calendar days
+        for dry 20ft/40ft boxes, then 70–115 EUR/day rising to 130–180 EUR/day after
+        day 7. Clear before arrival, pre-book the truck, and return the empty box
+        inside the combined free-time window.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>1. Rate table: verified Hamburg demurrage tariff</h2>
+    <p>
+      The only verified European demurrage tariff in the research snapshot is the
+      ACL (Atlantic Container Line) Hamburg import schedule. It counts calendar
+      days from the first calendar day after vessel discharge. Use it as a concrete
+      example of how European per-day charges escalate, not as an EU-wide tariff.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'equipment', label: 'Equipment' },
+        { key: 'freeTime', label: 'Free time' },
+        { key: 'day1to7', label: 'Day 1–7' },
+        { key: 'day8plus', label: 'Day 8+' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={aclRows}
+      caption="ACL Hamburg import demurrage is MEDIUM confidence from the carrier tariff. Other European terminals have their own schedules and were not published in the snapshot."
+    />
+    <SourceList sources={aclSources} title="Sources — verified Hamburg demurrage tariff" />
+
+    <h3 class="mt-3">US/FMC magnitude reference</h3>
+    <p>
+      For a rough global sense of how quickly the clock compounds, the FMC benchmark
+      shows a 40ft around <strong>$45/day for the first five days</strong> after free
+      time, escalating to <strong>$110+/day</strong> after that. This is
+      <strong>LOW confidence for Europe</strong> — use it only as a magnitude
+      reference, and request the actual European terminal/carrier schedule.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Item' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'basis', label: 'Source basis' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={benchmarkRows}
+      caption="The US/FMC figure is a global magnitude reference and LOW confidence for Europe. The Hamburg ACL lines are MEDIUM confidence."
+    />
+    <SourceList sources={benchmarkSources} title="Sources — European tariff & US magnitude reference" />
+
+    <div class="note mt-2">
+      <strong>Why one tariff is not enough:</strong> demurrage is terminal- and
+      carrier-specific, and the ACL schedule is Hamburg-specific. Rotterdam,
+      Antwerp, Felixstowe, Le Havre, Valencia, Genoa and Gdańsk all publish their
+      own free-time and per-day schedules that were not in the verified snapshot.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit time sets the free-time countdown</h2>
+      <p>
+        You cannot manage the destination clock without knowing when discharge
+        actually happens. China-to-northern-Europe sea transit runs
+        <strong>28–45 days</strong> because of Cape rerouting, and rail runs
+        <strong>15–24 days</strong>. The free-time countdown begins at discharge,
+        so a wider arrival window makes pre-clearance timing harder to control.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'lane', label: 'Lane' },
+          { key: 'window', label: 'Transit window' },
+          { key: 'basis', label: 'Source basis' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Sea and rail windows are MEDIUM confidence from the route data and research snapshot. Mediterranean sea windows were not published and stay LOW."
+      />
+      <SourceList sources={definitionSources} title="Sources — transit & free-time countdown context" />
+
+      <div class="note mt-2">
+        <strong>Why the width matters:</strong> Red Sea/Cape rerouting and schedule
+        volatility widen the arrival window. Pre-arrival filing and a booked truck
+        are the two levers that keep the container moving the moment it is
+        discharged, instead of letting the free-time clock run on a date you
+        cannot predict.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Decision module: demurrage vs detention — the two clocks</h2>
+    <p>
+      <strong>Demurrage</strong> is the terminal clock: the import container is
+      still inside the port past free time after discharge, and the charge is paid
+      to the terminal or carrier. <strong>Detention</strong> is the equipment
+      clock: the container has left the port but has not been returned to the depot
+      past the carrier free days after pickup. The same box can trigger both in
+      sequence if clearance is late and then the empty return is also late.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'demurrage', label: 'Demurrage' },
+        { key: 'detention', label: 'Detention' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={clockRows}
+      caption="The demurrage/detention definitions are MEDIUM confidence from the research notes. Confirm which clock each carrier tariff uses before booking."
+    />
+    <SourceList sources={definitionSources} title="Sources — demurrage vs detention definitions" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Demurrage risk lives inside the terminal">
+        <ul>
+          <li>Container remains inside the port past free time after discharge.</li>
+          <li>Charged by the terminal or carrier under the terminal tariff.</li>
+          <li>Clearing customs and picking up on time ends this clock.</li>
+          <li>Calendar days, including weekends and holidays unless stated otherwise.</li>
+        </ul>
+      </Card>
+      <Card title="Detention risk lives outside the terminal">
+        <ul>
+          <li>Container leaves the port but the empty is not returned to the depot.</li>
+          <li>Charged by the ocean carrier for equipment use beyond free days.</li>
+          <li>Unload and return the empty on time to end this clock.</li>
+          <li>Runs separately and can begin after a late pickup.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Combined free time / "DD2in1":</strong> some carriers offer a single
+      combined pool of free days covering both terminal storage and equipment use.
+      It is easier to manage but terms differ by carrier, so ask whether your quote
+      uses separate demurrage and detention clocks or one combined allowance.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. Port list: the eight European destination gateways</h2>
+    <p>
+      The free-time exposure differs by gateway. The verified tariff applies only
+      to Hamburg; the other ports below carry qualitative congestion and clearance
+      context from the destination data. Treat every non-Hamburg free-day figure
+      as LOW and request the terminal schedule.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'context', label: 'Gateway context' },
+        { key: 'note', label: 'Free-time / congestion note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="Port identities and UN/LOCODEs are HIGH confidence from the destination data. Free-time and congestion notes are LOW confidence where not in the ACL Hamburg tariff."
+    />
+    <SourceList sources={portSources} title="Sources — European destination ports" />
+
+    <div class="note mt-2">
+      <strong>Gateway-specific demurrage stories:</strong> Felixstowe is the
+      post-Brexit clearance story — complete the UK declaration and GB EORI before
+      arrival to avoid a hold. Genoa needs a strike/congestion buffer. Rotterdam
+      and Antwerp barge delays have stretched past 72 hours in 2026, so inland
+      handoff can be the hidden delay even after the box leaves the quay.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Cost composition: the full destination-charge stack</h2>
+      <p>
+        Demurrage is only one line on the destination invoice. The full stack also
+        includes detention, THC, port service fees, inspection risk, storage and
+        ISPS — most of which were not quantified in the verified snapshot. Do not
+        accept a quote that hides these in an "all-in" lump sum.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'layer', label: 'Cost component' },
+          { key: 'charge', label: 'Indicative magnitude' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The ACL Hamburg demurrage, EU duty and country VAT are MEDIUM confidence. Unquantified destination charges are LOW confidence and must be requested as an itemised schedule."
+      />
+      <SourceList sources={costSources} title="Sources — destination cost composition" />
+
+      <p class="mt-2">
+        The daily arithmetic is unforgiving: a 40ft dry box held past free time in
+        Hamburg costs <strong>115 EUR/day for days 1–7</strong>, then
+        <strong>180 EUR/day from day 8</strong>. A single customs hold can therefore
+        consume hundreds of euros before the container even leaves the terminal,
+        and detention can add another clock after pickup.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance: clear before arrival to avoid the clock</h2>
+
+    <h3>Pre-arrival document readiness</h3>
+    <p>
+      The single best demurrage control is to complete clearance before the vessel
+      arrives. Have the <strong>EORI number</strong> (or <strong>GB EORI</strong>
+      for the UK) registered, the <strong>T1 transit document</strong> filed where
+      applicable, and the commercial invoice, packing list, TARIC/HS classification
+      and customs declaration ready. Pre-book the truck and empty return before
+      discharge so paperwork does not consume the free days.
+    </p>
+
+    <h3>EU duty and VAT</h3>
+    <p>
+      Duty follows the <strong>EU Common Customs Tariff</strong>, typically
+      <strong>0–12%</strong> by HS/TARIC code, with no China–EU free-trade agreement
+      in force. Import VAT is then charged on the duty-inclusive value at the
+      destination-country rate.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={vatRows}
+      caption="Country VAT rates are MEDIUM confidence from the destination data. The UK is a separate post-Brexit regime."
+    />
+    <SourceList sources={complianceSources} title="Sources — EU/UK duty, VAT and EORI" />
+
+    <h3>CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> applies to many regulated products and
+      <strong>REACH</strong> regulates chemical substances. Product-conformity
+      holds can delay release just like missing customs documents, so confirm
+      applicability and prepare the technical file before shipment.
+    </p>
+
+    <h3>FASAH/SABER and GCC rules do not apply</h3>
+    <p>
+      <strong>FASAH and SABER are Saudi/GCC systems</strong>, and the
+      <strong>GCC 5% customs baseline</strong>, Saudi 15% VAT and UAE 5% VAT are
+      Gulf-specific. They do not apply to the EU or the UK and should not be
+      copied into a China-to-Europe demurrage-prevention workflow. Europe uses
+      EORI/GB EORI, the EU Common Customs Tariff, destination-country VAT, CE
+      marking and REACH instead.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      verified Hamburg demurrage tariff, US/FMC magnitude reference and port
+      congestion notes come from the
+      <code>docs/research-notes-2026-09-03.md</code> Firecrawl snapshot. Non-Hamburg
+      per-port free days, carrier detention amounts and destination fees remain LOW
+      and are marked request-for-quote rather than filled with invented numbers.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Sea vs Rail: China to Europe"
+        description="The mode decision that sets your arrival terminal and the free-time clock at the destination."
+        href="/europe/sea-vs-rail/"
+      />
+      <Card
+        title="FCL vs LCL"
+        description="FCL and LCL put demurrage/detention exposure in different places — see the full container-mode comparison."
+        href="/europe/fcl-vs-lcl/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a China-to-Europe quote with free-time and destination fees itemised"
+      text="Tell us your origin, commodity, TARIC/HS code, cube, weight, destination port and delivery address, and we will connect you with providers who can quote freight plus terminal free time, demurrage/detention and inland delivery."
+    />
+  </section>
+</BaseLayout>

@@ -3,54 +3,315 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
 import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
 
-const rows = [
-  { metric: 'Typical transit', sea: '28–45 days (Cape-routed)', rail: '18–22 days' },
-  { metric: 'Cost per 40ft', sea: '≈ $1,600 – $6,800', rail: '≈ $5,000 – $7,000+', confidence: 'LOW' },
-  { metric: 'Cost relative to sea', sea: 'Baseline', rail: '2–3× sea freight' },
-  { metric: 'Main risk', sea: 'Red Sea / Cape rerouting', rail: 'Russia transit + border congestion' },
-  { metric: 'Best for', sea: 'Low-value bulk, price-sensitive cargo', rail: 'High-value, deadline-sensitive cargo' },
+const pageUrl = `${SITE_URL}/europe/sea-vs-rail/`;
+
+const rateRows = [
+  { port: 'Rotterdam (NLRTM)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $160 per CBM', confidence: 'MEDIUM' },
+  { port: 'Hamburg (DEHAM)', twenty: '$1,200 – $4,600', forty: '$1,600 – $6,500', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Antwerp (BEANR)', twenty: '$1,200 – $4,700', forty: '$1,600 – $6,600', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Felixstowe (GBFXT)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Le Havre (FRLEH)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Valencia (ESVLC)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Genoa (ITGOA)', twenty: '$1,300 – $5,200', forty: '$1,800 – $7,200', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Gdańsk (PLGDN)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+];
+
+const railRows = [
+  {
+    route: "Xi'an → Duisburg",
+    transit: '16–19 days',
+    rate: '$4,200 – $5,100 per 40ft',
+    note: 'Highest frequency, 5–7 departures/week',
+    confidence: 'MEDIUM',
+  },
+  {
+    route: 'Chengdu → Lodz',
+    transit: '18–21 days',
+    rate: '$4,000 – $4,800 per 40ft',
+    note: 'Strong fit for central/western China origins',
+    confidence: 'MEDIUM',
+  },
+  {
+    route: 'Yiwu → Madrid',
+    transit: '20–24 days',
+    rate: '$4,800 – $5,800 per 40ft',
+    note: 'Longest corridor and lowest frequency',
+    confidence: 'MEDIUM',
+  },
+  {
+    route: 'Chongqing → Hamburg',
+    transit: '17–20 days',
+    rate: '$4,300 – $5,200 per 40ft',
+    note: 'Automotive supply-chain corridor',
+    confidence: 'MEDIUM',
+  },
+  {
+    route: 'Zhengzhou → Liege',
+    transit: '15–18 days',
+    rate: '$4,500 – $5,300 per 40ft',
+    note: 'Fastest verified rail lane',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    mode: 'Sea freight — China to Europe',
+    transit: '28–45 days',
+    basis: 'Cape-of-Good-Hope routing adds ~10–14 days versus the pre-crisis Suez lane',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail — New Silk Road',
+    transit: '15–24 days',
+    basis: 'Terminal-to-terminal corridor estimates; fastest published lane is 15–18 days',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Air freight',
+    transit: 'Not published in verified snapshot — request a quote',
+    basis: 'No verified Europe air transit or air rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Door-to-door',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds China export clearance, final-mile trucking and destination clearance',
+    confidence: 'LOW',
+  },
+];
+
+const breakEvenRows = [
+  {
+    metric: 'Cargo value per container',
+    ocean: '$80,000 benchmark',
+    rail: '≈ $185/week carrying cost at 12% annual cost of capital',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'Transit difference',
+    ocean: 'About 3 weeks longer than rail',
+    rail: '≈ 3 weeks of tied-up capital recovered',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'Extra carrying cost from the slower mode',
+    ocean: '≈ $555 more per container',
+    rail: 'Erodes the ocean freight discount',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'Landed-cost crossover',
+    ocean: 'Usually wins on low-value bulk cargo',
+    rail: 'Often wins at ≈ $200,000 cargo value per container',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'Planning threshold',
+    ocean: 'Below ~$50,000/container usually stays on water',
+    rail: 'Above ~$50,000/container usually worth quoting',
+    confidence: 'MEDIUM',
+  },
+];
+
+const portRows = [
+  { port: 'Rotterdam', unlocode: 'NLRTM', role: 'Northwest Europe deep-sea gateway; Rhine barge distribution', confidence: 'HIGH' },
+  { port: 'Hamburg', unlocode: 'DEHAM', role: 'German deep-sea port and China-rail terminus', confidence: 'HIGH' },
+  { port: 'Antwerp', unlocode: 'BEANR', role: 'Chemicals/breakbulk gateway; Rotterdam congestion alternative', confidence: 'HIGH' },
+  { port: 'Felixstowe', unlocode: 'GBFXT', role: 'UK gateway; separate post-Brexit customs regime', confidence: 'HIGH' },
+  { port: 'Le Havre', unlocode: 'FRLEH', role: 'Seine/Paris axis; France-only cargo gateway', confidence: 'HIGH' },
+  { port: 'Valencia', unlocode: 'ESVLC', role: 'Iberia gateway; Mediterranean transshipment', confidence: 'HIGH' },
+  { port: 'Genoa', unlocode: 'ITGOA', role: 'North Italy gateway; strike/congestion buffer needed', confidence: 'HIGH' },
+  { port: 'Gdańsk', unlocode: 'PLGDN', role: 'Baltic deep-water gateway; Małaszewicze rail split hub', confidence: 'HIGH' },
+];
+
+const seaCostRows = [
+  { item: 'Ocean freight — FCL/LCL', magnitude: '20ft $1,200–$5,200; 40ft $1,600–$7,200; LCL $60–$170 per CBM by port', confidence: 'MEDIUM' },
+  { item: 'Bunker Adjustment Factor (BAF)', magnitude: 'Not published in verified snapshot — request fee schedule', confidence: 'LOW' },
+  { item: 'Terminal Handling Charge (THC)', magnitude: 'Not published in verified snapshot — request fee schedule', confidence: 'LOW' },
+  { item: 'ISPS security charge', magnitude: 'Not published in verified snapshot — request fee schedule', confidence: 'LOW' },
+  { item: 'Documentation / bill of lading fee', magnitude: 'Not published in verified snapshot — request fee schedule', confidence: 'LOW' },
+  { item: 'Customs clearance and brokerage', magnitude: 'Not published in verified snapshot — request itemised schedule', confidence: 'LOW' },
+  { item: 'Demurrage / detention at destination', magnitude: 'Not published in verified snapshot — request free-time and per-day schedule', confidence: 'LOW' },
+];
+
+const railCostRows = [
+  { item: 'Rail base freight (40ft)', magnitude: '$4,000 – $5,800 by route', confidence: 'MEDIUM' },
+  { item: 'Fuel surcharge', magnitude: '8–15% of base freight, monthly diesel-indexed', confidence: 'MEDIUM' },
+  { item: 'Gauge-change fee', magnitude: '$150 – $250 per container', confidence: 'MEDIUM' },
+  { item: 'Border fees', magnitude: '$50 – $150 per border; northern route ≥4 borders = $200 – $600 total', confidence: 'MEDIUM' },
+  { item: 'Congestion surcharge', magnitude: '$200 – $500 per container at Małaszewicze in peak', confidence: 'MEDIUM' },
+  { item: 'Terminal storage', magnitude: '$20 – $40 per day', confidence: 'MEDIUM' },
+  { item: 'Cargo insurance', magnitude: '0.3 – 0.5% of cargo value (ocean 0.1 – 0.2%)', confidence: 'MEDIUM' },
+  { item: 'Onward trucking off-corridor', magnitude: 'Duisburg→south Italy/Spain adds 3–5 days + $800–$1,200 trucking', confidence: 'MEDIUM' },
+];
+
+const vatRows = [
+  { country: 'Germany', vat: '19%', note: 'EU member state; Hamburg rail terminus', confidence: 'MEDIUM' },
+  { country: 'United Kingdom', vat: '20%', note: 'Separate post-Brexit regime; GB EORI', confidence: 'MEDIUM' },
+  { country: 'France', vat: '20%', note: 'EU member state; Le Havre gateway', confidence: 'MEDIUM' },
+  { country: 'Netherlands', vat: '21%', note: 'EU member state; Rotterdam gateway', confidence: 'MEDIUM' },
+  { country: 'Belgium', vat: '21%', note: 'EU member state; Antwerp gateway', confidence: 'MEDIUM' },
+  { country: 'Spain', vat: '21%', note: 'EU member state; Valencia gateway', confidence: 'MEDIUM' },
+  { country: 'Italy', vat: '22%', note: 'EU member state; Genoa gateway', confidence: 'MEDIUM' },
+  { country: 'Poland', vat: '23%', note: 'EU member state; Gdańsk/Małaszewicze gateway', confidence: 'MEDIUM' },
 ];
 
 const faqs = [
   {
     q: 'Is rail faster than sea freight from China to Europe?',
-    a: 'Yes — rail runs roughly 18–22 days versus 28–45 days for a Cape-routed ocean sailing. Rail\u2019s advantage has grown since 2024, when Red Sea rerouting stretched ocean transit by 10–14 days.',
+    a: 'Yes. The verified research snapshot puts rail at 15–24 days on the main New Silk Road corridors, with the fastest published lane at 15–18 days. Sea freight now runs 28–45 days because most carriers route around the Cape of Good Hope, adding roughly 10–14 days versus the pre-crisis Suez lane. The gap is about three weeks of transit, and that is the value rail is selling.',
   },
   {
     q: 'Which is cheaper, sea or rail?',
-    a: 'Sea is almost always cheaper per container — roughly half to a third of rail. Rail only wins on total cost when the value of faster delivery (inventory financing, deadlines) exceeds the freight premium.',
+    a: 'Sea is cheaper on the freight line item in nearly every case — the verified 40ft sea ranges are $1,600–$7,200 across the eight main European ports, while rail base rates run $4,000–$5,800. Rail only wins on total landed cost when the value of recovering about three weeks of transit, reduced inventory financing and lower deadline risk exceeds the freight premium. For high-value or deadline-sensitive cargo, the comparison must include carrying cost, not just the published rate.',
   },
   {
     q: 'When should I choose rail over sea?',
-    a: 'When your cargo is high-value, deadline-sensitive or expensive to hold in transit. Rail buys back about three weeks of transit, which for electronics, auto parts or fashion often justifies the premium.',
+    a: 'Rail tends to win when cargo value is above roughly $50,000 per container, the transit tolerance is 15–25 days, and the origin is in central or western China where rail terminals are closer than seaports. Rail loses for low-value bulk cargo, destinations off the main corridor (for example Duisburg-to-south Italy or Spain adds 3–5 days plus $800–$1,200 of trucking), and cargo subject to Russia-related sanctions or dual-use controls. Always quote both before assuming either mode wins.',
   },
   {
     q: 'Does rail avoid the Red Sea risk entirely?',
-    a: 'Yes. Rail runs overland through Central Asia and Russia, so it is completely insulated from Red Sea routing and the Cape detour — the main reason it looked attractive through 2024–2026.',
+    a: 'Yes. Rail runs overland through Central Asia, Russia, Belarus and Poland, so it is insulated from Red Sea routing and the Cape detour that lengthens ocean transit. But rail carries a different geopolitical exposure — the dominant northern corridor transits Russia — so you trade routing risk for sanctions, insurance and reputational risk. Neither mode is risk-free; they are different risks.',
+  },
+  {
+    q: 'What surcharges should I add to a rail base rate?',
+    a: 'Add 15–25% to the published rail base rate for fuel, gauge change, border fees, congestion and terminal handling. A $4,500 spot typically lands around $5,400–$5,800 all-in, depending on route and season. The verified line items are fuel 8–15%, gauge-change $150–$250, border fees $50–$150 per border, peak congestion $200–$500, and terminal storage $20–$40 per day.',
+  },
+  {
+    q: 'What are the published rail rates by route?',
+    a: 'The verified snapshot lists five routes: Xi\u2019an→Duisburg $4,200–$5,100 (16–19 days), Chengdu→Lodz $4,000–$4,800 (18–21 days), Yiwu→Madrid $4,800–$5,800 (20–24 days), Chongqing→Hamburg $4,300–$5,200 (17–20 days), and Zhengzhou→Liege $4,500–$5,300 (15–18 days). These are 40ft base rates, not all-in landed costs.',
+  },
+  {
+    q: 'What are the sea rates from China to each European port?',
+    a: 'The route-data ranges are Rotterdam $1,200–$4,800 / $1,600–$6,800, Hamburg $1,200–$4,600 / $1,600–$6,500, Antwerp $1,200–$4,700 / $1,600–$6,600, Felixstowe $1,300–$5,000 / $1,800–$7,000, Le Havre $1,200–$4,800 / $1,600–$6,800, Valencia $1,300–$5,000 / $1,800–$7,000, Genoa $1,300–$5,200 / $1,800–$7,200, and Gdańsk $1,200–$4,800 / $1,600–$6,800 for 20ft/40ft. LCL runs $60–$170 per CBM depending on port.',
+  },
+  {
+    q: 'How does inventory carrying cost change the sea-vs-rail decision?',
+    a: 'At an $80,000 cargo value per container and 12% annual inventory cost, capital tied up in transit costs about $185 per week. If ocean takes roughly three weeks longer than rail, that is about $555 of extra carrying cost per container — enough to erase a large slice of the ocean freight discount. The published rule of thumb is that rail often wins on landed cost around $200,000 of cargo value per container.',
+  },
+  {
+    q: 'Which documentation does China-to-Europe rail require?',
+    a: 'Rail needs the CIM/SMGS consignment note — CIM covers the EU leg and SMGS covers the CIS leg — plus a T1 transit document filed electronically before the EU border. You also need the China export declaration and, recommended, a certificate of origin. Missing documents can stop the container at a border, and a missing T1 can add up to a week at Małaszewicze.',
+  },
+  {
+    q: 'How does insurance differ between sea and rail?',
+    a: 'Rail cargo insurance typically runs 0.3–0.5% of cargo value versus 0.1–0.2% for ocean, reflecting extra borders, gauge-change handling and higher theft risk. Check the geographic-scope clause on any marine policy because some policies exclude Russia or Central Asia overland legs. That clause matters most on the northern corridor.',
+  },
+  {
+    q: 'Do SASO, SABER or GCC customs rules apply to Europe?',
+    a: 'No. SASO and SABER are Saudi/GCC conformity systems, and the GCC 5% customs baseline is Gulf-specific. They do not apply to EU or UK shipments. For Europe, use CE marking for regulated products, REACH for chemical substances, the EU Common Customs Tariff for duty, and member-state VAT.',
+  },
+  {
+    q: 'What is the biggest double-count trap in sea-vs-rail quotes?',
+    a: 'The trap is comparing an ocean all-in quote with a rail base rate and then adding rail surcharges again, or accepting a rail quote that mixes base and all-in figures across different lanes. Standardise every quote to the same basis: port/terminal pair, 20ft or 40ft, and an explicit list of fuel, gauge, border, congestion, THC, documentation and final-mile items. If a charge is already included, ask the forwarder to say so in writing.',
   },
 ];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
 
 const schema = [
   {
+    type: 'Article',
+    data: {
+      headline: 'Sea vs Rail Freight: China to Europe — Cost & Time Comparison (2026)',
+      description:
+        'Sea freight versus New Silk Road rail from China to Europe: verified port-by-port ocean rates, rail corridor rates, transit windows, carrying-cost break-even arithmetic, surcharges and compliance.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
     type: 'FAQPage',
     data: {
-      mainEntity: faqs.map((f) => ({
+      mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
       })),
     },
   },
+  {
+    type: 'Organization',
+    data: organization,
+  },
 ];
+
+const seaRateSources = sourcesByIds([
+  'china-docshipper-europe',
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const railRateSources = sourcesByIds(['freightsurcharge']);
+const transitSources = sourcesByIds(['freightsurcharge', 'china-docshipper-europe']);
+const decisionSources = sourcesByIds(['freightsurcharge']);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const costSources = sourcesByIds(['freightsurcharge', 'china-docshipper-europe', 'eu-taric']);
+const complianceSources = sourcesByIds([
+  'eu-taric',
+  'german-customs',
+  'hmrc',
+  'french-customs',
+  'dutch-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+]);
 ---
 
 <BaseLayout
-  title="Sea vs Rail Freight: China to Europe — Which to Choose"
-  description="Sea freight versus New Silk Road rail for China-to-Europe shipping: transit time, cost, risk and which cargo each method suits."
-  canonical={`${SITE_URL}/europe/sea-vs-rail/`}
+  title="Sea vs Rail Freight: China to Europe — Cost & Time Comparison (2026)"
+  description="Sea freight versus New Silk Road rail from China to Europe: verified ocean rates for eight ports, rail corridor rates, transit times, carrying-cost break-even arithmetic, surcharges and compliance."
+  canonical={pageUrl}
+  ogType="article"
   schema={schema}
 >
   <div class="page-header">
@@ -61,94 +322,373 @@ const schema = [
           { label: 'Sea vs Rail' },
         ]}
       />
-      <h1>Sea vs rail: China to Europe</h1>
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Sea vs rail freight: China to Europe</h1>
       <p class="lead">
-        The choice is not between cheap and fast — it is between slow-and-cheap
-        and faster-and-dearer, and the tiebreaker is the cost of your money
-        tied up in transit.
+        The choice is not cheap-versus-fast in the abstract — it is a landed-cost
+        equation between the cost of the freight line and the cost of your money
+        tied up for roughly three extra weeks at sea.
       </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from planning notes. Ocean FCL/LCL and rail route
+        ranges are MEDIUM confidence from the WorldFreightHub Europe route data and the 2026-09-03
+        research snapshot; air figures and unquantified destination charges are LOW and marked
+        request-for-quote.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">28–45 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail transit</span>
+          <span class="fact-value">15–24 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">40ft sea range</span>
+          <span class="fact-value">$1,600–$7,200 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">40ft rail range</span>
+          <span class="fact-value">$4,000–$5,800 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail all-in add-on</span>
+          <span class="fact-value">+15–25% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Carrying-cost tiebreaker</span>
+          <span class="fact-value">≈ $185/week <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
     </div>
   </div>
 
   <section class="section container">
     <blockquote class="tldr">
       <p>
-        <strong>TL;DR:</strong> Sea freight is cheaper and slower; rail is
-        faster and dearer. Since the Red Sea crisis forced ocean around the Cape,
-        the transit gap widened to roughly 18–22 days (rail) versus 28–45 days
-        (sea). Choose rail when the value of three weeks of faster delivery
-        outweighs a 2–3× freight premium.
+        <strong>TL;DR:</strong> Sea wins on freight cost, rail wins on the cost of time. Verified
+        China-to-Europe sea transit runs 28–45 days because of Cape rerouting, while rail runs 15–24
+        days. Ocean is cheaper per box, but rail can win on total landed cost for high-value,
+        deadline-sensitive cargo once you add carrying cost, surcharge risk and inland positioning.
       </p>
     </blockquote>
   </section>
 
   <section class="section container">
-    <h2>Side by side</h2>
+    <h2>1. Rate table: ocean by port and rail by corridor</h2>
+    <p>
+      The ocean table is the eight-port benchmark from the Europe route data; the rail table is the
+      newly verified corridor snapshot. The two are not directly comparable yet because ocean is quoted
+      across three container modes while rail is quoted as a 40ft base rate with surcharges on top.
+      Standardise both to the same port/terminal pair and container size before comparing.
+    </p>
+
     <DataTable
       columns={[
-        { key: 'metric', label: 'Dimension' },
-        { key: 'sea', label: 'Sea freight' },
-        { key: 'rail', label: 'Rail freight' },
+        { key: 'port', label: 'Destination port' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={rows}
-      caption="Indicative comparison — verify live figures before booking."
+      rows={rateRows}
+      caption="Ocean FCL/LCL ranges are MEDIUM confidence from the WorldFreightHub Europe route data. Verify live figures before booking."
     />
+    <SourceList sources={seaRateSources} title="Sources — China-to-Europe ocean rate ranges" />
+
+    <h3 class="mt-3">New Silk Road rail rates</h3>
+    <p>
+      The May 2026 FreightSurcharge guide provides five verified rail corridors. Treat these as
+      door-to-terminal, 40ft base rates: the <strong>+15–25% all-in surcharge</strong> is not included
+      in these numbers.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'route', label: 'Rail corridor' },
+        { key: 'transit', label: 'Transit' },
+        { key: 'rate', label: '40ft base rate' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={railRows}
+      caption="Rail corridor rates are MEDIUM confidence from the 2026 research snapshot. Add +15–25% for surcharges before comparing with sea."
+    />
+    <SourceList sources={railRateSources} title="Sources — China-to-Europe rail corridor rates" />
+
+    <div class="note mt-2">
+      <strong>Read the two tables together, not side by side:</strong> a 40ft rail base of $4,500
+      becomes roughly $5,400–$5,800 all-in, while a 40ft ocean quote must still be checked for BAF,
+      THC, ISPS, documentation, clearance and demurrage exposure. The headline lines are screening
+      ranges, never the landed cost.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit-time table</h2>
+      <p>
+        Transit is where the corridor has changed most since 2024. The Cape-of-Good-Hope reroute added
+        roughly <strong>10–14 days</strong> to China-to-Europe ocean sailings, which is why the sea
+        planning window is now <strong>28–45 days</strong>. Rail holds at <strong>15–24 days</strong>,
+        giving it a reliable three-week time advantage. Air was not published in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'mode', label: 'Mode' },
+          { key: 'transit', label: 'Indicative transit' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Sea and rail transit windows are MEDIUM confidence from the route data and research snapshot. Air and door-to-door figures were not published and stay LOW."
+      />
+      <SourceList sources={transitSources} title="Sources — China-to-Europe transit times" />
+
+      <div class="note mt-2">
+        <strong>Why the sea window is so wide:</strong> Cape routing, direct-versus-transshipped service,
+        port congestion and seasonal schedule volatility all move the arrival date. The container still
+        starts its free-time countdown at discharge, so a wider transit window also makes destination
+        clearance planning less predictable.
+      </div>
+    </div>
   </section>
 
   <section class="section container">
-    <h2>The transit gap has widened</h2>
+    <h2>3. Decision module: the sea-vs-rail break-even</h2>
     <p>
-      For years the sea-versus-rail decision was roughly 30 days against 18.
-      The Red Sea crisis changed that. Since 2024, most carriers route around
-      the Cape of Good Hope to avoid the Houthi threat, adding 10–14 days to
-      every China-to-Europe sailing. Ocean transit now runs 28–45 days while
-      rail holds at 18–22. The gap nearly doubled — which is precisely why rail
-      volumes and prices held up through the crisis even as the underlying
-      economics of ocean stayed cheaper.
+      The decision is a landed-cost problem, not a freight-rate problem. The research snapshot provides
+      the arithmetic: an <strong>$80,000 cargo</strong> at a <strong>12% annual inventory cost</strong>
+      carries about <strong>$185 per week</strong> of tied-up capital. If ocean takes roughly three
+      weeks longer than rail, that is about <strong>$555 of extra carrying cost per container</strong>.
     </p>
+    <p>
+      At around <strong>$200,000 of cargo value per container</strong>, rail often beats ocean on total
+      landed cost even though its freight line is higher. The planning threshold is simpler than the
+      crossover: quote rail whenever the cargo value is above roughly <strong>$50,000 per
+      container</strong>, the tolerance is <strong>15–25 days</strong>, and the origin sits in central
+      or western China.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'metric', label: 'Metric' },
+        { key: 'ocean', label: 'Ocean' },
+        { key: 'rail', label: 'Rail' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={breakEvenRows}
+      caption="The inventory-carrying-cost arithmetic is MEDIUM confidence from the 2026 research notes. Use it as a decision screen, then request live quotes for both modes."
+    />
+    <SourceList sources={decisionSources} title="Sources — sea vs rail break-even arithmetic" />
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Rail tends to win when...">
+        <ul>
+          <li>Cargo value is above ~$50,000 per container.</li>
+          <li>Transit tolerance is 15–25 days.</li>
+          <li>Origin is central or western China, close to a rail terminal.</li>
+          <li>Destination is on the main rail corridor, not a long final-mile detour.</li>
+          <li>Inventory cost, season deadline or cash-in-transit is the real constraint.</li>
+        </ul>
+      </Card>
+      <Card title="Rail tends to lose when...">
+        <ul>
+          <li>Cargo is low-value bulk where carrying cost is small.</li>
+          <li>Destination is off-corridor — Duisburg to south Italy or Spain adds 3–5 days and $800–$1,200 trucking.</li>
+          <li>Cargo is subject to Russia-related sanctions or dual-use controls.</li>
+          <li>The importer cannot manage CIM/SMGS, T1 and multi-border documentation risk.</li>
+          <li>The freight line is the dominant cost and cash flow is not time-sensitive.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>Use the full landed-cost stack, not the headline:</strong> rail looks expensive only
+      until you add three extra weeks of inventory carrying cost, missed season risk and the ocean
+      destination-charge stack. Conversely, rail's 15–25% surcharge add-on can erase its value-of-time
+      advantage if the destination is far from the corridor.
+    </div>
   </section>
 
   <section class="section container">
-    <h2>Cost is not the real question</h2>
+    <h2>4. Port list: the eight European destination gateways</h2>
     <p>
-      On the freight line item, sea wins almost every time — a Cape-routed 40ft
-      runs roughly $1,600–6,800, while rail sits around $5,000–7,000 or more.
-      But the freight rate is only part of the landed cost. A container at sea
-      for 40 days ties up the value of its cargo for a month longer than rail
-      does. For high-value goods, the financing cost of that extra month —
-      plus the risk of missing a season or a deadline — frequently exceeds the
-      rail surcharge.
+      The comparison uses the same eight destination ports as the rest of the Europe corridor. The
+      choice of gateway changes the inland equation for both modes — Rotterdam feeds the Rhine,
+      Hamburg pairs deep-sea with rail, and Gdańsk sits next to the Małaszewicze rail entry.
     </p>
-    <p>
-      The honest framing: <strong>sea wins on freight cost, rail wins on total
-      cost of time.</strong> Low-value, price-sensitive cargo belongs on a
-      ship. High-value, deadline-sensitive cargo usually belongs on a train —
-      and the decision turns on your cost of capital, not the published rate.
-    </p>
-  </section>
 
-  <section class="section container">
-    <h2>Risk is different, not just different in size</h2>
-    <p>
-      Sea freight's dominant risk today is geopolitical routing — the Red Sea,
-      the Cape detour, and the war-risk premiums that feed into rates. Rail's
-      dominant risk is different: the dominant corridors transit Russia, which
-      carries its own insurance, compliance and reputational exposure. Neither
-      is "safe"; they are two different risks. Some shippers accept Russia
-      transit to keep rail's speed; others move back to ocean or onto the
-      slower southern Caspian corridor. Match the risk to your own compliance
-      posture, not just the price.
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="Port identities and UN/LOCODEs are HIGH confidence from the destination data. One-line roles are qualitative planning notes."
+    />
+    <SourceList sources={portSources} title="Sources — European destination ports" />
+
+    <p class="mt-2">
+      For final-mile planning, the dedicated country guides give the full inland-cost and compliance
+      detail: <a href="/europe/shipping-from-china-to-netherlands/">Netherlands</a>,
+      <a href="/europe/shipping-from-china-to-germany/">Germany</a>,
+      <a href="/europe/shipping-from-china-to-belgium/">Belgium</a>,
+      <a href="/europe/shipping-from-china-to-united-kingdom/">United Kingdom</a>,
+      <a href="/europe/shipping-from-china-to-france/">France</a>,
+      <a href="/europe/shipping-from-china-to-spain/">Spain</a>,
+      <a href="/europe/shipping-from-china-to-italy/">Italy</a> and
+      <a href="/europe/shipping-from-china-to-poland/">Poland</a>.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>Frequently asked questions</h2>
+      <h2>5. Cost composition and the all-in vs base-rate trap</h2>
+      <p>
+        Both modes carry a stack of charges after the headline rate. The sea stack is familiar but
+        largely unquantified in the verified snapshot; the rail stack is newly quantified in the
+        research notes. The most expensive mistake is mixing the two bases — an all-in ocean figure
+        next to a base rail figure — so force every quote to the same standard.
+      </p>
+
+      <h3>Ocean destination-cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaCostRows}
+        caption="The ocean freight line is MEDIUM confidence from route data. BAF, THC, ISPS, documentation, clearance and demurrage/detention amounts were not published and stay LOW."
+      />
+
+      <h3 class="mt-3">Rail surcharge stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={railCostRows}
+        caption="Rail surcharge components are MEDIUM confidence from the FreightSurcharge May 2026 guide. Apply them to the same base rate and route before comparing with ocean."
+      />
+      <SourceList sources={costSources} title="Sources — ocean and rail cost composition" />
+
+      <div class="note mt-2">
+        <strong>The double-count trap:</strong> a $4,500 rail spot plus 15–25% surcharges lands around
+        $5,400–$5,800. If a quote already says "all-in", do not add fuel, gauge, border and congestion
+        again. Ask the forwarder to list which items are included and which are estimated, then compare
+        only like-for-like on the same origin, terminal pair and container size.
+      </div>
+
+      <p class="mt-2">
+        Destination free-time charges are a separate clock that can wipe out either mode's savings.
+        See the companion
+        <a href="/europe/demurrage-detention/">Demurrage &amp; Detention: China to Europe</a> guide for
+        the verified Hamburg carrier tariff and how to keep the meter from running.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance: documents, duty, VAT and the Russia question</h2>
+
+    <h3>Rail documentation</h3>
+    <p>
+      Rail uses the <strong>CIM/SMGS consignment note</strong>: CIM covers the EU leg and SMGS covers
+      the CIS leg, with a combined note covering the full journey. File the <strong>T1 transit
+      document</strong> electronically before the EU border, and prepare the China export declaration
+      plus a certificate of origin where recommended. Missing documentation can stop the container at a
+      border, and a missing T1 can add up to a week at Małaszewicze.
+    </p>
+
+    <h3>EORI, duty and VAT</h3>
+    <p>
+      An <strong>EORI number</strong> is mandatory for any EU import and must exist before arrival;
+      the UK uses a separate <strong>GB EORI</strong> since Brexit. Duty follows the
+      <strong>EU Common Customs Tariff</strong>, typically <strong>0–12%</strong> by HS/TARIC code, with
+      no China–EU free-trade agreement in force. Import VAT is then charged on the duty-inclusive value
+      at the destination country rate.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={vatRows}
+      caption="Country VAT rates are MEDIUM confidence from the destination data. The UK is a separate post-Brexit customs regime."
+    />
+    <SourceList sources={complianceSources} title="Sources — EU/UK duty, VAT and EORI" />
+
+    <h3>CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is required for many regulated products — electronics, toys,
+      machinery and medical devices among others — and <strong>REACH</strong> regulates chemical
+      substances. Confirm applicability to your product class and prepare the technical file before
+      shipment; neither mode changes these product rules.
+    </p>
+
+    <h3>Sanctions and dual-use on Russia transit</h3>
+    <p>
+      The dominant northern rail corridor transits Russia, so shippers must screen the cargo, the
+      consignee and the routing against sanctions and dual-use controls before booking. Some insurance
+      policies exclude Russia or Central Asia overland legs, and some buyers avoid the corridor for
+      reputational or compliance reasons. If the cargo is restricted, use the ocean lane or a corridor
+      that avoids Russian territory.
+    </p>
+
+    <h3>SASO/SABER and the GCC tariff do not apply</h3>
+    <p>
+      <strong>SASO and SABER are Saudi/GCC conformity systems</strong>, and the <strong>GCC 5%
+      tariff</strong> is Gulf-specific. They do not apply to the EU or the UK and should not be copied
+      into a China-to-Europe workflow. Europe uses CE marking, REACH, the EU Common Customs Tariff and
+      member-state VAT instead.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. Frequently asked questions</h2>
       <FaqBlock items={faqs} />
     </div>
   </section>
 
   <section class="section container">
-    <Cta />
+    <h2>Related guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The ocean
+      FCL/LCL ranges are re-checked against the WorldFreightHub Europe route data, and the rail
+      corridor rates, surcharge stack and carrying-cost arithmetic come from the
+      <code>docs/research-notes-2026-09-03.md</code> Firecrawl snapshot. Air figures and unquantified
+      destination charges remain LOW and marked request-for-quote rather than filled with invented
+      numbers.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="FCL vs LCL"
+        description="If the container mode is still open, compare full-container versus shared LCL economics and the ~15 CBM crossover."
+        href="/europe/fcl-vs-lcl/"
+      />
+      <Card
+        title="Demurrage & Detention: China to Europe"
+        description="The free-time clock at European ports and the verified Hamburg carrier tariff that turns delay into per-day charges."
+        href="/europe/demurrage-detention/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China-to-Europe sea and rail quote"
+      text="Tell us your origin, commodity, TARIC/HS code, cube, weight, final European destination and required delivery date, and we will connect you with providers who can quote ocean and rail on the same basis."
+    />
   </section>
 </BaseLayout>
