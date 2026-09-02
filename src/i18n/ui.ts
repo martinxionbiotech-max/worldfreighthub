@@ -20,6 +20,9 @@ const en: Dict = {
   'nav.directory': 'Directory',
   'nav.middleeast': 'Middle East',
   'nav.europe': 'Europe',
+  'nav.destinations': 'Destinations',
+  'nav.guides': 'Shipping Guides',
+  'nav.resources': 'Resources',
   'nav.whatsapp': 'WhatsApp',
   'nav.getquote': 'Get Quote',
 
@@ -138,6 +141,9 @@ const ar: Dict = {
   'nav.directory': 'الدليل',
   'nav.middleeast': 'الشرق الأوسط',
   'nav.europe': 'أوروبا',
+  'nav.destinations': 'الوجهات',
+  'nav.guides': 'أدلة الشحن',
+  'nav.resources': 'الموارد',
   'nav.whatsapp': 'واتساب',
   'nav.getquote': 'احصل على عرض سعر',
 

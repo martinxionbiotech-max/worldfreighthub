@@ -10,16 +10,31 @@ const { locale = 'en' } = Astro.props;
 const prefix = locale === 'ar' ? '/ar' : '';
 
 // Sections with a live Arabic version get the /ar/ prefix; the rest point to English for now.
-const nav = [
-  { label: t(locale, 'nav.routes'), href: `${prefix}/routes/` },
-  { label: t(locale, 'nav.countries'), href: `${prefix}/countries/` },
-  { label: t(locale, 'nav.ports'), href: `${prefix}/ports/` },
-  { label: t(locale, 'nav.methods'), href: `${prefix}/methods/` },
-  { label: t(locale, 'nav.glossary'), href: `${prefix}/glossary/` },
-  { label: t(locale, 'nav.tools'), href: '/tools/' },
-  { label: t(locale, 'nav.directory'), href: `${prefix}/directory/` },
-  { label: t(locale, 'nav.middleeast'), href: '/middleeast/' },
-  { label: t(locale, 'nav.europe'), href: '/europe/' },
+const navGroups = [
+  {
+    label: t(locale, 'nav.destinations'),
+    items: [
+      { label: t(locale, 'nav.middleeast'), href: '/middleeast/' },
+      { label: t(locale, 'nav.europe'), href: '/europe/' },
+    ],
+  },
+  {
+    label: t(locale, 'nav.guides'),
+    items: [
+      { label: t(locale, 'nav.routes'), href: `${prefix}/routes/` },
+      { label: t(locale, 'nav.countries'), href: `${prefix}/countries/` },
+      { label: t(locale, 'nav.ports'), href: `${prefix}/ports/` },
+      { label: t(locale, 'nav.methods'), href: `${prefix}/methods/` },
+    ],
+  },
+  {
+    label: t(locale, 'nav.resources'),
+    items: [
+      { label: t(locale, 'nav.glossary'), href: `${prefix}/glossary/` },
+      { label: t(locale, 'nav.tools'), href: '/tools/' },
+      { label: t(locale, 'nav.directory'), href: `${prefix}/directory/` },
+    ],
+  },
 ];
 ---
 
@@ -27,8 +42,18 @@ const nav = [
   <div class="container header-inner">
     <a class="logo" href={prefix || '/'}>{SITE_NAME}</a>
     <nav class="site-nav" aria-label="Primary navigation">
-      {nav.map((item) => (
-        <a href={item.href}>{item.label}</a>
+      {navGroups.map((group) => (
+        <div class="nav-dropdown">
+          <button type="button" class="nav-dropdown-toggle" aria-haspopup="true">
+            {group.label}
+            <span class="caret">▾</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            {group.items.map((item) => (
+              <a href={item.href}>{item.label}</a>
+            ))}
+          </div>
+        </div>
       ))}
       <a class="nav-cta nav-cta--whatsapp" href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener">{t(locale, 'nav.whatsapp')}</a>
       <a class="nav-cta" href="/get-quote/">{t(locale, 'nav.getquote')}</a>
