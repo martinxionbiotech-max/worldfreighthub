@@ -3,15 +3,68 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
 
-const rows = [
-  { dimension: 'Transit time', direct: 'Shorter — no hub wait', transshipment: 'Longer — adds a hub connection' },
-  { dimension: 'Cost', direct: 'Often higher (premium schedule)', transshipment: 'Often lower (hub consolidation)' },
-  { dimension: 'Reliability', direct: 'Fewer hand-offs, fewer failure points', transshipment: 'Two sailings to miss, not one' },
-  { dimension: 'Schedule frequency', direct: 'Thinner on niche lanes', transshipment: 'More frequent on small lanes' },
-  { dimension: 'Typical on', direct: 'Rotterdam, Hamburg, Antwerp, Felixstowe', transshipment: 'Valencia, Genoa via Med hubs' },
+const pageUrl = `${SITE_URL}/europe/direct-vs-transshipment/`;
+const notPublished = 'Not published in verified snapshot — request an itemised schedule';
+
+const rateRows = [
+  { port: 'Rotterdam (NLRTM)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $160 per CBM', confidence: 'MEDIUM' },
+  { port: 'Hamburg (DEHAM)', twenty: '$1,200 – $4,600', forty: '$1,600 – $6,500', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Antwerp (BEANR)', twenty: '$1,200 – $4,700', forty: '$1,600 – $6,600', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Felixstowe (GBFXT)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Le Havre (FRLEH)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Valencia (ESVLC)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Genoa (ITGOA)', twenty: '$1,300 – $5,200', forty: '$1,800 – $7,200', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Gdańsk (PLGDN)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+];
+
+const transitRows = [
+  { port: 'Rotterdam (NLRTM)', days: '28 (25–45)', note: 'Direct-dense Northwest Europe range', confidence: 'LOW' },
+  { port: 'Hamburg (DEHAM)', days: '29 (25–45)', note: 'Direct-dense Northwest Europe range; deep-sea + China rail', confidence: 'LOW' },
+  { port: 'Antwerp (BEANR)', days: '28 (25–45)', note: 'Direct-dense Northwest Europe range; Rotterdam congestion alternative', confidence: 'LOW' },
+  { port: 'Felixstowe (GBFXT)', days: '29 (25–45)', note: 'Direct-dense range for the UK, outside the EU customs regime', confidence: 'LOW' },
+  { port: 'Le Havre (FRLEH)', days: '30 (25–45)', note: 'Mediterranean-edge call; often a transshipment final leg', confidence: 'LOW' },
+  { port: 'Valencia (ESVLC)', days: '32 (25–45)', note: 'Mediterranean transshipment norm via Tanger Med / Malta / Piraeus', confidence: 'LOW' },
+  { port: 'Genoa (ITGOA)', days: '33 (25–45)', note: 'Mediterranean transshipment norm for North Italy', confidence: 'LOW' },
+  { port: 'Gdańsk (PLGDN)', days: '30 (25–45)', note: 'Baltic deep-water gateway; routing profile not published in snapshot', confidence: 'LOW' },
+];
+
+const portRows = [
+  { port: 'Rotterdam', unlocode: 'NLRTM', role: 'Direct-dense Northwest range; largest European gateway and Rhine barge hub', confidence: 'MEDIUM' },
+  { port: 'Hamburg', unlocode: 'DEHAM', role: 'Direct-dense Northwest range; deep-sea plus New Silk Road rail terminus', confidence: 'MEDIUM' },
+  { port: 'Antwerp', unlocode: 'BEANR', role: 'Direct-dense Northwest range; chemicals and breakbulk alternative', confidence: 'MEDIUM' },
+  { port: 'Felixstowe', unlocode: 'GBFXT', role: 'Direct-dense range for UK cargo after Brexit', confidence: 'MEDIUM' },
+  { port: 'Le Havre', unlocode: 'FRLEH', role: 'Med transshipment norm via Tanger Med / Malta / Piraeus; Seine gateway', confidence: 'MEDIUM' },
+  { port: 'Valencia', unlocode: 'ESVLC', role: 'Med transshipment norm; primary Iberian gateway', confidence: 'MEDIUM' },
+  { port: 'Genoa', unlocode: 'ITGOA', role: 'Med transshipment norm; North Italy gateway', confidence: 'MEDIUM' },
+  { port: 'Gdańsk', unlocode: 'PLGDN', role: 'Baltic deep-water gateway; not classified in the verified snapshot', confidence: 'LOW' },
+];
+
+const costRows = [
+  { charge: 'ISPS security charge', amount: 'EUR 14 per container', note: 'SOLAS port-security pass-through on the shipment', confidence: 'MEDIUM' },
+  { charge: 'THC Hamburg / Bremerhaven — dry', amount: 'EUR 325 per container', note: 'OOCL Germany local tariff; German direct or feeder call', confidence: 'MEDIUM' },
+  { charge: 'THC Wilhelmshaven — dry', amount: 'EUR 295 per container', note: 'Lower German alternative in the same carrier tariff', confidence: 'MEDIUM' },
+  { charge: 'THC Belgium + Netherlands — dry', amount: 'EUR 260 per container', note: 'Rotterdam/Antwerp band in the same carrier tariff', confidence: 'MEDIUM' },
+  { charge: 'Rotterdam export THC', amount: '≈ USD 235 per 20ft', note: 'Xeneta terminal-handling benchmark; export side', confidence: 'MEDIUM' },
+  { charge: 'Indicative THC Europe', amount: '20ft EUR 220–275 · 40ft EUR 280–330', note: 'hz-containers European THC guide; planning ranges, not one tariff', confidence: 'MEDIUM' },
+  { charge: 'Hamburg demurrage', amount: '20ft dry 3 free days → €70/day days 1–7 → €130/day day 8+; 40ft €115 → €180; reefer 2 free days → €110 → €150', note: 'ACL tariff; per-day escalation after free days', confidence: 'MEDIUM' },
+  { charge: 'Extra hub handling at the transshipment port', amount: notPublished, note: 'A transshipment adds a second terminal lift at the hub', confidence: 'LOW' },
+  { charge: 'Missed-connection storage and re-booking', amount: notPublished, note: 'If the feeder departs without the box, storage and the next connection apply', confidence: 'LOW' },
+];
+
+const complianceRows = [
+  { rule: 'EORI number', value: 'Mandatory before EU arrival', note: 'One EORI covers EU clearance; the UK uses a separate GB EORI', confidence: 'MEDIUM' },
+  { rule: 'EU TARIC / HS code', value: 'Duty follows the EU Common Customs Tariff', note: 'No China–EU free-trade agreement is in force', confidence: 'MEDIUM' },
+  { rule: 'Import VAT', value: 'NL 21% · DE 19% · FR 20% · ES 21% · IT 22% · PL 23% · BE 21% · UK 20%', note: 'Member-state rate on the duty-inclusive value; UK is outside the EU', confidence: 'HIGH' },
+  { rule: 'Article 23 VAT deferral', value: 'Netherlands licence defers import VAT on bonded inventory', note: 'The container-trade deferral tool, not an e-commerce scheme', confidence: 'MEDIUM' },
+  { rule: 'IOSS', value: 'For sub-€150 e-commerce consignments', note: 'The parcel tool; it does not replace Article 23 deferral', confidence: 'MEDIUM' },
+  { rule: 'CE marking', value: 'Required for regulated products', note: 'Electronics, toys, machinery and medical devices among others', confidence: 'MEDIUM' },
+  { rule: 'REACH', value: 'Regulates chemical substances', note: 'Registration and authorisation may apply before import', confidence: 'MEDIUM' },
 ];
 
 const faqs = [
@@ -31,26 +84,145 @@ const faqs = [
     q: 'What is the risk of transshipment?',
     a: 'The main risk is a missed connection: your first sailing is delayed, the feeder leaves without your container, and you wait for the next. It is a second schedule to depend on, which is why direct is valued for time-sensitive cargo.',
   },
+  {
+    q: 'How much time does transshipment add to my schedule?',
+    a: 'The verified snapshot does not publish a single transshipment delay figure. You can see the effect in the typical transit days — Valencia at 32 and Genoa at 33 sit a few days beyond the 28-day Rotterdam norm because the Mediterranean call usually carries an extra hub stop. The actual added wait is hub- and schedule-specific, so it stays LOW and should be requested from the forwarder for your lane.',
+  },
+  {
+    q: 'Is there a standard transshipment discount percentage?',
+    a: 'No. The verified data has no fixed “transshipment discount”. Hubs consolidate volume, which usually pushes the ocean line toward the cheaper part of the port band, but that is a qualitative effect, not a published percentage. Mark it LOW and request an itemised direct-versus-transshipment quote rather than assuming a saving.',
+  },
+  {
+    q: 'Does the Cape routing change the direct-versus-transshipment decision?',
+    a: 'It changes the baseline, not the choice. Since 2024 most carriers reroute around the Cape of Good Hope, adding roughly 10–14 days versus the pre-crisis Suez routing. A longer main leg makes any additional hub wait on a transshipment route more expensive in carrying cost, so the time argument for direct strengthens — but the economics still depend on your lane and cargo value.',
+  },
+  {
+    q: 'Which charges does transshipment add to my invoice?',
+    a: 'A transshipment adds a second terminal lift and port handling at the hub, plus the risk of storage and re-booking if the connection is missed. The verified snapshot does not publish the unit amount for that extra hub handling, so it is LOW and must be itemised separately. The destination THC, ISPS and demurrage lines remain the same regardless of routing.',
+  },
+  {
+    q: 'Can I mix direct and transshipped sailings in one supply chain?',
+    a: 'Yes, and many importers do. Run time-sensitive or high-value cargo on direct Northwest Europe calls, and let price-driven Mediterranean or Baltic volume ride transshipment. The same origin port can feed both, so the decision is per SKU or per order, not a once-only company choice.',
+  },
+  {
+    q: 'How do I check whether my quote is really direct?',
+    a: 'Ask the forwarder to name the vessel, the hub port and the second vessel, and to put the full routing on the bill of lading. A “direct service” can still include a hub stop in the itinerary; “direct” should mean no transshipment of your container, not just no change of vessel name. Confirm the hub handling charge is listed if a transshipment exists.',
+  },
+  {
+    q: 'Do Saudi or GCC-style conformity rules apply to a Europe transshipment?',
+    a: 'No. SABER, SASO and the GCC customs baseline are Gulf-specific and do not apply to EU or UK shipments. Europe uses CE marking, REACH, the EU Common Customs Tariff and member-state VAT. Do not copy a GCC compliance workflow onto a China-to-Europe transshipment.',
+  },
+  {
+    q: 'What is the cleanest way to compare a direct and a transshipment quote?',
+    a: 'Put both quotes on the same basis: same origin, equipment type, destination port, free-time allowance and terminal pair. Add the verified destination THC and ISPS, the unverified extra hub handling as a LOW line, and a carrying-cost check using your own cargo value and cost of capital. The ocean line alone will mislead you.',
+  },
 ];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
 
 const schema = [
   {
+    type: 'Article',
+    data: {
+      headline: 'Direct vs Transshipment Shipping: China to Europe',
+      description:
+        'Direct versus transshipped ocean freight from China to Europe: verified port-by-port FCL and LCL rates, transit days, the decision arithmetic, hub handling charges, and Europe compliance.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
     type: 'FAQPage',
     data: {
-      mainEntity: faqs.map((f) => ({
+      mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
       })),
     },
   },
+  {
+    type: 'Organization',
+    data: organization,
+  },
 ];
+
+const rateSources = sourcesByIds([
+  'china-docshipper-europe',
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const transitSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+  'freightsurcharge',
+]);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const costSources = sourcesByIds(['oocl-germany', 'hz-containers', 'xeneta-thc', 'acl-cargo']);
+const complianceSources = sourcesByIds([
+  'eu-taric',
+  'german-customs',
+  'dutch-customs',
+  'french-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+  'hmrc',
+]);
 ---
 
 <BaseLayout
   title="Direct vs Transshipment Shipping: China to Europe"
-  description="Direct versus transshipped ocean freight from China to Europe: transit time, cost, reliability, and which European ports each serves."
-  canonical={`${SITE_URL}/europe/direct-vs-transshipment/`}
+  description="Direct versus transshipped ocean freight from China to Europe: verified port-by-port rates, transit days, decision arithmetic, hub handling charges and Europe compliance."
+  canonical={pageUrl}
+  ogType="article"
   schema={schema}
 >
   <div class="page-header">
@@ -61,11 +233,37 @@ const schema = [
           { label: 'Direct vs Transshipment' },
         ]}
       />
+      <span class="badge badge--amber">September 2026 updated</span>
       <h1>Direct vs transshipment: China to Europe</h1>
       <p class="lead">
         The word "direct" sells, but it is not always the right buy — the
-        choice is a trade between time and a second schedule to depend on.
+        choice is a trade between time, money and a second schedule you can miss.
       </p>
+      <p class="small muted">
+        Confidence badges separate verified port-rate ranges from planning notes. Destination FCL/LCL
+        ranges are MEDIUM confidence from the WorldFreightHub Europe route data; transit days are LOW.
+        The extra hub-handling amount for transshipment is not published, so it stays LOW and
+        request-for-schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Direct-dense NW range</span>
+          <span class="fact-value">Rotterdam · Hamburg · Antwerp · Felixstowe <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Med transshipment norm</span>
+          <span class="fact-value">Valencia · Genoa · Le Havre <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Cape rerouting</span>
+          <span class="fact-value">+10–14 days vs pre-crisis Suez <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Typical sea transit</span>
+          <span class="fact-value">28–33 days by port <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -74,65 +272,245 @@ const schema = [
       <p>
         <strong>TL;DR:</strong> Direct sailings are faster and more reliable but
         often dearer and only available on the dense Northwest European lanes.
-        Transshipment is usually cheaper and keeps small lanes viable, but it
-        adds a hub connection and a second schedule you can miss.
+        Transshipment is usually cheaper and keeps thin Mediterranean lanes viable,
+        but it adds a hub connection, a second terminal lift and a second schedule
+        you can miss. There is no verified transshipment discount percentage — price
+        the two routings line by line, and treat the extra hub handling as a LOW
+        item to be confirmed.
       </p>
     </blockquote>
   </section>
 
   <section class="section container">
-    <h2>Side by side</h2>
+    <h2>1. Rate ranges by destination port</h2>
+    <p>
+      The direct-versus-transshipment decision starts from the same eight gateway
+      bands. A container does not automatically become cheaper because it is
+      transshipped; the band belongs to the destination port, and the hub
+      connection simply moves the route within that band. The verified MEDIUM
+      ranges below come from the WorldFreightHub Europe route data, and they stay
+      wide because the Red Sea crisis and Cape routing made spot pricing volatile.
+      Treat them as planning envelopes, not quotes.
+    </p>
     <DataTable
       columns={[
-        { key: 'dimension', label: 'Dimension' },
-        { key: 'direct', label: 'Direct' },
-        { key: 'transshipment', label: 'Transshipment' },
+        { key: 'port', label: 'Destination port' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={rows}
-      caption="Indicative comparison — confirm the routing on your specific lane."
+      rows={rateRows}
+      caption="Destination port rate ranges are MEDIUM confidence from the WorldFreightHub Europe route data. They are planning envelopes, not live quotes."
     />
+    <SourceList sources={rateSources} title="Sources — destination port rate ranges" />
+    <div class="note mt-2">
+      <strong>Why there is no discount column:</strong> the verified snapshot does not
+      publish a transshipment discount percentage. Hubs consolidate volume, which usually
+      helps price, but that is a qualitative effect. If a forwarder quotes a specific
+      discount, ask for the underlying line-item schedule and mark it request-for-quote.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit time by port</h2>
+      <p>
+        Transit days are the site's LOW-confidence convention because they depend on
+        the specific sailing, congestion and weather. The typical figures below sit
+        inside a 25–45 day planning range. The Mediterranean numbers — Valencia at 32
+        and Genoa at 33 — already reflect the fact that those calls usually carry an
+        extra hub stop, which is the visible signature of transshipment.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Destination port' },
+          { key: 'days', label: 'Typical transit days' },
+          { key: 'note', label: 'Routing note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Transit days are LOW confidence. The 25–45 day band is the planning range; the per-port typical figure is a starting point, not a guarantee."
+      />
+      <SourceList sources={transitSources} title="Sources — port transit and routing basis" />
+      <p class="mt-2">
+        One fact is firmer than the transit numbers: since 2024 most carriers reroute
+        around the <strong>Cape of Good Hope</strong> to avoid the Red Sea, adding
+        roughly <span class="fact-value">10–14 days <ConfidenceBadge level="MEDIUM" /></span>
+        versus the pre-crisis Suez routing. The Cape lengthening is the reason a
+        transshipment's extra hub wait now costs more in carrying time than it did
+        before the crisis.
+      </p>
+    </div>
   </section>
 
   <section class="section container">
-    <h2>Europe splits by geography</h2>
+    <h2>3. The decision arithmetic</h2>
     <p>
-      The direct-versus-transshipment choice is not uniform across Europe — it
-      splits by geography. The Northwest European range — Rotterdam, Hamburg,
-      Antwerp and Felixstowe — carries the densest direct China calls, because
-      the volumes justify full vessels. Mediterranean ports — Valencia, Genoa
-      and to some extent Le Havre — are more often fed by transshipment: a
-      China sailing discharges at a hub like Tanger Med, Malta or Piraeus, and
-      a feeder carries the container the final leg.
+      The right comparison is landed cost, not the ocean line. Start with the
+      verified bands. A 40ft to Rotterdam sits at <strong>$1,600 – $6,800</strong>
+      <ConfidenceBadge level="MEDIUM" />, whose midpoint is about $4,200. A 40ft to
+      Valencia sits at <strong>$1,800 – $7,000</strong>
+      <ConfidenceBadge level="MEDIUM" />, midpoint about $4,400. The two bands overlap
+      so heavily that the ocean line alone cannot settle direct-versus-transshipment —
+      the final price is set by allocation, season and carrier, not by whether the box
+      changes vessel.
     </p>
     <p>
-      That is why a Mediterranean port can look slower on paper — it often
-      carries an extra hub stop — yet still be the cheapest total route for
-      Iberian or Italian cargo. The transshipment is the price of reaching a
-      thinner lane, not a sign of a worse route.
+      Now add the routing differences. A direct Rotterdam call carries one terminal
+      lift at destination. A transshipped Valencia call carries the same destination
+      lift <em>plus</em> a second lift at the hub — Tanger Med, Malta or Piraeus — and
+      the unit amount for that hub handling is
+      <span class="fact-value"> {notPublished} <ConfidenceBadge level="LOW" /></span>.
+      A missed connection can then add hub storage and the wait for the next feeder,
+      also unpublished. Those two LOW lines are the real cost of transshipment.
     </p>
-  </section>
-
-  <section class="section container">
-    <h2>The risk nobody prices</h2>
     <p>
-      Transshipment's real cost is not the extra sailing — it is the missed
-      connection. A direct container depends on one schedule; a transshipped
-      container depends on two. If the first leg is delayed and the feeder
-      leaves without your box, you wait for the next feeder, and a "cheaper"
-      route quietly becomes a slower one. For time-sensitive cargo, direct
-      buys you insurance against that second schedule. For patient, price-driven
-      cargo, transshipment's saving is usually worth the small extra risk.
+      The time side is measurable with the verified typical days: Rotterdam at 28 and
+      Valencia at 32 — a typical gap of about four days
+      <ConfidenceBadge level="LOW" />. For a container holding $100,000 of goods and a
+      8% annual cost of capital, four extra days cost roughly $87 in carrying cost
+      ($100,000 × 0.08 × 4 ÷ 365). The cargo value and capital rate are your inputs,
+      not market facts, so treat this as a template: substitute your own value and
+      rate, and confirm the actual added days with the forwarder.
+    </p>
+    <p>
+      The conclusion is usually symmetrical: if the hub-handling plus carrying cost is
+      smaller than the ocean-line saving, transshipment wins for price-driven cargo. If
+      the cargo is time-sensitive or the missed-connection risk is unacceptable, the
+      direct premium is cheap insurance. Work the arithmetic with your numbers — do not
+      buy on the word "direct" or "cheaper" alone.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>Frequently asked questions</h2>
-      <FaqBlock items={faqs} />
+      <h2>4. Port options and their routing role</h2>
+      <p>
+        The eight European gateways split into two camps. The Northwest range is
+        direct-dense because the China volumes justify full vessels. The Mediterranean
+        ports are more often reached through a hub connection, which is a feature of a
+        thinner lane, not a sign of a worse route. Gdańsk sits in the Baltic and is not
+        classified in the verified snapshot, so it stays LOW until a routing plan is
+        published.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Port' },
+          { key: 'unlocode', label: 'UN/LOCODE' },
+          { key: 'role', label: 'Routing role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portRows}
+        caption="The direct-dense Northwest range and the Mediterranean transshipment norm are qualitative facts from the WorldFreightHub Europe port data."
+      />
+      <SourceList sources={portSources} title="Sources — European ports and routing role" />
+      <div class="note mt-2">
+        <strong>Cross-link:</strong> the same ports appear in the route-by-route detail at
+        <a href="/europe/routes/">the Europe route directory</a>. For the base-location
+        choice, read <a href="/europe/netherlands-vs-germany/">Netherlands vs Germany</a>;
+        for the mode choice, read <a href="/europe/sea-vs-rail/">Sea vs Rail</a>.
+      </div>
     </div>
   </section>
 
   <section class="section container">
-    <Cta />
+    <h2>5. Cost breakdown and the hidden charges</h2>
+    <p>
+      Direct or transshipped, the destination stack is the same: terminal handling,
+      ISPS, documentation and — if free time runs out — demurrage. The verified EUR
+      values below are single-carrier or industry benchmarks, so they are MEDIUM rather
+      than HIGH. The transshipment-specific lines — the extra hub lift and the
+      missed-connection costs — are not published and stay LOW.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'charge', label: 'Charge' },
+        { key: 'amount', label: 'Indicative amount' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="THC, ISPS and demurrage are MEDIUM confidence from carrier and industry tariffs. Transshipment hub handling and missed-connection costs are LOW and request-for-schedule."
+    />
+    <SourceList sources={costSources} title="Sources — THC, ISPS and demurrage values" />
+    <p class="mt-2">
+      For the full destination accessorial stack — documentation/BL, VGM, congestion and
+      special-equipment lines — read
+      <a href="/europe/hidden-charges/">Hidden Charges: China to Europe</a>. For the
+      free-time clock that turns delay into per-day cost, read
+      <a href="/europe/demurrage-detention/">Demurrage &amp; Detention: China to Europe</a>.
+      A transshipment does not create a new destination THC; it adds the hub lift, so keep
+      those two lines separate when you audit the quote.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Europe compliance: EORI, TARIC, VAT, IOSS/Article 23, CE/REACH</h2>
+      <p>
+        The routing does not change the compliance stack, but it does change whose clock
+        and whose terminal you depend on. An <strong>EORI number</strong> is mandatory
+        before EU arrival, duty follows the <strong>EU Common Customs Tariff</strong>
+        through the TARIC/HS code, and import VAT is charged on the duty-inclusive value
+        at the member-state rate. The container-trade deferral tool is
+        <strong>Article 23</strong> (Dutch licence), while <strong>IOSS</strong> is the
+        sub-€150 e-commerce parcel mechanism — the two are not interchangeable.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'value', label: 'Verified / indicative value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="VAT rates are HIGH confidence. EORI, TARIC, Article 23, IOSS, CE and REACH are structural requirements at MEDIUM confidence from official guidance."
+      />
+      <SourceList sources={complianceSources} title="Sources — EU/UK customs, VAT, deferral and product compliance" />
+      <p class="mt-2">
+        There is no <strong>SABER/SASO conformity system</strong> and no
+        <strong>single GCC-style 5% customs rate</strong> in Europe. Those are Gulf
+        mechanisms and do not apply to an EU or UK transshipment. Europe uses CE marking
+        for regulated products, REACH for chemical substances, TARIC duty and
+        member-state VAT instead — do not copy a GCC workflow onto this corridor.
+      </p>
+      <p>
+        For the two base-location tax profiles, read
+        <a href="/europe/shipping-from-china-to-netherlands/">Shipping from China to the Netherlands</a>
+        and <a href="/europe/shipping-from-china-to-germany/">Shipping from China to Germany</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Data freshness and update basis</h2>
+      <p>
+        This page is marked <span class="badge badge--amber">September 2026 updated</span>.
+        The destination FCL/LCL ranges are re-checked against the WorldFreightHub Europe
+        route data, the transit figures against the port data, and the THC/ISPS/demurrage
+        EUR values against the OOCL Germany local tariff, hz-containers, Xeneta and the ACL
+        free-time tariff. Transit and unpublished transshipment lines stay LOW rather than
+        being filled with invented numbers.
+      </p>
+      <p>
+        If a carrier or hub publishes the unit amount for transshipment handling, the page
+        can add that line and raise its confidence badge. In the meantime, request it as an
+        itemised line and keep the hub lift separate from the destination THC.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised direct-versus-transshipment quote"
+      text="Tell us your origin, commodity, TARIC/HS code, equipment type, destination port and required delivery date, and we will connect you with providers who can quote both routings on the same basis."
+    />
   </section>
 </BaseLayout>

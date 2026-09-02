@@ -3,15 +3,52 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
 
-const rows = [
-  { dimension: 'Gateway port', netherlands: 'Rotterdam — Europe\u2019s largest', germany: 'Hamburg — Germany\u2019s largest' },
-  { dimension: 'VAT rate', netherlands: '21% (deferrable under Article 23)', germany: '19% (no full deferral scheme)' },
-  { dimension: 'China rail terminus', netherlands: 'Limited', germany: 'Major (Hamburg, Duisburg)' },
-  { dimension: 'Hinterland reach', netherlands: 'Rhine barge to Germany, France, Switzerland', germany: 'Central Europe by rail' },
-  { dimension: 'Best fit', netherlands: 'EU-wide distribution hub, inventory holding', germany: 'German market + Central Europe, rail-split' },
+const pageUrl = `${SITE_URL}/europe/netherlands-vs-germany/`;
+const notPublished = 'Not published in verified snapshot — request an itemised schedule';
+
+const gatewayRateRows = [
+  { port: 'Rotterdam (Netherlands)', unlocode: 'NLRTM', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $160 per CBM', confidence: 'MEDIUM' },
+  { port: 'Hamburg (Germany)', unlocode: 'DEHAM', twenty: '$1,200 – $4,600', forty: '$1,600 – $6,500', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+];
+
+const modeRows = [
+  { mode: 'Ocean 40ft Shanghai → Central Europe', transit: '30–38 days', rate: '$1,800 – $2,500', note: 'Cape/Suez routing; the comparison envelope for both bases', confidence: 'MEDIUM' },
+  { mode: 'Rail 40ft China → Europe', transit: '15–24 days', rate: '$4,000 – $5,800', note: 'New Silk Road; the rail option that favours the German termini', confidence: 'MEDIUM' },
+];
+
+const transitRows = [
+  { corridor: 'Sea — Rotterdam', days: '28 (25–45)', note: 'Direct-dense Northwest Europe call; Rhine barge onward', confidence: 'LOW' },
+  { corridor: 'Sea — Hamburg', days: '29 (25–45)', note: 'Tidal Elbe draft can constrain the largest vessels', confidence: 'LOW' },
+  { corridor: 'China rail → Hamburg/Duisburg', days: '≈ 18–22', note: 'Arrives via Poland; port-level rail planning figure', confidence: 'LOW' },
+];
+
+const portRows = [
+  { port: 'Rotterdam', unlocode: 'NLRTM', role: 'Europe’s largest port; ≈13.4m TEU (2023); Maasvlakte 2 max draft ≈24 m; Rhine barge hinterland', confidence: 'MEDIUM' },
+  { port: 'Hamburg', unlocode: 'DEHAM', role: 'Germany’s largest port and China-rail terminus; ≈7.7m TEU (2023); tidal Elbe draft ≈15.2 m; HHLA CTA / Eurogate / Altenwerder', confidence: 'MEDIUM' },
+];
+
+const costRows = [
+  { charge: 'ISPS security charge', netherlands: 'EUR 14 per container', germany: 'EUR 14 per container', note: 'SOLAS pass-through; identical on both sides', confidence: 'MEDIUM' },
+  { charge: 'THC — dry', netherlands: 'EUR 260 (Belgium + Netherlands band)', germany: 'EUR 325 (Hamburg/Bremerhaven)', note: 'OOCL Germany local tariff; German THC is structurally higher', confidence: 'MEDIUM' },
+  { charge: 'THC — Wilhelmshaven', netherlands: '—', germany: 'EUR 295 dry', note: 'Cheaper German deep-water alternative in the same carrier tariff', confidence: 'MEDIUM' },
+  { charge: 'Rotterdam export THC', netherlands: '≈ USD 235 per 20ft', germany: '—', note: 'Xeneta benchmark; Rotterdam export side only', confidence: 'MEDIUM' },
+  { charge: 'Indicative THC Europe', netherlands: '20ft EUR 220–275 · 40ft EUR 280–330', germany: '20ft EUR 220–275 · 40ft EUR 280–330', note: 'hz-containers planning guide; the same band applies across both', confidence: 'MEDIUM' },
+  { charge: 'Hamburg demurrage (ACL)', netherlands: notPublished, germany: '20ft dry 3 free days → €70/day days 1–7 → €130/day day 8+; 40ft €115 → €180; reefer 2 free days → €110 → €150', note: 'ACL is a German reference tariff; the Rotterdam equivalent is not published', confidence: 'MEDIUM' },
+];
+
+const complianceRows = [
+  { rule: 'EORI number', value: 'Mandatory before EU arrival in either country', note: 'One EORI covers clearance in both the Netherlands and Germany', confidence: 'MEDIUM' },
+  { rule: 'EU TARIC / HS code', value: 'Same EU Common Customs Tariff in both countries', note: 'Duty is uniform across the EU; only VAT and local process differ', confidence: 'MEDIUM' },
+  { rule: 'Standard VAT', value: 'Netherlands 21% · Germany 19%', note: 'Germany is two points lower on the headline rate', confidence: 'HIGH' },
+  { rule: 'Article 23 VAT deferral', value: 'Netherlands: available under licence · Germany: no full deferral scheme', note: 'The structural difference that often outweighs the two-point rate gap', confidence: 'HIGH' },
+  { rule: 'IOSS', value: 'Sub-€150 e-commerce consignments in both', note: 'The parcel mechanism; separate from the container deferral tool', confidence: 'MEDIUM' },
+  { rule: 'CE / REACH', value: 'CE for regulated products; REACH for chemical substances', note: 'Product rules are identical in both member states', confidence: 'MEDIUM' },
 ];
 
 const faqs = [
@@ -21,36 +58,127 @@ const faqs = [
   },
   {
     q: 'Which has the lower VAT, the Netherlands or Germany?',
-    a: 'Germany, at 19% versus the Netherlands\u2019 21%. But the Netherlands\u2019 Article 23 deferral can defer the VAT cash outflow entirely for inventory held in bonded storage, which often outweighs the two-point rate difference.',
+    a: 'Germany, at 19% versus the Netherlands’ 21%. But the Netherlands’ Article 23 deferral can defer the VAT cash outflow entirely for inventory held in bonded storage, which often outweighs the two-point rate difference.',
   },
   {
     q: 'Does China rail freight serve the Netherlands?',
-    a: 'Less than Germany. The New Silk Road\u2019s main European termini are in Germany (Hamburg, Duisburg) and Poland (Małaszewicze, Łódź). Rotterdam is primarily a deep-sea gateway, though it is building rail capacity.',
+    a: 'Less than Germany. The New Silk Road’s main European termini are in Germany (Hamburg, Duisburg) and Poland (Małaszewicze, Łódź). Rotterdam is primarily a deep-sea gateway, though it is building rail capacity.',
   },
   {
     q: 'Can I distribute to Germany from a Rotterdam base?',
-    a: 'Yes — Rotterdam\u2019s Rhine barge network reaches the German Ruhr and beyond cheaply. Many EU distributors run a Dutch base and barge German-bound cargo inland rather than running a separate German operation.',
+    a: 'Yes — Rotterdam’s Rhine barge network reaches the German Ruhr and beyond cheaply. Many EU distributors run a Dutch base and barge German-bound cargo inland rather than running a separate German operation.',
+  },
+  {
+    q: 'Is Rotterdam or Hamburg cheaper for ocean freight?',
+    a: 'The verified bands overlap almost entirely: Rotterdam 40ft is $1,600 – $6,800 and Hamburg is $1,600 – $6,500, both MEDIUM. The ocean line does not settle the choice. The destination THC differs more clearly — Belgium/Netherlands dry is EUR 260 versus Hamburg/Bremerhaven EUR 325 — but that must be weighed against inland haul and VAT.',
+  },
+  {
+    q: 'Why is Hamburg THC higher than Rotterdam THC?',
+    a: 'In the verified OOCL Germany local tariff, Hamburg/Bremerhaven dry THC is EUR 325 while the Belgium + Netherlands band is EUR 260. The difference reflects terminal structure and handling economics at the German ports; it is a MEDIUM single-carrier tariff, not a universal price, so confirm the effective tariff for your carrier and equipment type.',
+  },
+  {
+    q: 'Which port is deeper, Rotterdam or Hamburg?',
+    a: 'Rotterdam, by a wide margin. Maasvlakte 2 gives Rotterdam a maximum draft of about 24 metres, while Hamburg’s tidal Elbe limits draft to about 15.2 metres. The practical consequence is that the very largest container vessels can call Rotterdam fully loaded and may be constrained at Hamburg.',
+  },
+  {
+    q: 'Does Germany offer VAT deferral like the Netherlands?',
+    a: 'No, not in the same form. Germany’s standard VAT is 19% but it does not offer the full Article 23 deferral scheme available to Dutch licence holders. Germany can offer warehouse and customs-suspension structures, but the Netherlands’ Article 23 is the cleaner cash-flow deferral for bonded inventory.',
+  },
+  {
+    q: 'Which base is better for a sea-rail split?',
+    a: 'Germany, because Hamburg pairs deep-sea with a China-rail terminus and Duisburg is Europe’s largest inland rail terminal. Rail from China arrives via Poland in roughly 18–22 days (LOW), giving German importers a genuine sea-rail split that the Netherlands cannot match on the rail side today.',
+  },
+  {
+    q: 'How do the demurrage rules differ between Rotterdam and Hamburg?',
+    a: 'The verified ACL tariff covers Hamburg: dry 20ft gets 3 free days then €70/day for days 1–7 and €130/day from day 8; 40ft escalates €115 then €180; reefers get 2 free days then €110 then €150. The Rotterdam equivalent is not published in the verified snapshot, so it stays LOW and must be requested.',
+  },
+  {
+    q: 'Do I need two EORI numbers for the Netherlands and Germany?',
+    a: 'No. One EORI number covers EU customs clearance in both member states. You may still need a local VAT registration for selling into each country, but the customs identifier itself is not duplicated per country.',
+  },
+  {
+    q: 'What is the biggest mistake when choosing between the two?',
+    a: 'Picking the lower headline VAT rate without modelling cash flow. Germany’s 19% looks cheaper, but a Dutch Article 23 deferral can remove the VAT outflow until the goods actually enter a member state. The decision should run on distribution geography, rail need, THC/inland cost and VAT cash-flow — not on the two-point rate alone.',
   },
 ];
 
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
 const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Netherlands vs Germany for China Imports — Distribution Base',
+      description:
+        'Netherlands versus Germany as a China-to-Europe import and distribution base: Rotterdam vs Hamburg rates and transit, VAT deferral arithmetic, THC, demurrage and compliance.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
   {
     type: 'FAQPage',
     data: {
-      mainEntity: faqs.map((f) => ({
+      mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
       })),
     },
   },
+  {
+    type: 'Organization',
+    data: organization,
+  },
 ];
+
+const rateSources = sourcesByIds([
+  'china-docshipper-europe',
+  'port-rotterdam',
+  'port-hamburg',
+  'freightsurcharge',
+]);
+const transitSources = sourcesByIds(['port-rotterdam', 'port-hamburg', 'freightsurcharge']);
+const portSources = sourcesByIds(['port-rotterdam', 'port-hamburg']);
+const costSources = sourcesByIds(['oocl-germany', 'hz-containers', 'xeneta-thc', 'acl-cargo']);
+const complianceSources = sourcesByIds([
+  'eu-taric',
+  'german-customs',
+  'dutch-customs',
+  'port-rotterdam',
+  'port-hamburg',
+]);
 ---
 
 <BaseLayout
   title="Netherlands vs Germany for China Imports — Distribution Base"
-  description="Netherlands versus Germany as a China-to-Europe import and distribution base: Rotterdam vs Hamburg, VAT deferral, rail access and hinterland reach."
-  canonical={`${SITE_URL}/europe/netherlands-vs-germany/`}
+  description="Netherlands versus Germany as a China-to-Europe import and distribution base: Rotterdam vs Hamburg rates, transit, VAT deferral, THC, demurrage and compliance."
+  canonical={pageUrl}
+  ogType="article"
   schema={schema}
 >
   <div class="page-header">
@@ -61,11 +189,36 @@ const schema = [
           { label: 'Netherlands vs Germany' },
         ]}
       />
+      <span class="badge badge--amber">September 2026 updated</span>
       <h1>Netherlands vs Germany for China imports</h1>
       <p class="lead">
         The two heavyweight entry points for China cargo are not interchangeable —
         one is a distribution machine, the other a market plus a rail terminus.
       </p>
+      <p class="small muted">
+        Confidence badges separate verified facts from planning notes. VAT rates are
+        HIGH; port statistics and single-carrier tariffs are MEDIUM; transit and the
+        unpublished Rotterdam demurrage equivalent are LOW and request-for-schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Rotterdam throughput</span>
+          <span class="fact-value">≈ 13.4m TEU (2023) <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Hamburg throughput</span>
+          <span class="fact-value">≈ 7.7m TEU (2023) <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Standard VAT</span>
+          <span class="fact-value">NL 21% · DE 19% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">China rail to Germany</span>
+          <span class="fact-value">≈ 18–22 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -73,79 +226,266 @@ const schema = [
     <blockquote class="tldr">
       <p>
         <strong>TL;DR:</strong> The Netherlands is the better base for EU-wide
-        distribution and inventory holding, thanks to Rotterdam\u2019s Rhine barge
+        distribution and inventory holding, thanks to Rotterdam’s Rhine barge
         network and Article 23 VAT deferral. Germany is the better base for
         serving the German market directly or running a sea-rail split, with
-        lower VAT and the New Silk Road terminus at Hamburg and Duisburg.
+        lower VAT and the New Silk Road terminus at Hamburg and Duisburg. The
+        ocean rate bands overlap, so the decision is made on VAT cash-flow, THC,
+        inland haul and rail access — not on a two-point VAT headline.
       </p>
     </blockquote>
   </section>
 
   <section class="section container">
-    <h2>Side by side</h2>
+    <h2>1. Rate ranges: the two gateways and the two modes</h2>
+    <p>
+      Rotterdam and Hamburg quote inside almost identical verified bands, which is
+      the first reason the "Netherlands or Germany" question cannot be settled by
+      the ocean line alone. A 40ft to Rotterdam is <strong>$1,600 – $6,800</strong>
+      <ConfidenceBadge level="MEDIUM" /> and a 40ft to Hamburg is
+      <strong>$1,600 – $6,500</strong> <ConfidenceBadge level="MEDIUM" />. The bands
+      overlap so heavily that carrier allocation, season and spot conditions move the
+      final price more than the country does.
+    </p>
     <DataTable
       columns={[
-        { key: 'dimension', label: 'Dimension' },
-        { key: 'netherlands', label: 'Netherlands' },
-        { key: 'germany', label: 'Germany' },
+        { key: 'port', label: 'Gateway port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={rows}
-      caption="Indicative comparison of the two leading China-to-Europe entry points."
+      rows={gatewayRateRows}
+      caption="Gateway rate ranges are MEDIUM confidence from the WorldFreightHub Europe route data. The bands overlap, so the ocean line does not settle the country choice."
     />
+    <SourceList sources={rateSources} title="Sources — Rotterdam and Hamburg rate ranges" />
+
+    <h3 class="mt-3">Ocean versus rail: the mode premium</h3>
+    <p>
+      Germany’s rail edge is easier to see when the two modes are placed side by
+      side. The verified FreightSurcharge Q1 2026 headline gives ocean 40ft
+      Shanghai → Central Europe at <strong>$1,800 – $2,500</strong> in
+      <strong>30–38 days</strong>, against rail at <strong>$4,000 – $5,800</strong>
+      in <strong>15–24 days</strong> <ConfidenceBadge level="MEDIUM" />. Rail buys
+      back roughly two to three weeks for a premium whose midpoint is about $2,750
+      over the ocean midpoint — arithmetic on the verified ranges, not a new data
+      point.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Transit' },
+        { key: 'rate', label: '40ft rate' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={modeRows}
+      caption="Ocean versus rail headline is MEDIUM confidence from the FreightSurcharge Q1 2026 guide."
+    />
+    <SourceList sources={transitSources} title="Sources — ocean and rail mode comparison" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transit time by corridor</h2>
+      <p>
+        Sea transit to the two ports is effectively the same in the verified data:
+        Rotterdam at 28 and Hamburg at 29 typical days, both inside a 25–45 day
+        planning range and both LOW confidence. The differentiator is the second
+        corridor: China rail reaches the German termini in roughly 18–22 days, a
+        port-level planning figure that is also LOW and should be confirmed per
+        departure.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'corridor', label: 'Corridor' },
+          { key: 'days', label: 'Typical transit' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={transitRows}
+        caption="Transit days are LOW confidence. The FreightSurcharge MEDIUM headline (ocean 30–38 days, rail 15–24 days) appears in the rate table above."
+      />
+      <SourceList sources={transitSources} title="Sources — port and rail transit" />
+      <p class="mt-2">
+        The Cape rerouting lengthens the sea baseline by roughly
+        <span class="fact-value"> 10–14 days <ConfidenceBadge level="MEDIUM" /></span>
+        versus the pre-crisis Suez routing, which is why the rail time advantage has
+        widened for time-critical cargo. The rail figure depends on border and gauge
+        handling, so keep it LOW until your specific lane is confirmed.
+      </p>
+    </div>
   </section>
 
   <section class="section container">
-    <h2>The VAT deferral that tips the scale</h2>
+    <h2>3. The decision arithmetic</h2>
     <p>
-      The single biggest structural difference is not the two-point VAT gap
-      (Germany 19% versus Netherlands 21%) — it is the Netherlands\u2019 Article 23
-      licence. It lets an importer hold China inventory in bonded storage at
-      Rotterdam and account for import VAT only when goods actually enter a
-      member state. For a distributor holding stock or re-exporting across the
-      EU, that defers a large, recurring cash outflow that Germany\u2019s system
-      does not offer in the same form.
+      The headline VAT comparison is simple arithmetic. On €100,000 of duty-inclusive
+      value, German import VAT is <strong>€19,000</strong> and Dutch import VAT is
+      <strong>€21,000</strong> — a €2,000 difference in Germany’s favour
+      <ConfidenceBadge level="HIGH" />. But that is only the headline. A Dutch
+      <strong>Article 23 licence</strong> lets the importer hold the goods in bonded
+      storage and account for VAT only when they enter a member state, so the €21,000
+      can sit off the cash-flow line until sale. Germany has no full deferral scheme,
+      so its €19,000 is typically paid at import. The practical comparison is
+      therefore not 21% versus 19%; it is <em>deferred versus paid</em>.
     </p>
     <p>
-      This is why "cheapest VAT" is the wrong way to pick a base. Germany's 19%
-      looks better on paper, but a Dutch deferral can remove the VAT from your
-      cash flow entirely until the sale. Price the cash-flow effect, not the
-      headline rate.
+      The rail arithmetic works the same way. Ocean at $1,800 – $2,500
+      <ConfidenceBadge level="MEDIUM" /> versus rail at $4,000 – $5,800
+      <ConfidenceBadge level="MEDIUM" /> implies a premium around $2,200 – $3,300 for
+      the lower part of each band. Rail buys back roughly 15–20 days of transit. For
+      a container holding $100,000 of goods at an 8% annual cost of capital, each week
+      of transit costs about $153 in carrying cost ($100,000 × 0.08 × 7 ÷ 365). If the
+      rail premium is below the carrying cost of the recovered weeks plus the value of
+      earlier sale, the German sea-rail split wins; otherwise the Dutch ocean base wins.
+      The cargo value and capital rate are your inputs, so substitute them.
     </p>
-  </section>
-
-  <section class="section container">
-    <h2>The rail split is Germany\u2019s edge</h2>
     <p>
-      Germany is where deep-sea and New Silk Road rail physically meet. Hamburg
-      takes both ocean vessels and China trains, and Duisburg is the largest
-      inland rail terminal in Europe. That makes Germany the natural home for a
-      sea-rail split — part of your volume by ocean, part by rail — which the
-      Netherlands cannot match on the rail side. Rotterdam is building rail
-      capacity, but its identity remains deep-sea.
-    </p>
-  </section>
-
-  <section class="section container">
-    <h2>They overlap more than they compete</h2>
-    <p>
-      The practical truth is that many importers use both, not either. A Dutch
-      base at Rotterdam with Rhine barge distribution into the German Ruhr is a
-      common, cost-effective pattern — you get Dutch VAT deferral and still
-      reach German buyers by water. The clean "Netherlands or Germany" framing
-      is usually a false choice; the real question is whether your priority is
-      EU-wide distribution (lean Dutch) or the German market plus a rail option
-      (lean German).
+      A clean rule of thumb emerges: <strong>prioritise distribution geography
+      first</strong>. If the final customer is the German domestic market or
+      Central Europe and you value a rail option, lean German. If the goods are
+      held as stock and distributed across France, Benelux, the Ruhr and beyond by
+      barge, lean Dutch and use Article 23 deferral. Most importers end up with both:
+      a Rotterdam stock base plus a Hamburg/Duisburg rail lane for replenishment.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>Frequently asked questions</h2>
-      <FaqBlock items={faqs} />
+      <h2>4. Port options and their roles</h2>
+      <p>
+        The comparison rests on two ocean gateways. Rotterdam wins on scale and
+        hinterland depth; Hamburg wins on the rail convergence that no other European
+        port matches. Duisburg is not an ocean port — it is the largest inland rail
+        terminal in Europe and the practical German rail destination for many
+        New Silk Road services.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Port' },
+          { key: 'unlocode', label: 'UN/LOCODE' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portRows}
+        caption="Rotterdam and Hamburg roles are MEDIUM confidence from the port authority data. Duisburg is an inland rail terminal rather than an ocean gateway."
+      />
+      <SourceList sources={portSources} title="Sources — Rotterdam and Hamburg port profiles" />
+      <p class="mt-2">
+        <strong>Rotterdam’s terminals</strong> (Maasvlakte 1 &amp; 2, Euromax, ECT
+        Delta) serve the largest vessels and feed the Rhine barge network.
+        <strong>Hamburg’s terminals</strong> (HHLA CTA, Eurogate, Altenwerder) pair
+        deep-sea with rail. <strong>Duisburg</strong> is where the rail corridor meets
+        the Ruhr industrial cluster — include it in any German base plan, but do not
+        treat it as an ocean destination.
+      </p>
+      <p>
+        For the broader routing question, read
+        <a href="/europe/direct-vs-transshipment/">Direct vs Transshipment: China to Europe</a>
+        and the
+        <a href="/europe/sea-vs-rail/">Sea vs Rail: China to Europe</a> guide.
+      </p>
     </div>
   </section>
 
   <section class="section container">
-    <Cta />
+    <h2>5. Cost breakdown and hidden charges</h2>
+    <p>
+      The destination stack is where the two countries differ most in verified
+      numbers. German THC is structurally higher in the OOCL Germany local tariff:
+      Hamburg/Bremerhaven dry is <strong>EUR 325</strong> against
+      <strong>EUR 260</strong> for the Belgium + Netherlands band. ISPS is the same
+      EUR 14 on both sides. The Rotterdam demurrage equivalent is not published, so it
+      stays LOW while the German ACL reference is MEDIUM.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'charge', label: 'Charge' },
+        { key: 'netherlands', label: 'Netherlands' },
+        { key: 'germany', label: 'Germany' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="THC and ISPS are MEDIUM confidence from the OOCL Germany tariff, hz-containers and Xeneta. The Rotterdam demurrage equivalent is LOW and request-for-schedule."
+    />
+    <SourceList sources={costSources} title="Sources — THC, ISPS and demurrage values" />
+    <p class="mt-2">
+      The German THC uplift of roughly EUR 65 per dry container is real but small next
+      to VAT cash-flow and inland haul. Audit the full stack before concluding:
+      <a href="/europe/hidden-charges/">Hidden Charges: China to Europe</a> covers
+      documentation, VGM and congestion, and
+      <a href="/europe/demurrage-detention/">Demurrage &amp; Detention: China to Europe</a>
+      covers the free-time clock that turns delay into per-day charges.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Europe compliance: EORI, TARIC, VAT and the deferral split</h2>
+      <p>
+        Both countries sit inside the same EU customs framework: one
+        <strong>EORI</strong>, the <strong>EU Common Customs Tariff</strong> and the
+        same CE/REACH product rules. The only tax difference is the VAT mechanism —
+        Germany’s lower 19% standard rate versus the Netherlands’ 21% plus the
+        Article 23 deferral that changes the cash-flow answer.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'value', label: 'Verified / indicative value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="VAT rates and the Article 23 deferral are HIGH confidence. EORI, TARIC, IOSS, CE and REACH are structural requirements at MEDIUM confidence."
+      />
+      <SourceList sources={complianceSources} title="Sources — Dutch and German VAT, customs and deferral" />
+      <p class="mt-2">
+        There is no <strong>SABER/SASO conformity system</strong> and no
+        <strong>single GCC-style 5% customs rate</strong> here: those are Gulf
+        mechanisms. Europe uses CE marking, REACH, the EU Common Customs Tariff and
+        member-state VAT. For the parcel-versus-container VAT question, read
+        <a href="/europe/ioss-vs-vat-deferral/">IOSS vs VAT Deferral</a>; for the
+        destination pillars, read
+        <a href="/europe/shipping-from-china-to-netherlands/">Shipping from China to the Netherlands</a>
+        and
+        <a href="/europe/shipping-from-china-to-germany/">Shipping from China to Germany</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Data freshness and update basis</h2>
+      <p>
+        This page is marked <span class="badge badge--amber">September 2026 updated</span>.
+        The Rotterdam and Hamburg rate ranges are re-checked against the WorldFreightHub
+        Europe route data, the VAT and Article 23 facts against the Dutch and German
+        customs guidance, and the THC/ISPS/demurrage EUR values against the OOCL Germany
+        local tariff, hz-containers, Xeneta and the ACL free-time tariff. Transit and the
+        unpublished Rotterdam demurrage equivalent stay LOW rather than being invented.
+      </p>
+      <p>
+        If a published Rotterdam demurrage tariff appears in the verified snapshot, the
+        page can add that line and raise its confidence badge. In the meantime, request
+        it as an itemised line and keep the German ACL figures as the MEDIUM reference
+        only for Hamburg/Bremerhaven.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised Netherlands-vs-Germany landed-cost quote"
+      text="Tell us your origin, commodity, TARIC/HS code, volume, final delivery country and whether you need a sea-rail split, and we will connect you with providers who can quote both bases on the same basis."
+    />
   </section>
 </BaseLayout>
