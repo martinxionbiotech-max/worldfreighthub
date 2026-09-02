@@ -1,0 +1,801 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/europe/sea-vs-air/`;
+
+const portRoles: Record<string, string> = {
+  rotterdam: 'Default Northwest-Europe deep-sea gateway',
+  hamburg: 'Germany rail terminus',
+  antwerp: 'Chemicals and breakbulk gateway',
+  felixstowe: 'UK gateway',
+  'le-havre': 'Seine / Paris axis gateway',
+  valencia: 'Iberia gateway',
+  genoa: 'North Italy gateway',
+  gdansk: 'Baltic / Central-Eastern Europe gateway',
+};
+
+const portSlugs = ['rotterdam', 'hamburg', 'antwerp', 'felixstowe', 'le-havre', 'valencia', 'genoa', 'gdansk'];
+
+const portRows = portSlugs.map((slug) => {
+  const port = europePorts.find((item) => item.slug === slug);
+  return {
+    port: port?.name ?? slug,
+    unlocode: port?.unlocode ?? '—',
+    role: portRoles[slug] ?? '',
+    confidence: 'HIGH',
+  };
+});
+
+const wfhRouteData: Source = {
+  id: 'wfh-europe-sea-air-route-data',
+  name: 'WorldFreightHub route data — China to the eight main European destination ports (sea FCL/LCL ranges and sea/rail transit; MEDIUM confidence; air rates not published)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhMethodology: Source = {
+  id: 'wfh-europe-sea-air-methodology',
+  name: 'WorldFreightHub methodology — China→Europe research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const euCustomsSources = sourcesByIds(['eu-taric']);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const complianceSources: Source[] = [...sourcesByIds(['eu-taric', 'hmrc']), wfhMethodology];
+const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const decisionSources: Source[] = [wfhRouteData, wfhMethodology];
+const costSources: Source[] = [...euCustomsSources, wfhMethodology];
+
+const rateRows = [
+  {
+    port: 'Rotterdam (NLRTM)',
+    sea20: '$1,200 – $4,800',
+    sea40: '$1,600 – $6,800',
+    seaLcl: '$60 – $160 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Hamburg (DEHAM)',
+    sea20: '$1,200 – $4,600',
+    sea40: '$1,600 – $6,500',
+    seaLcl: '$60 – $150 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Antwerp (BEANR)',
+    sea20: '$1,200 – $4,700',
+    sea40: '$1,600 – $6,600',
+    seaLcl: '$60 – $150 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Felixstowe (GBFXT)',
+    sea20: '$1,300 – $5,000',
+    sea40: '$1,800 – $7,000',
+    seaLcl: '$70 – $170 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Le Havre (FRLEH)',
+    sea20: '$1,200 – $4,800',
+    sea40: '$1,600 – $6,800',
+    seaLcl: '$60 – $150 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Valencia (ESVLC)',
+    sea20: '$1,300 – $5,000',
+    sea40: '$1,800 – $7,000',
+    seaLcl: '$70 – $170 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Genoa (ITGOA)',
+    sea20: '$1,300 – $5,200',
+    sea40: '$1,800 – $7,200',
+    seaLcl: '$70 – $170 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    port: 'Gdańsk (PLGDN)',
+    sea20: '$1,200 – $4,800',
+    sea40: '$1,600 – $6,800',
+    seaLcl: '$60 – $150 per CBM',
+    air: 'Not published in verified snapshot — request a quote',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    mode: 'Sea freight — FCL or LCL',
+    transit: 'Typically 28–33 days (25–45 day planning range)',
+    basis: 'WorldFreightHub Europe route data; Cape-of-Good-Hope rerouting adds ~+10–14 days versus pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail — New Silk Road',
+    transit: '18–22 days',
+    basis: 'WorldFreightHub Europe route data; then final inland rail/truck connection',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Air freight',
+    transit: 'Not published in verified snapshot — typical industry planning figure (roughly 3–8 days)',
+    basis: 'No verified Europe air transit appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Door-to-door',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds origin collection, China export clearance, destination clearance and inland trucking',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    factor: 'Typical transit',
+    sea: '28–33 days via the Cape; 25–45 day planning range (MEDIUM)',
+    air: 'Not published in verified snapshot — typical industry planning figure roughly 3–8 days (LOW)',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Freight cost',
+    sea: '20ft $1,200–$5,200; 40ft $1,600–$7,200; LCL $60–$170 per CBM by port (MEDIUM)',
+    air: 'Not published in verified snapshot — request a per-kg or per-volume quote (LOW)',
+    seaConfidence: 'MEDIUM',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Cost logic',
+    sea: 'Priced per container or per CBM; the cheapest mode for heavy, low-value cargo',
+    air: 'Priced on chargeable weight/volume; much dearer than sea, with no published dollar figure',
+    seaConfidence: 'LOW',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Value-of-time tiebreaker',
+    sea: 'Ties up cargo value for 25–45 days, plus Cape risk and potential demurrage/detention',
+    air: 'Buys back roughly three to five weeks of goods-in-transit time',
+    seaConfidence: 'LOW',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Stock-out and deadline risk',
+    sea: 'Higher risk of missing a season, launch date or production deadline',
+    air: 'Mitigates stock-out and deadline risk, at a higher freight cost',
+    seaConfidence: 'LOW',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Handling and packaging',
+    sea: 'Containerised; suitable for pallets, machinery, bulk and heavy units',
+    air: 'Airport screening, weight/volume limits and airline packaging rules',
+    seaConfidence: 'LOW',
+    airConfidence: 'LOW',
+  },
+  {
+    factor: 'Usual fit',
+    sea: 'Price-sensitive, high-volume or heavy cargo that can absorb a month of transit',
+    air: 'Time-critical, light, perishable or high-value cargo where speed is worth the premium',
+    seaConfidence: 'LOW',
+    airConfidence: 'LOW',
+  },
+];
+
+const vatRows = [
+  { country: 'Germany', vat: '19%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'United Kingdom', vat: '20%', note: 'Separate customs regime since Brexit — GB EORI, UK Global Tariff, UKCA', confidence: 'MEDIUM' },
+  { country: 'France', vat: '20%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Netherlands', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Belgium', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Spain', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Italy', vat: '22%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Poland', vat: '23%', note: 'EU member state', confidence: 'MEDIUM' },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight — FCL / LCL',
+    who: 'Carrier / forwarder',
+    magnitude: '20ft $1,200–$5,200; 40ft $1,600–$7,200; LCL $60–$170 per CBM by port (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Air freight',
+    who: 'Airline / air forwarder',
+    magnitude: 'Not published in verified snapshot — request a quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Terminal handling charge — origin',
+    who: 'China terminal / carrier',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Terminal handling charge — destination',
+    who: 'European terminal / carrier',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation / bill of lading or air waybill fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'ISPS security charge',
+    who: 'Carrier / terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'EU/UK Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request itemised schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking / rail from the gateway',
+    who: 'Haulier / rail operator',
+    magnitude: 'Not published in verified snapshot — request itemised schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Red Sea / Cape routing surcharge',
+    who: 'Ocean carrier',
+    magnitude: 'Carrier surcharge; not separately published in the snapshot — request breakdown',
+    confidence: 'LOW',
+  },
+  {
+    item: 'EU import duty',
+    who: 'Member-state Customs',
+    magnitude: 'EU Common Customs Tariff 0–12% by HS code (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Member-state tax authority',
+    magnitude: '19–23% by country, on the duty-inclusive value (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage / terminal storage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which is cheaper, sea freight or air freight from China to Europe?',
+    a: 'Sea is the cheaper mode by a wide margin. The WorldFreightHub Europe route data publishes sea ranges of $1,200–$5,200 for a 20ft, $1,600–$7,200 for a 40ft, and $60–$170 per CBM for LCL across the eight main gateways. Air dollar figures were not published in the verified snapshot, so air must be requested as a quote — but it is almost always much dearer than sea.',
+  },
+  {
+    q: 'How much longer is sea freight than air freight?',
+    a: 'The verified sea planning window is typically 28–33 days, with a 25–45 day range, because Cape-of-Good-Hope rerouting adds about +10–14 days versus the pre-crisis Suez routing. Air transit was not published in the snapshot; the typical industry planning figure is roughly 3–8 days, but that is a LOW-confidence planning input and must be confirmed with your carrier.',
+  },
+  {
+    q: 'When should I choose air freight over sea freight?',
+    a: 'Choose air when the value of faster delivery exceeds the air freight premium: time-critical goods, light or high-value cargo, perishables, or a shipment where a stock-out, launch date or production deadline would cost more than the freight saving. For heavy, low-value or price-sensitive cargo, sea remains the default.',
+  },
+  {
+    q: 'How do I calculate the value-of-time break-even between sea and air?',
+    a: 'Compare the inventory financing cost against the air premium. The formula is: cargo value × annual cost of capital × (sea transit days − air transit days) ÷ 365. Add the cost of a missed deadline or stock-out to the sea side of the equation. If the implied time-value plus risk exceeds the air premium, air is economically justified even though its freight line is dearer.',
+  },
+  {
+    q: 'Are air freight rates published in the WorldFreightHub snapshot?',
+    a: 'No. The verified snapshot publishes sea FCL/LCL ranges and sea/rail transit, but not air dollar rates or air transit. Air lines are marked LOW with a request-for-quote note, so do not treat any generic per-kg figure as verified. Ask the airline or air forwarder for an all-in quote with fuel, security and handling.',
+  },
+  {
+    q: 'Does air freight avoid the Red Sea / Cape routing issue?',
+    a: 'Yes. Air freight is not routed through the Red Sea or around the Cape, so it removes that specific geopolitical delay from the timeline. The trade-off is cost: the verified snapshot does not publish air rates, but the price premium over sea is the reason air is used only when time is the binding constraint.',
+  },
+  {
+    q: 'What hidden charges should I compare for sea versus air?',
+    a: 'Both modes face origin and destination handling, documentation, customs clearance and brokerage, and inland trucking. Sea adds THC, ISPS, the Red Sea/Cape surcharge and demurrage/detention risk; air adds airport screening and airline weight/volume charges. Destination dollar figures are not published in the verified snapshot, so request an itemised schedule for both modes before comparing.',
+  },
+  {
+    q: 'Do I need an EORI number for sea and air freight?',
+    a: 'Yes. The EORI is mandatory for any EU import regardless of transport mode and must be registered before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. Air does not remove the EORI requirement — it only shortens the timeline in which to have it ready.',
+  },
+  {
+    q: 'Does air freight change EU duty, VAT or CE/REACH requirements?',
+    a: 'No. The mode does not change the tax or conformity treatment. The EU Common Customs Tariff applies 0–12% by HS code, import VAT is charged on the duty-inclusive value, CE marking applies to regulated products, and REACH applies to chemical substances. The same TARIC/HS classification drives the duty and VAT for both sea and air.',
+  },
+  {
+    q: 'Is rail a middle option between sea and air?',
+    a: 'Yes. The New Silk Road rail lands in roughly 18–22 days — faster than the 28–33 day sea window and slower than air, with a cost noted as roughly two to three times sea per container. For cargo that cannot wait for a ship but cannot justify air, rail is the intermediate decision; see the Sea vs Rail guide on this site for the full comparison.',
+  },
+  {
+    q: 'Do SASO, SABER or the GCC 5% tariff apply to Europe?',
+    a: 'No. SASO and SABER are Saudi-only conformity systems, and the GCC 5% tariff is Gulf-specific. They do not apply to the EU or the UK. For China-to-Europe sea or air shipments, use CE marking, REACH, the EU Common Customs Tariff and member-state VAT instead.',
+  },
+  {
+    q: 'What is the safest default: sea or air?',
+    a: 'For most China-to-Europe volume, sea is the correct default because it wins on freight cost and the 25–45 day window is predictable enough for planned inventory. Reserve air for the exceptions — time-critical, high-value, perishable or deadline-driven cargo — and run the value-of-time calculation before paying the premium.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Sea vs Air Freight: China to Europe — Which Mode to Choose',
+      description:
+        'Sea freight versus air freight from China to Europe: 28–33 day ocean transit versus air speed, value-of-time break-even logic, cost structure, EU compliance and which mode fits.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Sea vs Air Freight: China to Europe — Which Mode to Choose"
+  description="Sea freight versus air freight from China to Europe: 28–33 day ocean transit versus air speed, value-of-time break-even logic, cost structure, EU compliance and which mode fits."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Sea vs Air' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Sea vs air freight: China to Europe</h1>
+      <p class="lead">
+        A standalone decision guide for importers choosing between slow-and-cheap ocean freight and
+        fast-and-dear air freight on the China-to-Europe corridor — with the published sea FCL/LCL
+        ranges, the 28–33 day Cape window, the value-of-time tiebreaker, hidden charges, EU duty and
+        VAT, and the EORI gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. The sea FCL/LCL
+        ranges and sea/rail transit come from the WorldFreightHub Europe route data (MEDIUM), while air
+        dollar rates and air transit were not published in the snapshot and stay LOW with a
+        request-for-quote marker. Treat every LOW-confidence figure as indicative and verify with your
+        carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">28–33 days via Cape <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea planning range</span>
+          <span class="fact-value">25–45 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail transit</span>
+          <span class="fact-value">18–22 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">Roughly 3–8 days, not published <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea FCL rate</span>
+          <span class="fact-value">20ft $1,200–$5,200 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air rate</span>
+          <span class="fact-value">Not published — request a quote <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EU duty</span>
+          <span class="fact-value">0–12% by HS code <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EORI</span>
+          <span class="fact-value">Required before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Rates table: sea FCL/LCL ranges versus air</h2>
+    <p>
+      The verified Europe route data publishes three sea benchmark lines for each of the eight main
+      gateways — <strong>20ft FCL</strong>, <strong>40ft FCL</strong> and <strong>LCL per CBM</strong> —
+      all MEDIUM confidence. Air freight sits in a separate column because its dollar figures were
+      <em>not</em> published in the snapshot: it is marked LOW and remains a request-for-quote line.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Destination port' },
+        { key: 'sea20', label: 'Sea 20ft FCL' },
+        { key: 'sea40', label: 'Sea 40ft FCL' },
+        { key: 'seaLcl', label: 'Sea LCL per CBM' },
+        { key: 'air', label: 'Air freight' },
+        { key: 'seaConfidence', label: 'Sea confidence', type: 'confidence' },
+        { key: 'airConfidence', label: 'Air confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="Sea FCL/LCL ranges are MEDIUM confidence from the WorldFreightHub Europe route data. Air dollar figures were not published in the snapshot and are LOW confidence request-for-quote lines."
+    />
+    <SourceList sources={rateSources} title="Sources — Sea vs Air rates" />
+
+    <div class="note mt-2">
+      <strong>Why the air column stays empty of numbers:</strong> no verified China-to-Europe air rate
+      appears in the research snapshot, so a generic per-kg figure would be a fabricated estimate. Ask
+      the airline or air forwarder for an all-in quote covering freight, fuel, security, handling and
+      destination charges.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. Transit-time table</h2>
+    <p>
+      Sea is the slow mode: the WorldFreightHub Europe route data puts China-to-Northwest-Europe ocean
+      transit at roughly <strong>28–33 days</strong>, within a <strong>25–45 day planning range</strong>,
+      with the Cape rerouting adding about <strong>+10–14 days</strong> versus the pre-crisis Suez
+      routing. Rail runs <strong>18–22 days</strong> as the land middle option, while air transit was
+      not published and is shown as a LOW-confidence industry planning figure of roughly 3–8 days.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only. Sea and rail are MEDIUM confidence; air and door-to-door figures were not published and remain request-for-quote."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Europe transit times" />
+
+    <div class="note mt-2">
+      <strong>Sea planning default:</strong> the 25–45 day range is the honest buffer to use for
+      inventory and purchase-order planning. Air shortens the clock, but without a published figure it
+      should be confirmed as a routing quote rather than assumed.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. Sea vs air decision and the value-of-time logic</h2>
+      <p>
+        The choice is not between cheap and fast — it is between slow-and-cheap and fast-and-dear, and
+        the tiebreaker is the cost of capital and stock-out risk on the cargo value tied up in transit.
+        Sea wins on the freight line every time; air wins on time. The only economically honest way to
+        choose is to price the time itself.
+      </p>
+      <p>
+        The formula is: <strong>inventory financing cost = cargo value × annual cost of capital × (sea
+        transit days − air transit days) ÷ 365</strong>. Add the value of a missed season, launch date or
+        production deadline to the sea side of that equation. If the implied time-value plus risk exceeds
+        the air premium, air is justified even though its freight line is much dearer.
+      </p>
+      <p>
+        Sea ties up your goods for <strong>25–45 days</strong> (typically 28–33). Air buys back roughly
+        three to five weeks of goods-in-transit time, but its dollar rate was not published in the
+        verified snapshot — request that figure before running the comparison. The decision is therefore
+        two-step: first get a real air quote, then compare it against the value of the time and the
+        deadline risk the shipment actually faces.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'seaConfidence', label: 'Sea confidence', type: 'confidence' },
+          { key: 'airConfidence', label: 'Air confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision support. Sea rates and transit are MEDIUM confidence from the route data; air figures and both mode-fit assessments are LOW-confidence planning notes."
+      />
+      <SourceList sources={decisionSources} title="Sources — Sea vs Air decision" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose sea freight when...">
+          <ul>
+            <li>The cargo is heavy, high-volume or price-sensitive.</li>
+            <li>The 25–45 day planning window fits your inventory or project schedule.</li>
+            <li>You are moving pallets, machinery, bulk units or a full container.</li>
+            <li>Freight cost matters more than transit speed.</li>
+          </ul>
+        </Card>
+        <Card title="Choose air freight when...">
+          <ul>
+            <li>The cargo is time-critical, light, perishable or high-value.</li>
+            <li>A stock-out, launch date or production deadline is at risk.</li>
+            <li>The value-of-time calculation exceeds the air premium.</li>
+            <li>You can accept the airport screening and weight/volume rules.</li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="note mt-2">
+        <strong>See the container-mode alternative:</strong> once you have chosen sea, the separate
+        <a href="/europe/fcl-vs-lcl/">FCL vs LCL</a> guide helps decide whether to ship a full container
+        or share one by the cubic metre.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. Port list: the eight European destination gateways</h2>
+    <p>
+      The comparison uses the eight main destination ports in the Europe route data. Choose the gateway
+      by final destination, inland reach and product type — not by the cheapest headline line alone.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="Port identities and UN/LOCODEs are HIGH confidence from the destination data; one-line roles are qualitative planning notes."
+    />
+    <SourceList sources={portSources} title="Sources — European destination ports" />
+
+    <div class="note mt-2">
+      <strong>Route-pillar follow-ups:</strong> the same eight gateways have dedicated country guides.
+      Start with <a href="/europe/shipping-from-china-to-netherlands/">Netherlands</a>,
+      <a href="/europe/shipping-from-china-to-germany/">Germany</a>,
+      <a href="/europe/shipping-from-china-to-belgium/">Belgium</a>,
+      <a href="/europe/shipping-from-china-to-united-kingdom/">United Kingdom</a>,
+      <a href="/europe/shipping-from-china-to-france/">France</a>,
+      <a href="/europe/shipping-from-china-to-spain/">Spain</a>,
+      <a href="/europe/shipping-from-china-to-italy/">Italy</a> and
+      <a href="/europe/shipping-from-china-to-poland/">Poland</a> for the full landed-cost and compliance detail.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Cost composition and hidden charges</h2>
+      <p>
+        The published ocean freight line is only the start of the door-to-door chain. A complete quote
+        must itemise <strong>ocean freight</strong>, <strong>THC at origin and destination</strong>,
+        <strong>documentation</strong>, <strong>ISPS</strong>, <strong>customs clearance and
+        brokerage</strong>, and <strong>inland trucking</strong> — plus the <strong>Red Sea/Cape
+        surcharge</strong> and the two free-time clocks, <strong>demurrage</strong> and
+        <strong>detention</strong>. Air adds its own airline screening and handling charges. The verified
+        snapshot does not publish destination dollar figures, so those lines stay LOW and must be
+        requested as an itemised schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The sea FCL/LCL ranges, EU duty and country VAT are MEDIUM confidence from route/customs sources. Air and unquantified destination charges are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when import cargo remains in the port beyond
+        the allowed free time after discharge. <strong>Detention</strong> is charged by the ocean carrier
+        when the container is kept beyond the equipment free time after collection. They are separate
+        clocks with separate payees, and European free-time periods and per-day rates are not published in
+        the verified snapshot. Confirm both allowances in writing before booking and file the declaration
+        promptly so neither clock runs.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised quote that lists <strong>origin charges</strong>, <strong>destination
+        THC</strong>, <strong>documentation</strong>, <strong>ISPS</strong>, <strong>clearance and
+        brokerage</strong>, <strong>inspection</strong>, <strong>port storage</strong>, and the two
+        free-time clocks — <strong>demurrage/detention</strong>. For air, ask for the all-in air freight
+        including fuel, security and airport handling. For sea, confirm the inland trucking or rail leg
+        from the port to the final delivery address as a separate line rather than an all-in lump sum.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance: EU duty, VAT, EORI &amp; conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Europe applies the <strong>EU Common Customs Tariff</strong>, so duty is identical across member
+      states and depends on the HS code — typically <strong>0–12% for consumer goods</strong>, with no
+      China–EU free-trade agreement in force. Import VAT is then charged on the
+      <strong>duty-inclusive value</strong>, so the statutory stack compounds: duty first, then VAT on
+      top of duty and CIF together. Country standard VAT rates are
+      <strong>DE 19%, UK 20%, FR 20%, NL 21%, BE 21%, ES 21%, IT 22% and PL 23%</strong>.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={vatRows}
+      caption="Country VAT rates are MEDIUM confidence from the destination data. The UK is a separate customs regime since Brexit."
+    />
+    <SourceList sources={complianceSources} title="Sources — EU & UK VAT and customs" />
+
+    <h3 class="mt-3">EORI — register before arrival</h3>
+    <p>
+      The <strong>EORI number</strong> is mandatory for any import into the EU and must be registered
+      <em>before</em> the goods arrive. For the United Kingdom, use a <strong>GB EORI</strong> under the
+      separate post-Brexit customs regime, together with the UK Global Tariff and UKCA where applicable.
+      Start the registration before the vessel or aircraft departs, not while the cargo is arriving.
+    </p>
+
+    <h3 class="mt-3">TARIC classification and documents</h3>
+    <p>
+      Goods are classified under the <strong>10-digit TARIC code</strong>, which drives the duty line,
+      VAT treatment, permits and restricted screening. The standard document set is a commercial invoice,
+      bill of lading or air waybill, packing list and the correct TARIC/HS classification, backed by your
+      EORI number. Confirm the current declaration workflow with a licensed broker.
+    </p>
+
+    <h3 class="mt-3">CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is the EU conformity mark required for many regulated products —
+      electronics, toys, machinery and medical devices, among others. <strong>REACH</strong> is the EU
+      chemical regulation requiring registration for chemical substances. Whether either applies depends
+      on your product class, so confirm applicability and the required technical file before shipment.
+    </p>
+
+    <h3 class="mt-3">De-minimis and IOSS</h3>
+    <p>
+      The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro
+      on most consignments. The <strong>€150</strong> figure is the VAT-related threshold, and the
+      <strong>IOSS</strong> scheme simplifies VAT on sub-€150 consignments sold to EU buyers. Confirm the
+      current thresholds and whether IOSS applies to your channel before relying on these figures.
+    </p>
+
+    <h3 class="mt-3">SASO/SABER and the GCC 5% tariff do not apply</h3>
+    <p>
+      <strong>SASO and SABER are Saudi-only conformity systems</strong>, and the <strong>GCC 5%
+      tariff</strong> is Gulf-specific. They do not apply to the EU or the UK and should not be copied
+      into a China-to-Europe workflow. Europe uses CE marking for regulated products, REACH for chemical
+      substances, the EU Common Customs Tariff for duty, and member-state VAT instead.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Europe customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related decision guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The sea
+      FCL/LCL ranges are re-checked against the WorldFreightHub Europe route data, while EU duty and VAT
+      lines are re-checked against the European Commission TARIC database and member-state customs
+      sources. If an air freight dollar rate, air transit figure, destination THC, ISPS or
+      demurrage/detention schedule becomes available, the table is updated, the confidence badge is
+      raised, and the modified date is changed. Until then, unquantified air and destination charges stay
+      LOW with a request-for-quote note rather than being filled with estimates.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="FCL vs LCL"
+        description="If you have settled on sea, decide between a full container and shared LCL cargo using the ~15 CBM break-even rule."
+        href="/europe/fcl-vs-lcl/"
+      />
+      <Card
+        title="Sea vs Rail"
+        description="The New Silk Road lands in 18–22 days — the middle option between ocean and air."
+        href="/europe/sea-vs-rail/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a China-to-Europe sea and air quote"
+      text="Tell us your origin, commodity, TARIC/HS code, weight, volume and required delivery date, and we will connect you with providers who can quote sea and air together with clearance, EU duty, VAT and inland delivery."
+    />
+  </section>
+</BaseLayout>

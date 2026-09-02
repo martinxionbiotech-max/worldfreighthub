@@ -1,0 +1,767 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/europe/fcl-vs-lcl/`;
+
+const portRoles: Record<string, string> = {
+  rotterdam: 'Default Northwest-Europe deep-sea gateway',
+  hamburg: 'Germany rail terminus',
+  antwerp: 'Chemicals and breakbulk gateway',
+  felixstowe: 'UK gateway',
+  'le-havre': 'Seine / Paris axis gateway',
+  valencia: 'Iberia gateway',
+  genoa: 'North Italy gateway',
+  gdansk: 'Baltic / Central-Eastern Europe gateway',
+};
+
+const portSlugs = ['rotterdam', 'hamburg', 'antwerp', 'felixstowe', 'le-havre', 'valencia', 'genoa', 'gdansk'];
+
+const portRows = portSlugs.map((slug) => {
+  const port = europePorts.find((item) => item.slug === slug);
+  return {
+    port: port?.name ?? slug,
+    unlocode: port?.unlocode ?? '—',
+    role: portRoles[slug] ?? '',
+    confidence: 'HIGH',
+  };
+});
+
+const wfhRouteData: Source = {
+  id: 'wfh-europe-fcl-lcl-route-data',
+  name: 'WorldFreightHub route data — China to the eight main European destination ports (FCL 20ft/40ft and LCL per-CBM ranges; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhMethodology: Source = {
+  id: 'wfh-europe-fcl-lcl-methodology',
+  name: 'WorldFreightHub methodology — China→Europe research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const euCustomsSources = sourcesByIds(['eu-taric']);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'hmrc',
+  'french-customs',
+  'port-valencia',
+  'port-genoa',
+  'port-gdansk',
+]);
+const complianceSources: Source[] = [...sourcesByIds(['eu-taric', 'hmrc']), wfhMethodology];
+const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const decisionSources: Source[] = [wfhRouteData, wfhMethodology];
+const costSources: Source[] = [...euCustomsSources, wfhMethodology];
+
+const rateRows = [
+  { port: 'Rotterdam (NLRTM)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $160 per CBM', confidence: 'MEDIUM' },
+  { port: 'Hamburg (DEHAM)', twenty: '$1,200 – $4,600', forty: '$1,600 – $6,500', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Antwerp (BEANR)', twenty: '$1,200 – $4,700', forty: '$1,600 – $6,600', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Felixstowe (GBFXT)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Le Havre (FRLEH)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+  { port: 'Valencia (ESVLC)', twenty: '$1,300 – $5,000', forty: '$1,800 – $7,000', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Genoa (ITGOA)', twenty: '$1,300 – $5,200', forty: '$1,800 – $7,200', lcl: '$70 – $170 per CBM', confidence: 'MEDIUM' },
+  { port: 'Gdańsk (PLGDN)', twenty: '$1,200 – $4,800', forty: '$1,600 – $6,800', lcl: '$60 – $150 per CBM', confidence: 'MEDIUM' },
+];
+
+const transitRows = [
+  {
+    mode: 'Sea freight — FCL or LCL',
+    transit: 'Typically 28–33 days (25–45 day planning range)',
+    basis: 'WorldFreightHub Europe route data; Cape-of-Good-Hope rerouting adds ~+10–14 days versus pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail — New Silk Road',
+    transit: '18–22 days',
+    basis: 'WorldFreightHub Europe route data; then final inland rail/truck connection',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Air freight',
+    transit: 'Not published in verified snapshot — typical industry planning figure (roughly 3–8 days)',
+    basis: 'No verified Europe air transit appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Door-to-door',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds origin collection, China export clearance, destination clearance and inland trucking',
+    confidence: 'LOW',
+  },
+];
+
+const breakEvenRows = [
+  {
+    metric: '20ft nominal capacity',
+    fcl: '≈ 33 CBM',
+    lcl: 'Not applicable',
+    confidence: 'LOW',
+  },
+  {
+    metric: '20ft usable cargo capacity',
+    fcl: '≈ 28 CBM',
+    lcl: 'Not applicable',
+    confidence: 'LOW',
+  },
+  {
+    metric: 'LCL unit rate across the eight ports',
+    fcl: 'Not applicable',
+    lcl: '$60 – $170 per CBM (MEDIUM, from the route data)',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: '15 CBM LCL arithmetic',
+    fcl: '20ft FCL line $1,200 – $5,200',
+    lcl: '15 CBM × $60–$170 = $900 – $2,550',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'Midpoint volume parity, Rotterdam example',
+    fcl: '20ft midpoint ≈ $3,000',
+    lcl: '$3,000 ÷ $110 per CBM ≈ 27 CBM',
+    confidence: 'LOW',
+  },
+  {
+    metric: 'Practical crossover rule',
+    fcl: 'Usually wins above ~15 CBM',
+    lcl: 'Usually wins below ~15 CBM',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    factor: 'Shipment size',
+    fcl: 'A full container load for cargo that can justify exclusive use of a 20GP, 40GP or 40HQ',
+    lcl: 'Less-than-container load sharing a consolidated container with other importers',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Pricing basis',
+    fcl: 'Priced per container — 20ft $1,200–$5,200 and 40ft $1,600–$7,200 across the eight ports (MEDIUM)',
+    lcl: 'Priced per cubic metre — $60–$170 per CBM across the eight ports (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Break-even arithmetic',
+    fcl: 'Usually wins once the cube is large enough for the per-container rate to beat per-CBM pricing plus CFS fees',
+    lcl: 'Below ~15 CBM LCL usually wins; above ~15 CBM FCL usually wins once minimums and handling are priced in',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Handling risk',
+    fcl: 'Single sealed unit between shipper and receiver; less handling exposure',
+    lcl: 'Adds CFS consolidation, deconsolidation and short-term warehousing steps',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Transit experience',
+    fcl: 'Main carriage uses the same 28–33 day Cape planning window',
+    lcl: 'Consolidation and deconsolidation can add variable time before final release',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Destination fees',
+    fcl: 'THC, documentation, ISPS, inspection risk, port storage, demurrage and detention remain possible',
+    lcl: 'Adds destination CFS/deconsolidation and per-CBM handling to the same hidden-charge stack',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Usual fit',
+    fcl: 'Volume-heavy cargo, project goods or buyers who want a single sealed unit',
+    lcl: 'Smaller consignments, trial orders, mixed-SKU retail replenishment or samples',
+    confidence: 'LOW',
+  },
+];
+
+const vatRows = [
+  { country: 'Germany', vat: '19%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'United Kingdom', vat: '20%', note: 'Separate customs regime since Brexit — GB EORI, UK Global Tariff, UKCA', confidence: 'MEDIUM' },
+  { country: 'France', vat: '20%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Netherlands', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Belgium', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Spain', vat: '21%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Italy', vat: '22%', note: 'EU member state', confidence: 'MEDIUM' },
+  { country: 'Poland', vat: '23%', note: 'EU member state', confidence: 'MEDIUM' },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight — FCL / LCL',
+    who: 'Carrier / forwarder',
+    magnitude: '20ft $1,200–$5,200; 40ft $1,600–$7,200; LCL $60–$170 per CBM by port (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Terminal handling charge — origin',
+    who: 'China terminal / carrier',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Terminal handling charge — destination',
+    who: 'European terminal / carrier',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation / bill of lading fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'ISPS security charge',
+    who: 'Carrier / terminal',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance and brokerage',
+    who: 'EU/UK Customs / licensed broker',
+    magnitude: 'Not published in verified snapshot — request itemised schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking / rail from the port',
+    who: 'Haulier / rail operator',
+    magnitude: 'Not published in verified snapshot — request itemised schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Red Sea / Cape routing surcharge',
+    who: 'Ocean carrier',
+    magnitude: 'Carrier surcharge; not separately published in the snapshot — request breakdown',
+    confidence: 'LOW',
+  },
+  {
+    item: 'EU import duty',
+    who: 'Member-state Customs',
+    magnitude: 'EU Common Customs Tariff 0–12% by HS code (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Member-state tax authority',
+    magnitude: '19–23% by country, on the duty-inclusive value (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Terminal (after free time)',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier (after free time)',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the difference between FCL and LCL?',
+    a: 'FCL (Full Container Load) gives you exclusive use of a 20GP, 40GP or 40HQ and is priced per container. LCL (Less-than-Container Load) consolidates your cargo with other importers in a shared container and is priced per cubic metre. For China-to-Europe shipping, FCL is normally the fit for large, heavy or palletised cargo, while LCL suits smaller consignments, trial orders, mixed SKUs and samples that do not fill a box.',
+  },
+  {
+    q: 'At what volume should I switch from LCL to FCL?',
+    a: 'The standard planning heuristic is a crossover of roughly 15 CBM: below about 15 CBM LCL usually wins, and above it FCL usually wins once CFS minimums, destination deconsolidation fees and handling risk are priced in. It is not a rigid threshold — the pure volumetric parity at published midpoints is higher, around 27 CBM, because a 20ft carries roughly 28 CBM of usable cargo. Request quotes on both sides before deciding.',
+  },
+  {
+    q: 'How much does LCL shipping from China to Europe cost?',
+    a: 'The WorldFreightHub Europe route data publishes LCL ranges across the eight main destination ports: $60–$160 per CBM to Rotterdam and Le Havre, $60–$150 to Hamburg, Antwerp and Gdańsk, and $70–$170 to Felixstowe, Valencia and Genoa. These are MEDIUM-confidence benchmark ranges, not firm quotes — confirm the live rate, minimum charge and destination CFS fees with your forwarder before booking.',
+  },
+  {
+    q: 'How much does FCL shipping from China to Europe cost?',
+    a: 'The published 20ft and 40ft ranges vary by gateway: Rotterdam $1,200–$4,800 / $1,600–$6,800, Hamburg $1,200–$4,600 / $1,600–$6,500, Antwerp $1,200–$4,700 / $1,600–$6,600, Felixstowe $1,300–$5,000 / $1,800–$7,000, Le Havre $1,200–$4,800 / $1,600–$6,800, Valencia $1,300–$5,000 / $1,800–$7,000, Genoa $1,300–$5,200 / $1,800–$7,200, and Gdańsk $1,200–$4,800 / $1,600–$6,800. All are MEDIUM confidence; live rates swing with season and Red Sea/Cape routing.',
+  },
+  {
+    q: 'Is LCL always cheaper for small shipments?',
+    a: 'Usually, but not automatically. LCL wins below the ~15 CBM planning crossover because you only pay for the cube you use. Above that, an FCL can become cheaper per cubic metre and avoids paying for a shared container with added CFS handling. The comparison must include the LCL minimum charge, destination deconsolidation fee and the FCL empty-box cost, not just the headline rate.',
+  },
+  {
+    q: 'Does FCL arrive faster than LCL?',
+    a: 'Main carriage timing is the same planning window — roughly 28–33 days by sea via the Cape, within a 25–45 day range. The difference is handling: LCL adds origin consolidation and destination CFS deconsolidation, which can add variable time before final release. Door-to-door speed therefore depends on how tightly the consolidation schedule and inland trucking line up, not on the main voyage.',
+  },
+  {
+    q: 'What destination charges should I compare for FCL versus LCL?',
+    a: 'Both modes face THC, documentation, ISPS, customs clearance and brokerage, inland trucking, and demurrage/detention risk. LCL adds destination CFS/deconsolidation and per-CBM handling on top of the same stack. The verified snapshot does not publish these destination dollar figures, so request an itemised schedule from your forwarder for both modes before comparing landed cost.',
+  },
+  {
+    q: 'Do I need an EORI number for both FCL and LCL?',
+    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is mandatory for any EU import, whether the goods arrive in a full container or a shared one, and it must exist before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. The shipment mode does not remove the EORI requirement.',
+  },
+  {
+    q: 'What is CFS and why does LCL add it?',
+    a: 'CFS (Container Freight Station) is where LCL cargo is consolidated in China and deconsolidated at the European port. Those extra handling steps are why LCL adds variable time and destination fees that FCL does not. The CFS fees and free-time allowances are not published in the verified snapshot, so ask for them as a separate line on the LCL quote.',
+  },
+  {
+    q: 'Does the Red Sea / Cape surcharge hit FCL and LCL differently?',
+    a: 'The Cape-of-Good-Hope reroute is a routing reality for both modes — the verified transit data puts sea at roughly 28–33 days, with the reroute adding about +10–14 days versus the pre-crisis Suez routing. Whether the carrier builds that into the freight line or lists it as a separate surcharge varies, and the surcharge amount is not published in the snapshot. Request a breakdown for both FCL and LCL.',
+  },
+  {
+    q: 'What EU duty and VAT apply to FCL and LCL?',
+    a: 'The mode does not change the tax treatment. The EU Common Customs Tariff applies 0–12% by HS code, with no China–EU free-trade agreement, and import VAT is charged on the duty-inclusive value. Country standard VAT rates run 19% (DE), 20% (UK/FR), 21% (NL/BE/ES), 22% (IT) and 23% (PL). Use the correct TARIC/HS code first, because duty and VAT compound regardless of FCL or LCL.',
+  },
+  {
+    q: 'Do SASO, SABER or the GCC 5% tariff apply to Europe?',
+    a: 'No. SASO and SABER are Saudi conformity systems, and the GCC 5% tariff is Gulf-specific. They do not apply to the EU or the UK. For Europe, use CE marking for regulated products, REACH for chemical substances, the EU Common Customs Tariff for duty, and member-state VAT. Do not copy a Saudi/GCC step into a China-to-Europe FCL or LCL workflow.',
+  },
+  {
+    q: 'How do I choose between a 20ft and a 40ft for FCL?',
+    a: 'Start with the usable cube and weight, not the nominal capacity. A 20ft holds roughly 28 CBM of usable cargo, while a 40ft holds roughly double and usually costs less per CBM when the volume justifies it. If your shipment is above the ~15 CBM LCL crossover but well below a full 20ft, a 20ft is the natural step up; if it approaches or exceeds a full 20ft, compare the 40ft unit economics plus your weight limit before choosing.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'FCL vs LCL Freight: China to Europe — Which Container Mode to Choose',
+      description:
+        'FCL versus LCL container shipping from China to Europe: 20ft/40ft rates, per-CBM costs, the ~15 CBM break-even rule, transit, EU duty and VAT, and which mode fits your shipment.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="FCL vs LCL Freight: China to Europe — Which Container Mode to Choose"
+  description="FCL versus LCL container shipping from China to Europe: 20ft/40ft rates, per-CBM costs, the ~15 CBM break-even rule, transit, EU duty and VAT, and which mode fits your shipment."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'FCL vs LCL' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>FCL vs LCL freight: China to Europe</h1>
+      <p class="lead">
+        A standalone decision guide for importers choosing between a full container load and a shared
+        less-than-container load on the China-to-Europe corridor — with the published 20ft/40ft and
+        per-CBM ranges, the ~15 CBM planning crossover, hidden destination charges, EU duty and VAT,
+        and the EORI gate.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. The 20ft/40ft and
+        LCL per-CBM ranges come from the WorldFreightHub Europe route data (MEDIUM), while capacity
+        rules of thumb, destination fees and air/rail dollar figures are LOW-confidence planning inputs
+        or request-for-quote markers. Treat every LOW-confidence figure as indicative and verify with
+        your forwarder before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">20ft nominal capacity</span>
+          <span class="fact-value">≈ 33 CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">20ft usable cargo</span>
+          <span class="fact-value">≈ 28 CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">LCL rate range</span>
+          <span class="fact-value">$60–$170/CBM <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Planning crossover</span>
+          <span class="fact-value">≈ 15 CBM <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">28–33 days via Cape <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EU duty</span>
+          <span class="fact-value">0–12% by HS code <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">19–23% by country <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EORI</span>
+          <span class="fact-value">Required before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Rates table: FCL and LCL benchmarks across the eight gateways</h2>
+    <p>
+      The published Europe route data gives every major gateway the same three benchmark lines:
+      <strong>20ft FCL</strong>, <strong>40ft FCL</strong> and <strong>LCL per CBM</strong>, all
+      MEDIUM confidence. Use them to build the headline freight comparison, but remember these are
+      ranges from the WorldFreightHub snapshot — not live carrier quotes. The wide spread reflects how
+      hard the Red Sea/Cape routing, fuel and peak-season demand move the market, so confirm a current
+      figure before booking.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Destination port' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL per CBM' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="All FCL and LCL ranges are MEDIUM confidence from the WorldFreightHub Europe route data; verify live figures before relying on them."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL vs LCL rates" />
+
+    <div class="note mt-2">
+      <strong>How to read the ranges:</strong> the 20ft line is the benchmark for a single full box, the
+      40ft line covers a 40GP/40HQ, and the LCL line is the per-cubic-metre rate for cargo sharing a
+      container. Compare all three on the same port, then add destination charges — the headline line is
+      never the landed cost.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. Transit-time table</h2>
+    <p>
+      The FCL-versus-LCL decision does not change the main-carriage clock. The WorldFreightHub Europe
+      route data puts China-to-Northwest-Europe sea transit at roughly <strong>28–33 days</strong>, within
+      a <strong>25–45 day planning range</strong>, with the Cape-of-Good-Hope rerouting adding about
+      <strong>+10–14 days</strong> versus the pre-crisis Suez routing. Rail runs <strong>18–22 days</strong>
+      as the faster land option; air transit and air dollar figures were not published in the snapshot.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only. Sea and rail are MEDIUM confidence; air and door-to-door figures were not published and remain request-for-quote."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Europe transit times" />
+
+    <div class="note mt-2">
+      <strong>FCL and LCL share the voyage, not the final mile:</strong> FCL moves as a sealed unit from
+      the origin facility to the port, while LCL spends time in CFS consolidation and deconsolidation.
+      Budget the same 28–33 day sea window for both, then add a larger handling buffer for LCL.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. FCL vs LCL decision and the break-even arithmetic</h2>
+      <p>
+        The standard planning heuristic starts with cube. A 20ft container has a <strong>nominal capacity
+        of roughly 33 CBM</strong> and about <strong>28 CBM of usable cargo</strong>. LCL is charged per
+        cubic metre, so the question is whether the per-CBM cost of your actual cube beats paying for a
+        whole container that may be partly empty.
+      </p>
+      <p>
+        Using the verified LCL ranges, the arithmetic is explicit. At the planning crossover of
+        <strong>15 CBM</strong>, LCL freight is <strong>15 × $60–$170 = $900–$2,550</strong> across the
+        eight ports. The 20ft FCL line is <strong>$1,200–$5,200</strong>. That is why forwarders use
+        <strong>roughly 15 CBM</strong> as the practical switch: below it LCL usually wins, above it FCL
+        usually wins once CFS minimums, destination deconsolidation and handling risk are priced in.
+      </p>
+      <p>
+        The raw volume parity is higher than the practical crossover. A midpoint Rotterdam example —
+        <strong>20ft at about $3,000</strong> and <strong>LCL at about $110/CBM</strong> — breaks even at
+        roughly <strong>27 CBM</strong>. The gap between the 15 CBM heuristic and the 27 CBM volumetric
+        split is the cost of convenience and risk: LCL carries added handling steps and minimum charges
+        that pull the sensible switch point lower. Treat the 15 CBM rule as an indicative planning guide
+        (LOW confidence), and request both an FCL and an LCL quote before deciding.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'metric', label: 'Metric' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={breakEvenRows}
+        caption="Decision arithmetic. The 15 CBM crossover and capacity figures are LOW-confidence planning rules; the LCL unit-rate arithmetic is based on MEDIUM-confidence route data."
+      />
+      <SourceList sources={decisionSources} title="Sources — FCL vs LCL decision arithmetic" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose FCL when...">
+          <ul>
+            <li>The cargo fills, or nearly fills, a 20GP, 40GP or 40HQ.</li>
+            <li>You value a single sealed unit and lower handling exposure.</li>
+            <li>The cube is above the ~15 CBM practical crossover.</li>
+            <li>The cargo is heavy, palletised, machine or project-oriented.</li>
+          </ul>
+        </Card>
+        <Card title="Choose LCL when...">
+          <ul>
+            <li>The consignment is below ~15 CBM.</li>
+            <li>You are running a trial order, mixed-SKU retail fill or samples.</li>
+            <li>You can accept CFS consolidation and deconsolidation time.</li>
+            <li>Per-CBM economics beat paying for an empty container.</li>
+          </ul>
+        </Card>
+      </div>
+
+      <div class="note mt-2">
+        <strong>See the alternative decision:</strong> if speed rather than cube is the constraint, the
+        separate <a href="/europe/sea-vs-air/">Sea vs Air</a> guide compares the 28–33 day ocean window
+        against the air option — a different tiebreaker from FCL versus LCL.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. Port list: the eight European destination gateways</h2>
+    <p>
+      The comparison uses the eight main destination ports in the Europe route data. Choose the gateway
+      by final destination, inland reach and product type — not by the cheapest headline ocean line alone.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="Port identities and UN/LOCODEs are HIGH confidence from the destination data; one-line roles are qualitative planning notes."
+    />
+    <SourceList sources={portSources} title="Sources — European destination ports" />
+
+    <div class="note mt-2">
+      <strong>Route-pillar follow-ups:</strong> the same eight gateways have dedicated country guides.
+      Start with <a href="/europe/shipping-from-china-to-netherlands/">Netherlands</a>,
+      <a href="/europe/shipping-from-china-to-germany/">Germany</a>,
+      <a href="/europe/shipping-from-china-to-belgium/">Belgium</a>,
+      <a href="/europe/shipping-from-china-to-united-kingdom/">United Kingdom</a>,
+      <a href="/europe/shipping-from-china-to-france/">France</a>,
+      <a href="/europe/shipping-from-china-to-spain/">Spain</a>,
+      <a href="/europe/shipping-from-china-to-italy/">Italy</a> and
+      <a href="/europe/shipping-from-china-to-poland/">Poland</a> for the full landed-cost and compliance detail.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Cost composition and hidden charges</h2>
+      <p>
+        The published ocean freight line is only the start of the door-to-door chain. A complete quote
+        must itemise <strong>ocean freight</strong>, <strong>THC at origin and destination</strong>,
+        <strong>documentation</strong>, <strong>ISPS</strong>, <strong>customs clearance and
+        brokerage</strong>, and <strong>inland trucking</strong> — plus the <strong>Red Sea/Cape
+        surcharge</strong> and the two free-time clocks, <strong>demurrage</strong> and
+        <strong>detention</strong>. The verified snapshot does not publish destination dollar figures,
+        so those lines stay LOW and must be requested as an itemised schedule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The FCL/LCL ranges, EU duty and country VAT are MEDIUM confidence from route/customs sources. Unquantified destination charges are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when import cargo remains in the port beyond
+        the allowed free time after discharge. <strong>Detention</strong> is charged by the ocean carrier
+        when the container is kept beyond the equipment free time after collection. They are separate
+        clocks with separate payees, and European free-time periods and per-day rates are not published in
+        the verified snapshot. Confirm both allowances in writing before booking and file the declaration
+        promptly so neither clock runs.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised quote that lists <strong>origin charges</strong>, <strong>destination
+        THC</strong>, <strong>documentation</strong>, <strong>ISPS</strong>, <strong>clearance and
+        brokerage</strong>, <strong>inspection</strong>, <strong>port storage</strong>, and the two
+        free-time clocks — <strong>demurrage/detention</strong>. For LCL, add the destination
+        CFS/deconsolidation fee as a separate line. For FCL, confirm the inland trucking or rail leg from
+        the port to the final delivery address rather than accepting an all-in lump sum.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance: EU duty, VAT, EORI &amp; conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Europe applies the <strong>EU Common Customs Tariff</strong>, so duty is identical across member
+      states and depends on the HS code — typically <strong>0–12% for consumer goods</strong>, with no
+      China–EU free-trade agreement in force. Import VAT is then charged on the
+      <strong>duty-inclusive value</strong>, so the statutory stack compounds: duty first, then VAT on
+      top of duty and CIF together. Country standard VAT rates are
+      <strong>DE 19%, UK 20%, FR 20%, NL 21%, BE 21%, ES 21%, IT 22% and PL 23%</strong>.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'note', label: 'Note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={vatRows}
+      caption="Country VAT rates are MEDIUM confidence from the destination data. The UK is a separate customs regime since Brexit."
+    />
+    <SourceList sources={complianceSources} title="Sources — EU & UK VAT and customs" />
+
+    <h3 class="mt-3">EORI — register before arrival</h3>
+    <p>
+      The <strong>EORI number</strong> is mandatory for any import into the EU and must be registered
+      <em>before</em> the goods arrive. For the United Kingdom, use a <strong>GB EORI</strong> under the
+      separate post-Brexit customs regime, together with the UK Global Tariff and UKCA where applicable.
+      Start the registration before the vessel departs, not while it is discharging.
+    </p>
+
+    <h3 class="mt-3">TARIC classification and documents</h3>
+    <p>
+      Goods are classified under the <strong>10-digit TARIC code</strong>, which drives the duty line,
+      VAT treatment, permits and restricted screening. The standard document set is a commercial invoice,
+      bill of lading, packing list and the correct TARIC/HS classification, backed by your EORI number.
+      Confirm the current declaration workflow with a licensed broker.
+    </p>
+
+    <h3 class="mt-3">CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is the EU conformity mark required for many regulated products —
+      electronics, toys, machinery and medical devices, among others. <strong>REACH</strong> is the EU
+      chemical regulation requiring registration for chemical substances. Whether either applies depends
+      on your product class, so confirm applicability and the required technical file before shipment.
+    </p>
+
+    <h3 class="mt-3">De-minimis and IOSS</h3>
+    <p>
+      The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro
+      on most consignments. The <strong>€150</strong> figure is the VAT-related threshold, and the
+      <strong>IOSS</strong> scheme simplifies VAT on sub-€150 consignments sold to EU buyers. Confirm the
+      current thresholds and whether IOSS applies to your channel before relying on these figures.
+    </p>
+
+    <h3 class="mt-3">SASO/SABER and the GCC 5% tariff do not apply</h3>
+    <p>
+      <strong>SASO and SABER are Saudi-only conformity systems</strong>, and the <strong>GCC 5%
+      tariff</strong> is Gulf-specific. They do not apply to the EU or the UK and should not be copied
+      into a China-to-Europe workflow. Europe uses CE marking for regulated products, REACH for chemical
+      substances, the EU Common Customs Tariff for duty, and member-state VAT instead.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Europe customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related decision guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The FCL/LCL
+      ranges are re-checked against the WorldFreightHub Europe route data, while EU duty and VAT lines are
+      re-checked against the European Commission TARIC database and member-state customs sources. If a
+      destination THC, ISPS, CFS, demurrage/detention or Red Sea surcharge figure becomes available, the
+      table is updated, the confidence badge is raised, and the modified date is changed. Until then,
+      unquantified destination charges stay LOW with a request-for-quote note rather than being filled
+      with estimates.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Sea vs Air"
+        description="If speed is the real constraint, compare the 28–33 day ocean window against air freight and the value-of-time tiebreaker."
+        href="/europe/sea-vs-air/"
+      />
+      <Card
+        title="Sea vs Rail"
+        description="The New Silk Road lands in 18–22 days — the middle option between ocean and air."
+        href="/europe/sea-vs-rail/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China-to-Europe FCL and LCL quote"
+      text="Tell us your origin, commodity, TARIC/HS code, cube, weight and final European destination, and we will connect you with providers who can quote FCL and LCL together with clearance, EU duty, VAT and inland delivery."
+    />
+  </section>
+</BaseLayout>
