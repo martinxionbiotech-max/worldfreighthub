@@ -3,54 +3,225 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
 
-const rows = [
-  { dimension: 'What it is', ioss: 'Import One-Stop Shop — a single EU VAT registration for sub-€150 e-commerce imports', deferral: 'A licence to delay import VAT until goods enter a member state' },
-  { dimension: 'Who it is for', ioss: 'B2C e-commerce sellers shipping small parcels', deferral: 'B2B importers holding inventory or re-exporting' },
-  { dimension: 'Threshold', ioss: 'Consignments up to €150', deferral: 'No value threshold — applies to full containers' },
-  { dimension: 'Main benefit', ioss: 'Buyer sees the full price; simplified clearance', deferral: 'Import VAT stays out of your cash flow' },
-  { dimension: 'Where it lives', ioss: 'Any EU member state', deferral: 'Notably the Netherlands (Article 23)' },
+const pageUrl = `${SITE_URL}/europe/ioss-vs-vat-deferral/`;
+const notPublished = 'Not published in verified snapshot — confirm with a tax advisor / member-state tax authority';
+
+const mechanismRows = [
+  { dimension: 'What it is', ioss: 'Import One-Stop Shop — a single EU VAT registration for sub-€150 e-commerce imports', deferral: 'A licence (notably the Netherlands’ Article 23) that defers import VAT until goods enter a member state', confidence: 'MEDIUM' },
+  { dimension: 'Who it is for', ioss: 'B2C e-commerce sellers shipping parcels directly to EU consumers', deferral: 'B2B importers holding full-container inventory or re-exporting', confidence: 'MEDIUM' },
+  { dimension: 'Value ceiling', ioss: 'Consignments up to €150', deferral: 'No value ceiling — it scales with container inventory', confidence: 'MEDIUM' },
+  { dimension: 'VAT treatment', ioss: 'Destination VAT collected from the buyer at checkout', deferral: 'Import VAT accounted for only when goods enter a member state', confidence: 'MEDIUM' },
+  { dimension: 'Registration footprint', ioss: 'One registration in any single member state covers all 27', deferral: 'Bonded-warehousing licence, most cleanly in the Netherlands', confidence: 'MEDIUM' },
+  { dimension: 'Duty effect', ioss: 'Does not reduce or waive customs duty', deferral: 'Does not reduce or waive customs duty', confidence: 'MEDIUM' },
+  { dimension: 'Main benefit', ioss: 'Buyer sees the full price; parcels clear fast', deferral: 'Import VAT stays out of cash flow until release', confidence: 'MEDIUM' },
+  { dimension: 'What it is not', ioss: 'Not a duty waiver or a deferral tool for containers', deferral: 'Not a tax saving — the VAT is still owed', confidence: 'MEDIUM' },
+];
+
+const vatRateRows = [
+  { country: 'Germany', vat: '19%', note: 'EU member state; the destination rate IOSS charges on German parcels', confidence: 'HIGH' },
+  { country: 'France', vat: '20%', note: 'EU member state', confidence: 'HIGH' },
+  { country: 'Netherlands', vat: '21%', note: 'EU member state; home of the Article 23 deferral', confidence: 'HIGH' },
+  { country: 'Spain', vat: '21%', note: 'EU member state', confidence: 'HIGH' },
+  { country: 'Italy', vat: '22%', note: 'EU member state', confidence: 'HIGH' },
+  { country: 'Poland', vat: '23%', note: 'EU member state; the highest of the verified set', confidence: 'HIGH' },
+  { country: 'Belgium', vat: '21%', note: 'EU member state', confidence: 'HIGH' },
+  { country: 'United Kingdom', vat: '20%', note: 'Separate GB regime since Brexit; £135 VAT threshold — outside EU IOSS and Article 23', confidence: 'HIGH' },
+];
+
+const cashflowRows = [
+  { event: 'At online checkout', ioss: 'Buyer pays destination VAT; the seller holds it', deferral: 'No VAT collected on a B2B container sale', confidence: 'MEDIUM' },
+  { event: 'At the EU border', ioss: 'No second import-VAT demand on the buyer', deferral: 'No import VAT paid; goods enter bonded storage', confidence: 'MEDIUM' },
+  { event: 'While goods sit in stock', ioss: 'VAT was already collected; nothing further', deferral: 'Import VAT not yet accounted for', confidence: 'MEDIUM' },
+  { event: 'When goods enter a member state', ioss: 'Not applicable — the parcel already cleared', deferral: 'VAT becomes due at that member state’s rate', confidence: 'MEDIUM' },
+  { event: 'Remittance', ioss: 'Seller remits monthly through a single declaration', deferral: 'Accounted for through the periodic VAT return as goods leave the bond', confidence: 'MEDIUM' },
+  { event: 'Net cash-flow effect', ioss: 'Neutral — the buyer prepaid the VAT', deferral: 'Positive — import VAT stays off the balance sheet until release', confidence: 'HIGH' },
+];
+
+const decisionRows = [
+  { model: 'B2C e-commerce to EU consumers', cargo: 'Sub-€150 parcels', tool: 'IOSS', test: 'Register once, collect destination VAT at checkout, remit monthly', confidence: 'HIGH' },
+  { model: 'B2C parcels above €150', cargo: 'Over-€150 consignments', tool: 'Standard import VAT', test: 'IOSS does not apply; the carrier or broker collects VAT and any duty', confidence: 'HIGH' },
+  { model: 'B2B inventory for EU resale', cargo: 'Full containers', tool: 'VAT deferral — Article 23', test: 'Defer import VAT until the goods enter a member state', confidence: 'HIGH' },
+  { model: 'B2B re-export or bonded distribution', cargo: 'Full containers', tool: 'VAT deferral — Article 23', test: 'Same licence; goods can remain outside the VAT net while in bond', confidence: 'HIGH' },
+  { model: 'Mixed business', cargo: 'Parcels plus containers', tool: 'Both tools', test: 'Run IOSS and Article 23 side by side, one mechanism per consignment', confidence: 'MEDIUM' },
+];
+
+const whereRows = [
+  { mechanism: 'IOSS registration', location: 'Any single EU member state', note: 'One registration covers all 27 member states', confidence: 'MEDIUM' },
+  { mechanism: 'IOSS destination VAT', location: 'Member state of the buyer', note: 'Charge the destination rate, e.g. 21% to the Netherlands', confidence: 'HIGH' },
+  { mechanism: 'VAT deferral', location: 'Netherlands — Article 23', note: 'Bonded warehousing; the cleanest EU deferral structure', confidence: 'HIGH' },
+  { mechanism: 'Deferral anchor port', location: 'Rotterdam', note: '≈13.4m TEU (2023); Rhine barge onward distribution', confidence: 'MEDIUM' },
+  { mechanism: 'Germany', location: 'No full deferral equivalent', note: '19% standard VAT, but paid at import', confidence: 'HIGH' },
+];
+
+const costRows = [
+  { item: 'Import VAT cash-flow', ioss: 'Collected from the buyer at checkout; not funded by the seller', deferral: 'Deferred until goods enter a member state', note: 'Deferral is a working-capital advantage, not a tax saving', confidence: 'HIGH' },
+  { item: 'Customs duty', ioss: 'Not reduced or waived by IOSS', deferral: 'Not reduced or waived by deferral', note: 'Separate line, uniform across the EU, typically 0–12% for consumer goods by HS code', confidence: 'MEDIUM' },
+  { item: 'Administrative and compliance cost', ioss: notPublished, deferral: notPublished, note: 'Budget for registration, returns and record-keeping after confirming with a tax advisor', confidence: 'LOW' },
+  { item: 'Registration or licence fee', ioss: notPublished, deferral: notPublished, note: 'No verified fee in the snapshot', confidence: 'LOW' },
+  { item: 'Financial guarantee or licence threshold', ioss: notPublished, deferral: notPublished, note: 'Article 23 conditions are member-state specific and not published here', confidence: 'LOW' },
+  { item: 'Penalties, interest and filing deadlines', ioss: notPublished, deferral: notPublished, note: 'Do not invent figures; confirm with the member-state tax authority', confidence: 'LOW' },
+];
+
+const complianceRows = [
+  { rule: 'EORI number', requirement: 'Mandatory before EU import', note: 'One EORI covers all member states', confidence: 'MEDIUM' },
+  { rule: 'IOSS scope', requirement: 'Consignments up to €150', note: 'Above €150, IOSS does not apply', confidence: 'HIGH' },
+  { rule: 'IOSS registration footprint', requirement: 'One registration in any single member state', note: 'Covers all 27 member states', confidence: 'MEDIUM' },
+  { rule: 'Article 23 licence', requirement: 'Bonded warehousing in the Netherlands', note: 'Deferral until goods enter a member state', confidence: 'HIGH' },
+  { rule: 'TARIC / HS classification', requirement: 'Same EU TARIC and HS code', note: 'Drives duty and customs controls', confidence: 'MEDIUM' },
+  { rule: 'EU Common Customs Tariff', requirement: 'Uniform duty across member states', note: 'Typically 0–12% for consumer goods, varies by HS code', confidence: 'MEDIUM' },
+  { rule: '€22 duty-free threshold', requirement: 'Abolished July 2021', note: 'Import VAT now applies from the first euro', confidence: 'HIGH' },
+  { rule: 'United Kingdom VAT regime', requirement: '20% standard rate; £135 VAT threshold', note: 'Separate GB regime since Brexit — outside EU IOSS and Article 23', confidence: 'HIGH' },
+  { rule: 'United Kingdom customs identifier', requirement: 'GB EORI for UK imports', note: 'The UK is not covered by an EU EORI number', confidence: 'MEDIUM' },
 ];
 
 const faqs = [
   {
     q: 'Are IOSS and VAT deferral the same thing?',
-    a: 'No. IOSS is for B2C e-commerce parcels up to €150 — it simplifies VAT collection at the point of sale. VAT deferral (such as the Netherlands\u2019 Article 23) is for importers holding inventory or re-exporting — it delays import VAT until goods enter a member state. They solve different problems for different businesses.',
+    a: 'No. IOSS is a VAT-collection shortcut for B2C e-commerce parcels up to €150; VAT deferral is a bonded-warehousing structure for full containers of inventory. IOSS collects the buyer’s VAT at checkout, while deferral delays import VAT until goods enter a member state. They serve different cargo types and are not interchangeable.',
   },
   {
     q: 'When should I use IOSS?',
-    a: 'When you sell to EU consumers and ship consignments valued at €150 or less. You register once in a single member state, collect the buyer\u2019s VAT at checkout, and remit it monthly — the buyer sees the full price with no surprise charges at delivery.',
+    a: 'When you sell goods to EU consumers and ship consignments valued at €150 or less. Register once in a single member state, collect the destination VAT at checkout, and remit it monthly through a single declaration. The buyer sees the full price and the parcel clears without a surprise VAT bill at delivery.',
   },
   {
     q: 'When should I use VAT deferral instead?',
-    a: 'When you import full containers as a business to hold in stock or re-export within the EU. Deferral keeps import VAT out of your cash flow until the goods actually enter a member state, which is a working-capital advantage — not a tax saving.',
+    a: 'When you import full containers as a business to hold in stock or re-export within the EU. A Netherlands Article 23 licence lets goods enter bonded storage with no import VAT paid at the border, and VAT is accounted for only when they enter a member state. That is a cash-flow advantage, not a tax saving.',
   },
   {
     q: 'Can I use both IOSS and VAT deferral?',
-    a: 'They can coexist for different parts of a business. A company that both sells B2C parcels and holds B2B inventory might use IOSS for the parcels and a deferral licence for the container stock. They are complementary, not competing.',
+    a: 'Yes — they are complementary, not competing. A company that sells B2C parcels and holds B2B container inventory can use IOSS for the parcels and an Article 23 licence for the containers. Each consignment still follows one mechanism, so keep the two channels separate in your records.',
+  },
+  {
+    q: 'Does IOSS reduce customs duty?',
+    a: 'No. IOSS simplifies VAT collection on sub-€150 consignments only; it does not reduce or waive customs duty. Duty is calculated separately under the EU Common Customs Tariff, is uniform across member states, and varies by HS code — typically 0–12% for consumer goods.',
+  },
+  {
+    q: 'Is VAT deferral a tax saving?',
+    a: 'No. Deferral changes when VAT is paid, not whether it is paid. The full import VAT is still owed when goods enter a member state; the benefit is that the money stays in your cash flow during the bonded-storage period. Treat it as a working-capital tool, never as a discount.',
+  },
+  {
+    q: 'Why is the Netherlands the natural home for deferral?',
+    a: 'Because Article 23 is the EU’s cleanest deferral structure, and Rotterdam anchors it. Rotterdam handled about 13.4m TEU in 2023 and connects by Rhine barge to the German Ruhr, France and the Benelux. The combination of bonded storage and cheap inland distribution makes the Dutch base hard to beat for EU-wide inventory.',
+  },
+  {
+    q: 'Does Germany offer VAT deferral like the Netherlands?',
+    a: 'No, not in the same full form. Germany’s standard VAT is lower at 19%, but it is typically paid at import; Germany has no full Article 23 equivalent. Germany remains strong for direct market access and rail, but the deferral cash-flow structure is a Dutch advantage.',
+  },
+  {
+    q: 'What happens to a parcel above €150?',
+    a: 'IOSS does not apply. The consignment falls back to the standard import-VAT treatment, which usually means the carrier or broker collects import VAT and possibly duty from the buyer before delivery, unless you structure it as DAP or DDP. Plan the post-€150 flow separately because the checkout-collection shortcut is gone.',
+  },
+  {
+    q: 'Do I still need an EORI number if I use IOSS?',
+    a: 'Yes. EORI is mandatory for EU import and one EORI covers all member states. IOSS registration is an additional layer for VAT collection on sub-€150 consignments; it does not replace EORI.',
+  },
+  {
+    q: 'Where does the United Kingdom fit?',
+    a: 'The UK is outside the EU IOSS and Article 23 framework since Brexit. It runs its own regime with a 20% standard rate and a £135 VAT threshold, and importers need a GB EORI. Treat the UK as a separate planning lane rather than an EU member state.',
+  },
+  {
+    q: 'What changed when the EU abolished the €22 threshold?',
+    a: 'From July 2021, the old €22 duty-free threshold disappeared and import VAT applies from the first euro. That change created the parcel-clearance problem IOSS was designed to solve. It is why sub-€150 e-commerce sellers now need a deliberate VAT mechanism instead of relying on low-value exemptions.',
+  },
+  {
+    q: 'How do I read the €100,000 Germany-versus-Netherlands example?',
+    a: 'On €100,000 of duty-inclusive value, German import VAT is €19,000 and Dutch import VAT is €21,000 — a €2,000 headline gap in Germany’s favour. But the Netherlands defers its €21,000 until goods enter a member state, while Germany’s €19,000 is paid at import. The practical comparison is deferred versus paid, not 19 versus 21.',
+  },
+  {
+    q: 'What is the cash-flow value of deferral?',
+    a: 'Illustratively, €21,000 deferred for 90 days at an 8% annual cost of capital is worth about €414 (€21,000 × 0.08 × 90 ÷ 365). It is a planning illustration, not a published figure — substitute your own cost of capital and stocking period. The real value scales with inventory value and time in bond.',
+  },
+  {
+    q: 'What compliance steps do I need before importing?',
+    a: 'Secure an EORI, classify the goods with the correct TARIC/HS code, and confirm the duty line under the EU Common Customs Tariff. Add an IOSS registration for sub-€150 parcels or an Article 23 bonded-warehousing licence for container inventory. Confirm any unpublished fees and thresholds with a tax advisor or the member-state tax authority before committing.',
+  },
+  {
+    q: 'Are IOSS registration fees and Article 23 licence costs published here?',
+    a: 'No — those figures are not in the verified snapshot, so they are marked LOW and shown as not published. Do not budget from invented numbers; request an itemised schedule from the tax authority or your advisor. Penalty amounts and financial-guarantee thresholds are also not published in the snapshot and must be confirmed.',
   },
 ];
 
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
 const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'IOSS vs VAT Deferral for China-to-Europe Imports',
+      description:
+        'IOSS versus VAT deferral for China-to-Europe imports: when to use the Import One-Stop Shop for sub-€150 B2C parcels and when to use Netherlands Article 23 deferral for container inventory.',
+      datePublished: '2026-09-03',
+      dateModified: '2026-09-03',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
   {
     type: 'FAQPage',
     data: {
-      mainEntity: faqs.map((f) => ({
+      mainEntity: faqs.map((faq) => ({
         '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
       })),
     },
   },
+  {
+    type: 'Organization',
+    data: organization,
+  },
 ];
+
+const mechanismSources = sourcesByIds(['eu-taric', 'dutch-customs', 'german-customs', 'hmrc']);
+const vatSources = sourcesByIds([
+  'eu-taric',
+  'dutch-customs',
+  'german-customs',
+  'french-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+  'hmrc',
+]);
+const deferralSources = sourcesByIds(['dutch-customs', 'port-rotterdam', 'german-customs', 'eu-taric']);
+const complianceSources = sourcesByIds(['eu-taric', 'dutch-customs', 'german-customs', 'hmrc']);
 ---
 
 <BaseLayout
   title="IOSS vs VAT Deferral for China-to-Europe Imports"
-  description="IOSS versus VAT deferral for China-to-Europe imports: what each mechanism does, who it is for, and when to use which."
-  canonical={`${SITE_URL}/europe/ioss-vs-vat-deferral/`}
+  description="IOSS versus VAT deferral for China-to-Europe imports: the €150 parcel threshold, Article 23 cash-flow deferral, VAT rates by member state, compliance and decision arithmetic."
+  canonical={pageUrl}
+  ogType="article"
   schema={schema}
 >
   <div class="page-header">
@@ -61,99 +232,307 @@ const schema = [
           { label: 'IOSS vs VAT Deferral' },
         ]}
       />
-      <h1>IOSS vs VAT deferral</h1>
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>IOSS vs VAT deferral for China-to-Europe imports</h1>
       <p class="lead">
-        Two VAT mechanisms that are constantly confused — one is for e-commerce
-        parcels, the other for containers of inventory, and picking the wrong
-        one is a common, costly mistake.
+        The parcel mechanism and the container mechanism are constantly confused —
+        IOSS collects the buyer’s VAT on sub-€150 e-commerce, while VAT deferral
+        keeps import VAT off a container importer’s cash flow. They are not
+        substitutes.
       </p>
+      <p class="small muted">
+        Confidence badges separate verified facts from planning notes. The VAT
+        rates, the €150 ceiling, the July-2021 €22 abolition and Article 23’s
+        existence are HIGH; structural rules and the 0–12% duty band are MEDIUM;
+        unpublished fees and thresholds are LOW and request-for-advisor.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">IOSS ceiling</span>
+          <span class="fact-value">€150 per consignment <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">€22 duty-free threshold</span>
+          <span class="fact-value">Abolished July 2021 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Standard VAT</span>
+          <span class="fact-value">NL 21% · DE 19% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Deferral</span>
+          <span class="fact-value">Timing, not a tax saving <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
     </div>
   </div>
 
   <section class="section container">
     <blockquote class="tldr">
       <p>
-        <strong>TL;DR:</strong> IOSS simplifies VAT on sub-€150 e-commerce
-        parcels sold to consumers. VAT deferral (notably the Netherlands\u2019
-        Article 23) delays import VAT on full containers held in stock or
-        re-exported. They are different tools for different businesses — not
-        substitutes.
+        <strong>TL;DR:</strong> Use IOSS for B2C parcels at €150 or less — register
+        once in a single member state, collect destination VAT at checkout, and
+        remit it monthly. Use Netherlands Article 23 deferral for full containers
+        held in bonded storage or re-exported — no import VAT at the border, and
+        VAT is accounted for only when goods enter a member state. The comparison
+        is deferred versus paid, not 19 versus 21.
       </p>
     </blockquote>
   </section>
 
   <section class="section container">
-    <h2>Side by side</h2>
+    <h2>1. Financial mechanics: two tools, two lanes</h2>
+    <p>
+      IOSS and VAT deferral solve different problems. IOSS is a
+      collection-and-remittance shortcut for the parcel economy: a seller registers
+      once in one member state, collects the buyer’s VAT at checkout and remits it
+      through a single monthly declaration, so a sub-€150 parcel clears quickly with
+      no surprise bill at the door. VAT deferral is a working-capital structure for
+      the container economy: an importer with a licence — most famously the
+      Netherlands’ Article 23 — places full containers in bonded storage and
+      accounts for import VAT only when the goods enter a member state. One tool is
+      about the checkout; the other is about the balance sheet.
+    </p>
+    <p>
+      Because the two mechanisms are so often conflated, run the mechanical
+      comparison first. The table below uses the same dimension-by-dimension framing
+      as the rest of the WorldFreightHub Europe corridor — the IOSS column and the
+      deferral column never overlap in cargo type.
+    </p>
     <DataTable
       columns={[
         { key: 'dimension', label: 'Dimension' },
         { key: 'ioss', label: 'IOSS' },
         { key: 'deferral', label: 'VAT deferral' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={rows}
-      caption="Two mechanisms that serve different import models."
+      rows={mechanismRows}
+      caption="The mechanism comparison is MEDIUM confidence: it describes the EU framework rather than introducing new rates or fees."
     />
+    <SourceList sources={mechanismSources} title="Sources — EU IOSS, Dutch Article 23 and UK regime" />
+
+    <h3 class="mt-3">Standard VAT rates by member state</h3>
+    <p>
+      The destination VAT rate determines how much IOSS collects on a parcel, and
+      how much a deferral licence eventually accounts for when bonded goods enter
+      that market. These standard rates are HIGH confidence from the project’s
+      verified member-state data: <strong>Germany 19%</strong>,
+      <strong>France 20%</strong>, <strong>Netherlands 21%</strong>,
+      <strong>Spain 21%</strong>, <strong>Italy 22%</strong>,
+      <strong>Poland 23%</strong>, <strong>Belgium 21%</strong> — and the
+      United Kingdom at 20% under its separate post-Brexit regime. The UK is outside
+      the EU IOSS and Article 23 framework, so it appears in the table but is not
+      part of the 27-member-state IOSS area.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Member state' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={vatRateRows}
+      caption="Standard VAT rates are HIGH confidence. The United Kingdom row is a separate GB regime, not part of the EU IOSS or Article 23 framework."
+    />
+    <SourceList sources={vatSources} title="Sources — member-state VAT rates and the UK regime" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Timing and cash-flow: when the money moves</h2>
+      <p>
+        The deeper difference is timing. Under IOSS, the buyer pays destination VAT
+        at checkout, so the seller is holding tax that was already collected and the
+        parcel does not face a second VAT demand at the border. Under deferral, no
+        import VAT is paid when the container arrives; the goods sit in bonded
+        storage, and the VAT clock starts when they enter a member state. The
+        importer’s cash is therefore not tied up in import VAT for the entire
+        stocking period.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'event', label: 'Cash-flow event' },
+          { key: 'ioss', label: 'IOSS' },
+          { key: 'deferral', label: 'VAT deferral' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={cashflowRows}
+        caption="Timing mechanics are MEDIUM confidence; the net cash-flow row is HIGH because deferral-as-timing is a verified framework fact."
+      />
+      <p class="mt-2">
+        Two illustrations make the timing concrete. On a <strong>€120 parcel</strong>
+        sold to a Dutch consumer, IOSS collects
+        <strong>€120 × 21% = €25.20</strong> at checkout and the seller remits it
+        through the monthly single declaration — arithmetic on the verified Dutch
+        rate, not a new data point. On the container side,
+        <strong>€21,000</strong> of Dutch import VAT deferred for 90 days at an 8%
+        annual cost of capital is worth about
+        <strong>€21,000 × 0.08 × 90 ÷ 365 ≈ €414</strong> of financing value. That is
+        illustrative arithmetic for planning; substitute your own cost of capital and
+        stocking period.
+      </p>
+      <SourceList sources={deferralSources} title="Sources — timing, deferral and Rotterdam distribution" />
+    </div>
   </section>
 
   <section class="section container">
-    <h2>IOSS: solving the parcel problem</h2>
+    <h2>3. Which tool for which business: the decision arithmetic</h2>
     <p>
-      The Import One-Stop Shop launched in July 2021 when the EU abolished the
-      old €22 duty-free threshold. From the first euro, every import owes VAT —
-      and for the flood of sub-€150 e-commerce parcels, that threatened to
-      create a clearance bottleneck and surprise charges at the buyer's door.
-      IOSS fixes both: the seller registers in one member state, collects the
-      buyer's VAT at checkout, and remits it monthly through a single
-      declaration. The buyer sees the full price up front and the parcel clears
-      fast.
+      The decision rule is simple once the cargo type is fixed. B2C parcels at €150
+      or less use IOSS. B2B container inventory held for EU resale or re-export uses
+      Article 23 deferral. The two tools can coexist in one company, but each
+      consignment still goes through only one of them.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'model', label: 'Business model' },
+        { key: 'cargo', label: 'Typical cargo' },
+        { key: 'tool', label: 'Tool' },
+        { key: 'test', label: 'Decision test' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={decisionRows}
+      caption="The €150 ceiling and Article 23 rows are HIGH confidence; the mixed-business row is MEDIUM guidance."
+    />
+    <p class="mt-2">
+      The headline €100,000 example is deliberately easy to misread. On €100,000 of
+      duty-inclusive value, German import VAT is <strong>€19,000</strong> and Dutch
+      import VAT is <strong>€21,000</strong> — a €2,000 difference in Germany’s
+      favour on the rate alone <ConfidenceBadge level="HIGH" />. But the Dutch
+      Article 23 licence defers the €21,000 until the goods enter a member state,
+      while the German €19,000 is typically paid at import because Germany has no
+      full deferral equivalent. The real comparison is
+      <em>deferred versus paid</em>, not 19 versus 21. If the deferred €21,000 sits
+      off the cash-flow line for 90 days at 8%, the financing value is about €414 —
+      smaller than the €2,000 headline, which is exactly the point: the decision
+      turns on geography and timing, not on the two-point rate gap alone.
     </p>
     <p>
-      IOSS is a B2C tool. If you sell parcels to EU consumers, it is the
-      mechanism to know. It is not for container freight or B2B inventory.
-    </p>
-  </section>
-
-  <section class="section container">
-    <h2>VAT deferral: solving the cash-flow problem</h2>
-    <p>
-      VAT deferral is the opposite end of the scale. When a business imports
-      full containers to hold in stock or re-export within the EU, the import
-      VAT is a large, recurring cash outflow that arrives long before the goods
-      are sold. A deferral licence — most famously the Netherlands\u2019 Article 23
-      — lets the importer place goods in bonded storage and account for import
-      VAT only when they actually enter a member state. It is a cash-flow
-      advantage, not a tax saving: the VAT is still owed, just later, when the
-      goods move and the revenue exists to cover it.
-    </p>
-    <p>
-      This is why the Netherlands is the natural home for EU distribution
-      operations — the deferral turns a working-capital drain into a
-      working-capital asset, and no other member state offers the mechanism as
-      cleanly.
-    </p>
-  </section>
-
-  <section class="section container">
-    <h2>The common mistake</h2>
-    <p>
-      The error most first-time importers make is applying the wrong tool to
-      the wrong model — registering for IOSS when they actually hold container
-      inventory, or expecting VAT deferral to simplify their e-commerce
-      parcels. The two mechanisms do not overlap, and neither replaces the
-      other. Match the tool to the import model: parcels to consumers, IOSS;
-      containers of stock, deferral. If you run both models, you may well need
-      both.
+      For the full distribution-base comparison, read
+      <a href="/europe/netherlands-vs-germany/">Netherlands vs Germany</a>; for the
+      parcel-versus-container freight-mode question, read
+      <a href="/europe/direct-vs-transshipment/">Direct vs Transshipment</a> and
+      <a href="/europe/sea-vs-air/">Sea vs Air</a>. For the destination pillars,
+      start at <a href="/europe/">China to Europe freight</a>.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>Frequently asked questions</h2>
-      <FaqBlock items={faqs} />
+      <h2>4. Where each tool lives</h2>
+      <p>
+        Where each tool lives is almost a geography lesson. IOSS is borderless in the
+        best sense: one registration in any single EU member state covers all 27, and
+        the destination member state’s VAT rate applies to each parcel. Deferral is
+        anchored. The cleanest version is the Netherlands’ Article 23, built on
+        Rotterdam — Europe’s largest port at about 13.4m TEU in 2023 — with
+        Rhine-barge onward distribution into Germany, France and the Benelux. Germany
+        does not offer a full deferral equivalent; its 19% VAT is lower, but it is
+        paid at import.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'mechanism', label: 'Mechanism' },
+          { key: 'location', label: 'Where it lives' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={whereRows}
+        caption="Article 23, the destination VAT rate and the absence of a German full-deferral equivalent are HIGH; IOSS registration footprint and Rotterdam throughput are MEDIUM."
+      />
+      <SourceList sources={deferralSources} title="Sources — Netherlands Article 23 and Rotterdam" />
+      <p class="mt-2">
+        If the Netherlands is your candidate base, read
+        <a href="/europe/shipping-from-china-to-netherlands/">Shipping from China to the Netherlands</a>
+        for the Rotterdam entry detail that pairs with the Article 23 licence.
+      </p>
     </div>
   </section>
 
   <section class="section container">
-    <Cta />
+    <h2>5. Cost components and hidden costs</h2>
+    <p>
+      The most important cost concept on this page is that deferral is a
+      working-capital advantage, not a tax saving. The VAT is still owed; it is paid
+      later, when goods enter a member state and the revenue exists to cover it.
+      IOSS is also not a discount: it changes who collects and when VAT is remitted,
+      but it does not reduce or waive customs duty. Duty sits in a separate line,
+      uniform across the EU under the Common Customs Tariff and typically 0–12% for
+      consumer goods depending on the HS code.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost or benefit' },
+        { key: 'ioss', label: 'IOSS' },
+        { key: 'deferral', label: 'VAT deferral' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="The import-VAT cash-flow row is HIGH. The 0–12% duty band is MEDIUM. Unpublished fees, guarantees, penalties and filing deadlines are LOW and must be confirmed."
+    />
+    <SourceList sources={complianceSources} title="Sources — VAT cash-flow, duty and the EU customs framework" />
+    <p class="mt-2">
+      Where a specific number is not in the verified snapshot — IOSS registration
+      fees, Article 23 licence costs, financial-guarantee thresholds, monthly filing
+      deadlines or penalty amounts — the table deliberately says
+      <em>not published</em> and marks the line LOW. Do not budget from invented
+      figures; confirm with a tax advisor or the member-state tax authority before
+      committing to a structure.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Compliance essentials for China-to-Europe imports</h2>
+      <p>
+        Both mechanisms sit inside the same EU customs backbone. An
+        <strong>EORI number</strong> is mandatory before import and one EORI covers
+        all member states. <strong>IOSS</strong> adds a single member-state
+        registration for sub-€150 consignments. <strong>Article 23</strong> adds a
+        bonded-warehousing licence. <strong>TARIC/HS classification</strong> drives
+        duty and controls, and the <strong>EU Common Customs Tariff</strong> applies
+        the same duty across all member states. Two dates frame the parcel economy:
+        the <strong>€22 duty-free threshold was abolished in July 2021</strong>, and
+        the <strong>€150 ceiling</strong> now marks the top of the IOSS envelope. The
+        United Kingdom is a separate regime with its own £135 threshold and GB EORI.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'rule', label: 'Rule' },
+          { key: 'requirement', label: 'Verified / indicative value' },
+          { key: 'note', label: 'Why it matters' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={complianceRows}
+        caption="The €150 ceiling, the July-2021 €22 abolition, Article 23 and the UK regime are HIGH. EORI, IOSS footprint, TARIC and the 0–12% duty band are MEDIUM."
+      />
+      <SourceList sources={complianceSources} title="Sources — EU import, VAT and customs compliance" />
+      <p class="mt-2">
+        This page is marked
+        <span class="badge badge--amber">September 2026 updated</span>. The VAT
+        rates, the €150 ceiling, the July-2021 €22 abolition and the Article 23
+        deferral are re-checked against the project’s verified member-state data; the
+        0–12% consumer-duty band stays MEDIUM; the unpublished fees and thresholds
+        stay LOW rather than being invented. For the destination-specific rules, read
+        <a href="/europe/shipping-from-china-to-netherlands/">Shipping from China to the Netherlands</a>
+        and <a href="/europe/netherlands-vs-germany/">Netherlands vs Germany</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <Cta
+        title="Get an IOSS-versus-deferral VAT schedule"
+        text="Tell us your origin, commodity, TARIC/HS code, parcel value or container volume, and the destination member states, and we will connect you with providers who can model the correct VAT mechanism on the same basis."
+      />
+    </div>
   </section>
 </BaseLayout>
