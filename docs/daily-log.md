@@ -571,3 +571,23 @@
   1. Europe 深度指南收尾：`ioss-vs-vat-deferral.astro`（950 词薄页）深化为 IOSS vs Article 23 VAT 递延完整指南。
   2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-03（Europe 深度指南收尾 — IOSS vs VAT 递延深化）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe 走廊 Route Pillar 8 国 + 全部决策轴深度指南（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail / direct-vs-transshipment / netherlands-vs-germany）已交付，仅剩最后一张薄页 `ioss-vs-vat-deferral.astro`（950 词、4 FAQ、缺 Article/Organization schema、无置信徽标、无月度更新标记）待深化。本轮按 project-status「下一优先级」收尾。
+- **本轮动作**：
+  1. `ls src/pages` + `wc -w` 逐页比对 → GCC 无剩余页面；Europe 仅 `ioss-vs-vat-deferral` 未过 2500 词门槛。
+  2. 复用已验证数据（europe-countries.ts 8 国 VAT 税率 + €150/IOSS + 2021 取消 €22 免税额 + Article 23 + EORI + Rotterdam ≈13.4m TEU），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 指定可用验证数据，禁止杜撰）→ 交给 Codex 深化 1 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信度/schema/dist 产物/remote push 均核验）。
+- **Content（commit 3de109f）**：
+  - `src/pages/europe/ioss-vs-vat-deferral.astro`（950→**渲染 3,677 词**，16 FAQ）——IOSS vs Article 23 VAT 递延完整决策指南：①财务机制对比表（Dimension | IOSS | VAT deferral）+ 8 国标准 VAT 税率表（DE 19 / UK 20(独立税制) / FR 20 / NL 21 / ES 21 / IT 22 / PL 23 / BE 21，HIGH）②资金时点/现金流表（IOSS 结账代扣月缴 vs 递延到港不计、入成员国时才计征）③决策算术（€100k 货值 DE 19k vs NL 21k，但「递延 vs 实付」决胜；€21k 递延 90 天 @8%≈€414 融资价值，标示例算术）④IOSS 任何成员国 vs 递延荷兰 Rotterdam（Rhine 驳船分拨；德国无同类递延）⑤成本/隐藏成本（注册费/财务担保/罚则/申报期限均 LOW + not published + 咨询税务师，零杜撰）⑥合规（EORI/TARIC/EU 统一关税 0–12%/€150 上限/2021 取消 €22/英国 £135 独立税制，不混淆）⑦16 FAQ +「常见误用」板块（IOSS 不豁免关税、递延非税收减免、英国不在 IOSS/Article 23 框架）。
+  - 9 模块齐全 + "September 2026 updated" 徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）+ 交叉链接 netherlands-vs-germany / shipping-from-china-to-netherlands / direct-vs-transshipment / sea-vs-air。
+- **数据诚信**：HIGH 26（8 国 VAT + €150 + 2021 €22 取消 + Article 23 存在性）/ MEDIUM 22 / LOW 4；注册费、财务担保、罚则、申报期限等未验证数字一律「not published — confirm with tax authority」+ LOW，零杜撰；决策算术（€19k/€21k/€414/€120×21%）明确标注为「基于已验证税率的示例算术」。
+- **QA**：`npm run build` 零 error（页数不变，深化替换）；FAQ 16 条 ≥8；9 模块齐全；schema 齐全；工作区干净；`3de109f` 已推 origin/main（dist 产物 52KB 确认）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. **Europe 走廊内容全部交付完毕**（Route Pillar 8 国 + 8 决策轴深度指南全部 ≥2500 词）。后续可选：回 GCC 侧做薄页深化（GCC air 页为薄页，可类比本轮 rail/决策指南深化），或欧洲「时效数据页」聚合。
+  2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
