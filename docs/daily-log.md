@@ -549,3 +549,25 @@
 - **QA**：build 583 页零 error；FAQ 全部 ≥8；9 模块/schema/徽标齐全；`e4e099c feat(ar): add Arabic middleeast content pages (49 pages) + DataTable locale prop` 已推 origin/main。
 - **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
 - **Next**：Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain；Directory verified 提级。
+
+
+## 2026-09-03（Europe 深度指南续三 — Direct vs Transshipment + Netherlands vs Germany 深化）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe Route Pillar 覆盖全部 8 国 + sea-vs-rail/demurrage-detention/hidden-charges/fcl-vs-lcl/sea-vs-air/rail 已深化。本轮逐页 `wc -w` 比对发现 `direct-vs-transshipment`（773 词）、`netherlands-vs-germany`（849 词）、`ioss-vs-vat-deferral`（950 词）三张 Europe 决策指南仍为薄页（各仅 4 FAQ、缺 Article/Organization schema、无置信徽标、无月度更新标记），未过 2500 词质量门槛。本轮补齐最薄两张。
+- **本轮动作**：
+  1. `ls src/pages` + `wc -w` 逐页比对 → GCC 无剩余页面、Europe 3 张薄页确认 → 转 Europe 决策指南回填。
+  2. 复用既有已验证数据（europe-routes.ts 8 港费率/时效区间 + europe-ports.ts 港情 + research-notes-2026-09-03 铁路/ACL demurrage + hidden-charges OOCL THC EUR 值），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 指定可用验证数据，禁止杜撰）→ 交给 Codex 深化 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信度/schema/build/push）。
+  4. 修复 Codex 首次运行缺 `DEEPSEEK_API_KEY`（ssh 非登录非交互 shell 不 source `.profile`）→ `source ~/.profile` 后重跑成功。
+- **Content（commit 6563d70）**：
+  - `src/pages/europe/direct-vs-transshipment.astro`（773→**渲染 3,133 词**，12 FAQ）——直航 vs 中转决策：NW 直航密集港（Rotterdam/Hamburg/Antwerp/Felixstowe）vs 地中海中转港（Valencia/Genoa/Le Havre，经 Tanger Med/Malta/Piraeus 中转）；8 港费率表（MEDIUM）+ 时效表（LOW，28–33 天典型，25–45 区间）+ 中转「双班期错失」风险算术 + Cape +10–14 天（MEDIUM）+ 未量化中转折扣一律 LOW +「request an itemised schedule」（不臆造折扣百分比）。
+  - `src/pages/europe/netherlands-vs-germany.astro`（849→**渲染 2,713 词**，12 FAQ）——Rotterdam vs Hamburg 分拨基地决策：吞吐（≈13.4m vs ≈7.7m TEU）/吃水（≈24m vs ≈15.2m 潮汐）/VAT（NL 21% Art 23 递延 vs DE 19%，HIGH）+ THC（Hamburg €325/Wilhelmshaven €295/荷比 €260，MEDIUM）+ Hamburg demurrage（ACL 逐设备 EUR，MEDIUM）+ 铁路端点（Hamburg/Duisburg vs 荷兰有限）决胜算术。
+  - 两页均 9 模块齐全 + "September 2026 updated" 标记 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）；合规正确纠正「欧洲无 SABER/SASO/GCC 5%，用 CE/REACH/TARIC/成员国 VAT」；互为交叉链接 + 链 /europe/ + NL/DE Route Pillar。
+- **数据诚信**：direct-vs-transshipment 渲染 HIGH 1 / MEDIUM 34 / LOW 14；netherlands-vs-germany HIGH 4 / MEDIUM 24 / LOW 4。仅用已验证数字；中转折扣百分比未臆造（标 LOW + request）；单承运人关税（OOCL/ACL）标 MEDIUM 不标 HIGH；零杜撰。
+- **QA**：`npm run build` **583 页零 error**（深化替换，页数不变）；FAQ 12/12 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`6563d70 content(europe): deepen direct-vs-transshipment and netherlands-vs-germany decision guides` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 深度指南收尾：`ioss-vs-vat-deferral.astro`（950 词薄页）深化为 IOSS vs Article 23 VAT 递延完整指南。
+  2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。

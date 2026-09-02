@@ -88,6 +88,7 @@
 ## 下一优先级（明晚 03:30 cron）
 
 1. ~~Freight Cost Calculator 工具~~ ✅ 已上线（2026-09-02，commit `1d2d49a`）
-2. **Europe 走廊第二波（全部完成 ✅）**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`）+ Spain/Italy ✅（commit `eb02b45`）+ Poland/Belgium ✅（commit `13f1979`）；**Europe Route Pillar 已覆盖全部 8 国 ✅**；FCL vs LCL Europe 拆解 ✅（commit `70c0225`）；**Sea vs Rail 成本对比深化 ✅ + Europe Demurrage/Detention ✅**（commit `7cb3e93`）；**Rail 指南深化 ✅ + Europe Hidden Charges ✅**（commit `b1785df`：`europe/rail` 深化 855→3,601 词 + 新建 `europe/hidden-charges`（3,468 词，首次用 OOCL 2026 承运人关税 EUR 值覆盖 THC/ISPS/单证/VGM/拥堵杂费，MEDIUM），9 模块，build 534 页零 error）。Europe 深度指南主要决策轴（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail）已全部交付。
-3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
-4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified
+2. **Europe 走廊第二波（全部完成 ✅）**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`）+ Spain/Italy ✅（commit `eb02b45`）+ Poland/Belgium ✅（commit `13f1979`）；**Europe Route Pillar 已覆盖全部 8 国 ✅**；FCL vs LCL Europe 拆解 ✅（commit `70c0225`）；**Sea vs Rail 成本对比深化 ✅ + Europe Demurrage/Detention ✅**（commit `7cb3e93`）；**Rail 指南深化 ✅ + Europe Hidden Charges ✅**（commit `b1785df`）；**Direct vs Transshipment 深化 ✅ + Netherlands vs Germany 深化 ✅**（commit `6563d70`：`direct-vs-transshipment` 773→3,133 词 + `netherlands-vs-germany` 849→2,713 词，各 12 FAQ、9 模块、Article/FAQPage/Organization schema，build 583 页零 error）。Europe 深度指南主要决策轴（sea-vs-rail / demurrage-detention / hidden-charges / fcl-vs-lcl / sea-vs-air / rail / direct-vs-transshipment / netherlands-vs-germany）已全部交付，仅剩 `ioss-vs-vat-deferral`（950 词薄页）待深化。
+3. **Europe 深度指南收尾**：`ioss-vs-vat-deferral.astro` 深化为 IOSS vs Article 23 VAT 递延完整指南。
+4. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
+5. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified
