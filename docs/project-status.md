@@ -1,6 +1,6 @@
 # WorldFreightHub — Project Status
 
-> 最后更新：2026-09-02 07:19 (Asia/Shanghai)
+> 最后更新：2026-09-03 (Asia/Shanghai)
 
 ## 核心信息
 
@@ -86,6 +86,6 @@
 ## 下一优先级（明晚 03:30 cron）
 
 1. ~~Freight Cost Calculator 工具~~ ✅ 已上线（2026-09-02，commit `1d2d49a`）
-2. **Europe 走廊第二波**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`：`shipping-from-china-to-netherlands` + `shipping-from-china-to-france`，Article 23 VAT 递延 / HAROPA Le Havre 差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 526 页零 error）+ Spain/Italy ✅（commit `eb02b45`：`shipping-from-china-to-spain` + `shipping-from-china-to-italy`，Valencia-vs-Rotterdam 到岸成本逻辑 / 意大利 22% VAT + 罢工缓冲差异化，9 模块，费率 MEDIUM、时效 LOW，build 528 页零 error）+ Poland/Belgium ✅（commit `13f1979`：`shipping-from-china-to-poland` + `shipping-from-china-to-belgium`，Gdańsk 海铁分流枢纽 / Antwerp 化工门户差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 530 页零 error）；**Europe Route Pillar 已覆盖全部 8 国（DE/UK/NL/FR/ES/IT/PL/BE）✅**；续：FCL vs LCL Europe 拆解、海运/铁路成本对比数据页
+2. **Europe 走廊第二波**：Germany/UK ✅（commit `4d79478`）+ Netherlands/France ✅（commit `11b468a`：`shipping-from-china-to-netherlands` + `shipping-from-china-to-france`，Article 23 VAT 递延 / HAROPA Le Havre 差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 526 页零 error）+ Spain/Italy ✅（commit `eb02b45`：`shipping-from-china-to-spain` + `shipping-from-china-to-italy`，Valencia-vs-Rotterdam 到岸成本逻辑 / 意大利 22% VAT + 罢工缓冲差异化，9 模块，费率 MEDIUM、时效 LOW，build 528 页零 error）+ Poland/Belgium ✅（commit `13f1979`：`shipping-from-china-to-poland` + `shipping-from-china-to-belgium`，Gdańsk 海铁分流枢纽 / Antwerp 化工门户差异化，9 模块，费率 MEDIUM、时效 MEDIUM/LOW，build 530 页零 error）；**Europe Route Pillar 已覆盖全部 8 国（DE/UK/NL/FR/ES/IT/PL/BE）✅**；续：FCL vs LCL Europe 拆解 ✅（commit `70c0225`：`europe/fcl-vs-lcl` + `europe/sea-vs-air`，决策指南簇补齐，build 532 页零 error）；剩余：海运 vs 铁路成本对比数据页（现有 sea-vs-rail 偏定性，可深化）、Europe 版 Demurrage/Detention + Hidden Charges 类比页（需先补充欧洲港口 free-time/THC 研究）
 3. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
 4. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified

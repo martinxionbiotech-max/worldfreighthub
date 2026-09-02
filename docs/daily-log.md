@@ -463,3 +463,25 @@
   1. Europe 走廊 Route Pillar 已覆盖全部 8 国 ✅；后续可做 **FCL vs LCL Europe 拆解**、**海运 vs 铁路成本对比数据页**、或 Europe 深度指南续（类比 GCC 的 Demurrage/Detention、Hidden Charges 页面）。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-03（Europe 决策指南簇 — FCL vs LCL + Sea vs Air）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe Route Pillar 已覆盖全部 8 国（DE/UK/NL/FR/ES/IT/PL/BE）。本轮按 project-status「下一优先级」补齐 Europe 决策指南簇中缺失的两张对比页：**FCL vs LCL** 与 **Sea vs Air**（此前已有 sea-vs-rail / direct-vs-transshipment / netherlands-vs-germany / ioss-vs-vat-deferral）。
+- **本轮动作**：
+  1. 核对 content-roadmap + `ls src/pages` 逐页比对 → 确认无剩余 GCC 页面、无 europe fcl-vs-lcl / sea-vs-air 页面 → 转 Europe 决策指南回填。
+  2. 读 europe-routes / europe-countries / europe-ports / sources 数据 + poland 模板页 + sea-vs-rail 对比页，构造自包含 Codex prompt（9 模块公式 + 质量红线 + 指定可用验证数据，禁止杜撰）。
+  3. 交给 Codex 写 2 页，Codex 自检报告 + 我独立复核（git log / status / build 页数）。
+- **Content（commit 70c0225）**：
+  - `src/pages/europe/fcl-vs-lcl.astro`（**3,646 词**，13 FAQ）——FCL vs LCL 决策：20ft FCL ≈33 CBM / ≈28 CBM 可用、LCL 按 CBM 计费、~15 CBM 盈亏分界（显式算术展开，LOW 规划口径）；8 大目的港 FCL 20/40ft + LCL $/CBM 费率表（MEDIUM，europe-routes.ts 已验证区间）；成本构成含 THC/单证/ISPS/清关 broker/内陆拖车/demurrage-detention（未量化项标 LOW + request）；合规明确「SABER/SASO/GCC 5% 关税仅沙特/GCC，不适用欧洲」。
+  - `src/pages/europe/sea-vs-air.astro`（**3,687 词**，12 FAQ）——Sea vs Air 决策：海运 28–33 天（25–45 区间，Cape +10–14 天）vs 空运（~3–8 天，LOW「not published」）；空运 $ 费率无已验证数字 → 一律 LOW + request，零杜撰；「value of time / inventory financing」决胜逻辑显式展开；红海 Cape 绕行对时效与费率的影响。
+  - 两页均 9 模块齐全：① 费率表 ② 时效表 ③ 决策算术 ④ 港口清单（8 港 + UN/LOCODE）⑤ 成本构成（含隐藏费用）⑥ 合规（EORI/TARIC/CE/REACH/VAT/IOSS/€150，SABER 仅沙特）⑦ FAQ ≥8 条 ⑧ "September 2026 updated" 标记 ⑨ Schema（Article + FAQPage + BreadcrumbList + Organization，date 2026-09-03）。互为交叉链接 + 链 8 国 Route Pillar + sea-vs-rail。
+  - `src/pages/europe/index.astro` 决策指南卡片行新增 2 张卡片（fcl-vs-lcl / sea-vs-air）。
+- **数据诚信**：fcl-vs-lcl HIGH 8 / MEDIUM 28 / LOW 18；sea-vs-air HIGH 8 / MEDIUM 29 / LOW 34。所有 FCL/LCL 数字沿用 europe-routes.ts 已验证区间（MEDIUM）；空运 $ / 时效与未量化目的地杂费标 LOW +「Not published in verified snapshot — request a quote / request an itemised schedule」；唯一非验证数字为容量/盈亏分界启发值（≈33/≈28/~15 CBM、~3–8 天）与 value-of-time 公式，均显式标注 LOW 规划口径。零杜撰。
+- **QA**：`npm run build` **532 页零 error**（+2）；FAQ 13/12 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`70c0225 content(europe): add FCL-vs-LCL and sea-vs-air China-to-Europe decision guides` 已推 origin/main。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. Europe 深度指南续：可做「海运 vs 铁路成本对比数据页」深化（现有 sea-vs-rail 偏定性）、或 Europe 版 Demurrage/Detention + Hidden Charges 类比页（GCC 已交付，Europe 版本需欧洲港口 free-time/THC 数据，届时须先补充研究）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
