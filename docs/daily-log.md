@@ -632,3 +632,24 @@
   1. GCC 走廊级决策页已全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air）。后续可选：GCC 侧 Air Freight 时效/成本深化（现有 air 页仅沙特/阿联酋，卡/科/阿曼/巴林无专属 air 页）或「Transit Time 走廊级聚合页」。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+
+## 2026-09-04（第三轮 — GCC 走廊级 Transit Time + Air Freight 横比）
+
+- **时间窗口**：凌晨 cron（Asia/Shanghai）
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe 走廊 8 国 + 8 决策轴全部交付；前两轮已补齐 GCC `fcl-vs-lcl` / `gcc-customs-duty-comparison` / `sea-vs-air-freight-china-to-gcc` 三张走廊级决策页。逐页 `ls src/pages/middleeast` + `wc -w` 比对发现仍缺两张走廊级「数据/参考页」——① 7 港 Transit Time 单页横比（现有 transit-time 仅沙特/阿联酋，卡/科/阿曼/巴林混在 shipping-cost-transit-time 页）；② 走廊级 Air Freight 参考页（现有 air 页仅沙特/阿联酋，且 sea-vs-air 是「选海运还是空运」决策页，缺纯空运「怎么运 + 多少钱」参考页）。
+- **本轮动作**：
+  1. `ls src/pages/middleeast` + `wc -w` 逐页比对 → 51 页内容页全部 ≥2500 词、无剩余薄页；剩余 Gap = 走廊级 Transit Time 横比 + 走廊级 Air Freight 参考页。
+  2. 复用已验证数据（routes.ts 7 港 typical 时效 + routing note + methods.ts FCL 14–30 / LCL 15–35 / air 3–7 / express 3–7 + gcc-ports.ts 港情 + research-notes-2026-08-30.md 沙特/阿联酋空运基准价），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 全量已验证数据清单，禁止杜撰）→ 写 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信徽标/schema/BreadcrumbList/dist 产物/push 均核验）。
+- **Content（commit 61c0918）**：
+  - `src/pages/middleeast/transit-time-china-to-gcc.astro`（新建，渲染 4,015 词，12 FAQ）——走廊级 7 港时效横比：3 中国始发港 × 7 GCC 目的港 typical 时效矩阵（Jeddah 18 / Dammam 20 / Jebel Ali 21 / Hamad 22 / Shuwaikh 24 / Sohar 19 / Khalifa bin Salman 22 天，MEDIUM，range 15–30）+ 分方式时效表（FCL 14–30 / LCL 15–35 / air 3–7 / express 3–7 / rail 18–25 LOW）+ FCL vs LCL 时效差异（LCL 慢 5–10 天）+ 红海/好望角绕行 + 霍尔木兹战险 0.125%→0.4%+ 风险算术 + 直航 vs 中转。
+  - `src/pages/middleeast/air-freight-china-to-gcc.astro`（新建，渲染 4,323 词，12 FAQ）——走廊级空运参考页：沙特/阿联酋空运基准价表（LOW，上海→利雅得 $917–$1,223/100kg、中国→沙特 $880–$1,350/100kg、沙特 SAR 26.5–30.5/kg、阿联酋 AED 20–23.5/kg、express ~$6.90/kg、DDP air 33–48 RMB/kg）+ 卡/科/阿曼/巴林空运「Not published — request a per-kg quote」零杜撰 + chargeable weight 算术（÷6000 air / ÷5000 courier，80×50×40cm 20kg → 26.7kg / 32kg）+ 机场对（PVG/CAN/SZX/HKG → RUH/JED/DXB/AUH/DOH/KWI/MCT/BAH）+ air vs express + 成本构成（燃油/安保/机场杂费均 LOW + request）+ 合规（GCC 5% 关税 CIF + 六国 VAT 15/5/0/0/5/10 + SABER SC 到港前 +「空运不豁免 duty/VAT/SABER」+ ISF 不适用 GCC）。
+  - 两页均 9 模块齐全 + "September 2026 updated" 徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）+ 交叉链接（6 国 route pillar / fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / demurrage-detention / hidden-charges / per-country transit + air 页）+ `index.astro` 新增 2 张决策卡。
+- **数据诚信**：transit-time 表 42 行（34 sourced HIGH/MEDIUM + 8 LOW + 7「not published」）；air 表 46 行（17 sourced + 29 LOW + 19「not published」格）。海运费率/时效全部 routes.ts（MEDIUM）；duty/VAT 全部 gcc-countries.ts（HIGH）；空运基准价竞品 snapshot 一律 LOW；卡/科/阿曼/巴林空运零杜撰（Not published）；未量化杂费一律 LOW + request。零杜撰。
+- **QA**：`npm run build` **588 页零 error**（+2，独立复跑确认）；FAQ 12/12 条均 ≥8；9 模块齐全；schema（Article+FAQPage+Organization+BreadcrumbList）齐全；工作区干净；`61c0918` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. GCC 走廊级决策/数据页已全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight）。GCC 内容页全部 ≥2500 词、9 模块、schema 齐全。后续可选：Directory verified 提级，或按国 air 专属页（卡/科/阿曼/巴林，需先补一手空运基准价数据）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
