@@ -1,0 +1,1030 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/sea-vs-air-freight-china-to-gcc/`;
+
+const wfhRouteData: Source = {
+  id: 'wfh-gcc-sea-air-route-data',
+  name: 'WorldFreightHub route data — China to the seven main GCC destination ports (sea FCL 20ft/40ft, LCL per-CBM and typical transit days)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhMethods: Source = {
+  id: 'wfh-gcc-sea-air-methods',
+  name: 'WorldFreightHub methods data — FCL/LCL capacity, ~15 CBM crossover and demurrage benchmarks',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const cargofromchinaSaudi: Source = {
+  id: 'cargofromchina-saudi',
+  name: 'Cargo From China — China to Saudi Arabia guide (air SAR 26.5–30.5/kg, 2–5 business days)',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide (air AED 20–23.5/kg, express and DDP air)',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+
+const freightos: Source = {
+  id: 'freightos-riyadh-air',
+  name: 'Freightos — Shanghai/Shenzhen to Riyadh air benchmarks ($917–$1,223 and $920–$1,250 per 100 kg)',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+
+const ddpchain: Source = {
+  id: 'ddpchain-saudi-air',
+  name: 'DDPChain — China to Saudi Arabia guide (general air $880–$1,350 per 100 kg)',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance (volumetric weight = L × W × H cm ÷ 6,000)',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const customsSources: Source[] = sourcesByIds([
+  'zatca',
+  'dubai-customs',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+const complianceSources: Source[] = [...customsSources, wfhCountryData];
+const seaRateSources: Source[] = [wfhRouteData, wfhMethods];
+const airRateSources: Source[] = [ddpchain, cargofromchinaSaudi, freightos, cargofromchinaUae, docshipper];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaSaudi, cargofromchinaUae];
+const chargeableSources: Source[] = [iata];
+const costSources: Source[] = [...customsSources, wfhMethods, wfhRouteData];
+const decisionSources: Source[] = [wfhRouteData, wfhMethods];
+
+const seaRateRows = [
+  {
+    port: 'Jeddah Islamic Port (SAJED)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam (SADMM)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Jebel Ali (AEJEA)',
+    twenty: '$1,500 – $3,250',
+    forty: '$2,200 – $3,950',
+    lcl: '$60 – $180 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad (QAHMD)',
+    twenty: '$1,700 – $2,500',
+    forty: '$2,500 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh (KWSWK)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$70 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar (OMSOH)',
+    twenty: '$1,500 – $2,600',
+    forty: '$2,200 – $3,800',
+    lcl: '$60 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa bin Salman (BHKBS)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airRateRows = [
+  {
+    market: 'Saudi Arabia',
+    benchmark:
+      'General air $8.80–$13.50/kg · Freightos $917–$1,223/100 kg (Shanghai→Riyadh) and $920–$1,250/100 kg (Shenzhen→Riyadh) · SAR 26.5–30.5/kg (cargofromchina 22kg+/101kg+) · express 10 kg $315–$420',
+    transit: '2–5 business days · 6–10 days · 10–15 days DDP air',
+    confidence: 'LOW',
+  },
+  {
+    market: 'United Arab Emirates',
+    benchmark: 'AED 20–23.5/kg (≈$5.45–$6.40/kg)',
+    transit: '2–4 days express · 3–6 days DDP air · 3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    market: 'Qatar',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '3–7 days airport-to-airport (unverified)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'Kuwait',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '3–7 days airport-to-airport (unverified)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'Oman',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '3–7 days airport-to-airport (unverified)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'Bahrain',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '3–7 days airport-to-airport (unverified)',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    port: 'Jeddah Islamic Port (SAJED)',
+    country: 'Saudi Arabia',
+    sea: '~18 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam (SADMM)',
+    country: 'Saudi Arabia',
+    sea: '~20 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Jebel Ali (AEJEA)',
+    country: 'United Arab Emirates',
+    sea: '~21 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Hamad (QAHMD)',
+    country: 'Qatar',
+    sea: '~22 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Shuwaikh (KWSWK)',
+    country: 'Kuwait',
+    sea: '~24 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Sohar (OMSOH)',
+    country: 'Oman',
+    sea: '~19 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Khalifa bin Salman (BHKBS)',
+    country: 'Bahrain',
+    sea: '~22 days · 15–30 day range',
+    air: '3–7 days airport-to-airport',
+    confidence: 'LOW',
+  },
+];
+
+const decisionMatrixRows = [
+  {
+    dimension: 'Volume and density',
+    chooseSea: 'Large, dense or heavy cargo approaching a container share',
+    chooseAir: 'Small, light or compact cargo at low chargeable weight',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Value density',
+    chooseSea: 'Low or moderate item value where freight share is material',
+    chooseAir: 'High value where freight is a small fraction of price',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Urgency',
+    chooseSea: 'A delivery window that can absorb 15–30 days',
+    chooseAir: 'Stockout-critical or must-arrive-this-week cargo',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Shelf life / fragility',
+    chooseSea: 'Durable, stable goods that tolerate a longer voyage',
+    chooseAir: 'Perishable, fragile or time-sensitive goods',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Working capital',
+    chooseSea: 'Predictable inventory where unit cost matters most',
+    chooseAir: 'A shorter cash-to-revenue cycle that justifies the premium',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'Compliance exposure',
+    chooseSea: 'Same duty, VAT, HS and SABER rules apply',
+    chooseAir: 'Same rules apply — air never removes duty, VAT, HS or SABER',
+    confidence: 'HIGH',
+  },
+];
+
+const billingRows = [
+  {
+    basis: 'Billing unit',
+    sea: 'Per container (FCL) or per CBM (LCL)',
+    air: 'Per chargeable kilogram — the higher of actual and volumetric weight',
+    confidence: 'LOW',
+  },
+  {
+    basis: 'Volume arithmetic',
+    sea: 'CBM = L × W × H (m) or container cube; LCL has a 1 CBM minimum',
+    air: 'Volumetric weight = L × W × H (cm) ÷ 6,000; some carriers use ÷ 5,000',
+    confidence: 'MEDIUM',
+  },
+  {
+    basis: 'Density sensitivity',
+    sea: 'Scales by cube; weight matters less until a container limit',
+    air: 'Scales by chargeable weight, so light bulky goods bill up sharply',
+    confidence: 'LOW',
+  },
+  {
+    basis: 'Planning crossover',
+    sea: 'FCL usually wins above ~15 CBM; LCL below it',
+    air: 'Air wins when speed and value density outweigh the bill',
+    confidence: 'MEDIUM',
+  },
+];
+
+const workedExampleRows = [
+  {
+    line: 'Shipment dimensions and actual weight',
+    value: '2 CBM · 180 kg actual weight',
+    note: 'A plausible light, bulky e-commerce move',
+  },
+  {
+    line: 'Sea LCL — GCC benchmark (2 CBM × $20–$110)',
+    value: '$40 – $220',
+    note: 'Illustrative arithmetic on the MEDIUM LCL benchmark',
+  },
+  {
+    line: 'Air chargeable weight (2,000,000 cm³ ÷ 6,000)',
+    value: '333.33 kg',
+    note: 'Volumetric exceeds 180 kg actual by ~1.85×',
+  },
+  {
+    line: 'Air at UAE benchmark (333.33 kg × $5.45–$6.40)',
+    value: '$1,816.65 – $2,133.31',
+    note: 'Arithmetic on the LOW UAE air benchmark',
+  },
+  {
+    line: 'Air at Saudi benchmark (333.33 kg × $8.80–$13.50)',
+    value: '$2,933.30 – $4,499.96',
+    note: 'Arithmetic on the LOW Saudi air benchmark',
+  },
+  {
+    line: 'Illustrative conclusion',
+    value: 'Air bills 333.33 kg instead of 180 kg',
+    note: 'Light, bulky cargo is brutal by air — verify with live quotes',
+  },
+];
+
+const densityRows = [
+  {
+    scenario: 'Light variant · 2 CBM · 180 kg actual',
+    sea: '$40 – $220 (2 CBM LCL)',
+    air: '$1,816.65–$2,133.31 UAE · $2,933.30–$4,499.96 Saudi',
+    note: 'Air charges 333.33 kg volumetric instead of 180 kg',
+  },
+  {
+    scenario: 'Dense variant · 2 CBM · 2,000 kg actual',
+    sea: '$40 – $220 (2 CBM LCL)',
+    air: '$10,900–$12,800 UAE · $17,600–$27,000 Saudi',
+    note: 'Chargeable becomes the full 2,000 kg; air is extreme',
+  },
+];
+
+const portAirportRows = [
+  {
+    seaport: 'Jeddah Islamic Port (SAJED)',
+    country: 'Saudi Arabia',
+    airport: 'JED (Jeddah) · RUH (Riyadh)',
+    marketNote: 'Western Saudi Arabia',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'King Abdulaziz Port Dammam (SADMM)',
+    country: 'Saudi Arabia',
+    airport: 'DMM (Dammam) · RUH (Riyadh)',
+    marketNote: 'Eastern Province and Riyadh',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'Jebel Ali (AEJEA)',
+    country: 'United Arab Emirates',
+    airport: 'DXB (Dubai International) · DWC (Al Maktoum)',
+    marketNote: 'Dubai and northern emirates',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'Hamad (QAHMD)',
+    country: 'Qatar',
+    airport: 'DOH (Hamad International)',
+    marketNote: 'All of Qatar',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'Shuwaikh (KWSWK)',
+    country: 'Kuwait',
+    airport: 'KWI (Kuwait International)',
+    marketNote: 'Kuwait City and central Kuwait',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'Sohar (OMSOH)',
+    country: 'Oman',
+    airport: 'MCT (Muscat International)',
+    marketNote: 'Northern Oman and Muscat',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'Khalifa bin Salman (BHKBS)',
+    country: 'Bahrain',
+    airport: 'BAH (Bahrain International)',
+    marketNote: 'Bahrain + Causeway into eastern Saudi',
+    confidence: 'HIGH',
+  },
+];
+
+const costCompositionRows = [
+  {
+    item: 'Ocean freight — FCL',
+    mode: 'Sea',
+    who: 'Carrier / forwarder',
+    magnitude: '$1,500–$8,100 by destination port',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Ocean freight — LCL',
+    mode: 'Sea',
+    who: 'Carrier / forwarder',
+    magnitude: '$20–$180 per CBM by port',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Air freight',
+    mode: 'Air',
+    who: 'Airline / forwarder',
+    magnitude: '$5.45–$13.50/kg for Saudi and UAE only; other GCC not published — request quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin terminal handling (OTHC)',
+    mode: 'Sea',
+    who: 'China terminal / carrier',
+    magnitude: 'Not published — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal handling (DTHC)',
+    mode: 'Sea',
+    who: 'GCC terminal / carrier',
+    magnitude: 'Not published — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'CFS consolidation / deconsolidation',
+    mode: 'Sea (LCL)',
+    who: 'CFS operator at both ends',
+    magnitude: 'Not published — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Bunker / fuel adjustment',
+    mode: 'Sea',
+    who: 'Ocean carrier',
+    magnitude: 'Carrier surcharge; not published — request a breakdown',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation / bill of lading fee',
+    mode: 'Sea',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Fuel surcharge',
+    mode: 'Air',
+    who: 'Airline',
+    magnitude: 'Not published — request a breakdown',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Security and terminal handling',
+    mode: 'Air',
+    who: 'Airline / ground handler',
+    magnitude: 'Not published — request a breakdown',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance / brokerage',
+    mode: 'Both',
+    who: 'Broker / customs authority',
+    magnitude: 'Not published — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Demurrage / detention',
+    mode: 'Both (mainly sea containers)',
+    who: 'Terminal + ocean carrier',
+    magnitude: '$75–$300/day after 3–7 free days',
+    confidence: 'MEDIUM',
+  },
+];
+
+const vatRows = [
+  { country: 'Saudi Arabia', vat: '15%', note: 'Highest GCC VAT; stacked on 5% duty', confidence: 'HIGH' },
+  { country: 'United Arab Emirates', vat: '5%', note: 'Free zones can defer duty until mainland entry', confidence: 'HIGH' },
+  { country: 'Qatar', vat: '0% (no VAT yet)', note: 'VAT expected ~5%; confirm timeline locally', confidence: 'HIGH' },
+  { country: 'Kuwait', vat: '0% (no VAT)', note: 'Signed GCC agreement, not implemented', confidence: 'HIGH' },
+  { country: 'Oman', vat: '5%', note: 'Same VAT as the UAE; less congested Sohar gateway', confidence: 'HIGH' },
+  { country: 'Bahrain', vat: '10%', note: 'Second-highest GCC VAT; Causeway alternate into Saudi', confidence: 'HIGH' },
+];
+
+const faqs = [
+  {
+    q: 'Is sea or air freight cheaper from China to the GCC?',
+    a: 'Sea is almost always cheaper per unit for meaningful volume: $1,500–$8,100 per FCL and $20–$180 per CBM, versus roughly $5.45–$13.50/kg by air for Saudi Arabia and the UAE. Air is justified by speed, value density or urgency, not headline cost. Both sets are snapshots — re-quote for your actual shipment.',
+  },
+  {
+    q: 'How does chargeable weight change the sea vs air decision?',
+    a: 'Air is billed on chargeable weight — the higher of actual and volumetric weight, where volumetric weight is L × W × H (cm) ÷ 6,000 (some carriers use 5,000). Sea LCL bills per CBM and FCL per container. Light, bulky cargo is billed far above actual weight by air, which favours sea.',
+  },
+  {
+    q: 'Can you show a sea vs air worked example for 2 CBM and 180 kg?',
+    a: 'Yes, as illustrative arithmetic. Sea LCL is about $40–$220 (2 CBM × the $20–$110 corridor benchmark). Air chargeable weight is 2,000,000 cm³ ÷ 6,000 = 333.33 kg, so air runs about $1,816.65–$2,133.31 on the UAE benchmark or $2,933.30–$4,499.96 on the Saudi benchmark. The point is the 333.33 kg chargeable weight — verify with live quotes.',
+  },
+  {
+    q: 'Does air freight remove GCC duty, VAT or SABER?',
+    a: 'No. Air shortens the transport clock, not the compliance clock. The GCC baseline duty is 5% of CIF value, VAT is charged on the duty-inclusive value at the destination rate, HS classification applies, and the Saudi SABER SC must be obtained before arrival. Sea and air face identical paperwork.',
+  },
+  {
+    q: 'Do I need SABER for air freight to Saudi Arabia?',
+    a: 'Yes, if the goods are regulated. SABER/SASO is Saudi-only, and the SABER SC must be obtained before arrival — effective 1 January 2025. Air cargo arriving without it racks up storage and demurrage just like sea cargo. The other five GCC states do not require SABER.',
+  },
+  {
+    q: 'What hidden charges apply to sea freight to the GCC?',
+    a: 'Beyond ocean freight, expect OTHC/DTHC, CFS consolidation and deconsolidation for LCL, bunker/fuel adjustment, documentation fees and the demurrage/detention clock. THC, CFS, bunker and documentation amounts are not published — request them as an itemised quote.',
+  },
+  {
+    q: 'What hidden charges apply to air freight to the GCC?',
+    a: 'Beyond the per-kg rate, expect fuel surcharge, security charge, terminal handling and customs clearance/brokerage. These amounts are not published — request them as an itemised quote and add them to the landed cost.',
+  },
+  {
+    q: 'How much is demurrage and detention on this corridor?',
+    a: 'The methods data puts GCC demurrage and detention at $75–$300 per day after a 3–7 day free-time window. A customs or SABER hold can turn a one-week delay into hundreds of dollars per container, so finish clearance and book the inland leg before discharge.',
+  },
+  {
+    q: 'What is the best hybrid sea + air plan for the GCC?',
+    a: 'Use sea for the forecasted base volume at the lowest unit cost, and air only for the stockout, seasonal-launch or promotion top-up. This protects the base margin while keeping availability, without paying air rates for the whole volume.',
+  },
+  {
+    q: 'Why are Saudi sea rates wider than Jebel Ali and other GCC ports?',
+    a: 'Saudi gateways sit on two different lanes: Jeddah on the Red Sea and Dammam on the Arabian Gulf via the Strait of Hormuz. War-risk premiums and fuel costs flex with the news cycle, which is why the Saudi 20ft range runs $1,500–$6,200 while Jebel Ali compresses to $1,500–$3,250. Air bypasses both lanes at a large premium.',
+  },
+  {
+    q: 'Does ISF apply to the GCC?',
+    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports. Saudi Arabia has its own pre-arrival step through SABER and the FASAH single-window — do not copy US ISF into a China-to-GCC workflow.',
+  },
+  {
+    q: 'How do I get a real sea and air comparison for the GCC?',
+    a: 'Request two itemised quotes on the same basis: origin, commodity, HS code, dimensions, weight and final GCC destination. Ask for freight, OTHC/DTHC or fuel/security/terminal, CFS if LCL, documentation, free time, demurrage/detention, duty, VAT and the inland leg together. The headline rate is never the landed cost.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Sea vs Air Freight from China to the GCC: Cost, Transit & the Decision That Matters (August 2026)',
+      description:
+        'Corridor-wide sea vs air freight from China to the GCC: FCL/LCL rates, per-kg air benchmarks, transit, chargeable weight, hidden charges, compliance and a hybrid plan.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Sea vs Air Freight from China to the GCC: Cost, Transit & Decision Guide (August 2026)"
+  description="Sea vs air freight from China to the GCC: FCL/LCL rates, per-kg air benchmarks, transit, chargeable weight, hidden charges, compliance and a hybrid plan."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Sea vs air freight China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">August 2026 updated</span>
+      <h1>Sea vs air freight from China to the GCC: cost, transit and the decision that actually matters</h1>
+      <p class="lead">
+        The corridor-wide sea-vs-air decision across all six GCC countries and seven seaports: cost,
+        transit, the chargeable-weight rule that makes bulky goods brutal by air, hidden charges, and
+        why air does not remove duty, VAT or SABER. Use sea for the base, air for the exception, and
+        compare both on the same landed cost.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified rules from indicative snapshots. Sea FCL/LCL ranges are
+        MEDIUM confidence route data; air per-kg figures are LOW confidence August 2026 snapshots from
+        Freightos, Cargo From China, DDPChain and DocShipper. Unquantified fees stay request-for-quote
+        rather than invented.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Sea LCL</span>
+          <span class="fact-value">$20–$180/CBM <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air (SA &amp; UAE only)</span>
+          <span class="fact-value">$5.45–$13.50/kg <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">15–30 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Chargeable weight</span>
+          <span class="fact-value">L×W×H/6000 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Demurrage</span>
+          <span class="fact-value">$75–$300/day <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Sea rate table: FCL and LCL benchmarks for all seven GCC gateways</h2>
+    <p>
+      Every gateway has three published lines — <strong>20ft FCL</strong>, <strong>40ft FCL</strong>
+      and <strong>LCL per CBM</strong> — from the MEDIUM-confidence route data, not live quotes. The
+      Saudi ranges are widest because Red Sea and Strait of Hormuz risk is priced into them.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Destination port' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={seaRateRows}
+      caption="Sea freight benchmarks for the seven main GCC destination ports. MEDIUM confidence route data — request live quotes before booking."
+    />
+    <SourceList sources={seaRateSources} title="Sources — GCC sea rates" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Air rate table: verified benchmarks for Saudi and UAE, request-for-quote everywhere else</h2>
+      <p>
+        Air research for this corridor is uneven: Saudi Arabia and the UAE have published snapshots;
+        Qatar, Kuwait, Oman and Bahrain do not. We mark the missing markets as <strong>“Not published —
+        request a per-kg quote”</strong> rather than inventing a number. Every figure is LOW confidence
+        and must be re-quoted for your commodity and airport pair.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'market', label: 'Market' },
+          { key: 'benchmark', label: 'Verified benchmark (LOW)' },
+          { key: 'transit', label: 'Transit snapshot' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airRateRows}
+        caption="Air benchmarks are August 2026 market snapshots from Freightos, Cargo From China, DDPChain and DocShipper — not carrier quotes."
+      />
+      <SourceList sources={airRateSources} title="Sources — GCC air benchmarks" />
+
+      <div class="note mt-2">
+        <strong>Never copy a Saudi air rate onto Qatar, Kuwait, Oman or Bahrain.</strong> Request a
+        per-kg quote for those four markets rather than assuming the benchmark transfers.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit-time table: sea typical days vs air planning range by port</h2>
+    <p>
+      Sea is slower and more variable than the typical day suggests: the planning range is
+      <strong>15–30 days</strong> and LCL adds consolidation time. Air is materially faster, but the
+      research only supports a general <strong>3–7 days airport-to-airport</strong> range — unverified
+      for Qatar, Kuwait, Oman and Bahrain, which have no published air transit benchmark.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Sea gateway' },
+        { key: 'country', label: 'Country' },
+        { key: 'sea', label: 'Sea typical' },
+        { key: 'air', label: 'Air planning range' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Sea typical days and the 3–7 day air range are LOW confidence planning figures, not schedules."
+    />
+    <SourceList sources={transitSources} title="Sources — GCC sea and air transit" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The decision framework: when sea, when air</h2>
+      <p>
+        This is the page’s core. The choice is a cargo-fit and cash-flow problem, not a rate
+        comparison. Score the shipment on <strong>volume/density</strong>, <strong>value
+        density</strong>, <strong>urgency</strong>, <strong>shelf life</strong> and
+        <strong>working capital</strong>, then run the two quotes; the hybrid plan resolves conflicts.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'dimension', label: 'Dimension' },
+          { key: 'chooseSea', label: 'Choose sea when...' },
+          { key: 'chooseAir', label: 'Choose air when...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionMatrixRows}
+        caption="The decision matrix is heuristic. The compliance row is the only HIGH-confidence line; the rest are planning patterns, not fixed rules."
+      />
+      <SourceList sources={decisionSources} title="Sources — decision framework context" />
+
+      <h3 class="mt-3">Chargeable weight vs CBM: the arithmetic that decides the premium</h3>
+      <p>
+        Sea LCL bills by <strong>cubic metre</strong> and FCL by <strong>container</strong>; air bills
+        by <strong>chargeable kilogram</strong> — the higher of actual and volumetric weight, where
+        volumetric weight is <strong>L × W × H (cm) ÷ 6,000</strong>. Some carriers use ÷ 5,000, making
+        the bill larger.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'basis', label: 'Basis' },
+          { key: 'sea', label: 'Sea freight' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={billingRows}
+        caption="Sea scales by cube, air by chargeable weight. The 6,000-divisor rule is MEDIUM confidence; the patterns are LOW confidence."
+      />
+      <SourceList sources={chargeableSources} title="Sources — chargeable weight rule" />
+
+      <div class="note mt-2">
+        <strong>Secondary note — the FCL/LCL ~15 CBM break-even:</strong> within sea, FCL usually wins
+        above roughly 15 CBM and LCL usually wins below it, because FCL is a flat box rate spread
+        across your cube. Air sits alongside both when speed or value density outweighs the
+        chargeable-weight bill. Read the full crossover in the
+        <a href="/middleeast/fcl-vs-lcl/">FCL vs LCL guide</a>.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Worked example: 2 CBM and 180 kg — why bulky goods are brutal by air</h2>
+    <p>
+      This illustrative arithmetic shows why density matters more than the headline per-kg rate for a
+      light, bulky shipment.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'line', label: 'Line' },
+        { key: 'value', label: 'Illustrative value' },
+        { key: 'note', label: 'Note' },
+      ]}
+      rows={workedExampleRows}
+      caption="Illustrative arithmetic only. Verify with live quotes before deciding."
+    />
+    <SourceList sources={[...seaRateSources, ...airRateSources, ...chargeableSources]} title="Sources — worked example inputs" />
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'sea', label: 'Sea LCL (2 CBM)' },
+          { key: 'air', label: 'Air (chargeable weight)' },
+          { key: 'note', label: 'Planning note' },
+        ]}
+        rows={densityRows}
+        caption="Illustrative arithmetic. Dense cargo makes air extreme; light cargo still carries a volumetric premium."
+      />
+      <SourceList sources={[...seaRateSources, ...airRateSources, ...chargeableSources]} title="Sources — density example" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Port + airport list: pair the right sea gateway with the right air gateway</h2>
+      <p>
+        The corridor has seven named seaports and a distinct set of cargo airports. The pairing below
+        is about <strong>serving the same market</strong>, not colocation: Riyadh-bound air cargo lands
+        at RUH while sea cargo clears at Jeddah or Dammam.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'seaport', label: 'Seaport' },
+          { key: 'country', label: 'Country' },
+          { key: 'airport', label: 'Paired airport(s)' },
+          { key: 'marketNote', label: 'Market served' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={portAirportRows}
+        caption="Port and airport pairings are HIGH confidence gateway facts."
+      />
+      <SourceList sources={[...customsSources, wfhRouteData]} title="Sources — GCC ports and airports" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Cost composition: the hidden charges that separate headline rate from landed cost</h2>
+    <p>
+      Most comparisons break on destination charges. Sea adds OTHC/DTHC, CFS, bunker and
+      documentation; air adds fuel, security, terminal handling and clearance. The snapshot does not
+      publish dollar amounts for most of these, so they are LOW confidence and must be requested as
+      itemised quotes. The one quantified item is <strong>demurrage and detention: $75–$300 per day
+      after 3–7 free days</strong>.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost item' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'who', label: 'Charged by' },
+        { key: 'magnitude', label: 'Magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costCompositionRows}
+      caption="Freight and demurrage are MEDIUM confidence; unquantified destination and air surcharges are LOW confidence."
+    />
+    <SourceList sources={costSources} title="Sources — GCC destination cost composition" />
+
+    <div class="note mt-2">
+      <strong>Demurrage vs detention:</strong> demurrage is charged by the terminal while the
+      container sits inside the port beyond free time; detention is charged by the carrier while it
+      sits outside. Plan clearance, SABER and the inland leg before discharge.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Compliance: air does not remove duty, VAT or SABER</h2>
+      <p>
+        The transport mode does not change customs treatment. The GCC baseline duty is <strong>5% of
+        CIF value</strong>, VAT is charged on the duty-inclusive value at the destination rate, HS
+        classification applies, and Saudi SABER applies whether cargo arrives by ship or plane. The
+        table below separates the country VAT profiles.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'country', label: 'Country' },
+          { key: 'vat', label: 'VAT' },
+          { key: 'note', label: 'Note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={vatRows}
+        caption="Country VAT rates are HIGH confidence from the WorldFreightHub GCC country data."
+      />
+      <SourceList sources={complianceSources} title="Sources — GCC duty and VAT" />
+
+      <h3 class="mt-3">SABER SC must be obtained before arrival (Saudi, 2025-01-01 rule)</h3>
+      <p>
+        For regulated goods into Saudi Arabia, the importer registers on SABER, obtains the product
+        conformity certificate (PC), then the shipment conformity certificate (SC) for that shipment.
+        Since <strong>1 January 2025, the SC must be obtained before arrival</strong> or clearance
+        fails. Air cargo arriving without it racks up storage and demurrage just like sea cargo.
+      </p>
+
+      <h3 class="mt-3">HS classification and the de minimis limits</h3>
+      <p>
+        Classify goods with the correct <strong>HS code</strong> before quoting, because duty, VAT and
+        conformity screening all depend on it. Saudi Arabia publishes a <strong>SAR 1,000</strong> de
+        minimis and the UAE <strong>AED 1,000</strong>, both for personal parcels only; VAT has no
+        exemption. <strong>ISF is a US requirement and does not apply to the GCC.</strong>
+      </p>
+
+      <div class="note mt-2">
+        <strong>The rule to repeat:</strong> air freight removes waiting time, not paperwork. Duty,
+        VAT, HS classification and SABER are identical for sea and air — the only difference is how
+        long the cargo sits before that compliance clock starts.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. The hybrid plan: sea for the base, air for the exception</h2>
+    <p>
+      The highest-value answer for many GCC importers is a portfolio: sea carries the forecasted base
+      at the lowest unit cost, while air covers the top of the demand curve with a small
+      chargeable-weight footprint.
+    </p>
+    <div class="note mt-2">
+      <strong>Operational rule:</strong> sea orders should be triggered by forecast and lead time,
+      air orders by the remaining stockout buffer. The moment air becomes the default rather than the
+      exception, revisit the sea cadence and the safety-stock level.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. Geopolitical note: Red Sea vs Strait of Hormuz, and why air bypasses both</h2>
+      <p>
+        Jeddah sits on the <strong>Red Sea</strong>, where routing has been volatile since 2023 and
+        some carriers reroute around the Cape of Good Hope. The other six gateways approach through
+        the <strong>Strait of Hormuz</strong>, where war-risk premiums flex with the news cycle — which
+        is why Saudi spreads are wide. Air bypasses both lanes, but prices that certainty at
+        $5.45–$13.50/kg rather than per container.
+      </p>
+      <p>
+        When quoting sea freight, ask whether a Saudi sailing transits the Red Sea or the Cape, and
+        treat Hormuz exposure as a separate risk line. See the
+        <a href="/middleeast/jeddah-vs-dammam/">Jeddah vs Dammam guide</a> for the full choice.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>11. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>12. Data methodology and freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">August 2026 updated</span>. Sea ranges and
+      transit days come from the WorldFreightHub GCC route data; the ~15 CBM crossover and
+      $75–$300/day demurrage figure come from the methods data; VAT, duty and de minimis come from the
+      GCC country data. Air benchmarks are August 2026 snapshots from Freightos, Cargo From China,
+      DDPChain and DocShipper — named, dated and LOW confidence because they are not carrier quotes.
+    </p>
+    <p>
+      If a verified THC, CFS, bunker, fuel, security, terminal or Qatar/Kuwait/Oman/Bahrain air rate
+      becomes available, the tables are updated and the confidence badge is raised. Until then,
+      unquantified charges stay LOW with a request-for-quote note, and the worked examples stay
+      illustrative arithmetic rather than binding prices.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related corridor and country guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="Sea vs air freight China to UAE"
+          href="/middleeast/sea-vs-air-freight-china-to-uae/"
+        />
+        <Card
+          title="FCL vs LCL shipping China to GCC"
+          href="/middleeast/fcl-vs-lcl/"
+        />
+        <Card
+          title="Hidden and destination charges China to GCC"
+          href="/middleeast/hidden-charges-china-to-gcc/"
+        />
+        <Card
+          title="Demurrage and detention China to GCC"
+          href="/middleeast/demurrage-detention-china-to-gcc/"
+        />
+        <Card
+          title="GCC customs, duty and VAT comparison"
+          href="/middleeast/gcc-customs-duty-comparison/"
+        />
+        <Card
+          title="Air freight China to Saudi Arabia"
+          href="/middleeast/air-freight-from-china-to-saudi-arabia/"
+        />
+        <Card
+          title="Air freight China to UAE"
+          href="/middleeast/air-freight-from-china-to-uae/"
+        />
+        <Card
+          title="Shipping from China to Saudi Arabia"
+          href="/middleeast/shipping-from-china-to-saudi-arabia/"
+        />
+        <Card
+          title="Shipping from China to UAE"
+          href="/middleeast/shipping-from-china-to-uae/"
+        />
+        <Card
+          title="Shipping from China to Qatar"
+          href="/middleeast/shipping-from-china-to-qatar/"
+        />
+        <Card
+          title="Shipping from China to Kuwait"
+          href="/middleeast/shipping-from-china-to-kuwait/"
+        />
+        <Card
+          title="Shipping from China to Oman"
+          href="/middleeast/shipping-from-china-to-oman/"
+        />
+        <Card
+          title="Shipping from China to Bahrain"
+          href="/middleeast/shipping-from-china-to-bahrain/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get sea and air quotes for the same GCC shipment"
+      text="Tell us your origin, dimensions, weight, commodity, HS code and final GCC destination, and we will connect you with providers who can quote sea, air and a hybrid plan."
+    />
+  </section>
+</BaseLayout>
