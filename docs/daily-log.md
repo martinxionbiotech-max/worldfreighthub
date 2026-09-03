@@ -613,3 +613,22 @@
   1. GCC 走廊级决策页已补齐（fcl-vs-lcl / gcc-customs-duty-comparison）。后续可选：GCC 侧「Sea vs Air 走廊级横比」（现有 sea-vs-air 为 UAE-only）或「Air Freight 时效/成本深化」。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-04（第二轮 — GCC 走廊级 Sea vs Air 横比）
+
+- **时间窗口**：凌晨 cron（Asia/Shanghai）
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe 走廊 8 国 + 8 决策轴全部交付；上轮已补齐 GCC `fcl-vs-lcl` / `gcc-customs-duty-comparison`。逐页比对发现唯一剩余结构性 Gap：GCC 侧缺「走廊级 Sea vs Air 横比」（现有 `sea-vs-air-freight-china-to-uae` 为 UAE-only，而 Europe 已有走廊级 `sea-vs-air.astro`）。本轮补齐。
+- **本轮动作**：
+  1. `ls src/pages/middleeast` + `wc -w` 逐页比对 → 51 页内容页全部 ≥2500 词（`index.astro` 为 hub 页 1486 词除外）；唯一 Gap = 走廊级 Sea vs Air 横比。
+  2. 复用已验证数据（routes.ts 7 港 FCL/LCL 费率 + 时效 + research-notes-2026-08-30.md 沙特/阿联酋空运基准价 + gcc-countries.ts 6 国 duty/VAT），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 全量已验证数据清单，禁止杜撰）→ 写 1 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信徽标/schema/build/push 均核验）。
+- **Content（commit 471a8cb）**：
+  - `src/pages/middleeast/sea-vs-air-freight-china-to-gcc.astro`（新建，源码 5,010 词 / 渲染 `<main>` ≈ 3,996–4,075 词，12 FAQ）——走廊级 Sea vs Air 决策：7 港海运费率表（MEDIUM，routes.ts）+ 沙特/阿联酋空运基准价表（LOW，$880–$1,350/100kg ≈ $8.80–13.50/kg、Freightos 上海→利雅得 $917–$1,223/100kg、AED 20–23.5/kg）+ 卡/科/阿曼/巴林空运「Not published — request a per-kg quote」零杜撰 + 分港/分方式时效表（海 18–24 天典型 / 空 3–7 天）+ 6,000-divisor 计费重量算术（2 CBM/180 kg → 333.33 kg chargeable）+ ~15 CBM FCL/LCL 分界 + 成本构成（海 OTHC/DTHC/CFS/bunker/单证 + 空燃油/安保/机场杂费，均 LOW + request，demurrage $75–300/天 MEDIUM）+ 合规（GCC 5% 关税 CIF + 六国 VAT 15/5/0/0/5/10 + SABER SC 到港前 +「空运不豁免 duty/VAT/SABER」）+ 地理风险（红海 vs 霍尔木兹，空运绕行但溢价）。
+  - 9 模块齐全 + "August 2026 updated" 徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）+ 交叉链接（fcl-vs-lcl / hidden-charges / demurrage-detention / gcc-customs-duty-comparison / sea-vs-air-uae / 6 国 route pillar / 2 张 air 页）+ `index.astro` 新增决策卡。
+- **数据诚信**：空运卡/科/阿曼/巴林 4 国零杜撰（一律「Not published」）；海运费率全部 routes.ts（MEDIUM）；duty/VAT/de minimis 全部 gcc-countries.ts（HIGH）；未量化杂费一律 LOW + request。
+- **QA**：`npm run build` **586 页零 error**（+1）；FAQ 12 条 ≥8；9 模块齐全；schema 齐全；工作区干净；`471a8cb` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. GCC 走廊级决策页已全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air）。后续可选：GCC 侧 Air Freight 时效/成本深化（现有 air 页仅沙特/阿联酋，卡/科/阿曼/巴林无专属 air 页）或「Transit Time 走廊级聚合页」。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
