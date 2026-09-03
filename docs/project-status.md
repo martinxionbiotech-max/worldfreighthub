@@ -93,5 +93,6 @@
 - **GCC 走廊级决策页补齐 ✅（2026-09-04，commit `41dc0ab`）**：`middleeast/fcl-vs-lcl`（~4,033 词）+ `middleeast/gcc-customs-duty-comparison`（~2,899 词），各 14 FAQ、9 模块、Article/FAQPage/Organization schema，build 585 页零 error。至此 GCC 与 Europe 走廊级决策/数据页全部对齐。
 - **GCC 走廊级 Sea vs Air 横比 ✅（2026-09-04，commit `471a8cb`）**：`middleeast/sea-vs-air-freight-china-to-gcc`（源码 5,010 词 / 渲染 `<main>` ~4,000 词，12 FAQ）补齐唯一剩余结构性 Gap（原 sea-vs-air 为 UAE-only）。build **586 页零 error**。
 - **GCC 走廊级 Transit Time + Air Freight 横比 ✅（2026-09-04，commit `61c0918`）**：`middleeast/transit-time-china-to-gcc`（渲染 4,015 词，12 FAQ，7 港时效矩阵）+ `middleeast/air-freight-china-to-gcc`（渲染 4,323 词，12 FAQ，空运基准价 + chargeable weight + 机场对）。至此 GCC 走廊级决策/数据页全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight）。build **588 页零 error**。
-4. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划
+- **Arabic 走廊页 + 工具/站点页本地化提交 ✅（2026-09-04，commit `ed786a8`）**：`ar/middleeast/` 新增 5 张走廊级 Arabic 版（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight，FAQ 14/14/12/12/12）+ `ar/` 站点/工具页（about / contact / data / editorial-policy / methodology / get-quote / tools 4 计算器 + index）+ Footer/Header locale-aware prefix 修复。build **604 页零 error**（588→604，+16 页）。**至此 China→GCC + Europe 英文 + Arabic 内容全部交付完毕。**
+4. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划（需 Martin CF 账号）
 5. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified

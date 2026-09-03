@@ -680,3 +680,24 @@
   1. GCC 走廊级决策/数据页已全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight）。GCC 内容页全部 ≥2500 词、9 模块、schema 齐全。后续可选：Directory verified 提级，或按国 air 专属页（卡/科/阿曼/巴林，需先补一手空运基准价数据）。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+## 2026-09-04（第四轮 — Arabic 走廊页 + 工具/站点页本地化收尾并提交）
+
+- **时间窗口**：凌晨 cron（Asia/Shanghai）
+- **背景**：China→GCC 英文路线图（Day 8–50）已 100% 完成；前三轮已补齐 GCC 走廊级 5 张决策/数据页（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight）。本机巡检发现工作区有 16 个未提交 Arabic 本地化文件（5 张走廊页 + 11 张工具/站点页）+ 3 个组件/索引改动（Footer/Header locale-aware prefix 修复 + `ar/middleeast/index.astro` 决策卡），系上一轮 Arabic 本地化产出但未 commit，且 `ps aux` 确认无 codex/node/npm/astro 进程在跑（无并发冲突、无中断进程）。
+- **本轮动作**：
+  1. `git status` 发现 16 未跟踪 Arabic 页 + 3 修改；确认工作区完整、无进行中进程 → 接手收尾。
+  2. 逐文件质量自检：CJK「待核实」/TODO/FIXME/lorem/placeholder 泄漏扫描 = 0；5 张走廊 Arabic 页 FAQ 14/14/12/12/12 条均 ≥8、`type:'Article'` + FAQPage(mainEntity) + Organization schema + Breadcrumb 组件 + 「تحديث سبتمبر 2026」徽标齐全；工具页 4 计算器 + index + get-quote/about/contact/data/editorial-policy/methodology 复用 Seo/JsonLd/DataTable/FaqBlock/Breadcrumb 组件，RTL/locale 正确。
+  3. `npm run build` **604 页零 error**（588→604，+16 页 = 精确对应 16 个新增 Arabic 文件）；`git add -A` + commit + push。
+- **Content（commit ed786a8）**：
+  - `src/pages/ar/middleeast/` 新增 5 张走廊级 Arabic 版：fcl-vs-lcl（14 FAQ）、gcc-customs-duty-comparison（14）、sea-vs-air-freight-china-to-gcc（12）、transit-time-china-to-gcc（12）、air-freight-china-to-gcc（12）——与英文版同源数据（routes.ts 7 港费率/时效 + gcc-countries.ts 6 国 duty/VAT + research-notes-2026-08-30.md 空运基准价），零新抓取、零杜撰。
+  - `src/pages/ar/` 新增站点/工具页：about / contact / data / editorial-policy / methodology / get-quote / tools（cbm-calculator / container-loading-calculator / volumetric-weight-calculator / freight-cost-calculator + index）。
+  - `src/components/Footer.astro` + `Header.astro`：内部链接（about/contact/data/tools/methodology/editorial-policy/middleeast/get-quote）改为 `${prefix}` locale-aware，使 Arabic 版导航正确落到 `/ar/*`；`src/pages/ar/middleeast/index.astro` 新增 5 张走廊决策卡。
+- **数据诚信**：全部翻译自英文已验证数据源，无新增数字；无 CJK 泄漏；无杜撰。
+- **QA**：`npm run build` 604 页零 error；FAQ 均 ≥8；schema 齐全；`ed786a8` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步、工作区干净）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. China→GCC + Europe 英文 + Arabic 内容全部交付完毕。后续可选：Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. 按国 air 专属页（卡/科/阿曼/巴林）——需先补一手空运基准价数据，否则一律标「Not published」（质量红线禁止杜撰）。
+
