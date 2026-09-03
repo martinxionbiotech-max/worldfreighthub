@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { SITE_URL, CONTACT } from '../../site';
+import { t, type Locale } from '../../i18n/ui';
+
+const locale = 'ar' as const;
+---
+
+<BaseLayout locale={locale}
+  title="تواصل معنا"
+  description="تواصل مع فريق WorldFreightHub بخصوص التصحيحات أو الشراكات أو الاستفسارات العامة."
+  canonical={`${SITE_URL}/ar/contact/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: 'تواصل معنا' }]} />
+      <h1>تواصل معنا</h1>
+      <p class="lead">تواصل مع فريق WorldFreightHub.</p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>تواصل معنا مباشرة</h2>
+    <p>
+      لأسرع رد، تواصل مع {CONTACT.name} عبر واتساب أو هاتفيًا — أو راسلنا بالبريد الإلكتروني.
+    </p>
+
+    <div class="contact-actions" style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:1.5rem 0;">
+      <a class="btn btn-whatsapp" href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener">
+        واتساب {CONTACT.phoneDisplay}
+      </a>
+      <a class="btn btn-secondary" href={`tel:${CONTACT.phoneTel}`}>
+        اتصل {CONTACT.phoneDisplay}
+      </a>
+      <a class="btn btn-secondary" href={`mailto:${CONTACT.email}`}>
+        راسلنا {CONTACT.email}
+      </a>
+    </div>
+
+    <h2>الاستفسارات العامة</h2>
+    <p>
+      للتصحيحات أو تحديثات البيانات أو الأسئلة العامة، راسلنا على
+      <a href={`mailto:${CONTACT.email}`}> {CONTACT.email}</a>.
+    </p>
+
+    <h2>الشراكات والدليل</h2>
+    <p>
+      إذا كنت وكيل شحن أو مخلصًا جمركيًا أو مزود خدمات لوجستية مهتمًا بالدليل، استخدم العنوان نفسه مع سطر الموضوع «Directory».
+    </p>
+
+    <p class="mt-3">
+      <a class="btn btn-primary" href="/ar/get-quote/">اطلب عرض سعر</a>
+    </p>
+  </section>
+</BaseLayout>

@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { SITE_URL } from '../../../site';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/tools/container-loading-calculator/`;
+const title = 'حاسبة تحميل الحاوية';
+const description =
+  'قدّر عدد الكراتين وإجمالي القطع التي تتسع لها حاوية 20 قدمًا أو 40 قدمًا أو 40 قدمًا عالية السعة باستخدام أحجام قابلة للاستخدام استرشادية تبلغ 28 و58 و68 CBM.';
+
+const faqs = [
+  {
+    q: 'كم كرتونة تتسع لها حاوية 20 قدمًا؟',
+    a: 'يعتمد ذلك على حجم الكرتونة ووزنها. باستخدام 28 CBM استرشادية من الحجم القابل للاستخدام، اقسم 28 على CBM للكرتونة الواحدة. النتيجة تقدير للحجم فقط وليست حمولة مضمونة.',
+  },
+  {
+    q: 'لماذا يكون تقدير تحميل الحاوية استرشادياً فقط؟',
+    a: 'تستخدم الحاسبة معايير الحجم القابل للاستخدام، لكن التحميل الفعلي يعتمد أيضاً على الطبالات ومواد التثبيت وارتفاع الباب ورصّ الكراتين ووزن البضاعة وأي قيود تتعلق بالبضائع الخطرة أو الثقيلة.',
+  },
+  {
+    q: 'ما الفرق بين حاوية 40 قدمًا و40 قدمًا عالية السعة؟',
+    a: 'لحاوية 40 قدمًا عالية السعة المساحة نفسها تقريباً مثل 40 قدمًا القياسية، لكنها أعلى داخلياً بنحو قدم واحدة، لذلك تُخطط غالباً على أساس نحو 68 CBM بدلاً من 58 CBM. هذه أرقام استرشادية.',
+  },
+  {
+    q: 'هل أقدّر تحميل الحاوية بالحجم أم بالوزن؟',
+    a: 'تحقق من الاثنين معاً. فقد تملأ البضاعة عالية الحجم الحاوية أولاً، بينما قد تبلغ البضاعة الكثيفة حد حمولة الحاوية قبل اكتمال الحجم. أكد مع الناقل كلاً من CBM القابل للاستخدام والحمولة القصوى.',
+  },
+  {
+    q: 'ماذا يحدث إذا كانت كراتيني كبيرة الحجم أو ثقيلة جداً؟',
+    a: 'قد تهدر الكراتين كبيرة الحجم مساحة حول الباب، وقد تتجاوز الكراتين الثقيلة حد الحمولة قبل اكتمال الحجم. في هذه الحالات اجعل مخطط تحميل أو الناقل يتحقق من التخزين.',
+  },
+  {
+    q: 'هل يمكنني فعلاً تحميل كامل CBM القابل للاستخدام؟',
+    a: 'نادراً. فمساحات الطبالات ومواد التثبيت وأشكال الكراتين وقواعد العناية بالبضاعة وكفاءة التخزين كلها تقلل التعبئة العملية. تعامل مع الحجم القابل للاستخدام الكامل كسقف تخطيطي، لا كضمان حجز.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'ar',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale} title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: 'الأدوات', href: '/ar/tools/' },
+          { label: 'حاسبة تحميل الحاوية' },
+        ]}
+      />
+      <span class="badge badge--amber">آخر تحديث: أغسطس 2026</span>
+      <h1>حاسبة تحميل الحاوية</h1>
+      <p class="lead">
+        قدّر عدد الكراتين — وإجمالي عدد القطع — التي تتسع لها حاوية 20 قدمًا أو
+        40 قدمًا أو 40 قدمًا عالية السعة باستخدام معايير حجم استرشادية.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="cl-form" aria-label="مدخلات حاسبة تحميل الحاوية">
+          <div class="form-grid">
+            <div class="field">
+              <label for="cl-unit">وحدة قياس الكرتونة</label>
+              <select id="cl-unit">
+                <option value="cm" selected>سنتيمتر (سم)</option>
+                <option value="m">متر (م)</option>
+              </select>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="cl-length">طول الكرتونة</label>
+                <input id="cl-length" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 60" />
+              </div>
+              <div class="field">
+                <label for="cl-width">عرض الكرتونة</label>
+                <input id="cl-width" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 40" />
+              </div>
+              <div class="field">
+                <label for="cl-height">ارتفاع الكرتونة</label>
+                <input id="cl-height" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 50" />
+              </div>
+              <div class="field">
+                <label for="cl-pieces">عدد القطع في الكرتونة</label>
+                <input id="cl-pieces" type="number" min="1" step="1" inputmode="numeric" value="1" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="cl-container">نوع الحاوية</label>
+              <select id="cl-container">
+                <option value="20ft" selected>20 قدمًا — ~28 CBM (استرشادي)</option>
+                <option value="40ft">40 قدمًا — ~58 CBM (استرشادي)</option>
+                <option value="40hq">40 قدمًا عالية السعة — ~68 CBM (استرشادي)</option>
+              </select>
+            </div>
+            <p class="form-error" id="cl-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cl-calculate">احسب</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>المعادلة</h3>
+          <p><code id="cl-formula-carton">CBM للكرتونة = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ 1,000,000</code></p>
+          <p><code>الكراتين التقديرية = تقريب لأسفل (CBM القابل للاستخدام ÷ CBM للكرتونة)</code></p>
+          <p><code>إجمالي القطع = الكراتين التقديرية × عدد القطع في الكرتونة</code></p>
+          <p><code>الحجم القابل للاستخدام استرشادياً: 20 قدمًا ≈ 28 CBM · 40 قدمًا ≈ 58 CBM · 40 قدمًا عالية السعة ≈ 68 CBM</code></p>
+        </div>
+      </div>
+
+      <div class="result-panel" aria-live="polite">
+        <h3 class="result-title">النتيجة</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="result-label">CBM للكرتونة</span>
+            <span class="result-value" id="cl-carton-cbm">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">CBM القابل للاستخدام في الحاوية</span>
+            <span class="result-value" id="cl-usable-cbm">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">الكراتين التقديرية</span>
+            <span class="result-value" id="cl-cartons">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">إجمالي القطع</span>
+            <span class="result-value" id="cl-total-pieces">—</span>
+          </div>
+        </div>
+        <p class="result-note">
+          يخضع التحميل الفعلي للطبالات ومواد التثبيت والتدعيم والبضائع الثقيلة
+          وحدود الوزن. أكد التخزين النهائي مع الناقل قبل الحجز.
+        </p>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>استرشادي فقط:</strong> 20 قدمًا ≈ 28 CBM و40 قدمًا ≈ 58 CBM و40 قدمًا
+      عالية السعة ≈ 68 CBM معايير تخطيطية. قد تقل الأحمال الفعلية بسبب شكل
+      الكرتونة وقواعد الرصّ والطبالات وحدود الحمولة.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>كيف يعمل التقدير</h2>
+      <p>
+        تحسب الحاسبة أولاً حجم الكرتونة الواحدة بالمتر المكعب. ثم تقسم الحجم
+        القابل للاستخدام استرشادياً للحاوية على حجم تلك الكرتونة وتقرّب لأسفل،
+        لأنك لا تستطيع تحميل جزء من كرتونة. وأخيراً تضرب الكراتين التقديرية في
+        عدد القطع داخل كل كرتونة.
+      </p>
+      <p>
+        هذا حساب حجم بحت. فهو لا يحاكي اتجاه الكرتونة ولا مساحات الطبالات ولا
+        خلوص الباب ولا توزيع الوزن ولا قوة الرصّ، لذا استخدم النتيجة للتخطيط فقط.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const containers = {
+    '20ft': { name: '20 قدمًا', cbm: 28 },
+    '40ft': { name: '40 قدمًا', cbm: 58 },
+    '40hq': { name: '40 قدمًا عالية السعة', cbm: 68 },
+  };
+
+  const fmt = (value, max = 4) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function positivePieces() {
+    const value = Number.parseInt(el('cl-pieces').value, 10);
+    return Number.isInteger(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cl-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function updateFormula(unit) {
+    el('cl-formula-carton').textContent =
+      unit === 'm'
+        ? 'CBM للكرتونة = الطول (م) × العرض (م) × الارتفاع (م)'
+        : 'CBM للكرتونة = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ 1,000,000';
+  }
+
+  function calculate() {
+    const unit = el('cl-unit').value;
+    const length = positiveNumber('cl-length');
+    const width = positiveNumber('cl-width');
+    const height = positiveNumber('cl-height');
+    const pieces = positivePieces();
+
+    if (!length || !width || !height || !pieces) {
+      setError('أدخل أبعاد كرتونة موجبة وعدد قطع لا يقل عن 1.');
+      return;
+    }
+
+    const cartonCbm = unit === 'm' ? length * width * height : (length * width * height) / 1000000;
+    const container = containers[el('cl-container').value];
+    const cartons = Math.floor(container.cbm / cartonCbm);
+    const totalPieces = cartons * pieces;
+
+    setError();
+    el('cl-carton-cbm').textContent = `${fmt(cartonCbm)} m³`;
+    el('cl-usable-cbm').textContent = `${container.name} · ${container.cbm} CBM`;
+    el('cl-cartons').textContent = fmt(cartons, 0);
+    el('cl-total-pieces').textContent = fmt(totalPieces, 0);
+  }
+
+  el('cl-calculate').addEventListener('click', calculate);
+  el('cl-unit').addEventListener('change', () => updateFormula(el('cl-unit').value));
+
+  updateFormula(el('cl-unit').value);
+</script>

@@ -14,7 +14,7 @@ const navGroups = [
   {
     label: t(locale, 'nav.destinations'),
     items: [
-      { label: t(locale, 'nav.middleeast'), href: '/middleeast/' },
+      { label: t(locale, 'nav.middleeast'), href: `${prefix}/middleeast/` },
       { label: t(locale, 'nav.europe'), href: '/europe/' },
     ],
   },
@@ -31,7 +31,7 @@ const navGroups = [
     label: t(locale, 'nav.resources'),
     items: [
       { label: t(locale, 'nav.glossary'), href: `${prefix}/glossary/` },
-      { label: t(locale, 'nav.tools'), href: '/tools/' },
+      { label: t(locale, 'nav.tools'), href: `${prefix}/tools/` },
       { label: t(locale, 'nav.directory'), href: `${prefix}/directory/` },
     ],
   },
@@ -56,7 +56,7 @@ const navGroups = [
         </div>
       ))}
       <a class="nav-cta nav-cta--whatsapp" href={`https://wa.me/${CONTACT.whatsapp}`} target="_blank" rel="noopener">{t(locale, 'nav.whatsapp')}</a>
-      <a class="nav-cta" href="/get-quote/">{t(locale, 'nav.getquote')}</a>
+      <a class="nav-cta" href={`${prefix}/get-quote/`}>{t(locale, 'nav.getquote')}</a>
     </nav>
   </div>
 </header>

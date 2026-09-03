@@ -1,0 +1,253 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { SITE_URL } from '../../../site';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/tools/volumetric-weight-calculator/`;
+const title = 'حاسبة الوزن الحجمي';
+const description =
+  'احسب الوزن الحجمي من أبعاد الكرتونة بالسنتيمتر باستخدام مقسوم الشحن الجوي 6000 أو مقسوم الشحن البحري 1000، وحدد الوزن القابل للتحصيل.';
+
+const faqs = [
+  {
+    q: 'ما هو الوزن الحجمي؟',
+    a: 'الوزن الحجمي هو المساحة التي تشغلها الشحنة محولة إلى مكافئ وزني. يستخدمه الناقلون للمحاسبة العادلة على البضائع الخفيفة كبيرة الحجم التي تملأ المساحة دون إضافة وزن فعلي كبير.',
+  },
+  {
+    q: 'لماذا يقسم الشحن الجوي على 6000؟',
+    a: 'مقسوم 6000 معيار شائع للشحن الجوي الدولي. ويعني أن 1 CBM من المساحة يُفوتر بما يعادل نحو 167 كجم (1,000,000 ÷ 6000 ≈ 166.67 كجم). يستخدم بعض الناقلين 5000 للشحن السريع.',
+  },
+  {
+    q: 'متى يُستخدم مقسوم الشحن البحري 1000؟',
+    a: 'في الشحن البحري يُسعّر الحجم عادة بـ CBM بدلاً من الوزن الحجمي. ويُستخدم مقسوم 1000 في بعض المقارنات وعند بعض المشغلين لمعاملة 1 CBM كـ 1000 كجم؛ تحقق من أساس السعر بدقة مع الناقل.',
+  },
+  {
+    q: 'كيف يُحسب الوزن القابل للتحصيل؟',
+    a: 'الوزن القابل للتحصيل هو الأعلى من الوزن الفعلي والوزن الحجمي. مثلاً، طرد وزنه 10 كجم ووزنه الحجمي 15 كجم سيُفوتر على أساس 15 كجم.',
+  },
+  {
+    q: 'هل يستخدم الشحن السريع عاملاً مختلفاً؟',
+    a: 'نعم. غالباً ما تستخدم شركات الشحن السريع والطرود مقسوماً قدره 5000 بدلاً من 6000، مما ينتج وزناً حجمياً أعلى لنفس الكرتونة. أكد المقسوم دائماً في جدول الأسعار.',
+  },
+  {
+    q: 'هل يمكن أن يكون الوزن الحجمي أقل من الوزن الفعلي؟',
+    a: 'نعم. فالبضاعة الكثيفة لها وزن حجمي منخفض مقارنة بوزنها الفعلي، لذلك يكون الوزن القابل للتحصيل هو الوزن الفعلي ببساطة. يحاسب الناقل دائماً على الأعلى من الاثنين.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'ar',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale} title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: 'الأدوات', href: '/ar/tools/' },
+          { label: 'حاسبة الوزن الحجمي' },
+        ]}
+      />
+      <span class="badge badge--amber">آخر تحديث: أغسطس 2026</span>
+      <h1>حاسبة الوزن الحجمي</h1>
+      <p class="lead">
+        قارن الوزن الفعلي بالوزن الحجمي باستخدام مقسوم الشحن الجوي 6000 أو مقسوم
+        الشحن البحري 1000، واطّلع على الوزن القابل للتحصيل.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="vol-form" aria-label="مدخلات حاسبة الوزن الحجمي">
+          <div class="form-grid">
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="vol-length">الطول (سم)</label>
+                <input id="vol-length" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 60" />
+              </div>
+              <div class="field">
+                <label for="vol-width">العرض (سم)</label>
+                <input id="vol-width" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 40" />
+              </div>
+              <div class="field">
+                <label for="vol-height">الارتفاع (سم)</label>
+                <input id="vol-height" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 50" />
+              </div>
+              <div class="field">
+                <label for="vol-actual">الوزن الفعلي (كجم)</label>
+                <input id="vol-actual" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 10" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="vol-factor">عامل التحصيل</label>
+              <select id="vol-factor">
+                <option value="6000" selected>الشحن الجوي — ÷6000 (1 CBM ≈ 167 كجم)</option>
+                <option value="1000">الشحن البحري — ÷1000 (1 CBM ≈ 1000 كجم)</option>
+              </select>
+            </div>
+            <p class="form-error" id="vol-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="vol-calculate">احسب</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>المعادلة</h3>
+          <p><code id="vol-formula-volume">الوزن الحجمي = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ 6000</code></p>
+          <p><code>الوزن القابل للتحصيل = max(الوزن الفعلي، الوزن الحجمي)</code></p>
+          <p><code id="vol-process">—</code></p>
+        </div>
+      </div>
+
+      <div class="result-panel" aria-live="polite">
+        <h3 class="result-title">النتيجة</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="result-label">الوزن الفعلي</span>
+            <span class="result-value" id="vol-actual-result">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">الوزن الحجمي</span>
+            <span class="result-value" id="vol-volumetric">—</span>
+          </div>
+          <div class="result-item result-item--accent">
+            <span class="result-label">الوزن القابل للتحصيل</span>
+            <span class="result-value" id="vol-chargeable">—</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">أساس الفوترة</span>
+            <span class="result-value" id="vol-basis">—</span>
+          </div>
+        </div>
+        <p class="result-note">
+          تختلف عوامل الشحن الجوي بحسب الناقل والمسار؛ وتستخدم بعض خدمات الشحن
+          السريع 5000 بدلاً من 6000. أكد المقسوم في جدول أسعارك قبل تقديم عرض سعر.
+        </p>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>استرشادي فقط:</strong> مقسوما 6000 و1000 معياران تخطيطيان شائعان،
+      لكن قد يطبق الناقلون عوامل أو حدوداً دنيا أو قواعد تقريب مختلفة. أكد الوزن
+      القابل للتحصيل مع الناقل.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>كيف يُحسب الوزن الحجمي</h2>
+      <p>
+        اضرب طول الكرتونة وعرضها وارتفاعها بالسنتيمتر للحصول على الحجم بالسنتيمتر
+        المكعب، ثم اقسم على عامل التحصيل. النتيجة هي الوزن الحجمي بالكيلوجرام.
+        وأخيراً قارن هذا الرقم بالوزن الفعلي على الميزان واستخدم القيمة الأعلى
+        كوزن قابل للتحصيل.
+      </p>
+      <p>
+        في الشحن الجوي بمقسوم 6000 تُعامل 1 CBM كنحو 167 كجم. وفي الشحن البحري
+        بمقسوم 1000 تُعامل 1 CBM كـ 1000 كجم. كلاهما استرشادي ويجب التحقق منه
+        مقابل أساس السعر المنشور لدى الناقل.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const fmt = (value, max = 2) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id, allowZero = false) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && (allowZero ? value >= 0 : value > 0) ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('vol-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function updateFormula(factor) {
+    el('vol-formula-volume').textContent =
+      `الوزن الحجمي = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ ${factor}`;
+  }
+
+  function calculate() {
+    const length = positiveNumber('vol-length');
+    const width = positiveNumber('vol-width');
+    const height = positiveNumber('vol-height');
+    const actualWeight = positiveNumber('vol-actual', true);
+
+    if (!length || !width || !height || actualWeight === null) {
+      setError('أدخل طولاً وعرضاً وارتفاعاً موجباً ووزناً فعلياً قدره 0 كجم أو أكثر.');
+      return;
+    }
+
+    const factor = Number.parseInt(el('vol-factor').value, 10);
+    const volumetricWeight = (length * width * height) / factor;
+    const chargeableWeight = Math.max(actualWeight, volumetricWeight);
+    const basis =
+      chargeableWeight === actualWeight && actualWeight !== volumetricWeight
+        ? 'الوزن الفعلي'
+        : chargeableWeight === volumetricWeight && actualWeight !== volumetricWeight
+          ? 'الوزن الحجمي'
+          : 'متساويان';
+
+    setError();
+    el('vol-actual-result').textContent = `${fmt(actualWeight)} kg`;
+    el('vol-volumetric').textContent = `${fmt(volumetricWeight)} kg`;
+    el('vol-chargeable').textContent = `${fmt(chargeableWeight)} kg`;
+    el('vol-basis').textContent = basis;
+    el('vol-process').textContent =
+      `= (${fmt(length)} × ${fmt(width)} × ${fmt(height)}) ÷ ${factor} = ${fmt(volumetricWeight)} kg · max(${fmt(actualWeight)}, ${fmt(volumetricWeight)}) = ${fmt(chargeableWeight)} kg`;
+  }
+
+  el('vol-calculate').addEventListener('click', calculate);
+  el('vol-factor').addEventListener('change', () => updateFormula(el('vol-factor').value));
+
+  updateFormula(el('vol-factor').value);
+</script>

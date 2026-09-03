@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { SITE_URL, SITE_NAME } from '../../../site';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const faqs = [
+  {
+    q: 'كيف يعمل طلب عرض السعر؟',
+    a: 'املأ النموذج بمنشأ الشحنة ووجهتها، والبضاعة والوزن والحجم، وشرط التسليم ووسيلة النقل المفضلة. يُرسل طلبك عبر البريد الإلكتروني إلى فريق WorldFreightHub، الذي يوجهه إلى مزوّد على ممر الصين – الخليج. لا يوجد أي التزام أو رسوم لطلب عرض السعر.',
+  },
+  {
+    q: 'هل تتم مشاركة معلوماتي مع أطراف ثالثة؟',
+    a: 'تُشارك فقط التفاصيل اللازمة لإعداد عرض السعر مع مزوّد ذي صلة بمسار شحنتك، ولا يحدث ذلك إلا بعد إرسال النموذج. نحن لا نبيع بيانات الاتصال الخاصة بك ولا ننشرها.',
+  },
+  {
+    q: 'ما معنى DDP وDAP وFOB؟',
+    a: 'يعني DDP أن البائع (الشاحن) يتحمل الرسوم الجمركية والضرائب والتسليم النهائي؛ ويشمل DAP التسليم إلى المكان المحدد دون التخليص الجمركي على الواردات؛ ويعني FOB أن المشتري يتحمل المسؤولية بمجرد تحميل البضاعة في نقطة المنشأ. اختر DDP للحصول على تكلفة إجمالية للوصول من الباب إلى الباب شاملة الضرائب.',
+  },
+  {
+    q: 'هل أحتاج إلى شهادة SABER للسعودية؟',
+    a: 'بالنسبة لمعظم السلع الاستهلاكية والصناعية الخاضعة للرقابة، نعم — إذ يلزم الحصول على شهادة SABER (مع شهادة مطابقة SABER) قبل وصول البضاعة إلى السعودية. ويمكن للمزوّد إرشادك بشأن ما إذا كانت فئة منتجك تتطلب ذلك.',
+  },
+  {
+    q: 'ما المعلومات التي ينبغي أن أجهزها للحصول على عرض سعر دقيق؟',
+    a: 'اسم المنتج ورمز النظام المنسق HS، وعدد الكراتين وأبعادها، والوزن الإجمالي، وقيمة البضاعة (للتأمين والرسوم)، ومدينة الاستلام في الصين، وعنوان التسليم النهائي. كلما كان الحجم والوزن أدق، كان السعر أدق.',
+  },
+  {
+    q: 'هل يمكنني طلب عرض سعر عبر واتساب بدلاً من ذلك؟',
+    a: 'نعم. إذا كنت تفضل ذلك، أرسل التفاصيل نفسها إلى martin@dinweys.com وسنوجه طلبك. نوجه الطلبات إلى مزوّدين يستجيبون عادة عبر البريد الإلكتروني أو واتساب.',
+  },
+  {
+    q: 'متى سأستلم عرض السعر؟',
+    a: 'يعتمد وقت الاستجابة على المزوّد واكتمال التفاصيل التي قدمتها، لكن معظم طلبات عرض الأسعار على هذا الممر تتم الإجابة عنها خلال يوم إلى يومي عمل.',
+  },
+];
+
+const schema = [
+  {
+    type: 'ContactPage',
+    data: {
+      name: 'اطلب عرض سعر للشحن',
+      url: `${SITE_URL}/ar/get-quote/`,
+      description:
+        'اطلب عرض سعر لشحنتك من الصين إلى دول مجلس التعاون الخليجي — المنشأ والوجهة والبضاعة والوزن والحجم وشرط التسليم ووسيلة النقل.',
+      provider: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title="اطلب عرض سعر للشحن — من الصين إلى الخليج"
+  description="اطلب عرض سعر لشحنتك من الصين إلى دول مجلس التعاون الخليجي — المنشأ والوجهة والبضاعة والوزن والحجم وشرط التسليم ووسيلة النقل."
+  canonical={`${SITE_URL}/ar/get-quote/`}
+  schema={schema}
+  noindex={true}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: 'اطلب عرض سعر' }]} />
+      <h1>اطلب عرض سعر للشحن</h1>
+      <p class="lead">
+        أخبرنا عن شحنتك وسنوجهها إلى مزوّد على ممر الصين – الخليج. لا يوجد أي
+        التزام أو رسوم لطلب عرض السعر.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="grid grid--2">
+      <div>
+        <h2>تفاصيل الشحنة</h2>
+        <p class="muted small">
+          الحقول المعلّمة بعلامة * مطلوبة. كلما كان وصف البضاعة والوزن والحجم
+          أدق، كان السعر أدق.
+        </p>
+        <form
+          class="form-card mt-2"
+          action="https://formsubmit.co/martin@dinweys.com"
+          method="post"
+        >
+          <input type="hidden" name="_subject" value="New freight quote request — worldfreighthub.net" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">الاسم *</label>
+              <input type="text" id="name" name="name" required placeholder="اسمك" />
+            </div>
+            <div class="field">
+              <label for="email">البريد الإلكتروني *</label>
+              <input type="email" id="email" name="email" required placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label for="whatsapp">واتساب / الهاتف (اختياري)</label>
+              <input type="text" id="whatsapp" name="whatsapp" placeholder="+86 / +966 ..." />
+            </div>
+            <div class="field">
+              <label for="origin">المنشأ (ميناء / مدينة) *</label>
+              <input type="text" id="origin" name="origin" required placeholder="مثال: شانغهاي" />
+            </div>
+            <div class="field">
+              <label for="destination">الوجهة (ميناء / مدينة) *</label>
+              <input type="text" id="destination" name="destination" required placeholder="مثال: جدة" />
+            </div>
+            <div class="field">
+              <label for="cargo">وصف البضاعة *</label>
+              <input type="text" id="cargo" name="cargo" required placeholder="مثال: 200 كرتونة إلكترونيات" />
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="weight">الوزن (كجم) *</label>
+                <input type="number" id="weight" name="weight" min="0" step="any" required />
+              </div>
+              <div class="field">
+                <label for="cbm">الحجم (CBM) *</label>
+                <input type="number" id="cbm" name="cbm" min="0" step="any" required />
+              </div>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="incoterm">شرط التسليم (Incoterm) *</label>
+                <select id="incoterm" name="incoterm" required>
+                  <option value="DDP">DDP (من الباب إلى الباب، شامل الضرائب)</option>
+                  <option value="DAP">DAP (تسليم في المكان المحدد)</option>
+                  <option value="FOB">FOB</option>
+                  <option value="CIF">CIF</option>
+                  <option value="EXW">EXW</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="method">وسيلة النقل *</label>
+                <select id="method" name="method" required>
+                  <option value="FCL">FCL (حاوية كاملة)</option>
+                  <option value="LCL">LCL (حاوية مشتركة)</option>
+                  <option value="Air">الشحن الجوي</option>
+                  <option value="Rail">الشحن بالسكك الحديدية</option>
+                  <option value="Express">الشحن السريع</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="notes">ملاحظات إضافية (اختياري)</label>
+              <textarea id="notes" name="notes" placeholder="قيمة البضاعة، تاريخ التسليم المستهدف، احتياجات SABER/SASO، إلخ."></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">إرسال طلب عرض السعر</button>
+            <p class="muted small">
+              بإرسالك النموذج فأنت توافق على أن يتم التواصل معك بخصوص طلب عرض
+              السعر هذا فقط. راجع الأسئلة الشائعة أدناه لمعرفة كيفية التعامل مع
+              بياناتك.
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <div>
+        <h2>ماذا يحدث بعد ذلك</h2>
+        <div class="form-card mt-2">
+          <ol class="mt-0" style="display:grid; gap:0.75rem; padding-left:1.25rem;">
+            <li>يُرسل طلبك عبر البريد الإلكتروني إلى فريق WorldFreightHub.</li>
+            <li>نطابقه مع مزوّد ذي صلة بمسار الصين – الخليج الخاص بك.</li>
+            <li>يرد المزوّد عبر البريد الإلكتروني أو واتساب مع السعر ومدة النقل.</li>
+          </ol>
+          <p class="mt-2">
+            تفضل البريد الإلكتروني؟ راسلنا على
+            <a href="mailto:martin@dinweys.com"> martin@dinweys.com</a>
+            مع تفاصيل الشحنة نفسها.
+          </p>
+        </div>
+        <div class="form-card mt-2">
+          <h3 class="mt-0">ما يُستحسن معرفته قبل طلب عرض السعر</h3>
+          <p class="small">
+            بالنسبة للسعودية، تحتاج معظم السلع الخاضعة للرقابة إلى شهادة SABER قبل
+            الوصول. تبلغ الرسوم الجمركية على واردات دول مجلس التعاون الخليجي عادة
+            5% من قيمة CIF؛ وتختلف ضريبة القيمة المضافة باختلاف الدولة (السعودية
+            15%، الإمارات 5%). هذه الأرقام استرشادية — وسيؤكد لك مزوّدك التكلفة
+            الإجمالية للوصول بدقة.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>أسئلة شائعة حول طلب عرض السعر</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+</BaseLayout>

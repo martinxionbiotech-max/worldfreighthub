@@ -1,0 +1,971 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/sea-vs-air-freight-china-to-gcc/`;
+
+const wfhRouteData: Source = {
+  id: 'wfh-gcc-sea-air-route-data',
+  name: 'WorldFreightHub route data — China to the seven main GCC destination ports (sea FCL 20ft/40ft, LCL per-CBM and typical transit days)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhMethods: Source = {
+  id: 'wfh-gcc-sea-air-methods',
+  name: 'WorldFreightHub methods data — FCL/LCL capacity, ~15 CBM crossover and demurrage benchmarks',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const cargofromchinaSaudi: Source = {
+  id: 'cargofromchina-saudi',
+  name: 'Cargo From China — China to Saudi Arabia guide (air SAR 26.5–30.5/kg, 2–5 business days)',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const cargofromchinaUae: Source = {
+  id: 'cargofromchina-uae',
+  name: 'Cargo From China — China to UAE guide (air AED 20–23.5/kg, express and DDP air)',
+  url: 'https://cargofromchina.com/china-uae/',
+  type: 'industry',
+};
+
+const docshipper: Source = {
+  id: 'docshipper-uae',
+  name: 'China DocShipper — China to UAE freight guide',
+  url: 'https://china.docshipper.com/en/freight-shipping-china-uae/',
+  type: 'industry',
+};
+
+const freightos: Source = {
+  id: 'freightos-riyadh-air',
+  name: 'Freightos — Shanghai/Shenzhen to Riyadh air benchmarks ($917–$1,223 and $920–$1,250 per 100 kg)',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+
+const ddpchain: Source = {
+  id: 'ddpchain-saudi-air',
+  name: 'DDPChain — China to Saudi Arabia guide (general air $880–$1,350 per 100 kg)',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance (volumetric weight = L × W × H cm ÷ 6,000)',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const customsSources: Source[] = sourcesByIds([
+  'zatca',
+  'dubai-customs',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+const complianceSources: Source[] = [...customsSources, wfhCountryData];
+const seaRateSources: Source[] = [wfhRouteData, wfhMethods];
+const airRateSources: Source[] = [ddpchain, cargofromchinaSaudi, freightos, cargofromchinaUae, docshipper];
+const transitSources: Source[] = [wfhRouteData, cargofromchinaSaudi, cargofromchinaUae];
+const chargeableSources: Source[] = [iata];
+const costSources: Source[] = [...customsSources, wfhMethods, wfhRouteData];
+const decisionSources: Source[] = [wfhRouteData, wfhMethods];
+
+const seaRateRows = [
+  {
+    port: 'ميناء جدة الإسلامي (SAJED)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي (AEJEA)',
+    twenty: '$1,500 – $3,250',
+    forty: '$2,200 – $3,950',
+    lcl: '$60 – $180 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء حمد (QAHMD)',
+    twenty: '$1,700 – $2,500',
+    forty: '$2,500 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ (KWSWK)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$70 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار (OMSOH)',
+    twenty: '$1,500 – $2,600',
+    forty: '$2,200 – $3,800',
+    lcl: '$60 – $110 per CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان (BHKBS)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airRateRows = [
+  {
+    market: 'السعودية',
+    benchmark:
+      'شحن جوي عام $8.80–$13.50/kg · Freightos $917–$1,223/100 kg (شنغهاي→الرياض) و $920–$1,250/100 kg (شنتشن→الرياض) · SAR 26.5–30.5/kg (cargofromchina 22kg+/101kg+) · شحن سريع 10 kg $315–$420',
+    transit: '2–5 أيام عمل · 6–10 أيام · 10–15 يومًا DDP جوي',
+    confidence: 'LOW',
+  },
+  {
+    market: 'الإمارات',
+    benchmark: 'AED 20–23.5/kg (≈$5.45–$6.40/kg)',
+    transit: '2–4 أيام سريع · 3–6 أيام DDP جوي · 3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    market: 'قطر',
+    benchmark: 'غير منشور — اطلب عرض سعر لكل kg',
+    transit: '3–7 أيام من مطار إلى مطار (غير موثق)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'الكويت',
+    benchmark: 'غير منشور — اطلب عرض سعر لكل kg',
+    transit: '3–7 أيام من مطار إلى مطار (غير موثق)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'عُمان',
+    benchmark: 'غير منشور — اطلب عرض سعر لكل kg',
+    transit: '3–7 أيام من مطار إلى مطار (غير موثق)',
+    confidence: 'LOW',
+  },
+  {
+    market: 'البحرين',
+    benchmark: 'غير منشور — اطلب عرض سعر لكل kg',
+    transit: '3–7 أيام من مطار إلى مطار (غير موثق)',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    port: 'ميناء جدة الإسلامي (SAJED)',
+    country: 'السعودية',
+    sea: '~18 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    country: 'السعودية',
+    sea: '~20 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'جبل علي (AEJEA)',
+    country: 'الإمارات',
+    sea: '~21 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'ميناء حمد (QAHMD)',
+    country: 'قطر',
+    sea: '~22 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'الشويخ (KWSWK)',
+    country: 'الكويت',
+    sea: '~24 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'صحار (OMSOH)',
+    country: 'عُمان',
+    sea: '~19 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+  {
+    port: 'خليفة بن سلمان (BHKBS)',
+    country: 'البحرين',
+    sea: '~22 يومًا · نطاق 15–30 يومًا',
+    air: '3–7 أيام من مطار إلى مطار',
+    confidence: 'LOW',
+  },
+];
+
+const decisionMatrixRows = [
+  {
+    dimension: 'الحجم والكثافة',
+    chooseSea: 'بضائع كبيرة أو كثيفة أو ثقيلة تقترب من حصة حاوية',
+    chooseAir: 'بضائع صغيرة أو خفيفة أو مدمجة بوزن قابل للتحصيل منخفض',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'الكثافة القيمية',
+    chooseSea: 'قيمة منخفضة أو متوسطة حيث تكون حصة الشحن مادية',
+    chooseAir: 'قيمة عالية حيث يكون الشحن جزءًا صغيرًا من السعر',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'الاستعجال',
+    chooseSea: 'نافذة تسليم تستطيع استيعاب 15–30 يومًا',
+    chooseAir: 'بضائع حرجة لنفاد المخزون أو يجب أن تصل هذا الأسبوع',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'مدة الصلاحية / قابلية الكسر',
+    chooseSea: 'سلع متينة ومستقرة تتحمل رحلة أطول',
+    chooseAir: 'بضائع قابلة للتلف أو هشة أو حساسة للوقت',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'رأس المال العامل',
+    chooseSea: 'مخزون يمكن التنبؤ به حيث تهم تكلفة الوحدة أكثر',
+    chooseAir: 'دورة نقد إلى إيراد أقصر تبرر العلاوة',
+    confidence: 'LOW',
+  },
+  {
+    dimension: 'التعرض للامتثال',
+    chooseSea: 'تنطبق قواعد الرسوم وضريبة القيمة المضافة وHS وسابر نفسها',
+    chooseAir: 'تنطبق القواعد نفسها — الجو لا يلغي أبدًا الرسوم أو ضريبة القيمة المضافة أو HS أو سابر',
+    confidence: 'HIGH',
+  },
+];
+
+const billingRows = [
+  {
+    basis: 'وحدة الفوترة',
+    sea: 'لكل حاوية (FCL) أو لكل CBM (LCL)',
+    air: 'لكل كيلوغرام قابل للتحصيل — الأعلى بين الوزن الفعلي والحجمي',
+    confidence: 'LOW',
+  },
+  {
+    basis: 'حساب الحجم',
+    sea: 'CBM = الطول × العرض × الارتفاع (م) أو مكعب الحاوية؛ ولـ LCL حد أدنى 1 CBM',
+    air: 'الوزن الحجمي = الطول × العرض × الارتفاع (سم) ÷ 6,000؛ وبعض الناقلين يستخدمون ÷ 5,000',
+    confidence: 'MEDIUM',
+  },
+  {
+    basis: 'حساسية الكثافة',
+    sea: 'يتدرج بالحجم؛ والوزن أقل أهمية حتى حد الحاوية',
+    air: 'يتدرج بالوزن القابل للتحصيل، لذا تدفع البضائع الخفيفة كبيرة الحجم أعلى بكثير',
+    confidence: 'LOW',
+  },
+  {
+    basis: 'نقطة التعادل التخطيطية',
+    sea: 'يفوز FCL عادة فوق ~15 CBM؛ وLCL تحته',
+    air: 'يفوز الجو عندما تتفوق السرعة والكثافة القيمية على الفاتورة',
+    confidence: 'MEDIUM',
+  },
+];
+
+const workedExampleRows = [
+  {
+    line: 'أبعاد الشحنة والوزن الفعلي',
+    value: '2 CBM · 180 kg وزن فعلي',
+    note: 'شحنة معقولة خفيفة وكبيرة الحجم للتجارة الإلكترونية',
+  },
+  {
+    line: 'شحن بحري LCL — معيار الخليج (2 CBM × $20–$110)',
+    value: '$40 – $220',
+    note: 'حساب توضيحي على معيار LCL متوسط الموثوقية',
+  },
+  {
+    line: 'الوزن القابل للتحصيل جوًا (2,000,000 سم³ ÷ 6,000)',
+    value: '333.33 kg',
+    note: 'الوزن الحجمي يتجاوز 180 kg الفعلي بنحو 1.85×',
+  },
+  {
+    line: 'الجو بمعيار الإمارات (333.33 kg × $5.45–$6.40)',
+    value: '$1,816.65 – $2,133.31',
+    note: 'حساب على معيار الجو الإماراتي منخفض الموثوقية',
+  },
+  {
+    line: 'الجو بمعيار السعودية (333.33 kg × $8.80–$13.50)',
+    value: '$2,933.30 – $4,499.96',
+    note: 'حساب على معيار الجو السعودي منخفض الموثوقية',
+  },
+  {
+    line: 'الخلاصة التوضيحية',
+    value: 'الجو يفوتر 333.33 kg بدلًا من 180 kg',
+    note: 'البضائع الخفيفة كبيرة الحجم مكلفة جوًا — تحقق من عروض الأسعار المباشرة',
+  },
+];
+
+const densityRows = [
+  {
+    scenario: 'البديل الخفيف · 2 CBM · 180 kg فعلي',
+    sea: '$40 – $220 (2 CBM LCL)',
+    air: '$1,816.65–$2,133.31 الإمارات · $2,933.30–$4,499.96 السعودية',
+    note: 'الجو يفوتر 333.33 kg حجميًا بدلًا من 180 kg',
+  },
+  {
+    scenario: 'البديل الكثيف · 2 CBM · 2,000 kg فعلي',
+    sea: '$40 – $220 (2 CBM LCL)',
+    air: '$10,900–$12,800 الإمارات · $17,600–$27,000 السعودية',
+    note: 'يصبح الوزن القابل للتحصيل 2,000 kg كاملًا؛ والجو متطرف',
+  },
+];
+
+const portAirportRows = [
+  {
+    seaport: 'ميناء جدة الإسلامي (SAJED)',
+    country: 'السعودية',
+    airport: 'JED (جدة) · RUH (الرياض)',
+    marketNote: 'غرب السعودية',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    country: 'السعودية',
+    airport: 'DMM (الدمام) · RUH (الرياض)',
+    marketNote: 'المنطقة الشرقية والرياض',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'جبل علي (AEJEA)',
+    country: 'الإمارات',
+    airport: 'DXB (دبي الدولي) · DWC (آل مكتوم)',
+    marketNote: 'دبي والإمارات الشمالية',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'ميناء حمد (QAHMD)',
+    country: 'قطر',
+    airport: 'DOH (حمد الدولي)',
+    marketNote: 'كل قطر',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'الشويخ (KWSWK)',
+    country: 'الكويت',
+    airport: 'KWI (الكويت الدولي)',
+    marketNote: 'مدينة الكويت ووسط الكويت',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'صحار (OMSOH)',
+    country: 'عُمان',
+    airport: 'MCT (مسقط الدولي)',
+    marketNote: 'شمال عُمان ومسقط',
+    confidence: 'HIGH',
+  },
+  {
+    seaport: 'خليفة بن سلمان (BHKBS)',
+    country: 'البحرين',
+    airport: 'BAH (البحرين الدولي)',
+    marketNote: 'البحرين + الجسر نحو شرق السعودية',
+    confidence: 'HIGH',
+  },
+];
+
+const costCompositionRows = [
+  {
+    item: 'الشحن البحري — FCL',
+    mode: 'بحري',
+    who: 'الناقل / وكيل الشحن',
+    magnitude: '$1,500–$8,100 حسب ميناء الوجهة',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'الشحن البحري — LCL',
+    mode: 'بحري',
+    who: 'الناقل / وكيل الشحن',
+    magnitude: '$20–$180 لكل CBM حسب الميناء',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'الشحن الجوي',
+    mode: 'جوي',
+    who: 'شركة الطيران / وكيل الشحن',
+    magnitude: '$5.45–$13.50/kg للسعودية والإمارات فقط؛ وبقية الخليج غير منشورة — اطلب عرض سعر',
+    confidence: 'LOW',
+  },
+  {
+    item: 'مناولة محطة المنشأ (OTHC)',
+    mode: 'بحري',
+    who: 'محطة الصين / الناقل',
+    magnitude: 'غير منشور — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'مناولة محطة الوجهة (DTHC)',
+    mode: 'بحري',
+    who: 'محطة الخليج / الناقل',
+    magnitude: 'غير منشور — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'تجميع / فك تجميع CFS',
+    mode: 'بحري (LCL)',
+    who: 'مشغل CFS عند الطرفين',
+    magnitude: 'غير منشور — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الوقود / تعديل الوقود',
+    mode: 'بحري',
+    who: 'الناقل البحري',
+    magnitude: 'رسوم ناقل إضافية؛ غير منشورة — اطلب تفصيلًا',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المستندات / بوليصة الشحن',
+    mode: 'بحري',
+    who: 'الناقل / وكيل الشحن / المخلص',
+    magnitude: 'غير منشور — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الوقود',
+    mode: 'جوي',
+    who: 'شركة الطيران',
+    magnitude: 'غير منشور — اطلب تفصيلًا',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الأمن ومناولة المحطة',
+    mode: 'جوي',
+    who: 'شركة الطيران / المناولة الأرضية',
+    magnitude: 'غير منشور — اطلب تفصيلًا',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التخليص الجمركي / السمسرة',
+    mode: 'كلاهما',
+    who: 'المخلص / سلطة الجمارك',
+    magnitude: 'غير منشور — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'غرامة التأخير / رسوم الاحتجاز',
+    mode: 'كلاهما (حاويات بحرية بشكل أساسي)',
+    who: 'المحطة + الناقل البحري',
+    magnitude: '$75–$300/يوم بعد 3–7 أيام حرة',
+    confidence: 'MEDIUM',
+  },
+];
+
+const vatRows = [
+  { country: 'السعودية', vat: '15%', note: 'أعلى ضريبة قيمة مضافة في الخليج؛ تضاف فوق رسوم 5%', confidence: 'HIGH' },
+  { country: 'الإمارات', vat: '5%', note: 'يمكن للمناطق الحرة تأجيل الرسوم حتى دخول البر الرئيسي', confidence: 'HIGH' },
+  { country: 'قطر', vat: '0% (لا ضريبة بعد)', note: 'من المتوقع ضريبة ~5%؛ أكد الجدول الزمني محليًا', confidence: 'HIGH' },
+  { country: 'الكويت', vat: '0% (لا ضريبة)', note: 'وُقّعت اتفاقية الخليج ولم تُنفذ بعد', confidence: 'HIGH' },
+  { country: 'عُمان', vat: '5%', note: 'نفس ضريبة الإمارات؛ بوابة صحار أقل ازدحامًا', confidence: 'HIGH' },
+  { country: 'البحرين', vat: '10%', note: 'ثاني أعلى ضريبة في الخليج؛ الجسر بديل نحو السعودية', confidence: 'HIGH' },
+];
+
+const faqs = [
+  {
+    q: 'هل الشحن البحري أم الجوي أرخص من الصين إلى الخليج؟',
+    a: 'البحر دائمًا تقريبًا أرخص للوحدة عند الأحجام المهمة: $1,500–$8,100 لكل FCL و$20–$180 لكل CBM، مقابل نحو $5.45–$13.50/kg جوًا للسعودية والإمارات. يبرر الجو نفسه بالسرعة أو الكثافة القيمية أو الاستعجال، لا بالتكلفة المعلنة. وكلا المجموعتين لقطات — أعد التسعير لشحنتك الفعلية.',
+  },
+  {
+    q: 'كيف يغيّر الوزن القابل للتحصيل قرار البحر مقابل الجو؟',
+    a: 'يُفوتر الجو على الوزن القابل للتحصيل — الأعلى بين الوزن الفعلي والحجمي، حيث الوزن الحجمي = الطول × العرض × الارتفاع (سم) ÷ 6,000 (وبعض الناقلين يستخدم 5,000). يفوتر الشحن البحري LCL لكل CBM وFCL لكل حاوية. وتُفوتر البضائع الخفيفة كبيرة الحجم بأعلى بكثير من وزنها الفعلي جوًا، ما يرجّح البحر.',
+  },
+  {
+    q: 'هل يمكنك عرض مثال عملي للبحر مقابل الجو لشحنة 2 CBM و180 kg؟',
+    a: 'نعم، كحساب توضيحي. الشحن البحري LCL نحو $40–$220 (2 CBM × معيار الممر $20–$110). والوزن القابل للتحصيل جوًا هو 2,000,000 سم³ ÷ 6,000 = 333.33 kg، لذا يبلغ الجو نحو $1,816.65–$2,133.31 بمعيار الإمارات أو $2,933.30–$4,499.96 بمعيار السعودية. النقطة هي الوزن القابل للتحصيل 333.33 kg — تحقق من عروض الأسعار المباشرة.',
+  },
+  {
+    q: 'هل يلغي الشحن الجوي رسوم الخليج أو ضريبة القيمة المضافة أو سابر؟',
+    a: 'لا. يقصّر الجو ساعة النقل لا ساعة الامتثال. خط أساس الرسوم الخليجية 5% من قيمة CIF، وتُفرض ضريبة القيمة المضافة على القيمة الشاملة للرسوم بمعدل الوجهة، ويسري تصنيف HS، ويجب الحصول على شهادة سابر السعودية SC قبل الوصول. ويواجه البحر والجو الأوراق نفسها.',
+  },
+  {
+    q: 'هل أحتاج إلى سابر للشحن الجوي إلى السعودية؟',
+    a: 'نعم، إذا كانت البضاعة منظمة. سابر/SASO للسعودية فقط، ويجب الحصول على شهادة سابر SC قبل الوصول — سارية منذ 1 يناير 2025. والشحنة الجوية التي تصل بدونها تتراكم عليها رسوم التخزين وغرامة التأخير تمامًا مثل الشحنة البحرية. والدول الخليجية الخمس الأخرى لا تتطلب سابر.',
+  },
+  {
+    q: 'ما الرسوم الخفية التي تنطبق على الشحن البحري إلى الخليج؟',
+    a: 'بخلاف الشحن البحري، توقع OTHC/DTHC وتجميع وفك تجميع CFS لشحن LCL ورسوم الوقود ورسوم المستندات وساعة غرامة التأخير/رسوم الاحتجاز. ومبالغ THC وCFS والوقود والمستندات غير منشورة — اطلبها كعرض سعر مفصل.',
+  },
+  {
+    q: 'ما الرسوم الخفية التي تنطبق على الشحن الجوي إلى الخليج؟',
+    a: 'بخلاف سعر الكيلوغرام، توقع رسوم الوقود ورسوم الأمن ومناولة المحطة والتخليص الجمركي/السمسرة. وهذه المبالغ غير منشورة — اطلبها كعرض سعر مفصل وأضفها إلى التكلفة الإجمالية للوصول.',
+  },
+  {
+    q: 'كم تبلغ غرامة التأخير ورسوم الاحتجاز على هذا الممر؟',
+    a: 'تضع بيانات الوسائل غرامة التأخير ورسوم الاحتجاز في الخليج عند $75–$300 يوميًا بعد نافذة مهلة حرة 3–7 أيام. وقد يحول احتجاز جمركي أو سابر تأخير أسبوع إلى مئات الدولارات لكل حاوية، لذا أكمل التخليص واحجز الرحلة البرية الداخلية قبل التفريغ.',
+  },
+  {
+    q: 'ما أفضل خطة هجينة بحرية + جوية للخليج؟',
+    a: 'استخدم البحر لحجم القاعدة المتوقع بأقل تكلفة للوحدة، والجو فقط لسد نفاد المخزون أو إطلاق موسمي أو دفعة ترويجية. هذا يحمي هامش القاعدة مع الحفاظ على التوافر، دون دفع أسعار الجو لكامل الحجم.',
+  },
+  {
+    q: 'لماذا أسعار البحر السعودية أوسع من جبل علي وبقية موانئ الخليج؟',
+    a: 'تقع البوابات السعودية على مسارين مختلفين: جدة على البحر الأحمر والدمام على الخليج العربي عبر مضيق هرمز. وتتحرك علاوات مخاطر الحرب وتكاليف الوقود مع دورة الأخبار، ولهذا يمتد نطاق 20ft السعودي $1,500–$6,200 بينما ينضغط جبل علي إلى $1,500–$3,250. ويتجاوز الجو المسارين بعلاوة كبيرة.',
+  },
+  {
+    q: 'هل يسري ISF على الخليج؟',
+    a: 'لا. ISF (إيداع أمن المستورد) برنامج أمريكي ولا يسري على واردات الخليج. لدى السعودية خطوتها المسبقة عبر سابر ونافذة فسح الموحدة — لا تنسخ ISF الأمريكي إلى سير عمل الصين-الخليج.',
+  },
+  {
+    q: 'كيف أحصل على مقارنة بحرية وجوية حقيقية للخليج؟',
+    a: 'اطلب عرضي سعر مفصلين على الأساس نفسه: المنشأ والبضاعة ورمز HS والأبعاد والوزن والوجهة الخليجية النهائية. واطلب معًا الشحن وOTHC/DTHC أو الوقود/الأمن/المحطة وCFS إذا كان LCL والمستندات والمهلة الحرة وغرامة التأخير/رسوم الاحتجاز والرسوم وضريبة القيمة المضافة والرحلة البرية الداخلية. فالسعر المعلن لا يكون أبدًا التكلفة الإجمالية للوصول.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن البحري مقابل الجوي من الصين إلى الخليج: التكلفة ومدة النقل والقرار المهم (أغسطس 2026)',
+      description:
+        'الشحن البحري مقابل الجوي من الصين إلى الخليج على مستوى الممر: أسعار FCL/LCL ومعايير الجو لكل kg ومدة النقل والوزن القابل للتحصيل والرسوم الخفية والامتثال وخطة هجينة.',
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن البحري مقابل الجوي من الصين إلى الخليج: دليل التكلفة ومدة النقل والقرار (أغسطس 2026)"
+  description="الشحن البحري مقابل الجوي من الصين إلى الخليج: أسعار FCL/LCL ومعايير الجو لكل kg ومدة النقل والوزن القابل للتحصيل والرسوم الخفية والامتثال وخطة هجينة."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: 'الشرق الأوسط', href: '/ar/middleeast/' },
+          { label: 'الشحن البحري مقابل الجوي من الصين إلى الخليج' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث أغسطس 2026</span>
+      <h1>الشحن البحري مقابل الجوي من الصين إلى الخليج: التكلفة ومدة النقل والقرار الذي يهم فعلاً</h1>
+      <p class="lead">
+        قرار البحر مقابل الجو على مستوى الممر عبر دول الخليج الست والموانئ البحرية السبعة: التكلفة، ومدة النقل، وقاعدة الوزن القابل للتحصيل التي تجعل البضائع كبيرة الحجم مكلفة جوًا، والرسوم الخفية، ولماذا لا يلغي الجو الرسوم أو ضريبة القيمة المضافة أو سابر. استخدم البحر للقاعدة والجو للاستثناء، وقارن بينهما على أساس التكلفة الإجمالية للوصول نفسها.
+      </p>
+      <p class="small muted">
+        تفصل شارات الموثوقية القواعد الموثقة عن اللقطات الاسترشادية. نطاقات FCL/LCL البحرية بيانات مسارات متوسطة الموثوقية؛ وأرقام الجو لكل kg لقطات أغسطس 2026 منخفضة الموثوقية من Freightos وCargo From China وDDPChain وDocShipper. وتبقى الرسوم غير المحددة تحت طلب عرض سعر بدلًا من اختراع أرقام.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">الشحن البحري الجزئي LCL</span>
+          <span class="fact-value">$20–$180/CBM <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الجو (السعودية والإمارات فقط)</span>
+          <span class="fact-value">$5.45–$13.50/kg <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل البحري</span>
+          <span class="fact-value">15–30 يومًا <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الوزن القابل للتحصيل</span>
+          <span class="fact-value">L×W×H/6000 <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">غرامة التأخير</span>
+          <span class="fact-value">$75–$300/day <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. جدول أسعار البحر: معايير FCL وLCL للبوابات الخليجية السبع</h2>
+    <p>
+      لكل بوابة ثلاثة أسطر منشورة — <strong>20ft FCL</strong> و<strong>40ft FCL</strong> و<strong>LCL لكل CBM</strong> — من بيانات المسارات متوسطة الموثوقية، وليست عروض أسعار مباشرة. والنطاقات السعودية هي الأوسع لأن مخاطر البحر الأحمر ومضيق هرمز مسعّرة فيها.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'ميناء الوجهة' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={seaRateRows}
+      caption="معايير الشحن البحري للموانئ الخليجية السبع الرئيسية. بيانات مسارات متوسطة الموثوقية — اطلب عروض أسعار مباشرة قبل الحجز."
+    />
+    <SourceList locale={locale} sources={seaRateSources} title="المصادر — أسعار البحر في الخليج" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. جدول أسعار الجو: معايير موثقة للسعودية والإمارات، وطلب عرض سعر للبقية</h2>
+      <p>
+        أبحاث الجو لهذا الممر غير متساوية: لدى السعودية والإمارات لقطات منشورة؛ بينما لا تملك قطر والكويت وعُمان والبحرين لقطات. نحدد الأسواق الناقصة بعبارة <strong>«غير منشور — اطلب عرض سعر لكل kg»</strong> بدلًا من اختراع رقم. وكل رقم منخفض الموثوقية ويجب إعادة تسعيره حسب بضاعتك وزوج المطارات.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'market', label: 'السوق' },
+          { key: 'benchmark', label: 'المعيار الموثق (LOW)' },
+          { key: 'transit', label: 'لقطة مدة النقل' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={airRateRows}
+        caption="معايير الجو لقطات سوق أغسطس 2026 من Freightos وCargo From China وDDPChain وDocShipper — وليست عروض أسعار ناقل."
+      />
+      <SourceList locale={locale} sources={airRateSources} title="المصادر — معايير الجو في الخليج" />
+
+      <div class="note mt-2">
+        <strong>لا تنقل أبدًا سعر جو سعودي إلى قطر أو الكويت أو عُمان أو البحرين.</strong> اطلب عرض سعر لكل kg لهذه الأسواق الأربعة بدلًا من افتراض انتقال المعيار.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. جدول مدة النقل: أيام البحر النموذجية مقابل نطاق تخطيط الجو حسب الميناء</h2>
+    <p>
+      البحر أبطأ وأكثر تقلبًا مما يوحي به اليوم النموذجي: نطاق التخطيط <strong>15–30 يومًا</strong> وLCL يضيف وقت التجميع. الجو أسرع بوضوح، لكن الأبحاث تدعم نطاقًا عامًا <strong>3–7 أيام من مطار إلى مطار</strong> — غير موثق لقطر والكويت وعُمان والبحرين التي لا معيار موثقًا لمدد النقل الجوي لها.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'بوابة البحر' },
+        { key: 'country', label: 'الدولة' },
+        { key: 'sea', label: 'البحر النموذجي' },
+        { key: 'air', label: 'نطاق تخطيط الجو' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="أيام البحر النموذجية ونطاق الجو 3–7 أيام أرقام تخطيط منخفضة الموثوقية وليست جداول."
+    />
+    <SourceList locale={locale} sources={transitSources} title="المصادر — مدة النقل البحري والجوي في الخليج" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. إطار القرار: متى البحر ومتى الجو</h2>
+      <p>
+        هذا هو جوهر الصفحة. الاختيار مسألة ملاءمة البضاعة والتدفق النقدي، وليس مقارنة أسعار فقط. قيّم الشحنة على <strong>الحجم/الكثافة</strong> و<strong>الكثافة القيمية</strong> و<strong>الاستعجال</strong> و<strong>مدة الصلاحية</strong> و<strong>رأس المال العامل</strong>، ثم اطلب العرضين؛ وتحل الخطة الهجينة التعارضات.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'dimension', label: 'البعد' },
+          { key: 'chooseSea', label: 'اختر البحر عندما...' },
+          { key: 'chooseAir', label: 'اختر الجو عندما...' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={decisionMatrixRows}
+        caption="مصفوفة القرار استرشادية. سطر الامتثال هو السطر الوحيد عالي الموثوقية؛ والبقية أنماط تخطيط وليست قواعد ثابتة."
+      />
+      <SourceList locale={locale} sources={decisionSources} title="المصادر — سياق إطار القرار" />
+
+      <h3 class="mt-3">الوزن القابل للتحصيل مقابل CBM: الحساب الذي يحدد العلاوة</h3>
+      <p>
+        يفوتر الشحن البحري LCL بالمتر المكعب وFCL بالحاوية؛ بينما يفوتر الجو بالكيلوغرام القابل للتحصيل — الأعلى بين الوزن الفعلي والحجمي، حيث الوزن الحجمي = <strong>الطول × العرض × الارتفاع (سم) ÷ 6,000</strong>. ويستخدم بعض الناقلين القسمة على 5,000، ما يرفع الفاتورة.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'basis', label: 'الأساس' },
+          { key: 'sea', label: 'الشحن البحري' },
+          { key: 'air', label: 'الشحن الجوي' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={billingRows}
+        caption="البحر يُسعَّر بالحجم والجو بالوزن القابل للتحصيل. قاعدة القسمة على 6,000 متوسطة الموثوقية؛ والأنماط منخفضة الموثوقية."
+      />
+      <SourceList locale={locale} sources={chargeableSources} title="المصادر — قاعدة الوزن القابل للتحصيل" />
+
+      <div class="note mt-2">
+        <strong>ملاحظة ثانوية — نقطة تعادل FCL/LCL عند ~15 CBM:</strong> ضمن البحر، يفوز FCL عادة فوق نحو 15 CBM ويفوز LCL تحته، لأن FCL سعر صندوق ثابت يوزع على حجمك. ويقف الجو بجانبهما عندما تتفوق السرعة أو الكثافة القيمية على فاتورة الوزن القابل للتحصيل. اقرأ نقطة التعادل كاملة في <a href="/ar/middleeast/fcl-vs-lcl/">دليل FCL مقابل LCL</a>.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. مثال عملي: 2 CBM و180 kg — لماذا البضائع كبيرة الحجم مكلفة جوًا</h2>
+    <p>
+      يوضح هذا الحساب التوضيحي لماذا تهم الكثافة أكثر من سعر الكيلوغرام المعلن للشحنة الخفيفة كبيرة الحجم.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'line', label: 'البند' },
+        { key: 'value', label: 'القيمة التوضيحية' },
+        { key: 'note', label: 'ملاحظة' },
+      ]}
+      rows={workedExampleRows}
+      caption="حساب توضيحي فقط. تحقق من عروض الأسعار المباشرة قبل اتخاذ القرار."
+    />
+    <SourceList locale={locale} sources={[...seaRateSources, ...airRateSources, ...chargeableSources]} title="المصادر — مدخلات المثال العملي" />
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'scenario', label: 'السيناريو' },
+          { key: 'sea', label: 'البحر LCL (2 CBM)' },
+          { key: 'air', label: 'الجو (الوزن القابل للتحصيل)' },
+          { key: 'note', label: 'ملاحظة تخطيطية' },
+        ]}
+        rows={densityRows}
+        caption="حساب توضيحي. البضائع الكثيفة تجعل الجو متطرفًا؛ والبضائع الخفيفة ما تزال تحمل علاوة حجمية."
+      />
+      <SourceList locale={locale} sources={[...seaRateSources, ...airRateSources, ...chargeableSources]} title="المصادر — مثال الكثافة" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. قائمة الموانئ والمطارات: اربط البوابة البحرية الصحيحة بالبوابة الجوية الصحيحة</h2>
+      <p>
+        للممر سبعة موانئ بحرية مسماة ومجموعة مميزة من مطارات الشحن. الاقتران أدناه يتعلق <strong>بخدمة السوق نفسها</strong>، لا بالتواجد في المكان نفسه: تهبط شحنات الرياض الجوية في RUH بينما تُخلى البضائع البحرية في جدة أو الدمام.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'seaport', label: 'الميناء البحري' },
+          { key: 'country', label: 'الدولة' },
+          { key: 'airport', label: 'المطار(ات) المرتبط' },
+          { key: 'marketNote', label: 'السوق المخدوم' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={portAirportRows}
+        caption="اقترانات الموانئ والمطارات حقائق بوابة عالية الموثوقية."
+      />
+      <SourceList locale={locale} sources={[...customsSources, wfhRouteData]} title="المصادر — موانئ ومطارات الخليج" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. هيكل التكلفة: الرسوم الخفية التي تفصل السعر المعلن عن التكلفة الإجمالية للوصول</h2>
+    <p>
+      تتعثر معظم المقارنات عند رسوم الوجهة. يضيف البحر OTHC/DTHC وCFS والوقود والمستندات؛ ويضيف الجو الوقود والأمن ومناولة المحطة والتخليص. لا تنشر اللقطة مبالغ الدولارات لمعظم هذه البنود، لذا هي منخفضة الموثوقية ويجب طلبها كعروض أسعار مفصلة. والبند المحدد الوحيد هو <strong>غرامة التأخير ورسوم الاحتجاز: $75–$300 يوميًا بعد 3–7 أيام حرة</strong>.
+    </p>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'item', label: 'بند التكلفة' },
+        { key: 'mode', label: 'الوسيلة' },
+        { key: 'who', label: 'يُحصَّل بواسطة' },
+        { key: 'magnitude', label: 'القيمة' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={costCompositionRows}
+      caption="الشحن وغرامة التأخير متوسطة الموثوقية؛ ورسوم الوجهة والجو غير المحددة منخفضة الموثوقية."
+    />
+    <SourceList locale={locale} sources={costSources} title="المصادر — هيكل تكلفة الوجهة في الخليج" />
+
+    <div class="note mt-2">
+      <strong>غرامة التأخير مقابل رسوم الاحتجاز:</strong> تفرض المحطة غرامة التأخير أثناء بقاء الحاوية داخل الميناء بعد المهلة الحرة؛ ويفرض الناقل رسوم الاحتجاز أثناء بقائها خارجه. خطط للتخليص وسابر والرحلة البرية الداخلية قبل التفريغ.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الامتثال: الجو لا يلغي الرسوم أو ضريبة القيمة المضافة أو سابر</h2>
+      <p>
+        لا تغيّر وسيلة النقل المعاملة الجمركية. خط أساس الرسوم الخليجية <strong>5% من قيمة CIF</strong>، وتُفرض ضريبة القيمة المضافة على القيمة الشاملة للرسوم بمعدل الوجهة، ويسري تصنيف HS، وتسري سابر السعودية سواء وصلت البضاعة بحرًا أو جوًا. ويفصل الجدول أدناه ملفات ضريبة القيمة المضافة لكل دولة.
+      </p>
+      <DataTable locale={locale}
+        columns={[
+          { key: 'country', label: 'الدولة' },
+          { key: 'vat', label: 'ضريبة القيمة المضافة' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={vatRows}
+        caption="معدلات ضريبة القيمة المضافة بالدولة عالية الموثوقية من بيانات دول الخليج في WorldFreightHub."
+      />
+      <SourceList locale={locale} sources={complianceSources} title="المصادر — الرسوم وضريبة القيمة المضافة في الخليج" />
+
+      <h3 class="mt-3">يجب الحصول على شهادة سابر SC قبل الوصول (السعودية، قاعدة 2025-01-01)</h3>
+      <p>
+        بالنسبة للبضائع المنظمة إلى السعودية، يسجل المستورد في سابر ويحصل على شهادة مطابقة المنتج (PC) ثم شهادة مطابقة الشحنة (SC) لتلك الشحنة. ومنذ <strong>1 يناير 2025، يجب الحصول على SC قبل الوصول</strong> وإلا فشل التخليص. والشحنة الجوية التي تصل بدونها تتراكم عليها رسوم التخزين وغرامة التأخير تمامًا مثل الشحنة البحرية.
+      </p>
+
+      <h3 class="mt-3">تصنيف HS وحدود الإعفاء الجمركي</h3>
+      <p>
+        صنّف البضائع برمز <strong>HS الصحيح</strong> قبل التسعير، لأن الرسوم وضريبة القيمة المضافة وفحص المطابقة تعتمد عليه. تنشر السعودية حد إعفاء <strong>1,000 SAR</strong> والإمارات <strong>1,000 AED</strong>، وكلاهما للطرود الشخصية فقط؛ ولا إعفاء من ضريبة القيمة المضافة. <strong>ISF متطلب أمريكي ولا يسري على الخليج.</strong>
+      </p>
+
+      <div class="note mt-2">
+        <strong>القاعدة التي يجب تكرارها:</strong> الشحن الجوي يزيل وقت الانتظار لا الأوراق. الرسوم وضريبة القيمة المضافة وتصنيف HS وسابر متطابقة للبحر والجو — والفرق الوحيد هو مدة بقاء البضاعة قبل أن تبدأ ساعة الامتثال.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. الخطة الهجينة: البحر للقاعدة والجو للاستثناء</h2>
+    <p>
+      الإجابة الأعلى قيمة لكثير من مستوردي الخليج هي محفظة: ينقل البحر القاعدة المتوقعة بأقل تكلفة للوحدة، بينما يغطي الجو قمة منحنى الطلب بحجم وزن قابل للتحصيل صغير.
+    </p>
+    <div class="note mt-2">
+      <strong>القاعدة التشغيلية:</strong> ينبغي تشغيل طلبات البحر حسب التوقع ومدة التوريد، وطلبات الجو حسب المتبقي من مخزون الأمان. وفي اللحظة التي يصبح فيها الجو هو الافتراضي لا الاستثناء، أعد النظر في إيقاع الشحن البحري ومستوى المخزون الاحتياطي.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>10. ملاحظة جيوسياسية: البحر الأحمر مقابل مضيق هرمز ولماذا يتجاوزهما الجو</h2>
+      <p>
+        تقع جدة على <strong>البحر الأحمر</strong>، حيث كان التوجيه متقلبًا منذ 2023 وأعاد بعض الناقلين التوجيه حول رأس الرجاء الصالح. وتقترب البوابات الست الأخرى عبر <strong>مضيق هرمز</strong>، حيث تتحرك علاوات مخاطر الحرب مع دورة الأخبار — ولهذا الفوارق السعودية واسعة. ويتجاوز الجو المسارين، لكنه يسعّر هذه اليقين بـ $5.45–$13.50/kg بدلًا من كل حاوية.
+      </p>
+      <p>
+        عند تسعير الشحن البحري، اسأل هل تعبر الرحلة السعودية البحر الأحمر أم رأس الرجاء الصالح، وعامل التعرض لهرمز كخط مخاطرة منفصل. راجع <a href="/ar/middleeast/jeddah-vs-dammam/">دليل جدة مقابل الدمام</a> للاختيار الكامل.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>11. الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>12. منهجية البيانات وحداثتها</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">بتحديث أغسطس 2026</span>. تأتي نطاقات البحر وأيام النقل من بيانات مسارات الخليج في WorldFreightHub؛ وتأتي نقطة تعادل ~15 CBM ورقم غرامة التأخير $75–$300/يوم من بيانات الوسائل؛ وتأتي ضريبة القيمة المضافة والرسوم وحد الإعفاء من بيانات دول الخليج. ومعايير الجو لقطات أغسطس 2026 من Freightos وCargo From China وDDPChain وDocShipper — مسماة ومؤرخة ومنخفضة الموثوقية لأنها ليست عروض أسعار ناقل.
+    </p>
+    <p>
+      إذا توفر سعر THC أو CFS أو وقود أو أمن أو محطة أو سعر جو لقطر/الكويت/عُمان/البحرين موثق، تُحدَّث الجداول وتُرفع شارة الموثوقية. وحتى ذلك الحين، تبقى الرسوم غير المحددة منخفضة الموثوقية مع ملاحظة طلب عرض سعر، وتبقى الأمثلة العملية حسابات توضيحية لا أسعارًا ملزمة.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>أدلة الممر والدول ذات الصلة</h2>
+      <div class="grid grid--3 mt-2">
+        <Card locale={locale}
+          title="الشحن البحري مقابل الجوي من الصين إلى الإمارات"
+          href="/ar/middleeast/sea-vs-air-freight-china-to-uae/"
+        />
+        <Card locale={locale}
+          title="الشحن FCL مقابل LCL من الصين إلى الخليج"
+          href="/ar/middleeast/fcl-vs-lcl/"
+        />
+        <Card locale={locale}
+          title="الرسوم الخفية ورسوم الوجهة من الصين إلى الخليج"
+          href="/ar/middleeast/hidden-charges-china-to-gcc/"
+        />
+        <Card locale={locale}
+          title="غرامة التأخير ورسوم الاحتجاز من الصين إلى الخليج"
+          href="/ar/middleeast/demurrage-detention-china-to-gcc/"
+        />
+        <Card locale={locale}
+          title="مقارنة الجمارك والرسوم وضريبة القيمة المضافة في الخليج"
+          href="/ar/middleeast/gcc-customs-duty-comparison/"
+        />
+        <Card locale={locale}
+          title="الشحن الجوي من الصين إلى السعودية"
+          href="/ar/middleeast/air-freight-from-china-to-saudi-arabia/"
+        />
+        <Card locale={locale}
+          title="الشحن الجوي من الصين إلى الإمارات"
+          href="/ar/middleeast/air-freight-from-china-to-uae/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى السعودية"
+          href="/ar/middleeast/shipping-from-china-to-saudi-arabia/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى الإمارات"
+          href="/ar/middleeast/shipping-from-china-to-uae/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى قطر"
+          href="/ar/middleeast/shipping-from-china-to-qatar/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى الكويت"
+          href="/ar/middleeast/shipping-from-china-to-kuwait/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى عُمان"
+          href="/ar/middleeast/shipping-from-china-to-oman/"
+        />
+        <Card locale={locale}
+          title="الشحن من الصين إلى البحرين"
+          href="/ar/middleeast/shipping-from-china-to-bahrain/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عروض أسعار بحرية وجوية لنفس شحنة الخليج"
+      text="أخبرنا بمنشأك وأبعادك ووزنك وبضاعتك ورمز HS ووجهتك الخليجية النهائية، وسنوصلك بمزودين يمكنهم تسعير البحر والجو وخطة هجينة."
+    />
+  </section>
+</BaseLayout>

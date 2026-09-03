@@ -1,0 +1,798 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/transit-time-china-to-gcc/`;
+
+const wfhRouteData: Source = {
+  id: 'wfh-transit-route-data',
+  name: 'WorldFreightHub route data — China to GCC destination ports (typical transit days; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'organization',
+};
+
+const wfhMethodData: Source = {
+  id: 'wfh-transit-method-data',
+  name: 'WorldFreightHub methods data — FCL, LCL, air, express and rail transit windows',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-transit-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const rateSources: Source[] = [wfhRouteData];
+const seaTransitSources: Source[] = [wfhRouteData];
+const methodTransitSources: Source[] = [wfhMethodData, wfhRouteData];
+const decisionSources: Source[] = [wfhMethodData, wfhRouteData];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+    'sipg',
+    'ningbo-zhoushan-port',
+    'shenzhen-port-group',
+  ]),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhMethodData,
+  wfhRouteData,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const rateRows = [
+  {
+    port: 'ميناء جدة الإسلامي (SAJED)',
+    fcl20: '$1,500 – $6,200',
+    fcl40: '$1,900 – $8,100',
+    lcl: '$20 – $110 / CBM',
+    note: 'مسار البحر الأحمر يوسّع الفارق بين مخاطر البحر الأحمر وطريق رأس الرجاء الصالح',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    fcl20: '$1,500 – $6,200',
+    fcl40: '$1,900 – $8,100',
+    lcl: '$20 – $110 / CBM',
+    note: 'علاوة مخاطر الحرب في مضيق هرمز تتحرك مع دورة الأخبار',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي (AEJEA)',
+    fcl20: '$1,500 – $3,250',
+    fcl40: '$2,200 – $3,950',
+    lcl: '$60 – $180 / CBM',
+    note: 'أضيق فارق — أعلى منافسة بين الناقلين على الممر',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء حمد (QAHMD)',
+    fcl20: '$1,700 – $2,500',
+    fcl40: '$2,500 – $3,600',
+    lcl: '$75 – $100 / CBM',
+    note: 'سوق بمنفذ واحد؛ رحلات أقل وجدول أرق',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ (KWSWK)',
+    fcl20: '$1,500 – $2,500',
+    fcl40: '$2,200 – $3,600',
+    lcl: '$70 – $100 / CBM',
+    note: 'مسار منخفض التردد؛ نوافذ أوسع وتقلب أكبر في المسارات',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار (OMSOH)',
+    fcl20: '$1,500 – $2,600',
+    fcl40: '$2,200 – $3,800',
+    lcl: '$60 – $110 / CBM',
+    note: 'ازدحام أقل من جبل علي أو جدة',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان (BHKBS)',
+    fcl20: '$1,500 – $2,500',
+    fcl40: '$2,200 – $3,600',
+    lcl: '$75 – $100 / CBM',
+    note: 'نقل بري عبر جسر الملك فهد إلى شرق السعودية',
+    confidence: 'MEDIUM',
+  },
+];
+
+const seaTransitRows = [
+  {
+    port: 'ميناء جدة الإسلامي',
+    unlocode: 'SAJED',
+    country: 'السعودية',
+    typical: '~18 يومًا',
+    range: '15–30 يومًا',
+    routing: 'البحر الأحمر؛ رحلات مباشرة شائعة وبعض إعادة الشحن عبر سنغافورة/كولومبو؛ يتجنب مضيق هرمز',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبدالعزيز الدمام',
+    unlocode: 'SADMM',
+    country: 'السعودية',
+    typical: '~20 يومًا',
+    range: '15–30 يومًا',
+    routing: 'إعادة شحن في الغالب عبر سنغافورة/كولومبو؛ يعبر مضيق هرمز',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي',
+    unlocode: 'AEJEA',
+    country: 'الإمارات',
+    typical: '~21 يومًا',
+    range: '15–30 يومًا',
+    routing: 'أكثر الجداول كثافة وأكثرها رحلات مباشرة؛ بعض الخدمات عبر سنغافورة',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء حمد',
+    unlocode: 'QAHMD',
+    country: 'قطر',
+    typical: '~22 يومًا',
+    range: '15–30 يومًا',
+    routing: 'رحلات أقل؛ إعادة الشحن شائعة ونوافذ أوسع',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ',
+    unlocode: 'KWSWK',
+    country: 'الكويت',
+    typical: '~24 يومًا',
+    range: '15–30 يومًا',
+    routing: 'مسار منخفض التردد؛ نوافذ جدولة أوسع',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار',
+    unlocode: 'OMSOH',
+    country: 'عُمان',
+    typical: '~19 يومًا',
+    range: '15–30 يومًا',
+    routing: 'ازدحام أقل؛ مدخل خليج عُمان',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان',
+    unlocode: 'BHKBS',
+    country: 'البحرين',
+    typical: '~22 يومًا',
+    range: '15–30 يومًا',
+    routing: 'تردد معتدل؛ مع امتداد بري عبر جسر الملك فهد',
+    confidence: 'MEDIUM',
+  },
+];
+
+const methodRows = [
+  {
+    method: 'شحن بحري FCL (ميناء إلى ميناء)',
+    window: '14–30 يومًا',
+    note: 'رحلات مباشرة 14–20 يومًا؛ إعادة الشحن تضيف أسبوعًا أو أكثر',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'شحن بحري LCL (ميناء إلى ميناء)',
+    window: '15–35 يومًا',
+    note: 'أضف 5–10 أيام مقارنة برحلة FCL مكافئة',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'الشحن الجوي (مطار إلى مطار)',
+    window: '3–7 أيام',
+    note: 'الرحلة ساعات فقط؛ وتضاف فوقها المناولة الأرضية والتخليص والتسليم',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'البريد السريع (من الباب إلى الباب)',
+    window: '3–7 أيام',
+    note: 'أبسط وأسرع اختصار للتخطيط مع أعلى تكلفة لكل kg',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'السكك الحديدية إلى الخليج',
+    window: '18–25 يومًا',
+    note: 'يعتمد على الممر ولا يزال متخصصًا؛ معظم مسارات الخليج تحتاج جسرًا بريًا/بحريًا',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    factor: 'نقطة تعادل الحجم',
+    fcl: 'الأفضل من ~15 CBM فأكثر',
+    lcl: 'الأفضل دون ~15 CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'مدة النقل',
+    fcl: 'أسرع — رحلات مباشرة 14–20 يومًا',
+    lcl: 'أبطأ — يضيف 5–10 أيام للتجميع',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'مخاطر المناولة',
+    fcl: 'حاوية مغلقة مع مناولة أقل',
+    lcl: 'حاوية مشتركة مع مناولة أكثر',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'سلوك التكلفة',
+    fcl: 'سعر ثابت للحاوية ينخفض للوحدة كلما امتلأت',
+    lcl: 'سعر لكل CBM زائد رسوم CFS وحد أدنى 1 CBM',
+    confidence: 'MEDIUM',
+  },
+];
+
+const portListRows = [
+  {
+    gateway: 'شنغهاي (CNSHA)',
+    side: 'منشأ صيني',
+    role: 'أكثر موانئ الحاويات ازدحامًا في العالم — 55.06M TEU (2025)؛ وأكثف رحلات مباشرة إلى الخليج',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'نينغبو-تشوشان (CNNGB)',
+    side: 'منشأ صيني',
+    role: 'ثالث موانئ الحاويات — 43M TEU (2025)؛ الأول عالميًا في حمولة البضائع؛ وغالبًا أرخص قليلًا على مسارات الخليج',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'شنتشن / يانتيان / شيكو (CNSZX)',
+    side: 'منشأ صيني',
+    role: 'بوابة جنوب الصين / دلتا نهر اللؤلؤ للإلكترونيات والسلع الاستهلاكية',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'ميناء جدة الإسلامي (SAJED)',
+    side: 'وجهة خليجية',
+    role: 'بوابة البحر الأحمر، غرب السعودية',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    side: 'وجهة خليجية',
+    role: 'بوابة الخليج العربي، المنطقة الشرقية + وصلة سكة حديد الرياض',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'جبل علي (AEJEA)',
+    side: 'وجهة خليجية',
+    role: 'أكبر ميناء في الشرق الأوسط ومركز إعادة التصدير الإماراتي ومنطقة جافزا الحرة',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'ميناء حمد (QAHMD)',
+    side: 'وجهة خليجية',
+    role: 'البوابة التجارية الوحيدة لقطر',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'الشويخ (KWSWK)',
+    side: 'وجهة خليجية',
+    role: 'بوابة مدينة الكويت العامة/للحاويات',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'صحار (OMSOH)',
+    side: 'وجهة خليجية',
+    role: 'بوابة شمال عُمان للحاويات بمدخل خليج عُمان',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'خليفة بن سلمان (BHKBS)',
+    side: 'وجهة خليجية',
+    role: 'بوابة البحرين؛ وصلة جسر الملك فهد إلى السعودية',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'غرامة التأخير / رسوم الاحتجاز',
+    who: 'الميناء / الناقل',
+    magnitude: 'مهلة حرة ~3–7 أيام؛ رسوم يومية ~$75–$300 بعدها',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'تأمين مخاطر الحرب (مضيق هرمز)',
+    who: 'الناقل / المؤمّن',
+    magnitude: 'ارتفعت من ~0.125% إلى ~0.4%+ لكل رحلة في 2026؛ وتتحرك أسعار الجانب الخليجي مع دورة الأخبار',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'OTHC / DTHC',
+    who: 'ميناء المنشأ / الوجهة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم CFS',
+    who: 'محطة شحن الحاويات',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الوقود / الوقود الإضافية',
+    who: 'الناقل',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المستندات',
+    who: 'الناقل / وكيل الشحن',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'المعاينة الجمركية',
+    who: 'جمارك الوجهة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'شهادة سابر (السعودية فقط)',
+    who: 'منصة سابر / جهة المطابقة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'السمسرة الجمركية',
+    who: 'المخلص المرخص',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كم تستغرق مدة النقل البحري من الصين إلى الخليج؟',
+    a: 'يتراوح النقل النموذجي من ميناء إلى ميناء بين 18–24 يومًا عبر البوابات السبع الرئيسية: جدة ~18، صحار ~19، الدمام ~20، جبل علي ~21، حمد ~22، خليفة بن سلمان ~22، والشويخ ~24 يومًا. ونطاق التخطيط 15–30 يومًا، وقد تضيف إعادة الشحن عبر سنغافورة أو كولومبو أسبوعًا أو أكثر.',
+  },
+  {
+    q: 'أي ميناء خليجي لديه أسرع مدة نقل من الصين؟',
+    a: 'ميناء جدة الإسلامي هو الأسرع في النقل البحري النموذجي بنحو 18 يومًا، ويرجع ذلك إلى أن مسار البحر الأحمر يتجنب مضيق هرمز وأن الرحلات المباشرة شائعة. وتأتي صحار خلفه بنحو 19 يومًا مع ازدحام أقل من المراكز الأكبر.',
+  },
+  {
+    q: 'أي ميناء خليجي لديه أبطأ مدة نقل من الصين؟',
+    a: 'الشويخ في الكويت هو الأبطأ بين البوابات السبع الرئيسية بنحو 24 يومًا نموذجيًا، على مسار منخفض التردد مع إعادة شحن ونوافذ جدولة أوسع.',
+  },
+  {
+    q: 'هل يغيّر ميناء المنشأ في الصين مدة النقل؟',
+    a: 'تعطي بيانات المسارات رقمًا نموذجيًا لكل وجهة (18–24 يومًا) بدلًا من رقم منفصل لكل منشأ. تتصل شنغهاي ونينغبو-تشوشان وشنتشن كلها بالممرات الخليجية نفسها؛ وقد يقلص موقع شنتشن الجنوبي يومًا أو يومين مقارنة بتحميل شنغهاي في بعض المسارات، لكن تقسيمات مستوى المنشأ ليست منشورة بشكل منفصل في اللقطة الموثقة — أكد كل مسار مع وكيل الشحن.',
+  },
+  {
+    q: 'ما الفرق بين مدد النقل FCL وLCL؟',
+    a: 'الشحن البحري FCL يستغرق 14–30 يومًا من ميناء إلى ميناء (رحلات مباشرة 14–20)، بينما يستغرق LCL 15–35 يومًا. يضيف LCL 5–10 أيام لأن البضاعة يجب تجميعها قبل الإبحار وفك تجميعها بعد الوصول.',
+  },
+  {
+    q: 'ما سرعة الشحن الجوي مقارنة بالبحري من الصين إلى الخليج؟',
+    a: 'الشحن الجوي 3–7 أيام من مطار إلى مطار والبريد السريع 3–7 أيام من الباب إلى الباب، مقابل 18–24 يومًا نموذجيًا للشحن البحري. وتأتي السرعة بتكلفة أعلى بكثير لكل كيلوغرام.',
+  },
+  {
+    q: 'هل يؤثر مضيق هرمز على مدد النقل من الصين إلى الخليج؟',
+    a: 'نعم. قد تتأثر المسارات في الجانب الخليجي — الدمام وجبل علي وحمد والشويخ وصحار وخليفة بن سلمان — بمخاطر مضيق هرمز، وارتفع تأمين مخاطر الحرب من نحو 0.125% إلى 0.4%+ لكل رحلة في 2026. وتتجنب جدة المضيق عبر مسار البحر الأحمر لكنها تحمل مخاطر البحر الأحمر/رأس الرجاء الصالح الخاصة بها.',
+  },
+  {
+    q: 'هل ينبغي أن أقلق من إعادة التوجيه عبر البحر الأحمر ورأس الرجاء الصالح؟',
+    a: 'نعم. أجبرت هجمات الحوثيين على الملاحة في البحر الأحمر منذ أواخر 2023 والحصار البحري الحوثي للسعودية في يوليو 2026 بعض الناقلين على إعادة التوجيه حول رأس الرجاء الصالح، ما يرفع مدد النقل والأسعار. أكد دائمًا المسار المباشر مقابل المعاد شحنه ومسار البحر الأحمر مقابل رأس الرجاء الصالح مع وكيل الشحن قبل الحجز.',
+  },
+  {
+    q: 'هل السكك الحديدية خيار واقعي من الصين إلى الخليج؟',
+    a: 'فقط كخيار متخصص. السكك الحديدية 18–25 يومًا حسب الممر، ومعظم وجهات الخليج ما تزال تحتاج وصلة برية أو بحرية بعد محطة القطار. قيّمه فقط لممرات داخلية محددة، وليس كخيار افتراضي للخليج.',
+  },
+  {
+    q: 'هل يضيف التخليص الجمركي وقتًا فوق نوافذ النقل؟',
+    a: 'نعم. تغطي الأرقام في هذه الصفحة الرحلة البحرية أو الجوية فقط. ويضاف التخليص على الواردات فوق ذلك وليس منشورًا في اللقطة الموثقة؛ واحتجازات سابر في السعودية هي أكثر تأخير يمكن تجنبه شيوعًا، لذا أكمل شهادة SC قبل وصول البضاعة.',
+  },
+  {
+    q: 'كيف أمنع غرامة التأخير من إضافة أيام وتكلفة؟',
+    a: 'تمنح محطات الخليج نحو 3–7 أيام حرة، ثم تفرض نحو $75–$300 يوميًا. جهّز التخليص وأوراق سابر والنقل البري الداخلي قبل وصول السفينة حتى لا تبقى الحاوية بعد المهلة الحرة.',
+  },
+  {
+    q: 'كيف أحصل على مدة نقل حالية لمساري المحدد؟',
+    a: 'اطلب عرض سعر مباشرًا عبر نموذج اطلب عرض سعر مع منشأك ووجهتك ورمز HS وتفاصيل البضاعة بدقة. يمكن لوكيل الشحن تأكيد المسار المباشر مقابل المعاد شحنه وإعطاء نافذة خاصة بشحنتك بدلًا من الأرقام النموذجية على مستوى الممر أعلاه.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'مدة النقل من الصين إلى الخليج — مقارنة شاملة لـ 7 موانئ (2026)',
+      description:
+        'مقارنة شاملة لمدة النقل من الصين إلى الخليج عبر الموانئ الرئيسية السبعة، مع نوافذ الشحن البحري والجوي والبريد السريع، واختلافات توقيت FCL مقابل LCL، والرسوم الخفية والامتثال.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="مدة النقل من الصين إلى الخليج — مقارنة شاملة لـ 7 موانئ (2026)"
+  description="مقارنة شاملة لمدة النقل من الصين إلى الخليج عبر الموانئ الرئيسية السبعة، مع نوافذ الشحن البحري والجوي والبريد السريع، واختلافات توقيت FCL مقابل LCL، والرسوم الخفية والامتثال."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: 'الشرق الأوسط', href: '/ar/middleeast/' },
+          { label: 'مدة النقل من الصين إلى الخليج' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث سبتمبر 2026</span>
+      <h1>مدة النقل من الصين إلى الخليج: المقارنة الشاملة للموانئ السبعة</h1>
+      <p class="lead">
+        صفحة مرجعية واحدة لتخطيط المدة التي تستغرقها الشحنات من شنغهاي ونينغبو-تشوشان وشنتشن إلى البوابات الخليجية السبع الرئيسية. تقارن بين نوافذ الشحن البحري والجوي والبريد السريع، وتوضح مصدر الأيام الإضافية، وتفصل الأرقام التي يمكنك التخطيط بناءً عليها عن تلك التي يجب تأكيدها مع وكيل الشحن.
+      </p>
+      <p class="small muted">
+        تفصل شارات الموثوقية الأرقام الموثقة عن نطاقات التخطيط الاسترشادية. تعامل مع كل ملاحظة منخفضة الموثوقية كاسترشادية، وأكد دائمًا المسار المباشر مقابل المعاد شحنه ومسار البحر الأحمر مقابل رأس الرجاء الصالح مع وكيل الشحن قبل الحجز.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">أسرع بوابة بحرية</span>
+          <span class="fact-value">جدة ~18 يومًا <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">أبطأ بوابة بحرية</span>
+          <span class="fact-value">الشويخ ~24 يومًا <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">نطاق التخطيط البحري</span>
+          <span class="fact-value">15–30 يومًا <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الشحن الجوي</span>
+          <span class="fact-value">3–7 أيام <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">البريد السريع</span>
+          <span class="fact-value">3–7 أيام من الباب إلى الباب <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">السكك الحديدية إلى الخليج</span>
+          <span class="fact-value">18–25 يومًا، متخصص <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. نطاقات أسعار FCL وLCL حسب ميناء الوجهة</h2>
+    <p>
+      يسير تخطيط مدة النقل وتسعير الشحن معًا، لذا ابدأ من فارق الأسعار قبل اعتماد أي جدول. تأتي نطاقات 20ft و40ft ولكل CBM من بيانات المسارات في WorldFreightHub. والفارق السعودي الواسع هو علاوة المخاطر الجيوسياسية تتحرك — وليس ضجيجًا.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'ميناء الوجهة' },
+        { key: 'fcl20', label: '20ft FCL' },
+        { key: 'fcl40', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL (لكل CBM)' },
+        { key: 'note', label: 'ملاحظة تشكيل السعر' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="نطاقات FCL/LCL متوسطة الموثوقية من بيانات المسارات. وهي نطاقات تخطيط وليست عروض أسعار ناقل مباشرة."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار FCL وLCL" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. النقل البحري: مقارنة الموانئ السبعة جميعها</h2>
+      <p>
+        تغطي الأيام النموذجية من ميناء إلى ميناء أدناه الرحلة البحرية فقط من موانئ الصين الأساسية الثلاثة — شنغهاي ونينغبو-تشوشان وشنتشن — إلى كل بوابة خليجية. ويضاف التخليص الجمركي فوق ذلك، ولا تنشر بيانات المسارات تقسيمات منفصلة على مستوى المنشأ، لذا تعامل مع الرقم النموذجي كمعيار للوجهة وأكد المسار المحدد مع وكيل الشحن.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'port', label: 'ميناء الوجهة' },
+          { key: 'unlocode', label: 'UN/LOCODE' },
+          { key: 'country', label: 'الدولة' },
+          { key: 'typical', label: 'النقل النموذجي' },
+          { key: 'range', label: 'نطاق التخطيط' },
+          { key: 'routing', label: 'ملاحظة المسار' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="أيام النقل النموذجية متوسطة الموثوقية من بيانات المسارات؛ وينطبق نطاق 15–30 يومًا على جميع مسارات الصين إلى الخليج."
+      />
+      <SourceList locale={locale} sources={seaTransitSources} title="المصادر — النقل البحري من الصين إلى الخليج" />
+
+      <div class="note mt-2">
+        <strong>المنشأ يهم عند الهوامش:</strong> تقع شنتشن (يانتيان/شيكو) جنوبًا أكثر، ما قد يقلص يومًا أو يومين مقارنة بالتحميل من شنغهاي على المسار نفسه، لكن هذا تشغيلي وغير منشور بشكل منفصل <ConfidenceBadge locale={locale} level="LOW" />. نينغبو-تشوشان غالبًا بديل أقل تكلفة قليلًا من شنغهاي مع رحلات مماثلة. أكد المحطة والرحلة بالضبط مع وكيل الشحن.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. مدة النقل حسب الوسيلة: البحر والجو والبريد السريع والسكك الحديدية</h2>
+    <p>
+      تغيّر الوسيلة التي تختارها النافذة أكثر مما يفعل ميناء الوجهة. استخدم هذا الجدول لوضع أرقام البحر للموانئ السبعة بجانب الخيارات الأسرع، ثم قرر هل يستحق توفير الوقت التكلفة الأعلى للوحدة.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'method', label: 'الوسيلة' },
+        { key: 'window', label: 'نافذة النقل' },
+        { key: 'note', label: 'ما الذي يحدد النافذة' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={methodRows}
+      caption="نوافذ FCL وLCL والجو والبريد السريع متوسطة الموثوقية من بيانات الوسائل؛ والسكك الحديدية منخفضة الموثوقية لأن ممرات الخليج غير موحدة."
+    />
+    <SourceList locale={locale} sources={methodTransitSources} title="المصادر — مدة النقل بالوسيلة من الصين إلى الخليج" />
+
+    <div class="note mt-2">
+      <strong>الشحن الجوي ليس عدد أيام، بل عدد خطوات المناولة الأرضية.</strong> الرحلة نفسها ساعات؛ ونافذة 3–7 أيام تشمل الاستلام من المنشأ والفحص الأمني والتخليص عند التصدير والرحلة والتخليص في الوجهة والتسليم النهائي. وينطبق اختصار 3–7 أيام نفسه على البريد السريع، لكنه من الباب إلى الباب ويجمع خطوات التخليص.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL مقابل LCL: كيف يغيّر القرار جدولك الزمني</h2>
+      <p>
+        FCL وLCL ليسا مجرد سعرين مختلفين — بل ساعتين مختلفتين. LCL أبطأ لأن التجميع في المنشأ وفك التجميع في الوجهة يضيفان 5–10 أيام، وتتحرك الحاوية المشتركة وفق جدول وكيل الشحن لا جدولك.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="توجيه FCL مقابل LCL استرشادي، مبني من بيانات الوسائل متوسطة الموثوقية."
+      />
+      <SourceList locale={locale} sources={decisionSources} title="المصادر — FCL مقابل LCL" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="اختر FCL عندما...">
+          <ul>
+            <li>الحجم نحو 15 CBM أو أكثر.</li>
+            <li>نافذة 14–20 يومًا المباشرة تستحق تكلفة الحاوية.</li>
+            <li>القدرة على التنبؤ ومناولة أقل أهمية.</li>
+            <li>يمكن تجهيز التخليص والنقل البري قبل الوصول.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="اختر LCL عندما...">
+          <ul>
+            <li>الحجم أقل من ~15 CBM.</li>
+            <li>تقبل 5–10 أيام إضافية مقارنة بـ FCL.</li>
+            <li>ما تزال رسوم CFS تجعل LCL أرخص إجمالًا.</li>
+            <li>المرونة أهم من أسرع رحلة.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. موانئ الصين الثلاثة وبوابات الخليج السبع</h2>
+    <p>
+      طابق المنشأ مع تجمع التصنيع والوجهة مع المرسل إليه. حقائق موانئ الصين عالية الموثوقية؛ وأدوار الموانئ الخليجية متوسطة الموثوقية من بيانات الموانئ.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'gateway', label: 'البوابة' },
+        { key: 'side', label: 'الجانب' },
+        { key: 'role', label: 'الدور' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={portListRows}
+      caption="حقائق موانئ المنشأ الصينية عالية الموثوقية؛ وأدوار البوابات الخليجية متوسطة الموثوقية من بيانات الموانئ."
+    />
+    <SourceList locale={locale} sources={portSources} title="المصادر — مناشئ الصين والموانئ الخليجية" />
+
+    <div class="note mt-2">
+      <strong>استخدم رمز UN/LOCODE الصحيح على بوليصة الشحن.</strong> فحجز «شنتشن» بشكل عام قد يوجهك إلى محطة خاطئة — حدد يانتيان أو شيكو أو تشيوان. وعند الوجهة، الرموز السبعة أعلاه هي التي تظهر في بيانات المسارات.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. هيكل التكلفة: الرسوم الخفية التي تطيل الساعة</h2>
+      <p>
+        تتحول أيام النقل إلى أيام تكلفة عندما تبقى الحاوية بعد المهلة الحرة أو تُضاف علاوة مخاطر المسار. غرامة التأخير/رسوم الاحتجاز وعلاوة مخاطر الحرب في هرمز هما البندان المحددان رقميًا؛ والبقية بنود حقيقية لم تُنشر مبالغها في اللقطة الموثقة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'بند التكلفة' },
+          { key: 'who', label: 'يُحصَّل بواسطة' },
+          { key: 'magnitude', label: 'القيمة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="المهلة الحرة لغرامة التأخير/رسوم الاحتجاز وعلاوة مخاطر الحرب متوسطة الموثوقية؛ والرسوم غير المحددة منخفضة الموثوقية وتتطلب عرض سعر مفصلاً."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — هيكل تكلفة النقل" />
+
+      <div class="note mt-2">
+        <strong>خطط للتخليص قبل وصول السفينة.</strong> المهلة الحرة في محطات الخليج نحو 3–7 أيام فقط، وتبلغ غرامة التأخير/رسوم الاحتجاز اليومية ~$75–$300 بعدها. وقد يمحو احتجاز سابر أو بطء المخلص وفورات رحلة أرخص خلال أسبوع.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الامتثال: الرسوم وضريبة القيمة المضافة وسابر/SASO ومسألة ISF غير المطبقة</h2>
+    <p>
+      تستخدم دول الخليج الست جميعها <strong>خط أساس 5% CIF للرسوم الجمركية على الواردات</strong> ورموز HS من 10 أرقام. وتختلف ضريبة القيمة المضافة حسب السوق: السعودية 15% والبحرين 10% والإمارات 5% وعُمان 5% وقطر والكويت 0% (لا ضريبة بعد). ومطابقة سابر/SASO <strong>للسعودية فقط</strong>، ويجب الحصول على شهادة مطابقة الشحنة (SC) قبل وصول البضاعة — سارية منذ 1 يناير 2025.
+    </p>
+
+    <h3 class="mt-3">سابر/SASO للسعودية فقط والجو لا يتجاوزها</h3>
+    <p>
+      بالنسبة للبضائع السعودية المنظمة، احصل على شهادة مطابقة المنتج (PC) أولًا، ثم شهادة الشحنة (SC) قبل وصول البضاعة. الشحن الجوي يقصّر النقل لكنه <strong>لا</strong> يلغي خطوة سابر، ولا يعفي البحر أو الجو من الرسوم أو ضريبة القيمة المضافة.
+    </p>
+
+    <h3 class="mt-3">ISF قاعدة أمريكية</h3>
+    <p>
+      <strong>ISF (إيداع أمن المستورد) لا يسري على واردات الخليج.</strong> إنه برنامج أمريكي. المعادل السعودي للإيداع المسبق هو شهادة سابر SC زائد الإقرار المسبق عبر فسح؛ وبقية دول الخليج تستخدم إقرارات النافذة الموحدة الخاصة بها. ورد هذا لتجنب الخلط الشائع.
+    </p>
+
+    <h3 class="mt-3">حد الإعفاء الجمركي وشهادة المنشأ</h3>
+    <p>
+      تنشر السعودية (1,000 SAR) والإمارات (1,000 AED) حدي إعفاء للطرود الشخصية/البريدية فقط؛ وتبقى ضريبة القيمة المضافة مستحقة والبضائع التجارية خاضعة للرسوم عمومًا في الحالتين. وتبقى مجموعة المستندات القياسية: الفاتورة التجارية وقائمة التعبئة وبوليصة الشحن وشهادة المنشأ وتصنيف HS الصحيح.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الامتثال الخليجي" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>أدلة القرار ذات الصلة وحداثة البيانات</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">بتحديث سبتمبر 2026</span>. تتم إعادة فحص أرقام النقل النموذجية مقابل بيانات المسارات في WorldFreightHub، ونوافذ الوسائل مقابل بيانات الوسائل. وإذا توفرت تقسيمات على مستوى المنشأ أو أعداد أيام التخليص، تُحدَّث الجداول وتُرفع شارات الموثوقية ويتغير تاريخ التعديل. وحتى ذلك الحين، تبقى الأرقام غير المنشورة منخفضة الموثوقية مع ملاحظة اطلب عرض سعر.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale}
+        title="مدة النقل إلى السعودية"
+        description="نوافذ جدة مقابل الدمام البحرية، واختلافات FCL مقابل LCL، والنقل الجوي/البريد السريع والتأخيرات التي تطيل الساعة."
+        href="/ar/middleeast/transit-time-china-to-saudi-arabia/"
+      />
+      <Card locale={locale}
+        title="مدة النقل إلى الإمارات"
+        description="نافذة جبل علي البحرية النموذجية البالغة 21 يومًا، وملاحظات ميناء خليفة والشارقة، والشحن الجوي 3–7 أيام والتأخيرات التي تطيل الساعة."
+        href="/ar/middleeast/transit-time-china-to-uae/"
+      />
+      <Card locale={locale}
+        title="الشحن FCL مقابل LCL من الصين إلى الخليج"
+        description="دليل القرار على مستوى الممر بين الحاوية الكاملة والحصة الأصغر من الحاوية."
+        href="/ar/middleeast/fcl-vs-lcl/"
+      />
+      <Card locale={locale}
+        title="مقارنة الجمارك والرسوم وضريبة القيمة المضافة في الخليج"
+        description="مقارنة جنبًا إلى جنب لست دول حول الرسوم الجمركية وضريبة القيمة المضافة وحد الإعفاء ومطابقة سابر/SASO."
+        href="/ar/middleeast/gcc-customs-duty-comparison/"
+      />
+      <Card locale={locale}
+        title="الشحن البحري مقابل الجوي من الصين إلى الخليج"
+        description="دليل قرار على مستوى الممر: أسعار FCL/LCL لسبعة موانئ، ومعايير الجو لكل kg، والوزن القابل للتحصيل، وخطة هجينة."
+        href="/ar/middleeast/sea-vs-air-freight-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="غرامة التأخير ورسوم الاحتجاز من الصين إلى الخليج"
+        description="فخ غرامة التأخير البالغة $75–$300/يوم وكيف تتحول احتجازات التخليص إلى رسوم احتجاز."
+        href="/ar/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="الرسوم الخفية ورسوم الوجهة من الصين إلى الخليج"
+        description="THC ورسوم الميناء والمستندات وISPS والمعاينة والسمسرة وسابر والتخزين وتفصيل تكلفة الوجهة الشاملة."
+        href="/ar/middleeast/hidden-charges-china-to-gcc/"
+      />
+    </div>
+    <p class="mt-2">
+      <strong>استكشف الممر كاملًا:</strong> ابدأ من
+      <a href="/ar/middleeast/">مركز الشرق الأوسط</a>, أو انتقل إلى الركائز الست للمسارات —
+      <a href="/ar/middleeast/shipping-from-china-to-saudi-arabia/">السعودية</a>,
+      <a href="/ar/middleeast/shipping-from-china-to-uae/">الإمارات</a>,
+      <a href="/ar/middleeast/shipping-from-china-to-qatar/">قطر</a>,
+      <a href="/ar/middleeast/shipping-from-china-to-kuwait/">الكويت</a>,
+      <a href="/ar/middleeast/shipping-from-china-to-oman/">عُمان</a> و
+      <a href="/ar/middleeast/shipping-from-china-to-bahrain/">البحرين</a>.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="أكد مسارك قبل الحجز"
+      text="أخبرنا بميناء المنشأ والوجهة وحجم البضاعة ورمز HS، وسنوصلك بمزودين يمكنهم تأكيد المسار المباشر مقابل المعاد شحنه وإعطاء نافذة نقل خاصة بشحنتك."
+    />
+  </section>
+</BaseLayout>

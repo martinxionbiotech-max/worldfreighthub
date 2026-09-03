@@ -1,0 +1,1194 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/tools/freight-cost-calculator/`;
+const title = 'حاسبة تكلفة الشحن: تقدير التكلفة الإجمالية للوصول من الصين إلى الخليج (أغسطس 2026)';
+const description =
+  'قدّر التكلفة الإجمالية للوصول لشحنة من الصين إلى دول مجلس التعاون الخليجي باستخدام حاسبة تكلفة الشحن المجانية هذه — الشحن البحري أو الجوي، ورسوم دول المجلس، وضريبة القيمة المضافة، والتأمين، ورسوم الوجهة التي تغفلها معظم عروض الأسعار.';
+
+const notPublished = 'غير منشور في لقطة البحث الخاصة بنا — اطلب جدولاً مفصلاً من وكيل الشحن';
+
+const freightRows = [
+  {
+    port: 'ميناء جدة الإسلامي',
+    country: 'السعودية',
+    fcl20: '$1,500–$6,200',
+    fcl40: '$1,900–$8,100',
+    lcl: '$20–$110/CBM',
+    note: 'بوابة البحر الأحمر؛ يعكس النطاق الواسع مخاطر المسار والجغرافيا السياسية — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبد العزيز بالدمام',
+    country: 'السعودية',
+    fcl20: '$1,500–$6,200',
+    fcl40: '$1,900–$8,100',
+    lcl: '$20–$110/CBM',
+    note: 'البوابة السعودية على الخليج؛ مسار مضيق هرمز — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي',
+    country: 'الإمارات',
+    fcl20: '$1,500–$3,250',
+    fcl40: '$2,200–$3,950',
+    lcl: '$60–$180/CBM',
+    note: 'أعلى ممر خليجي من حيث التردد؛ معظم خيارات الناقلين — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'حمد',
+    country: 'قطر',
+    fcl20: '$1,700–$2,500',
+    fcl40: '$2,500–$3,600',
+    lcl: '$75–$100/CBM',
+    note: 'سوق قطر ذو البوابة الواحدة؛ الترانزيت شائع — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ',
+    country: 'الكويت',
+    fcl20: '$1,500–$2,500',
+    fcl40: '$2,200–$3,600',
+    lcl: '$70–$100/CBM',
+    note: 'بوابة الكويت؛ أكد مسار الشويخ مقابل الشعيبة — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار',
+    country: 'عُمان',
+    fcl20: '$1,500–$2,600',
+    fcl40: '$2,200–$3,800',
+    lcl: '$60–$110/CBM',
+    note: 'بوابة عُمان خارج مضيق هرمز — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان',
+    country: 'البحرين',
+    fcl20: '$1,500–$2,500',
+    fcl40: '$2,200–$3,600',
+    lcl: '$75–$100/CBM',
+    note: 'ربط بجسر الملك فهد إلى شرق السعودية؛ مدخل بديل متخصص — تحقق مع وكيل الشحن',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    lane: 'بحر · الصين إلى السعودية (جدة / الدمام)',
+    window: '≈ 20–45 يومًا',
+    basis: 'تقدير الممر',
+    note: 'إعادة التوجيه عبر البحر الأحمر وتقلب الجداول يبقيان النافذة واسعة — تحقق مع وكيل الشحن',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'بحر · الصين إلى الإمارات (جبل علي / ميناء خليفة)',
+    window: '≈ 14–18 يومًا',
+    basis: 'تقدير الممر',
+    note: 'أسرع نافذة بحرية خليجية موثقة في اللقطة — تحقق مع وكيل الشحن',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'بحر · الصين إلى قطر / الكويت / عُمان / البحرين',
+    window: notPublished,
+    basis: 'لقطة البحث',
+    note: 'اطلب جدول الإبحار الحالي؛ واستخدم نوافذ السعودية/الإمارات كدليل اتجاه فقط — تحقق مع وكيل الشحن',
+    confidence: 'LOW',
+  },
+  {
+    lane: 'شحن جوي · الصين إلى دول مجلس التعاون الخليجي',
+    window: notPublished,
+    basis: 'لقطة البحث',
+    note: 'أسرع بكثير من البحر، لكن المناولة والتخليص في الوجهة تضيفان وقتاً — تحقق مع وكيل الشحن',
+    confidence: 'LOW',
+  },
+];
+
+const portRows = [
+  {
+    port: 'ميناء جدة الإسلامي',
+    country: 'السعودية',
+    note: 'بوابة السعودية على البحر الأحمر للمناطق الغربية والوسطى.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبد العزيز بالدمام',
+    country: 'السعودية',
+    note: 'بوابة الخليج التي تخدم المنطقة الشرقية والرياض عبر السكك الحديدية/الطرق.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي',
+    country: 'الإمارات',
+    note: 'أكبر ميناء في الإمارات، ومركز إقليمي لإعادة التصدير وركيزة المنطقة الحرة JAFZA.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء خليفة (أبوظبي)',
+    country: 'الإمارات',
+    note: 'مركز المياه العميقة لـ AD Ports وبديل أبوظبي عن جبل علي.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'حمد',
+    country: 'قطر',
+    note: 'بوابة الحاويات التجارية الوحيدة في قطر.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ',
+    country: 'الكويت',
+    note: 'بوابة منطقة مدينة الكويت؛ وتخدم الشعيبة الجنوب.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار',
+    country: 'عُمان',
+    note: 'بوابة شمال عُمان الواقعة خارج مضيق هرمز.',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان',
+    country: 'البحرين',
+    note: 'الميناء الرئيسي للمياه العميقة في البحرين مع منفذ جسر الملك فهد إلى السعودية.',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    layer: 'الشحن البحري',
+    basis: 'شرائح FCL 20 قدمًا / 40 قدمًا / LCL الخاصة بكل ميناء من routes.ts',
+    note: 'النقل الدولي الرئيسي فقط — وليس التكلفة الشاملة',
+    confidence: 'MEDIUM',
+  },
+  {
+    layer: 'التأمين البحري على البضائع',
+    basis: 'إدخال مرئي، افتراضياً 0.3% من القيمة شاملة الشحن',
+    note: 'افتراض معياري في الصناعة، غير وارد في لقطة البحث — اجعله 0 إذا لم يكن مطلوباً',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'الرسوم الجمركية على واردات دول مجلس التعاون الخليجي',
+    basis: '5% × CIF',
+    note: 'خط الأساس للتعرفة الجمركية الموحدة لدول المجلس؛ الكحول والتبغ أعلى',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'ضريبة القيمة المضافة على الوجهة',
+    basis: 'السعودية 15% · الإمارات 5% · عُمان 5% · البحرين 10% · قطر 0% · الكويت 0%',
+    note: 'تُحسب على CIF مضافاً إليها الرسوم',
+    confidence: 'HIGH',
+  },
+  {
+    layer: 'رسوم الوجهة والرسوم المحلية',
+    basis: notPublished,
+    note: 'THC ورسوم الميناء والمستندات/أمر التسليم وISPS والمعاينة والوساطة وSABER والتخزين والنقل البري الداخلي — اطلب جدولاً كاملاً',
+    confidence: 'LOW',
+  },
+  {
+    layer: 'غرامة التأخير / رسوم الاحتجاز (اختياري)',
+    basis: '≈ 50–300+ دولار يومياً؛ متوسط 2025 ≈ 150–300 دولار',
+    note: 'النطاق الكمي الوحيد لرسوم الوجهة في اللقطة؛ ينطبق فقط بعد انتهاء فترة الإعفاء',
+    confidence: 'LOW',
+  },
+];
+
+const complianceRows = [
+  {
+    rule: 'التعرفة الجمركية الموحدة لدول مجلس التعاون الخليجي',
+    value: 'رسوم 5% على CIF',
+    note: 'خط الأساس في كل دول المجلس؛ الكحول والتبغ وبعض الخطوط الزراعية أعلى',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'ضريبة القيمة المضافة في السعودية',
+    value: '15% على CIF + الرسوم',
+    note: 'سارية منذ 1 يوليو 2020',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'ضريبة القيمة المضافة في الإمارات',
+    value: '5% على CIF + الرسوم',
+    note: 'سارية منذ 1 يناير 2018',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'ضريبة القيمة المضافة في عُمان',
+    value: '5% على CIF + الرسوم',
+    note: 'سارية منذ 16 أبريل 2021',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'ضريبة القيمة المضافة في البحرين',
+    value: '10% على CIF + الرسوم',
+    note: 'رُفعت من 5% في 2022',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'ضريبة القيمة المضافة في قطر / الكويت',
+    value: 'لا توجد حالياً',
+    note: 'لا توجد ضريبة قيمة مضافة بعد في لقطة البحث؛ راقب التشريعات المحلية',
+    confidence: 'HIGH',
+  },
+  {
+    rule: 'شهادة مطابقة الشحنة SABER',
+    value: 'يجب الحصول عليها قبل وصول السفينة',
+    note: 'سارية منذ 1 يناير 2025؛ ونقص SC هو السبب الأكثر شيوعاً لاحتجاز الشحنات في الموانئ السعودية',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'التسجيل الجمركي قبل الوصول',
+    value: 'FASAH (السعودية) / Mirsal (الإمارات)',
+    note: 'التسجيل المسبق يحمي فترة الإعفاء ويقصر التخليص',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'تصنيف HS',
+    value: 'رمز HS صحيح قبل تقديم عرض السعر',
+    note: 'يحدد الرسوم ونطاق SABER ومخاطر المعاينة',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'هل هذه الحاسبة عرض سعر حقيقي؟',
+    a: 'لا. إنها تقدير تخطيطي استرشادي وليست عرض سعر ولا إيجاباً تعاقدياً. تتحرك أسعار الشحن أسبوعياً، وتختلف رسوم الوجهة بحسب المحطة والناقل، ويجب تأكيد كل نتيجة مع وكيل شحن مرخص قبل الحجز.',
+  },
+  {
+    q: 'لماذا تُعرض أسعار الشحن كنطاق؟',
+    a: 'ممر الصين – الخليج متقلب. تتحرك الأسعار الفورية مع الطاقة الاستيعابية والموسمية ومخاطر البحر الأحمر ومضيق هرمز والازدحام والوقود. يُظهر النطاق الفارق الواقعي بين سوق هادئ وسوق متوتر؛ فالرقم الواحد سيتظاهر بأن التقلب غير موجود.',
+  },
+  {
+    q: 'ما هو CIF وكيف تُحسب الرسوم؟',
+    a: 'يعني CIF التكلفة والتأمين والشحن. في هذه الحاسبة أساس CIF هو قيمة البضاعة مضافاً إليها منتصف الشحن والتأمين. ثم تُحسب رسوم دول المجلس بنسبة 5% من قيمة CIF، وتُطبق ضريبة القيمة المضافة على CIF مضافاً إليها الرسوم.',
+  },
+  {
+    q: 'ما معدل ضريبة القيمة المضافة الذي ينطبق على وجهتي؟',
+    a: 'تربط الحاسبة ميناء الوجهة بمعدل الدولة: السعودية 15%، الإمارات 5%، عُمان 5%، البحرين 10%، قطر 0%، الكويت 0%. لا توجد ضريبة قيمة مضافة حالياً في قطر والكويت ضمن لقطة البحث.',
+  },
+  {
+    q: 'ما الرسوم غير المشمولة؟',
+    a: 'رسوم الوجهة والرسوم المحلية غير محددة كمياً في اللقطة. وتشمل THC ورسوم خدمة الميناء ورسوم المستندات/أمر التسليم وISPS والمعاينة والوساطة وPC/SC من SABER والتخزين والنقل البري الداخلي. تعرضها الحاسبة كبند «اطلب الجدول»، لا كرقم مختلق.',
+  },
+  {
+    q: 'كيف أقدّر غرامة التأخير ورسوم الاحتجاز؟',
+    a: 'أدخل عدد الأيام المتوقع بقاء الحاوية فيها بعد التفريغ. تخصم الحاسبة افتراض تخطيطي بخمسة أيام إعفاء وتطبق نطاق اللقطة التقريبي من 50 إلى 300+ دولار يومياً، بمتوسط 2025 نحو 150–300 دولار يومياً. هذا تقدير اتجاهي وليس تعرفة محطة.',
+  },
+  {
+    q: 'هل يشمل ذلك DDP؟',
+    a: 'لا. هذا تقدير للتكلفة الإجمالية للوصول وليس عرض DDP. يشمل DDP الرسوم وضريبة القيمة المضافة والتخليص والتسليم ضمن التزام وكيل الشحن، لكن الحساب الأساسي هو نفسه. استخدم الحاسبة لمراجعة سعر DDP مقابل مكونات تكلفته.',
+  },
+  {
+    q: 'لماذا يُعرض الشحن الجوي كنطاق؟',
+    a: 'تُنشر أسعار الشحن الجوي في لقطة البحث كمعايير اتجاهية فقط: السعودية نحو 8.80–13.50 دولار/كجم والإمارات نحو 5.45–6.40 دولار/كجم. وبالنسبة لوجهات الخليج الأخرى لا يوجد رقم جوي منشور في اللقطة، لذلك تستخدم الحاسبة نطاق السعودية/الإمارات كبديل اتجاهي فقط.',
+  },
+  {
+    q: 'كم مرة تُحدَّث هذه البيانات؟',
+    a: 'تحمل الصفحة شارة التحديث أغسطس 2026. تُعاد مراجعة قواعد الضرائب الموثقة وشرائح الشحن على مستوى الميناء مقابل ملفات البيانات؛ وتُعامل النطاقات السوقية المتقلبة كعناصر مراجعة شهرية وتبقى بموثوقية منخفضة حتى ينشر مصدر أولي رقماً محدداً.',
+  },
+  {
+    q: 'هل التأمين البحري مشمول؟',
+    a: 'نعم، لكن كافتراض صريح فقط. لا تنشر لقطة البحث معدلاً قياسياً للتأمين البحري على البضائع، لذلك تعتمد الحاسبة افتراضياً 0.3% من القيمة شاملة الشحن كبديل معياري في الصناعة. يمكنك جعله 0 أو استخدام معدل عرض سعرك الفعلي.',
+  },
+  {
+    q: 'ماذا تعني عبارة «تحقق مع وكيل الشحن»؟',
+    a: 'تعني أن الرقم لم يُتحقق منه مقابل مصدر أولي في لقطة البحث الحالية. يضع WorldFreightHub تلك الأرقام بموثوقية منخفضة ويوجهك إلى طلب جدول مفصل من وكيل الشحن بدلاً من تقديم مبلغ مختلق على أنه حقيقة.',
+  },
+  {
+    q: 'هل أستخدم هذا لقيم الإقرار الجمركي؟',
+    a: 'لا. استخدمه للتخطيط ولمراجعة عروض الأسعار، وليس للإقرار عن القيمة الجمركية. يجب أن تتبع القيمة المصرح بها الفاتورة التجارية الفعلية وقواعد الجمارك في الوجهة للسلع المحددة ورمز HS.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'ar',
+    },
+  },
+  {
+    type: 'Article',
+    data: {
+      headline: title,
+      description,
+      datePublished: '2026-08-31',
+      dateModified: '2026-08-31',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const freightSources = sourcesByIds([
+  'sipg',
+  'ningbo-zhoushan-port',
+  'mawani',
+  'dp-world',
+  'abu-dhabi-ports',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+
+const complianceSources = sourcesByIds([
+  'zatca',
+  'dubai-customs',
+  'mawani',
+  'dp-world',
+  'abu-dhabi-ports',
+  'qatar-customs',
+  'kuwait-customs',
+  'oman-customs',
+  'bahrain-customs',
+]);
+
+const costSources = [...new Set([...freightSources, ...complianceSources])];
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: 'الأدوات', href: '/ar/tools/' },
+          { label: 'حاسبة تكلفة الشحن' },
+        ]}
+      />
+      <span class="badge badge--amber">آخر تحديث: أغسطس 2026</span>
+      <h1>حاسبة تكلفة الشحن من الصين إلى الخليج</h1>
+      <p class="lead">
+        قدّر التكلفة الإجمالية للوصول لشحنة من الصين إلى دول مجلس التعاون الخليجي في شاشة واحدة:
+        الشحن البحري أو الجوي، ورسوم واردات دول المجلس، وضريبة القيمة المضافة على الوجهة،
+        والتأمين، ورسوم الوجهة التي تغفلها معظم عروض الأسعار عبر الإنترنت.
+      </p>
+      <p class="small muted">
+        كل رقم بالدولار يحمل شارة موثوقية. القواعد الضريبية الموثقة عالية؛ وشرائح الشحن متوسطة؛
+        والشحن الجوي والتأمين والرسوم الزمنية منخفضة حتى ينشر وكيل شحن جدولاً محدداً.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">رسوم دول المجلس</span>
+          <span class="fact-value">5% من CIF <ConfidenceBadge level="HIGH" locale={locale} /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">ضريبة القيمة المضافة في السعودية</span>
+          <span class="fact-value">15% <ConfidenceBadge level="HIGH" locale={locale} /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">ضريبة القيمة المضافة في الإمارات</span>
+          <span class="fact-value">5% <ConfidenceBadge level="HIGH" locale={locale} /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">معدل التأمين</span>
+          <span class="fact-value">مدخل 0.3% <ConfidenceBadge level="LOW" locale={locale} /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">غرامة التأخير / رسوم الاحتجاز</span>
+          <span class="fact-value">$50–$300+/يوم <ConfidenceBadge level="LOW" locale={locale} /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">رسوم محلية أخرى</span>
+          <span class="fact-value">حسب الجدول فقط <ConfidenceBadge level="LOW" locale={locale} /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>حاسبة تكلفة الشحن: من الصين إلى الخليج</h2>
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="freight-cost-form" aria-label="مدخلات حاسبة تكلفة الشحن من الصين إلى الخليج">
+          <div class="form-grid">
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="origin">ميناء المنشأ في الصين</label>
+                <select id="origin">
+                  <option value="shanghai">شانغهاي</option>
+                  <option value="ningbo-zhoushan">نينغبو-تشوشان</option>
+                  <option value="shenzhen">شنتشن (يانتان / شيكو)</option>
+                  <option value="guangzhou">قوانغتشو</option>
+                  <option value="qingdao">تشينغداو</option>
+                  <option value="tianjin">تيانجين</option>
+                  <option value="xiamen">شيامن</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="destination">ميناء الوجهة في الخليج</label>
+                <select id="destination">
+                  <option value="jeddah">جدة</option>
+                  <option value="dammam">الدمام</option>
+                  <option value="jebel-ali">جبل علي</option>
+                  <option value="khalifa-port-abu-dhabi">ميناء خليفة (أبوظبي)</option>
+                  <option value="hamad">حمد</option>
+                  <option value="shuwaikh">الشويخ</option>
+                  <option value="sohar">صحار</option>
+                  <option value="khalifa-bin-salman">خليفة بن سلمان</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="mode">وسيلة الشحن</label>
+                <select id="mode">
+                  <option value="fcl20">FCL 20 قدمًا</option>
+                  <option value="fcl40">FCL 40 قدمًا</option>
+                  <option value="lcl">LCL (لكل CBM)</option>
+                  <option value="air">الشحن الجوي (كجم قابل للتحصيل)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="size">حجم الشحنة</label>
+                <input id="size" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 1" />
+                <p class="small muted" id="size-hint">عدد الحاويات لـ FCL · CBM لـ LCL · الكجم القابل للتحصيل للشحن الجوي.</p>
+              </div>
+              <div class="field">
+                <label for="goods-value">قيمة البضاعة (USD)</label>
+                <input id="goods-value" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 50000" />
+              </div>
+              <div class="field">
+                <label for="hold-days">أيام الاحتجاز لغرامة التأخير/الاحتجاز</label>
+                <input id="hold-days" type="number" min="0" step="1" inputmode="numeric" value="0" />
+              </div>
+              <div class="field">
+                <label for="insurance-rate">معدل التأمين (%)</label>
+                <input id="insurance-rate" type="number" min="0" step="any" inputmode="decimal" value="0.3" />
+                <p class="small muted">
+                  افتراضياً ≈0.3% من القيمة شاملة الشحن — معيار صناعي، غير وارد في اللقطة
+                  <ConfidenceBadge level="LOW" locale={locale} />. اجعله 0 إذا كنت لا تحتاج تغطية بحرية للبضائع.
+                </p>
+              </div>
+            </div>
+            <p class="form-error" id="cost-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cost-calculate">احسب</button>
+              <button type="button" class="btn btn-secondary" id="cost-reset">إعادة تعيين</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>كيف يُبنى التقدير</h3>
+          <p><code>CIF = قيمة البضاعة + منتصف الشحن + التأمين</code></p>
+          <p><code>التأمين = (قيمة البضاعة + منتصف الشحن) × معدل التأمين</code></p>
+          <p><code>الرسوم = 5% × CIF</code></p>
+          <p><code>ضريبة القيمة المضافة = نسبة ضريبة الوجهة% × (CIF + الرسوم)</code></p>
+          <p><code>أيام غرامة التأخير = max(0، أيام الاحتجاز − 5 أيام إعفاء)</code></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="result-panel" aria-live="polite">
+          <h3 class="result-title">تقدير التكلفة الإجمالية للوصول</h3>
+          <div class="result-grid">
+            <div class="result-item result-item--accent">
+              <span class="result-label">التكلفة الإجمالية للوصول</span>
+              <span class="result-value" id="total-range">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">لكل وحدة</span>
+              <span class="result-value" id="per-unit">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">منتصف الشحن</span>
+              <span class="result-value" id="freight-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">منتصف CIF</span>
+              <span class="result-value" id="cif-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">الرسوم</span>
+              <span class="result-value" id="duty-mid">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">ضريبة القيمة المضافة</span>
+              <span class="result-value" id="vat-mid">—</span>
+            </div>
+          </div>
+          <p class="result-note" id="result-context">
+            أدخل تفاصيل الشحنة لإنشاء تفصيل استرشادي. يتبع الإجمالي المنخفض/المتوسط/المرتفع
+            نطاق الشحن؛ ويستخدم التأمين منتصف الشحن كأساس له.
+          </p>
+        </div>
+
+        <div class="table-wrap mt-2">
+          <table class="data-table">
+            <caption>تفصيل استرشادي للتكلفة الإجمالية للوصول</caption>
+            <thead>
+              <tr>
+                <th>المكوّن</th>
+                <th>منخفض</th>
+                <th>متوسط</th>
+                <th>مرتفع</th>
+                <th>الموثوقية</th>
+                <th>ملاحظة</th>
+              </tr>
+            </thead>
+            <tbody id="cost-breakdown-body">
+              <tr>
+                <td colspan="6" class="muted">لا يوجد تقدير بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>تقدير تخطيطي استرشادي — وليس عرض سعر.</strong> تتحرك أسعار الشحن أسبوعياً؛
+      وتختلف رسوم الوجهة بحسب المحطة والناقل. اطلب جدولاً مفصلاً من وكيل شحن قبل الحجز.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>1. جدول أسعار الشحن: موانئ الخليج السبعة المنشورة</h2>
+      <p>
+        أساس الشحن البحري في الحاسبة هو الشريحة نفسها الخاصة بكل وجهة المستخدمة في WorldFreightHub،
+        والمأخوذة من ملف بيانات المسارات. هذه نطاقات فحص وليست تعرفات: الفارق هو إشارة السوق،
+        وعلى وكيل الشحن أن يضغطه إلى عرض سعر نهائي شامل لسلعتك المحددة ورمز HS وأسبوع الإبحار.
+      </p>
+      <DataTable
+        locale={locale}
+        columns={[
+          { key: 'port', label: 'ميناء الوجهة' },
+          { key: 'country', label: 'الدولة' },
+          { key: 'fcl20', label: 'FCL 20 قدمًا' },
+          { key: 'fcl40', label: 'FCL 40 قدمًا' },
+          { key: 'lcl', label: 'LCL / CBM' },
+          { key: 'note', label: 'ملاحظة تخطيطية' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={freightRows}
+        caption="سبعة موانئ وجهة خليجية لها شرائح شحن بحري منشورة في لقطة البحث. يُستخدم ميناء خليفة كبديل إماراتي من نطاق جبل علي لعدم نشر شريحة منفصلة لأبوظبي."
+      />
+      <SourceList locale={locale} sources={freightSources} title="المصادر — شرائح الشحن من الصين إلى الخليج" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. مرجع مدة النقل</h2>
+    <p>
+      تهم مدة النقل مرتين في نموذج التكلفة الإجمالية للوصول: فهي تحدد دورة النقد، وتحدد مدى
+      الدقة التي يجب أن تُضبط بها أوقات التخليص وتسجيل SABER وFASAH أو Mirsal والنقل البري.
+      لا يُحدد كمياً في اللقطة سوى نافذتا البحر للسعودية والإمارات. وكل مسار آخر هو بند «اطلب الجدول».
+    </p>
+    <DataTable
+      locale={locale}
+      columns={[
+        { key: 'lane', label: 'المسار' },
+        { key: 'window', label: 'نافذة النقل' },
+        { key: 'basis', label: 'أساس المصدر' },
+        { key: 'note', label: 'ملاحظة تخطيطية' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="نوافذ النقل تقديرات تخطيطية وليست التزامات بالجداول. أكد الإبحار الحالي قبل تحديد مواعيد المستودعات والعملاء."
+    />
+    <SourceList locale={locale} sources={costSources} title="المصادر — النقل وسياق ممر الخليج" />
+    <div class="note mt-2">
+      <strong>تقلب البحر الأحمر ومضيق هرمز:</strong> تتجنب مسارات جدة مضيق هرمز لكنها تحمل
+      مخاطر إعادة التوجيه عبر البحر الأحمر؛ بينما تمر الدمام وجبل علي وموانئ الجانب الخليجي
+      عبر هرمز. وعندما تضيق هذه الاختناقات تتسع نوافذ النقل وتُعاد تسعير الأسعار الفورية —
+      وهذا بالضبط سبب كون شرائح الشحن في القسم 1 نطاقات وليست أرقاماً مفردة.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. FCL مقابل LCL: قرار ≈15 CBM</h2>
+      <p>
+        القرار الأكثر فائدة قبل طلب عرض السعر هو ما إذا كانت البضاعة ستتحرك كحاوية كاملة أم
+        كشحنة مجمعة LCL. نقطة التعادل التخطيطية على هذا الممر تقارب
+        <strong>15 CBM</strong>: تحتها يسعّر LCL عادة بالحجم ويتجنب الدفع مقابل نصف حاوية
+        فارغ؛ وفوقها يصبح FCL منافساً من حيث التكلفة ويمنحك تحكماً مباشراً في ساعة الحاوية.
+      </p>
+      <p>
+        الخيار يغيّر أيضاً مكان التعرض للتأخير. يضع FCL غرامة تأخير المحطة واحتجاز الناقل
+        مباشرة على المستورد. أما LCL فيمر عبر CFS حيث يوزع وكيل الشحن عادة المناولة والتخزين،
+        لكن بطء التجميع التفريقي أو نقص المستندات قد يخلقان رسوماً يمكن تجنبها. تستخدم
+        الحاسبة وسائط FCL وLCL والجوي نفسها بحيث يتبع الرقم منطق التسعير الصحيح.
+      </p>
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="قائمة مراقبة رسوم FCL">
+          <ul>
+            <li>THC على مستوى الحاوية في المنشأ والوجهة.</li>
+            <li>رسوم خدمة الميناء وبنود المستندات/أمر التسليم.</li>
+            <li>غرامة التأخير بعد فترة إعفاء المحطة ورسوم الاحتجاز بعد أيام إعفاء الناقل.</li>
+            <li>النقل البري الداخلي أو السككي إلى العنوان النهائي.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="قائمة مراقبة رسوم LCL">
+          <ul>
+            <li>THC ورسوم الميناء الموزعة.</li>
+            <li>رسوم التفريغ في CFS ورسوم خدمة البضائع.</li>
+            <li>التخزين بعد فترة إعفاء CFS.</li>
+            <li>أوامر تسليم متعددة المستلمين وأعمال المستندات.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. موانئ الوجهة الخليجية المغطاة</h2>
+    <p>
+      تربط الحاسبة كل وجهة بدولتها الخليجية بحيث تُطبق الرسوم وضريبة القيمة المضافة بالمعدل
+      الصحيح. قائمة الموانئ أدناه للتوجيه السريع؛ ولا تعامل الحاسبة ميناء المنشأ كمتغير للسعر،
+      لأن لقطة البحث تنشر شرائح شحن على جانب الوجهة بدلاً من فروقات المنشأ إلى المنشأ.
+    </p>
+    <DataTable
+      locale={locale}
+      columns={[
+        { key: 'port', label: 'الميناء' },
+        { key: 'country', label: 'الدولة' },
+        { key: 'note', label: 'ملاحظة البوابة' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="جميع وجهات الخليج الثماني القابلة للاختيار مغطاة؛ تستخدم موانئ الشحن البحري السبعة المنشورة شرائحها الخاصة، ويستخدم ميناء خليفة البديل الاتجاهي الإماراتي/جبل علي."
+    />
+    <SourceList locale={locale} sources={freightSources} title="المصادر — بوابات الموانئ الخليجية" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. تركيب التكلفة: ما يغفل عنه سعر الشحن الرئيسي</h2>
+      <p>
+        تقدير التكلفة الإجمالية للوصول لا يكون مفيداً إلا إذا فصل النقل الدولي عن الحزمة
+        القانونية وحزمة رسوم الوجهة. خط المحيط أو الجو هو أول رقم يعرضه وكيل الشحن، لكنه ليس
+        التكلفة النهائية أبداً. تجعل الحاسبة ذلك مرئياً بإبقاء رسوم الوجهة كبند مسمى غير رقمي
+        بدلاً من إخفائها بصمت في مبلغ إجمالي.
+      </p>
+      <DataTable
+        locale={locale}
+        columns={[
+          { key: 'layer', label: 'طبقة التكلفة' },
+          { key: 'basis', label: 'الأساس الموثق / الاسترشادي' },
+          { key: 'note', label: 'ملاحظة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="الطبقات القانونية (الرسوم وضريبة القيمة المضافة) موثقة. أما التأمين ومبالغ رسوم الوجهة فغير منشورة وتبقى منخفضة الموثوقية حتى يفصّلها وكيل الشحن."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — طبقات التكلفة الإجمالية والامتثال الخليجي" />
+      <p class="mt-2">
+        اقرأ التدقيق الكامل لرسوم الوجهة في
+        <a href="/ar/middleeast/hidden-charges-china-to-gcc/"> الرسوم الخفية ورسوم الوجهة:
+        تفصيل تكلفة الشحن من الصين إلى الخليج</a>. وهو يسمي كل بند يجب أن تطلب من وكيل الشحن
+        تفصيله قبل الحجز: THC ورسوم الميناء وخدمة البضائع والمستندات/أمر التسليم وISPS
+        والمعاينة والوساطة وPC/SC من SABER والتخزين وغرامة التأخير/رسوم الاحتجاز والنقل
+        البري الداخلي.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. نقاط الامتثال التي تغيّر التكلفة الإجمالية للوصول</h2>
+    <p>
+      الرسوم وضريبة القيمة المضافة هما الطبقتان القانونيتان المتوقعتان، لكنهما لا تكونان
+      صحيحتين إلا إذا كان تصنيف HS والتسجيلات قبل الوصول صحيحة. وتعد SABER السعودية العنصر
+      الأعلى تأثيراً على هذا الممر: فغياب شهادة مطابقة الشحنة يحوّل تخليصاً روتينياً إلى
+      احتجاز في الميناء يولّد غرامة تأخير وقد يمتد إلى رسوم احتجاز.
+    </p>
+    <DataTable
+      locale={locale}
+      columns={[
+        { key: 'rule', label: 'القاعدة' },
+        { key: 'value', label: 'القيمة الموثقة' },
+        { key: 'note', label: 'لماذا تهم' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="معدلات الضرائب موثقة مقابل مصادر الجمارك؛ أما SABER وFASAH/Mirsal وتصنيف HS فهي ضوابط تشغيلية ذات عواقب تكلفة مباشرة."
+    />
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الجمارك الخليجية وضريبة القيمة المضافة والامتثال" />
+    <p class="mt-2">
+      <strong>ملاحظة ISF:</strong> إقرار ISF هو إقرار أمني لمستوردي الولايات المتحدة ولا ينطبق
+      على مسارات الخليج المغطاة هنا. المكافئ الخليجي هو الإقرار الجمركي قبل الوصول —
+      <strong>FASAH</strong> للسعودية و<strong>Mirsal</strong> للإمارات.
+    </p>
+    <p>
+      صفحات مصاحبة:
+      <a href="/ar/middleeast/saso-saber-certification/"> شهادة SASO وSABER</a>،
+      <a href="/ar/middleeast/saudi-arabia-import-duty-vat/"> الرسوم الجمركية وضريبة القيمة المضافة في السعودية</a> و
+      <a href="/ar/middleeast/uae-import-duty-vat/"> الرسوم الجمركية وضريبة القيمة المضافة في الإمارات</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>كيف تستخدم هذه الحاسبة</h2>
+      <ol>
+        <li>
+          <strong>اختر ميناء المنشأ.</strong> هذا للسياق فقط — فهو لا يغير شريحة الشحن المنشورة،
+          لأن اللقطة على جانب الوجهة. يساعدك على تذكر أي بوابة صينية تقوم بتحميل البضاعة.
+        </li>
+        <li>
+          <strong>اختر ميناء الوجهة.</strong> تربطه الحاسبة بدولته الخليجية بحيث يُطبق منطق
+          ضريبة القيمة المضافة والرسوم الصحيح. يستخدم ميناء خليفة معدل دولة الإمارات.
+        </li>
+        <li>
+          <strong>اختر الوسيلة.</strong> FCL 20 قدمًا أو FCL 40 قدمًا أو LCL أو الجو. يتغير معنى
+          حقل الحجم: حاويات أو أمتار مكعبة أو كيلوجرامات قابلة للتحصيل.
+        </li>
+        <li>
+          <strong>أدخل حجم الشحنة وقيمة البضاعة.</strong> قيمة البضاعة هي قيمة الفاتورة التجارية
+          بالدولار الأمريكي. وبالنسبة لـ LCL استخدم إجمالي CBM من
+          <a href="/ar/tools/cbm-calculator/">حاسبة CBM</a>؛ وبالنسبة للجوي استخدم الكجم القابل
+          للتحصيل من <a href="/ar/tools/volumetric-weight-calculator/">حاسبة الوزن الحجمي</a>.
+        </li>
+        <li>
+          <strong>حدد التأمين وأيام الاحتجاز.</strong> معدل التأمين افتراضياً 0.3% ويمكن جعله
+          0. أيام الاحتجاز اختيارية؛ وإدخال أي قيمة فوق افتراض الخمسة أيام إعفاء يضيف نطاق
+          غرامة تأخير/رسوم احتجاز إلى التقدير.
+        </li>
+        <li>
+          <strong>اقرأ التفصيل وشارات الموثوقية.</strong> استخدم الإجمالي كمنخل للتفاوض، ثم اطلب
+          من وكيل الشحن تفصيل بند الوجهة/الرسوم المحلية قبل الحجز.
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>مثال محلول: شانغهاي إلى جدة، حاوية FCL واحدة 40 قدمًا</h2>
+    <p>
+      هذا المثال توضيحي ويستخدم الحساب نفسه في الحاسبة التفاعلية. الشحنة حاوية 40 قدمًا واحدة
+      من شانغهاي إلى جدة بقيمة بضاعة <strong>50,000 دولار</strong>. شريحة الشحن المنشورة لجدة
+      لحاوية 40 قدمًا هي <strong>$1,900–$8,100</strong>، فيكون المنتصف <strong>$5,000</strong>.
+    </p>
+    <p>
+      يُحسب التأمين على منتصف الشحن: <strong>($50,000 + $5,000) × 0.3% =
+      $165</strong>. وبالتالي تكون قيمة CIF <strong>$50,000 + $5,000 + $165 = $55,165</strong>.
+      والرسوم هي <strong>5% × $55,165 = $2,758.25</strong>. ثم تطبق ضريبة القيمة المضافة
+      السعودية على CIF مضافاً إليها الرسوم:
+      <strong>15% × ($55,165 + $2,758.25) = 15% × $57,923.25 = $8,688.49</strong>.
+    </p>
+    <p>
+      قبل رسوم الوجهة/الرسوم المحلية، يكون المجموع القانوني
+      <strong>$55,165 + $2,758.25 + $8,688.49 = $66,611.74</strong>. وينتج استخدام طرفي الشحن
+      المنخفض والمرتفع نطاقاً استرشادياً حول ذلك المنتصف تقريباً
+      <strong>$65,000–$72,000</strong> قبل كتلة رسوم الوجهة غير المنشورة. أضف THC وخدمة الميناء
+      والمستندات وSABER والتسليم الداخلي فقط عندما يعيد وكيل الشحن جدولاً مفصلاً.
+    </p>
+    <div class="note mt-2">
+      <strong>كررها بنفسك:</strong> غيّر الوجهة إلى جبل علي وأبقِ قيمة 50,000 دولار ووسيلة 40
+      قدمًا نفسها، وستحول الحاسبة شريحة الشحن إلى <strong>$2,200–$3,950</strong> ومعدل ضريبة
+      القيمة المضافة إلى <strong>5%</strong> — حزمة قانونية أصغر بكثير، وهذا سبب كون التكلفة
+      الإجمالية للوصول إلى الإمارات أقل عادة من السعودية.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>المنهجية وسلامة البيانات</h2>
+      <p>
+        يفصل WorldFreightHub الأرقام بحسب الموثوقية لسبب: معلومات الشحن لا تكون مفيدة إلا عندما
+        يستطيع القارئ التمييز بين تعرفة موثقة وتقدير سوقي. وتتبع الحاسبة القاعدة نفسها.
+      </p>
+      <p>
+        موثوقية <strong>عالية</strong> مخصصة للقواعد التي يمكن التحقق منها مقابل سلطة جمركية أو
+        ميناء: خط أساس رسوم دول المجلس البالغ 5% ومعدلات ضريبة القيمة المضافة القطرية.
+        وموثوقية <strong>متوسطة</strong> تميز شرائح الشحن البحري المنشورة من ملف بيانات
+        المسارات — موثوقة من حيث الاتجاه لكنها خاضعة لحركة السوق الأسبوعية. وموثوقية
+        <strong>منخفضة</strong> تميز معايير الجو وافتراض التأمين والرسوم الزمنية، لأن لقطة البحث
+        إما تفتقر إلى رقم أولي أو أن تلك الأرقام خاصة بالتعرفات بطبيعتها.
+      </p>
+      <p>
+        هذا نموذج استرشادي وليس ضماناً. وحيث لا يوجد رقم في اللقطة، تقول الصفحة
+        <em>غير منشور في لقطة البحث الخاصة بنا</em> وتعيدك إلى وكيل الشحن. أما البديل —
+        اختلاق رقم يبدو معقولاً — فسيجعل الحاسبة تبدو دقيقة بينما يجعل التقدير خاطئاً.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <h2>حداثة البيانات وإيقاع التحديث الشهري</h2>
+    <p>
+      هذه الصفحة موسومة بـ <span class="badge badge--amber">آخر تحديث: أغسطس 2026</span>. تُعاد
+      مراجعة الطبقات الموثقة — رسوم دول المجلس 5% وضريبة القيمة المضافة السعودية 15% والإماراتية
+      5% والعُمانية 5% والبحرينية 10% والقطرية/الكويتية 0% وقاعدة SABER قبل الوصول — مقابل
+      المصادر الجمركية. وتُعاد مراجعة شرائح الشحن البحري المنشورة السبعة شهرياً لأنها تتحرك مع
+      الطاقة الاستيعابية ومخاطر الاختناقات والموسمية.
+    </p>
+    <p>
+      يبقى الشحن الجوي والتأمين البحري وغرامة التأخير/رسوم الاحتجاز منخفضة الموثوقية حتى ينشر
+      مصدر أولي رقماً محدداً. وعند حدوث ذلك ستستبدل الصفحة البديل الاتجاهي بالرقم الموثق وترفع
+      الشارة وتحدّث تاريخ التعديل.
+    </p>
+    <p>
+      أداة مصاحبة: تمنحك <a href="/ar/tools/cbm-calculator/">حاسبة CBM</a> رقم الحجم اللازم لـ
+      LCL، وتساعد <a href="/ar/tools/container-loading-calculator/">حاسبة تحميل الحاوية</a> في
+      تأكيد ما إذا كانت الشحنة FCL أم LCL.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      locale={locale}
+      href="/ar/get-quote/"
+      title="احصل على عرض سعر مفصل من الصين إلى الخليج"
+      text="أخبرنا بميناء المنشأ وميناء الوجهة والسلعة ورمز HS والحجم وفترة الإعفاء المطلوبة، وسنربطك بمزوّدين يمكنهم تفصيل الشحن والرسوم وضريبة القيمة المضافة ورسوم الوجهة قبل الحجز."
+    />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const USD2 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const LOW_BADGE = '<span class="confidence-badge confidence--low">منخفضة</span>';
+  const MED_BADGE = '<span class="confidence-badge confidence--medium">متوسطة</span>';
+  const HIGH_BADGE = '<span class="confidence-badge confidence--high">عالية</span>';
+
+  const DEST = {
+    'jeddah': {
+      country: 'السعودية',
+      vatRate: 15,
+      fcl20: [1500, 6200],
+      fcl40: [1900, 8100],
+      lcl: [20, 110],
+      air: [8.8, 13.5],
+      airNote: 'معيار السعودية للشحن الجوي من لقطة البحث (منخفضة)',
+    },
+    'dammam': {
+      country: 'السعودية',
+      vatRate: 15,
+      fcl20: [1500, 6200],
+      fcl40: [1900, 8100],
+      lcl: [20, 110],
+      air: [8.8, 13.5],
+      airNote: 'معيار السعودية للشحن الجوي من لقطة البحث (منخفضة)',
+    },
+    'jebel-ali': {
+      country: 'الإمارات',
+      vatRate: 5,
+      fcl20: [1500, 3250],
+      fcl40: [2200, 3950],
+      lcl: [60, 180],
+      air: [5.45, 6.4],
+      airNote: 'معيار الإمارات للشحن الجوي من لقطة البحث (منخفضة)',
+    },
+    'khalifa-port-abu-dhabi': {
+      country: 'الإمارات',
+      vatRate: 5,
+      fcl20: [1500, 3250],
+      fcl40: [2200, 3950],
+      lcl: [60, 180],
+      air: [5.45, 6.4],
+      airNote: 'معيار الإمارات للشحن الجوي من لقطة البحث (منخفضة)',
+      fallbackNote: 'نطاق الشحن البحري لميناء خليفة غير منشور؛ بديل اتجاهي إلى نطاق الإمارات/جبل علي — اطلب جدولاً مفصلاً',
+    },
+    'hamad': {
+      country: 'قطر',
+      vatRate: 0,
+      fcl20: [1700, 2500],
+      fcl40: [2500, 3600],
+      lcl: [75, 100],
+      air: null,
+      airNote: 'الشحن الجوي لقطر غير منشور في اللقطة — بديل اتجاهي سعودي/إماراتي',
+    },
+    'shuwaikh': {
+      country: 'الكويت',
+      vatRate: 0,
+      fcl20: [1500, 2500],
+      fcl40: [2200, 3600],
+      lcl: [70, 100],
+      air: null,
+      airNote: 'الشحن الجوي للكويت غير منشور في اللقطة — بديل اتجاهي سعودي/إماراتي',
+    },
+    'sohar': {
+      country: 'عُمان',
+      vatRate: 5,
+      fcl20: [1500, 2600],
+      fcl40: [2200, 3800],
+      lcl: [60, 110],
+      air: null,
+      airNote: 'الشحن الجوي لعُمان غير منشور في اللقطة — بديل اتجاهي سعودي/إماراتي',
+    },
+    'khalifa-bin-salman': {
+      country: 'البحرين',
+      vatRate: 10,
+      fcl20: [1500, 2500],
+      fcl40: [2200, 3600],
+      lcl: [75, 100],
+      air: null,
+      airNote: 'الشحن الجوي للبحرين غير منشور في اللقطة — بديل اتجاهي سعودي/إماراتي',
+    },
+  };
+
+  const modeLabels = {
+    'fcl20': 'لكل حاوية',
+    'fcl40': 'لكل حاوية',
+    'lcl': 'لكل CBM',
+    'air': 'لكل كجم',
+  };
+
+  function nonNegative(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) && value >= 0 ? value : null;
+  }
+
+  function positiveNumber(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const value = Number.parseFloat(raw);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cost-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function badge(level) {
+    if (level === 'HIGH') return HIGH_BADGE;
+    if (level === 'LOW') return LOW_BADGE;
+    return MED_BADGE;
+  }
+
+  function rowHtml(name, low, mid, high, level, note) {
+    return `<tr><td>${name}</td><td>${low}</td><td>${mid}</td><td>${high}</td><td>${badge(level)}</td><td>${note}</td></tr>`;
+  }
+
+  function calculate() {
+    const destination = el('destination').value;
+    const mode = el('mode').value;
+    const dest = DEST[destination];
+    const size = positiveNumber('size');
+    const goods = nonNegative('goods-value');
+    const holdDaysRaw = nonNegative('hold-days');
+    const insuranceRate = nonNegative('insurance-rate');
+
+    if (!size) {
+      setError('أدخل حجم شحنة موجباً.');
+      return;
+    }
+    if (goods === null) {
+      setError('أدخل قيمة بضاعة تساوي صفراً أو أكثر.');
+      return;
+    }
+    if (holdDaysRaw === null || insuranceRate === null) {
+      setError('أدخل صفراً أو أكثر لأيام الاحتجاز ومعدل التأمين.');
+      return;
+    }
+
+    setError();
+    const holdDays = Math.floor(holdDaysRaw);
+
+    let low;
+    let high;
+    let freightLevel = 'MEDIUM';
+    let freightNote = 'شريحة الممر المنشورة (متوسطة)';
+
+    if (mode === 'fcl20') {
+      low = dest.fcl20[0] * size;
+      high = dest.fcl20[1] * size;
+    } else if (mode === 'fcl40') {
+      low = dest.fcl40[0] * size;
+      high = dest.fcl40[1] * size;
+    } else if (mode === 'lcl') {
+      low = dest.lcl[0] * size;
+      high = dest.lcl[1] * size;
+    } else {
+      if (dest.air) {
+        low = dest.air[0] * size;
+        high = dest.air[1] * size;
+      } else {
+        low = 5.45 * size;
+        high = 13.5 * size;
+      }
+      freightLevel = 'LOW';
+      freightNote = dest.airNote;
+    }
+
+    if (dest.fallbackNote && mode !== 'air') {
+      freightLevel = 'LOW';
+      freightNote = dest.fallbackNote;
+    }
+
+    const mid = (low + high) / 2;
+    const insurance = (goods + mid) * (insuranceRate / 100);
+    const cifs = [low, mid, high].map((f) => goods + f + insurance);
+    const duties = cifs.map((cif) => cif * 0.05);
+    const vats = duties.map((duty, index) => (dest.vatRate / 100) * (cifs[index] + duty));
+
+    const chargeableDays = Math.max(0, holdDays - 5);
+    const demLow = chargeableDays * 50;
+    const demMid = chargeableDays * 175;
+    const demHigh = chargeableDays * 300;
+
+    const totals = [0, 1, 2].map((i) => cifs[i] + duties[i] + vats[i]);
+    if (chargeableDays > 0) {
+      totals[0] += demLow;
+      totals[1] += demMid;
+      totals[2] += demHigh;
+    }
+
+    el('total-range').textContent = `${USD.format(totals[0])}–${USD.format(totals[2])}`;
+    el('per-unit').textContent = `${USD.format(totals[0] / size)}–${USD.format(totals[2] / size)} ${modeLabels[mode]}`;
+    el('freight-mid').textContent = USD.format(mid);
+    el('cif-mid').textContent = USD.format(cifs[1]);
+    el('duty-mid').textContent = USD.format(duties[1]);
+    el('vat-mid').textContent = USD.format(vats[1]);
+
+    const rows = [
+      rowHtml('الشحن', USD.format(low), USD.format(mid), USD.format(high), freightLevel, freightNote),
+      rowHtml('التأمين البحري', USD.format(insurance), USD.format(insurance), USD.format(insurance), 'LOW', 'معيار صناعي ≈0.3%، غير وارد في اللقطة'),
+      rowHtml('قيمة CIF', USD.format(cifs[0]), USD.format(cifs[1]), USD.format(cifs[2]), 'LOW', 'مشتقة من شريحة شحن متوسطة + افتراض تأمين منخفض'),
+      rowHtml('الرسوم الجمركية على واردات دول المجلس', USD.format(duties[0]), USD.format(duties[1]), USD.format(duties[2]), 'HIGH', '5% من CIF؛ الكحول والتبغ أعلى'),
+      rowHtml(`ضريبة القيمة المضافة في ${dest.country}`, USD.format(vats[0]), USD.format(vats[1]), USD.format(vats[2]), 'HIGH', dest.vatRate === 0 ? 'لا توجد ضريبة قيمة مضافة حالياً في لقطة البحث' : `${dest.vatRate}% من CIF + الرسوم`),
+      rowHtml('رسوم الوجهة والرسوم المحلية', 'غير منشور', 'غير منشور', 'غير منشور', 'LOW', '<a href="/ar/middleeast/hidden-charges-china-to-gcc/">اطلب جدولاً مفصلاً</a>'),
+    ];
+
+    if (holdDays > 0) {
+      rows.push(
+        rowHtml(
+          'غرامة التأخير / رسوم الاحتجاز',
+          USD.format(demLow),
+          USD.format(demMid),
+          USD.format(demHigh),
+          'LOW',
+          chargeableDays > 0
+            ? `${chargeableDays} يوم(أيام) قابل للتحصيل بعد افتراض الخمسة أيام إعفاء؛ نطاق $50–$300+/يوم، متوسط 2025 $150–$300/يوم`
+            : 'ضمن افتراض الخمسة أيام إعفاء؛ لا توجد أيام قابلة للتحصيل',
+        ),
+      );
+    }
+
+    rows.push(
+      rowHtml('التكلفة الإجمالية للوصول', USD.format(totals[0]), USD.format(totals[1]), USD.format(totals[2]), 'LOW', 'مركّبة؛ تشمل تأميناً منخفض الموثوقية ونطاق غرامة تأخير اختيارياً'),
+    );
+
+    el('cost-breakdown-body').innerHTML = rows.join('');
+    el('result-context').textContent =
+      `${dest.country} · ${modeLabels[mode]} · تم إدخال ${holdDays} يوم(أيام) احتجاز. يتبع المنخفض/المتوسط/المرتفع شريحة الشحن؛ ويستخدم التأمين منتصف الشحن كأساس له.`;
+  }
+
+  function clearResults() {
+    el('total-range').textContent = '—';
+    el('per-unit').textContent = '—';
+    el('freight-mid').textContent = '—';
+    el('cif-mid').textContent = '—';
+    el('duty-mid').textContent = '—';
+    el('vat-mid').textContent = '—';
+    el('cost-breakdown-body').innerHTML = '<tr><td colspan="6" class="muted">لا يوجد تقدير بعد.</td></tr>';
+    el('result-context').textContent = 'أدخل تفاصيل الشحنة لإنشاء تفصيل استرشادي. يتبع الإجمالي المنخفض/المتوسط/المرتفع نطاق الشحن؛ ويستخدم التأمين منتصف الشحن كأساس له.';
+    setError();
+  }
+
+  function resetForm() {
+    el('origin').value = 'shanghai';
+    el('destination').value = 'jeddah';
+    el('mode').value = 'fcl20';
+    el('size').value = '';
+    el('goods-value').value = '';
+    el('hold-days').value = '0';
+    el('insurance-rate').value = '0.3';
+    updateSizeHint();
+    clearResults();
+  }
+
+  function updateSizeHint() {
+    const mode = el('mode').value;
+    const hint = el('size-hint');
+    if (mode === 'fcl20' || mode === 'fcl40') {
+      hint.textContent = 'عدد الحاويات لـ FCL · CBM لـ LCL · الكجم القابل للتحصيل للشحن الجوي.';
+    } else if (mode === 'lcl') {
+      hint.textContent = 'CBM لـ LCL · عدد الحاويات لـ FCL · الكجم القابل للتحصيل للشحن الجوي.';
+    } else {
+      hint.textContent = 'الكجم القابل للتحصيل للشحن الجوي · عدد الحاويات لـ FCL · CBM لـ LCL.';
+    }
+  }
+
+  el('cost-calculate').addEventListener('click', calculate);
+  el('cost-reset').addEventListener('click', resetForm);
+  el('mode').addEventListener('change', updateSizeHint);
+  updateSizeHint();
+</script>

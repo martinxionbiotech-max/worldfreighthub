@@ -1,0 +1,890 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import type { Source } from '../../../data/types';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/air-freight-china-to-gcc/`;
+
+const freightos: Source = {
+  id: 'freightos-air-gcc',
+  name: 'Freightos — Shanghai to Riyadh air route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+
+const ddpchain: Source = {
+  id: 'ddpchain-air-gcc',
+  name: 'DDP Chain — China to Saudi Arabia air freight examples',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+
+const cargofromchina: Source = {
+  id: 'cargofromchina-air-gcc',
+  name: 'Cargo From China — China to Saudi Arabia and UAE air freight guides',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const sinoShipping: Source = {
+  id: 'sino-shipping-air-gcc',
+  name: 'Sino Shipping — China to Saudi express snapshot (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+
+const iata: Source = {
+  id: 'iata-air-gcc',
+  name: 'IATA — air cargo chargeable weight guidance',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const wfhMethodData: Source = {
+  id: 'wfh-air-method-data',
+  name: 'WorldFreightHub methods data — air freight and express rate bands and transit windows',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-air-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const rateSources: Source[] = [freightos, ddpchain, cargofromchina, sinoShipping, wfhMethodData];
+const chargeableSources: Source[] = [iata, wfhMethodData];
+const transitSources: Source[] = [wfhMethodData, ddpchain, sinoShipping];
+const comparisonSources: Source[] = [wfhMethodData, freightos, ddpchain, cargofromchina];
+const airportSources: Source[] = [
+  iata,
+  ...sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+  wfhMethodData,
+  iata,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const airRateRows = [
+  {
+    service: 'شحن جوي · شنغهاي → الرياض',
+    benchmark: '$917 – $1,223 لكل 100 kg',
+    perKg: '≈ $9.17 – $12.23 / kg',
+    transit: '6–10 أيام',
+    basis: 'بيانات مسارات Freightos الجوية',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي · الصين → السعودية حسب المسار',
+    benchmark: '$880 – $1,350 لكل 100 kg',
+    perKg: '≈ $8.80 – $13.50 / kg',
+    transit: 'حسب المسار',
+    basis: 'أمثلة مسارات ddpchain',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي · شنتشن → الرياض',
+    benchmark: '$920 – $1,250 لكل 100 kg',
+    perKg: '≈ $9.20 – $12.50 / kg',
+    transit: 'حسب المسار',
+    basis: 'مثال ddpchain شنتشن→الرياض',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي · شرائح السوق السعودي',
+    benchmark: 'SAR 26.5 – 30.5 / kg',
+    perKg: 'SAR 26.5 – 30.5 / kg',
+    transit: '2–5 أيام عمل',
+    basis: 'cargofromchina (شرائح 22kg+ / 101kg+)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي · سوق الإمارات',
+    benchmark: 'AED 20 – 23.5 / kg',
+    perKg: 'AED 20 – 23.5 / kg',
+    transit: '2–4 أيام سريع',
+    basis: 'دليل cargofromchina للإمارات',
+    confidence: 'LOW',
+  },
+  {
+    service: 'بريد سريع · الصين → الخليج',
+    benchmark: '~$6.90 / kg',
+    perKg: '≈ $6.90 / kg',
+    transit: '3–5 أيام',
+    basis: 'sino-shipping (أغسطس 2026)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي DDP · الصين → السعودية',
+    benchmark: '33 – 48 RMB / kg',
+    perKg: '33 – 48 RMB / kg',
+    transit: '10–15 أيام',
+    basis: 'شحن جوي DDP من ddpchain',
+    confidence: 'LOW',
+  },
+  {
+    service: 'شحن جوي عام · الصين → الخليج',
+    benchmark: '$4.3 – $11.0 / kg',
+    perKg: '$4.3 – $11.0 / kg',
+    transit: '3–7 أيام من مطار إلى مطار',
+    basis: 'بيانات طرق الشحن في WorldFreightHub',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'بريد سريع عام · الصين → الخليج',
+    benchmark: '$6.9 – $11.0 / kg',
+    perKg: '$6.9 – $11.0 / kg',
+    transit: '3–7 أيام من الباب إلى الباب',
+    basis: 'بيانات طرق الشحن في WorldFreightHub',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'الشحن الجوي إلى قطر',
+    benchmark: 'غير منشور',
+    perKg: 'غير منشور — اطلب عرض سعر لكل kg لمسارك',
+    transit: 'غير منشور',
+    basis: 'لا يوجد معيار قطري موثق في اللقطة',
+    confidence: 'LOW',
+  },
+  {
+    service: 'الشحن الجوي إلى الكويت',
+    benchmark: 'غير منشور',
+    perKg: 'غير منشور — اطلب عرض سعر لكل kg لمسارك',
+    transit: 'غير منشور',
+    basis: 'لا يوجد معيار كويتي موثق في اللقطة',
+    confidence: 'LOW',
+  },
+  {
+    service: 'الشحن الجوي إلى عُمان',
+    benchmark: 'غير منشور',
+    perKg: 'غير منشور — اطلب عرض سعر لكل kg لمسارك',
+    transit: 'غير منشور',
+    basis: 'لا يوجد معيار عُماني موثق في اللقطة',
+    confidence: 'LOW',
+  },
+  {
+    service: 'الشحن الجوي إلى البحرين',
+    benchmark: 'غير منشور',
+    perKg: 'غير منشور — اطلب عرض سعر لكل kg لمسارك',
+    transit: 'غير منشور',
+    basis: 'لا يوجد معيار بحريني موثق في اللقطة',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    method: 'الشحن الجوي (من مطار إلى مطار)',
+    window: '3–7 أيام',
+    note: 'الرحلة ساعات فقط؛ الاستلام من المنشأ والمناولة عند التصدير والتخليص والتسليم تُضاف فوقها',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'البريد السريع (من الباب إلى الباب)',
+    window: '3–7 أيام',
+    note: 'الأبسط، وبتتبع كامل، والأعلى تكلفة لكل kg',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'شحن جوي DDP (من الباب إلى الباب)',
+    window: '10–15 أيام',
+    note: 'يضيف التخليص في الوجهة والرسوم/ضريبة القيمة المضافة والتسليم النهائي إلى الرحلة الجوية',
+    confidence: 'LOW',
+  },
+  {
+    method: 'شحن بحري FCL (ميناء إلى ميناء)',
+    window: '14–30 يومًا',
+    note: 'مباشر 14–20 يومًا؛ إعادة الشحن تضيف أسبوعًا أو أكثر',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'شحن بحري LCL (ميناء إلى ميناء)',
+    window: '15–35 يومًا',
+    note: 'أبطأ بـ 5–10 أيام من FCL المكافئ',
+    confidence: 'MEDIUM',
+  },
+];
+
+const volumetricRows = [
+  {
+    case: 'كرتون 80 × 50 × 40 سم، وزن إجمالي 20 kg',
+    divisor: 'شحن جوي ÷6000',
+    volumetric: '80 × 50 × 40 ÷ 6000 = 26.7 kg',
+    chargeable: '26.7 kg (الحجمي يتجاوز الإجمالي)',
+    confidence: 'MEDIUM',
+  },
+  {
+    case: 'كرتون 80 × 50 × 40 سم، وزن إجمالي 20 kg',
+    divisor: 'بريد سريع / سريع ÷5000',
+    volumetric: '80 × 50 × 40 ÷ 5000 = 32 kg',
+    chargeable: '32 kg (الحجمي يتجاوز الإجمالي)',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airVsExpressRows = [
+  {
+    factor: 'النطاق',
+    air: 'من مطار إلى مطار للبضائع التجارية',
+    express: 'بريد سريع من الباب إلى الباب للطرود الصغيرة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'قاسم الوزن القابل للتحصيل',
+    air: '÷6000',
+    express: '÷5000 (الطرود الخفيفة كبيرة الحجم تكلف أكثر)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'نطاق السعر',
+    air: '$4.3 – $11.0 / kg',
+    express: '$6.9 – $11.0 / kg',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'الأنسب',
+    air: 'شحنات تجارية أثقل ترتب فيها الاستلام والتسليم بنفسك',
+    express: 'طرود أقل من 30 kg تقريبًا تحتاج حجزًا واحدًا وتتبعًا',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airVsSeaRows = [
+  {
+    factor: 'مدة النقل',
+    air: '3–7 أيام',
+    sea: '14–30 يومًا FCL / 15–35 يومًا LCL',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'التكلفة لكل kg',
+    air: 'عادة 5–10 أضعاف الشحن البحري',
+    sea: 'أقل تكلفة لكل وحدة عندما يكون الصندوق ممتلئًا بشكل معقول',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'متى يتفوق الشحن الجوي',
+    air: 'بضائع حرجة لنفاد المخزون أو قابلة للتلف أو عالية الكثافة القيمية أو شحنات صغيرة',
+    sea: 'بضائع كبيرة أو كثيفة أو ثقيلة أو ذات طلب مستقر',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airportRows = [
+  {
+    gateway: 'مطار شانغهاي بودونغ (PVG)',
+    side: 'منشأ صيني',
+    role: 'مرتكز شرق الصين للشحن الجوي المتجه إلى الخليج',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'مطار شنتشن باوان (SZX)',
+    side: 'منشأ صيني',
+    role: 'بوابة الإلكترونيات في جنوب الصين / دلتا نهر اللؤلؤ',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'مطار قوانغتشو بايون (CAN)',
+    side: 'منشأ صيني',
+    role: 'بديل جوي في جنوب الصين',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'مطار هونغ كونغ (HKG)',
+    side: 'منشأ صيني',
+    role: 'مركز إقليمي رئيسي لإعادة الشحن وطائرات الشحن',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'جدة (JED) / الرياض (RUH) / الدمام (DMM)',
+    side: 'وجهة خليجية',
+    role: 'مطارات وصول السعودية — طابقها مع المرسل إليه غربًا / وسطًا / شرقًا',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'دبي (DXB / DWC)',
+    side: 'وجهة خليجية',
+    role: 'مركز جوي إماراتي وإقليمي لإعادة التصدير',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'الدوحة (DOH)',
+    side: 'وجهة خليجية',
+    role: 'بوابة وصول قطر',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'الكويت (KWI)',
+    side: 'وجهة خليجية',
+    role: 'بوابة وصول الكويت',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'مسقط (MCT)',
+    side: 'وجهة خليجية',
+    role: 'بوابة وصول عُمان',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'البحرين (BAH)',
+    side: 'وجهة خليجية',
+    role: 'بوابة وصول البحرين',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'سعر الشحن الجوي الأساسي',
+    who: 'شركة الطيران / وكيل الشحن',
+    magnitude: 'عام $4.3 – $11.0/kg (متوسط)؛ لقطات المنافسين تختلف حسب المسار (منخفض)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الوقود الإضافية',
+    who: 'شركة الطيران',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم الأمن الإضافية',
+    who: 'شركة الطيران',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'مناولة المحطة',
+    who: 'جهة المناولة في المنشأ / الوجهة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'تخزين المطار بعد الفترة المجانية',
+    who: 'جهة المناولة الأرضية',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'التخليص الجمركي / السمسرة',
+    who: 'المخلص الجمركي المرخص',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'شهادة SABER (السعودية فقط)',
+    who: 'منصة SABER / جهة المطابقة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الرسوم الجمركية على الواردات',
+    who: 'سلطة الجمارك الخليجية',
+    magnitude: '5% من قيمة CIF (خط الأساس الخليجي الموحد)',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'ضريبة القيمة المضافة على الواردات',
+    who: 'سلطة الضرائب في الوجهة',
+    magnitude: 'السعودية 15% · الإمارات 5% · قطر 0% · الكويت 0% · عُمان 5% · البحرين 10%',
+    confidence: 'HIGH',
+  },
+];
+
+const faqs = [
+  {
+    q: 'كيف يتم تسعير الشحن الجوي من الصين إلى الخليج؟',
+    a: 'على أساس الوزن القابل للتحصيل — وهو الأعلى بين الوزن الإجمالي والوزن الحجمي. يُحسب الوزن الحجمي بضرب الطول × العرض × الارتفاع بالسنتيمتر وقسمة الناتج على 6000 للشحن الجوي (أو 5000 لدى معظم شركات البريد السريع). الكرتون الخفيف كبير الحجم يُفوتر على حجمه، لا على وزنه الفعلي.',
+  },
+  {
+    q: 'ما أسعار الشحن الجوي النموذجية من الصين إلى الخليج؟',
+    a: 'النطاق العام الموثق هو $4.3–$11.0/kg (موثوقية متوسطة). تُظهر لقطات السوق المنشورة أن شنغهاي→الرياض نحو $917–$1,223 لكل 100 kg وشنتشن→الرياض نحو $920–$1,250 لكل 100 kg، بالإضافة إلى شرائح سعودية تبلغ SAR 26.5–30.5/kg وشرائح إماراتية AED 20–23.5/kg — وجميعها منخفضة الموثوقية. أسعار الشحن الجوي إلى قطر والكويت وعُمان والبحرين غير منشورة في اللقطة الموثقة.',
+  },
+  {
+    q: 'لماذا لا تظهر أسعار الشحن الجوي إلى قطر والكويت وعُمان والبحرين؟',
+    a: 'لأن البيانات الموثقة لا تنشر معايير سعر لكل kg لتلك المسارات الأربعة. نحن لا نخترع أرقامًا تبدو معقولة: تلك المسارات تُعرض على أنها «غير منشور — اطلب عرض سعر لكل kg لمسارك».',
+  },
+  {
+    q: 'ما سرعة الشحن الجوي مقارنة بالبريد السريع من الصين إلى الخليج؟',
+    a: 'كلاهما 3–7 أيام في بيانات التخطيط العامة. الشحن الجوي من مطار إلى مطار وترتب أنت الاستلام والتسليم؛ أما البريد السريع فمن الباب إلى الباب مع تتبع وتخليص مدمج. يكون شحن DDP الجوي أطول بمدة 10–15 يومًا لأنه يضيف التخليص في الوجهة والتسليم النهائي.',
+  },
+  {
+    q: 'هل يوفر الشحن الجوي عليّ الرسوم الجمركية أو ضريبة القيمة المضافة أو SABER؟',
+    a: 'لا. الشحن الجوي يقلص مدة النقل لكنه لا يعفي من الرسوم الجمركية على الواردات (خط الأساس 5% من CIF) ولا من ضريبة القيمة المضافة ولا من مطابقة SABER/SASO للبضائع السعودية الخاضعة للتنظيم. يجب الحصول على شهادة مطابقة الشحنة (SC) قبل وصول البضاعة.',
+  },
+  {
+    q: 'كيف أحسب الوزن القابل للتحصيل؟',
+    a: 'خذ الأعلى بين الوزن الإجمالي والوزن الحجمي. مثال عملي: كرتون بأبعاد 80 × 50 × 40 سم ووزن 20 kg يكون 26.7 kg بالشحن الجوي (÷6000) و32 kg بالبريد السريع (÷5000). الوزن القابل للتحصيل هو الرقم الأكبر في كل حالة.',
+  },
+  {
+    q: 'متى أختار الشحن الجوي بدلاً من البريد السريع؟',
+    a: 'استخدم الشحن الجوي للشحنات التجارية الأثقل عندما ترتب الاستلام والتسليم بنفسك ويساعدك قاسم ÷6000 مع السعر الأقل لكل kg. استخدم البريد السريع للطرود الصغيرة الأقل من 30 kg تقريبًا حيث يستحق الحجز الواحد من الباب إلى الباب والتتبع دفع العلاوة.',
+  },
+  {
+    q: 'متى يتفوق الشحن الجوي على الشحن البحري في التكلفة الإجمالية؟',
+    a: 'عندما تتجاوز تكاليف الاحتفاظ أو التأمين أو القابلية للتلف أو خسارة المبيعات علاوة الشحن الجوي. الحالات النموذجية هي إعادة التوريد الحرجة لنفاد المخزون، والبضائع القابلة للتلف، والبضائع الهشة عالية القيمة، والشحنات الصغيرة التي تكون فيها الحدود الدنيا للشحن البحري مكلفة.',
+  },
+  {
+    q: 'ما المطارات المستخدمة للشحن الجوي من الصين إلى الخليج؟',
+    a: 'بوابات الصين الشائعة هي شانغهاي بودونغ (PVG)، وشنتشن باوان (SZX)، وقوانغتشو بايون (CAN)، وهونغ كونغ (HKG). وتشمل مطارات الوصول الخليجية جدة والرياض والدمام في السعودية، ودبي (DXB/DWC)، والدوحة، والكويت، ومسقط، والبحرين. أدوار المطارات سياق توجيه تشغيلي وليست موثقة في اللقطة — أكد زوج المطار ونقطة الترانزيت مع ناقلك.',
+  },
+  {
+    q: 'ما الرسوم الخفية التي يجب أن أتوقعها في الشحن الجوي؟',
+    a: 'بالإضافة إلى سعر كل kg: رسوم الوقود والأمن الإضافية، ومناولة المحطة، وتخزين المطار بعد الفترة المجانية، والتخليص الجمركي والسمسرة، ورسوم SABER PC/SC للسعودية، والرسوم الجمركية على الواردات بنسبة 5% من CIF وضريبة القيمة المضافة في الوجهة. لم تُنشر مبالغ الرسوم الإضافية المحددة في اللقطة الموثقة، لذا اطلب جدولًا مفصلاً.',
+  },
+  {
+    q: 'هل يوجد حد إعفاء جمركي أو إعفاء من الرسوم للشحن الجوي إلى الخليج؟',
+    a: 'تنشر السعودية (SAR 1,000) والإمارات (AED 1,000) حدين للإعفاء الجمركي للطرود الشخصية/البريدية فقط، ولا تزال ضريبة القيمة المضافة مستحقة. البضائع التجارية المنقولة جوًا تخضع للرسوم عمومًا بغض النظر، ولا تنشر الدول الخليجية الأربع الأخرى حدًا مؤكدًا.',
+  },
+  {
+    q: 'هل ينطبق ISF على الشحن الجوي من الصين إلى الخليج؟',
+    a: 'لا. ISF (إقرار أمن المستورد) برنامج أمريكي ولا ينطبق على واردات الخليج جوًا أو بحرًا. الخطوة السعودية المكافئة للتقديم المسبق هي شهادة SABER SC بالإضافة إلى إقرار فسح قبل الوصول.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن الجوي من الصين إلى الخليج — الأسعار والوزن القابل للتحصيل ومدد النقل (2026)',
+      description:
+        'مرجع شامل للشحن الجوي من الصين إلى الخليج: معايير السعر لكل kg، والوزن القابل للتحصيل مقابل الحجمي، وتخطيط النقل 3–7 أيام، والجوي مقابل السريع، والرسوم الخفية والامتثال.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن الجوي من الصين إلى الخليج — الأسعار والوزن القابل للتحصيل ومدد النقل (2026)"
+  description="مرجع شامل للشحن الجوي من الصين إلى الخليج: معايير السعر لكل kg، والوزن القابل للتحصيل مقابل الحجمي، وتخطيط النقل 3–7 أيام، والجوي مقابل السريع، والرسوم الخفية والامتثال."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'الشحن الجوي من الصين إلى الخليج' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث سبتمبر 2026</span>
+      <h1>الشحن الجوي من الصين إلى الخليج: الأسعار والوزن القابل للتحصيل ومدة النقل</h1>
+      <p class="lead">
+        المرجع الخالص للشحن الجوي «كيف يعمل + كم يكلف» لممر الصين → الخليج.
+        يشرح الوزن القابل للتحصيل، ويسرد معايير السعر المنشورة لكل kg مع شارات الموثوقية،
+        ويوضح لماذا لا يعفيك الشحن الجوي من الرسوم أو ضريبة القيمة المضافة أو SABER — وكل ذلك
+        دون اختراع أرقام لمسارات لا تملك بيانات موثقة.
+      </p>
+      <p class="small muted">
+        شارات الموثوقية تفصل النطاقات العامة الموثقة عن لقطات السوق من المنافسين.
+        تعامل مع كل سعر وملاحظة توجيه منخفضة الموثوقية كأرقام استرشادية، واطلب عرض سعر
+        للمسارات غير المنشورة.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">سعر الشحن الجوي العام</span>
+          <span class="fact-value">$4.3 – $11.0/kg <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">سعر البريد السريع العام</span>
+          <span class="fact-value">$6.9 – $11.0/kg <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة النقل الجوي</span>
+          <span class="fact-value">3–7 أيام من مطار إلى مطار <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قاسم الوزن القابل للتحصيل</span>
+          <span class="fact-value">÷6000 (جوي) / ÷5000 (بريد سريع) <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم / ضريبة القيمة المضافة / SABER</span>
+          <span class="fact-value">لا يعفي منها الشحن الجوي <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">قطر / الكويت / عُمان / البحرين</span>
+          <span class="fact-value">غير منشور <ConfidenceBadge locale={locale} level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. معايير أسعار الشحن الجوي: ما المنشور وما غير المنشور</h2>
+    <p>
+      تتحرك أسعار الشحن الجوي أسبوعيًا مع الوقود والسعة والموسم وزوج المطارات، لذا يفصل الجدول
+      لقطات السوق المنشورة عن النطاقات العامة الموثقة. لا تجمع متوسط صفوف الموثوقية المنخفضة معًا —
+      فهي تستخدم شرائح وزن ومسارات وأسس تواريخ مختلفة. تُعرض قطر والكويت وعُمان والبحرين
+      على أنها «غير منشور» بدلاً من ملئها بأرقام مخترعة.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'service', label: 'خدمة الشحن الجوي' },
+        { key: 'benchmark', label: 'المعيار المنشور' },
+        { key: 'perKg', label: 'استرشادي لكل kg' },
+        { key: 'transit', label: 'مدة النقل الاسترشادية' },
+        { key: 'basis', label: 'الأساس' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={airRateRows}
+      caption="النطاقان العامان متوسطا الموثوقية من بيانات طرق الشحن؛ أما لقطات المنافسين فمنخفضة الموثوقية. أرقام كل kg هي تحويلات حسابية من شرائح 100 kg المنشورة حيثما ينطبق ذلك."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار الشحن الجوي" />
+
+    <div class="note mt-2">
+      <strong>السعر المعلن مقابل التكلفة الإجمالية للوصول:</strong> رقم كل kg سطر واحد فقط. رسوم الوقود والأمن
+      الإضافية ومناولة المحطة والتخليص وSABER والرسوم/ضريبة القيمة المضافة كلها تُضاف فوقه،
+      لذا اطلب عرض سعر شامل مفصلاً لإجراء مقارنة واقعية.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. الوزن القابل للتحصيل: آلية التسعير التي يغفلها المستوردون الجدد</h2>
+      <p>
+        تسعر شركات الطيران على أساس <strong>الوزن القابل للتحصيل</strong> — وهو الأعلى بين الوزن الإجمالي
+        والوزن الحجمي. المثال العملي أدناه يستخدم نفس كرتون 80 × 50 × 40 سم ووزن 20 kg عبر
+        القاسمين، لترى بوضوح كيف يفرض البريد السريع رسومًا أعلى على البضائع الخفيفة كبيرة الحجم.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'case', label: 'مثال عملي' },
+          { key: 'divisor', label: 'القاسم' },
+          { key: 'volumetric', label: 'الوزن الحجمي' },
+          { key: 'chargeable', label: 'الوزن القابل للتحصيل' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={volumetricRows}
+        caption="حساب الوزن الحجمي متوسط الموثوقية: الطول × العرض × الارتفاع (سم) ÷ القاسم. والوزن القابل للتحصيل هو الأعلى بين الوزن الإجمالي والحجمي."
+      />
+      <SourceList locale={locale} sources={chargeableSources} title="المصادر — الوزن القابل للتحصيل" />
+
+      <div class="note mt-2">
+        <strong>قارن عروض الأسعار بالكيلوغرامات القابلة للتحصيل، لا بالكيلوغرامات الفعلية.</strong> احسب الوزن القابل للتحصيل لكل عرض سعر باستخدام القاسم نفسه، ثم قارن إجمالي
+        الكيلوغرامات القابلة للتحصيل وبنود التكلفة الشاملة — وليس سعر $/kg المعلن فقط أبدًا.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. نوافذ مدة النقل الجوي وكيف تقارن بالبحر</h2>
+    <p>
+      نافذة 3–7 أيام الجوية هي عداد مناولة أرضية، وليست مدة رحلة الطيران. ضعها بجانب
+      البحر وDDP الجوي أدناه، ثم استخدم جدول المقارنة لتقرر متى تبرر السرعة دفع العلاوة.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'method', label: 'الطريقة' },
+        { key: 'window', label: 'نافذة النقل' },
+        { key: 'note', label: 'ما الذي يحدد النافذة' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="نوافذ الجو والسريع والبحر متوسطة الموثوقية من بيانات طرق الشحن؛ وDDP الجوي منخفض الموثوقية من لقطة منافس."
+    />
+    <SourceList locale={locale} sources={transitSources} title="المصادر — نوافذ النقل الجوي" />
+
+    <h3 class="mt-3">متى يتفوق الجو على البحر</h3>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'factor', label: 'العامل' },
+        { key: 'air', label: 'الشحن الجوي' },
+        { key: 'sea', label: 'الشحن البحري' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={airVsSeaRows}
+      caption="عوامل القرار استرشادية؛ وأرقام مدة النقل والتكلفة للوحدة متوسطة الموثوقية من بيانات طرق الشحن."
+    />
+    <SourceList locale={locale} sources={comparisonSources} title="المصادر — الجو مقابل البحر" />
+
+    <div class="note mt-2">
+      <strong>الجو ليس اختصارًا ضريبيًا.</strong> اختيار الجو يزيل أيام البحر لكنه لا يزيل
+      خطوات الامتثال في الوجهة — فمتطلبات SABER للسعودية والرسوم/ضريبة القيمة المضافة والتخليص
+      كلها ما تزال سارية، لذا أدرجها في المقارنة من البداية.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. الجو مقابل البريد السريع: المنتجان الجويان ليسا متطابقين</h2>
+      <p>
+        كثيرًا ما يُستخدم الشحن الجوي والبريد السريع بالتبادل، لكنهما منتجان مختلفان
+        بقواسم ونطاقات وسلوك تكلفة مختلفة. اختر المنتج أولاً، ثم المسار.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'factor', label: 'العامل' },
+          { key: 'air', label: 'الشحن الجوي' },
+          { key: 'express', label: 'البريد السريع' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={airVsExpressRows}
+        caption="القاسم والنطاق ونطاقات السعر متوسطة الموثوقية من بيانات طرق الشحن."
+      />
+      <SourceList locale={locale} sources={chargeableSources} title="المصادر — الجو مقابل البريد السريع" />
+
+      <div class="grid grid--2 mt-2">
+        <Card locale={locale} title="اختر الشحن الجوي عندما...">
+          <ul>
+            <li>تكون الشحنة بضائع تجارية أثقل.</li>
+            <li>يمكنك ترتيب الاستلام والتسليم بنفسك.</li>
+            <li>يحمي قاسم ÷6000 البضائع كبيرة الحجم لكن الكثيفة.</li>
+            <li>يكون السعر الأقل لكل kg مهمًا عند الكميات الكبيرة.</li>
+          </ul>
+        </Card>
+        <Card locale={locale} title="اختر البريد السريع عندما...">
+          <ul>
+            <li>تكون الطرود أقل من 30 kg تقريبًا.</li>
+            <li>تستحق راحة التوصيل من الباب إلى الباب والتتبع دفع العلاوة.</li>
+            <li>تريد أن يتولى البريد السريع التخليص.</li>
+            <li>الحجز الواحد أفضل من إدارة نقلة من مطار إلى مطار.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. المطارات: المنشأ الصيني ووصول الخليج</h2>
+    <p>
+      أدوار المطارات أدناه سياق توجيه تشغيلي وليست موثقة في اللقطة. أكد زوج المطار
+      الدقيق ونقطة الترانزيت ومكتب التخليص مع شركة الطيران أو وكيل الشحن قبل الحجز.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'gateway', label: 'البوابة' },
+        { key: 'side', label: 'الجهة' },
+        { key: 'role', label: 'الدور' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={airportRows}
+      caption="أسماء المطارات وأدوارها سياق توجيه تشغيلي منخفض الموثوقية — غير منشورة في لقطة البحث الموثقة."
+    />
+    <SourceList locale={locale} sources={airportSources} title="المصادر — المنشأ الصيني ومطارات الخليج" />
+
+    <div class="note mt-2">
+      <strong>طابق مطار الوصول مع المرسل إليه.</strong> في السعودية تخدم جدة الغرب،
+      والرياض الوسط، والدمام الشرق؛ وفي الإمارات دبي هي المركز الجوي الرئيسي. يمكن للرحلة البرية
+      الأخيرة أن تغير إجمالي زمن النقل من الباب إلى الباب بقدر ما تغيره رحلة الطيران.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. هيكل تكلفة الشحن الجوي: الرسوم التي يتجاهلها المنافسون</h2>
+      <p>
+        سعر كل kg ليس سوى السطر الأول في التكلفة الإجمالية للوصول. فالرسوم الإضافية ومناولة المحطة
+        وتخزين المطار والتخليص وSABER كلها تُضاف فوقه — ولا يوثق في اللقطة سوى الرسوم وضريبة القيمة المضافة.
+        كل شيء آخر موسوم بموثوقية منخفضة مع ملاحظة اطلب عرض سعر.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'بند التكلفة' },
+          { key: 'who', label: 'من يفرضها' },
+          { key: 'magnitude', label: 'القيمة الاسترشادية' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="فقط الرسوم الجمركية على الواردات (5% CIF) وضريبة القيمة المضافة هما مرتفعا الموثوقية. الرسوم غير المحددة كمية منخفضة الموثوقية لأن اللقطة لم تنشر مبالغ محددة."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — مكونات تكلفة الشحن الجوي" />
+
+      <div class="note mt-2">
+        <strong>اطلب جدول التخزين قبل الحجز.</strong> يحصل الشحن الجوي على فترة
+        تخزين مجانية محدودة في مطار الوصول، ثم يصبح التخزين مقابل رسوم. لم تُنشر مدد السماح
+        وأسعار اليوم الواحد في اللقطة الموثقة — اطلبها وخَلِّص البضاعة خلال الفترة المجانية.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الامتثال: الرسوم وضريبة القيمة المضافة وSABER/SASO ومسألة ISF غير المطروحة</h2>
+    <p>
+      تستخدم دول الخليج الست جميعها <strong>خط الأساس 5% من CIF للرسوم الجمركية على الواردات</strong> ورموز HS المكونة من 10 أرقام.
+      ضريبة القيمة المضافة هي: السعودية 15%، البحرين 10%، الإمارات 5%، عُمان 5%، قطر 0% والكويت 0%. ونظام SABER/SASO
+      <strong>خاص بالسعودية فقط</strong>، ويجب الحصول على شهادة مطابقة الشحنة (SC)
+      قبل وصول البضاعة — سارية منذ 1 يناير 2025.
+    </p>
+
+    <h3 class="mt-3">الشحن الجوي لا يعفي من الرسوم أو ضريبة القيمة المضافة أو SABER</h3>
+    <p>
+      هذه أهم نقطة امتثال في هذه الصفحة: نقل البضائع جوًا بدلاً من البحر
+      يزيل أيام النقل لكنه <strong>لا</strong> يزيل الرسوم أو ضريبة القيمة المضافة أو مطابقة SABER/SASO.
+      للبضائع السعودية الخاضعة للتنظيم، أكمل أعمال PC/SC قبل هبوط البضاعة، تمامًا
+      كما تفعل في الشحن البحري.
+    </p>
+
+    <h3 class="mt-3">ISF قاعدة أمريكية</h3>
+    <p>
+      <strong>ISF (إقرار أمن المستورد) لا ينطبق على واردات الخليج جوًا أو بحرًا.</strong>
+      الخطوة السعودية للتقديم المسبق هي شهادة SABER SC بالإضافة إلى إقرار فسح قبل الوصول؛
+      وتستخدم الدول الخليجية الأخرى إقراراتها عبر النافذة الموحدة الخاصة بها. ورد هذا لتجنب الخلط الشائع.
+    </p>
+
+    <h3 class="mt-3">حد الإعفاء الجمركي والمستندات</h3>
+    <p>
+      تنشر السعودية (SAR 1,000) والإمارات (AED 1,000) حدين للإعفاء الجمركي
+      للطرود الشخصية/البريدية فقط؛ ولا تزال ضريبة القيمة المضافة مستحقة والبضائع التجارية خاضعة للرسوم عمومًا.
+      وتبقى بوليصة الشحن الجوي (AWB) والفاتورة التجارية وقائمة التعبئة وشهادة المنشأ ورمز HS
+      الصحيح مجموعة المستندات القياسية.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — امتثال الشحن الجوي الخليجي" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>أدلة القرار ذات الصلة وحداثة البيانات</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">تحديث سبتمبر 2026</span>. يُعاد التحقق من النطاقات
+      العامة للأسعار ونوافذ النقل مقابل بيانات طرق الشحن في WorldFreightHub، وتُوسم لقطات
+      المنافسين بموثوقية منخفضة مع مصدرها وأساس تاريخها. إذا توفرت معايير قطر أو الكويت
+      أو عُمان أو البحرين، يُحدث الجدول وتُرفع شارة الموثوقية؛ وحتى ذلك الحين تبقى المسارات
+      غير المنشورة «غير منشور».
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale}
+        title="الشحن الجوي من الصين إلى السعودية"
+        description="الوزن القابل للتحصيل مقابل الحجمي، وأسعار استرشادية لكل kg، ونقل 3-7 أيام وقرار الجو مقابل البحر."
+        href="/ar/middleeast/air-freight-from-china-to-saudi-arabia/"
+      />
+      <Card locale={locale}
+        title="الشحن الجوي من الصين إلى الإمارات"
+        description="بوابتا DXB/DWC، وقاعدة الوزن القابل للتحصيل بالقاسم 6,000، وأسعار استرشادية بـ AED/kg وقيود الليثيوم."
+        href="/ar/middleeast/air-freight-from-china-to-uae/"
+      />
+      <Card locale={locale}
+        title="الشحن البحري مقابل الجوي من الصين إلى الخليج"
+        description="دليل قرار على مستوى الممر: أسعار FCL/LCL لسبعة موانئ، ومعايير جوية لكل kg، والوزن القابل للتحصيل وخطة هجينة."
+        href="/ar/middleeast/sea-vs-air-freight-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="الشحن FCL مقابل LCL من الصين إلى الخليج"
+        description="الدليل الشامل على مستوى الممر للاختيار بين الحاوية الكاملة والحاوية المشتركة."
+        href="/ar/middleeast/fcl-vs-lcl/"
+      />
+      <Card locale={locale}
+        title="مقارنة جمارك الخليج والرسوم وضريبة القيمة المضافة"
+        description="مقارنة جنبًا إلى جنب لست دول حول الرسوم الجمركية وضريبة القيمة المضافة وحد الإعفاء وامتثال SABER/SASO."
+        href="/ar/middleeast/gcc-customs-duty-comparison/"
+      />
+      <Card locale={locale}
+        title="غرامات التأخير ورسوم الاحتجاز من الصين إلى الخليج"
+        description="فخ غرامة التأخير البالغة $75–$300 يوميًا وكيف تتحول إيقافات التخليص إلى رسوم احتجاز."
+        href="/ar/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="الرسوم الخفية ورسوم الوجهة من الصين إلى الخليج"
+        description="THC ورسوم خدمات الميناء والمستندات وISPS والمعاينة والسمسرة وSABER والتخزين وتفصيل تكلفة الوجهة الشاملة."
+        href="/ar/middleeast/hidden-charges-china-to-gcc/"
+      />
+    </div>
+    <p class="mt-2">
+      <strong>استكشف الممر بالكامل:</strong> ابدأ من
+      <a href="/ar/middleeast/">مركز الشرق الأوسط</a>، أو انتقل إلى ركائز المسارات الست —
+      <a href="/ar/middleeast/shipping-from-china-to-saudi-arabia/">السعودية</a>،
+      <a href="/ar/middleeast/shipping-from-china-to-uae/">الإمارات</a>،
+      <a href="/ar/middleeast/shipping-from-china-to-qatar/">قطر</a>،
+      <a href="/ar/middleeast/shipping-from-china-to-kuwait/">الكويت</a>،
+      <a href="/ar/middleeast/shipping-from-china-to-oman/">عُمان</a> و
+      <a href="/ar/middleeast/shipping-from-china-to-bahrain/">البحرين</a>.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر شامل للشحن الجوي"
+      text="أخبرنا بمطار المنشأ والوجهة وأبعاد البضاعة ووزنها ورمز HS، وسنوصلك بمزودين يمكنهم تسعير الوزن القابل للتحصيل والرسوم الإضافية والتخليص جنبًا إلى جنب."
+    />
+  </section>
+</BaseLayout>

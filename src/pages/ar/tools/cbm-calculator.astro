@@ -1,0 +1,322 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import { SITE_URL } from '../../../site';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/tools/cbm-calculator/`;
+const title = 'حاسبة CBM';
+const description =
+  'احسب الأمتار المكعبة (CBM) من الطول والعرض والارتفاع بالسنتيمتر أو المتر، واجمع إجمالي عدة كراتين، واطّلع على تقديرات استرشادية لحجم حاويات 20 قدمًا و40 قدمًا.';
+
+const faqs = [
+  {
+    q: 'ما هو CBM؟',
+    a: 'يرمز CBM إلى المتر المكعب، وهو وحدة الحجم المترية المستخدمة في تسعير شحنات LCL وFCL والشحن الحجمي. يساوي المتر المكعب الواحد مكعباً بأبعاد 1 م × 1 م × 1 م.',
+  },
+  {
+    q: 'كيف أحوّل السنتيمترات المكعبة إلى أمتار مكعبة؟',
+    a: 'اقسم الحجم بالسنتيمتر المكعب على 1,000,000. مثلاً: 60 سم × 40 سم × 50 سم = 120,000 سم³، أي ما يعادل 0.12 CBM.',
+  },
+  {
+    q: 'كيف يُحسب إجمالي CBM لعدة كراتين؟',
+    a: 'احسب CBM للكرتونة الواحدة ثم اضربه في عدد الكراتين المتطابقة. وإذا كانت الشحنة تحتوي على أحجام مختلفة، فاجمع إجمالي CBM لكل نوع كراتين معاً.',
+  },
+  {
+    q: 'هل يختلف CBM بين الشحن الجوي والبحري؟',
+    a: 'الحجم الفعلي هو نفسه، لكن الشحن الجوي يحوّل عادة CBM إلى وزن حجمي باستخدام مقسوم مثل 6000، بينما يسعّر الشحن البحري عموماً على أساس الحجم الفعلي في LCL.',
+  },
+  {
+    q: 'كم CBM يتسع في حاوية 20 قدمًا أو 40 قدمًا؟',
+    a: 'تُخطط حاوية 20 قدمًا غالباً على أساس نحو 28 CBM وحاوية 40 قدمًا على أساس نحو 58 CBM من الحجم القابل للاستخدام. هذه أرقام استرشادية فقط؛ إذ يعتمد التحميل الفعلي على الطبالات ومواد التثبيت وأبعاد الكراتين والوزن.',
+  },
+  {
+    q: 'ما الفرق بين CBM والوزن القابل للتحصيل؟',
+    a: 'يقيس CBM المساحة، بينما يقارن الوزن القابل للتحصيل الوزن الفعلي بالوزن الحجمي ويحاسب على القيمة الأعلى. يستخدم الناقلون أحدهما أو الآخر بحسب وسيلة النقل وكثافة البضاعة.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      description,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      inLanguage: 'ar',
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale} title={title} description={description} canonical={pageUrl} schema={schema}>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[
+          { label: 'الأدوات', href: '/ar/tools/' },
+          { label: 'حاسبة CBM' },
+        ]}
+      />
+      <span class="badge badge--amber">آخر تحديث: أغسطس 2026</span>
+      <h1>حاسبة CBM</h1>
+      <p class="lead">
+        حوّل أبعاد الكراتين أو الطبالات إلى أمتار مكعبة، واجمع إجمالي شحنة
+        متعددة القطع، وقارن الحجم مع السعة الاسترشادية للحاوية.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <div class="tool-grid">
+      <div>
+        <form class="form-card" id="cbm-form" aria-label="مدخلات حاسبة CBM">
+          <div class="form-grid">
+            <div class="field">
+              <label for="cbm-unit">وحدة القياس</label>
+              <select id="cbm-unit">
+                <option value="cm" selected>سنتيمتر (سم)</option>
+                <option value="m">متر (م)</option>
+              </select>
+            </div>
+            <div class="grid grid--2">
+              <div class="field">
+                <label for="cbm-length">الطول</label>
+                <input id="cbm-length" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 60" />
+              </div>
+              <div class="field">
+                <label for="cbm-width">العرض</label>
+                <input id="cbm-width" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 40" />
+              </div>
+              <div class="field">
+                <label for="cbm-height">الارتفاع</label>
+                <input id="cbm-height" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 50" />
+              </div>
+              <div class="field">
+                <label for="cbm-quantity">الكمية (بالقطعة)</label>
+                <input id="cbm-quantity" type="number" min="1" step="1" inputmode="numeric" value="1" />
+              </div>
+            </div>
+            <p class="form-error" id="cbm-error" role="alert" hidden></p>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="cbm-calculate">احسب</button>
+              <button type="button" class="btn btn-secondary" id="cbm-add">أضف إلى الشحنة</button>
+              <button type="button" class="btn btn-secondary" id="cbm-clear">امسح الشحنة</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="formula-box mt-2">
+          <h3>المعادلة</h3>
+          <p><code id="cbm-formula-single">CBM = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ 1,000,000</code></p>
+          <p><code>إجمالي CBM = CBM للقطعة الواحدة × الكمية</code></p>
+          <p><code>الحجم القابل للاستخدام استرشادياً: 20 قدمًا ≈ 28 CBM · 40 قدمًا ≈ 58 CBM</code></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="result-panel" aria-live="polite">
+          <h3 class="result-title">النتيجة</h3>
+          <div class="result-grid">
+            <div class="result-item">
+              <span class="result-label">CBM للقطعة الواحدة</span>
+              <span class="result-value" id="cbm-single">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">إجمالي CBM (السطر الحالي)</span>
+              <span class="result-value" id="cbm-total">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">تقدير حجم حاوية 20 قدمًا</span>
+              <span class="result-value" id="cbm-20ft">—</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">تقدير حجم حاوية 40 قدمًا</span>
+              <span class="result-value" id="cbm-40ft">—</span>
+            </div>
+            <div class="result-item result-item--wide">
+              <span class="result-label">الإجمالي التراكمي للشحنة</span>
+              <span class="result-value" id="cbm-shipment-total">—</span>
+            </div>
+          </div>
+          <p class="result-note">
+            أرقام الحاويات أحجام قابلة للاستخدام استرشادية. يعتمد التحميل الفعلي
+            على الطبالات ومواد التثبيت وأبعاد الكراتين وحدود الوزن.
+          </p>
+        </div>
+
+        <div class="table-wrap mt-2">
+          <table class="data-table">
+            <caption>عناصر الشحنة المضافة إلى الإجمالي التراكمي</caption>
+            <thead>
+              <tr>
+                <th>السطر</th>
+                <th>الحجم</th>
+                <th>الكمية</th>
+                <th>CBM للقطعة</th>
+                <th>إجمالي CBM</th>
+              </tr>
+            </thead>
+            <tbody id="cbm-shipment-rows">
+              <tr>
+                <td colspan="5" class="muted">لم تتم إضافة عناصر بعد.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note mt-3">
+      <strong>استرشادي فقط:</strong> أرقام سعة الحاويات (20 قدمًا ≈ 28 CBM
+      و40 قدمًا ≈ 58 CBM) تقديرات تخطيطية وليست حدود تحميل مضمونة. تأكد من
+      التخزين الفعلي وحدود الوزن مع الناقل.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>كيف يُحسب CBM</h2>
+      <p>
+        قس الأبعاد الخارجية لكرتونة واحدة أو طبلية واحدة. اضرب الطول في العرض في
+        الارتفاع، ثم حوّل النتيجة إلى أمتار مكعبة. عند إدخال الأبعاد بالسنتيمتر
+        اقسم على 1,000,000؛ وعند إدخالها بالمتر يكون الناتج CBM مباشرة.
+      </p>
+      <p>
+        في الشحنة المختلطة احسب كل حجم عنصر على حدة ثم اجمع الإجماليات. يحافظ زر
+        «أضف إلى الشحنة» أسفل الحقول على إجمالي تراكمي لعدة أنواع من الكراتين.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>الأسئلة الشائعة</h2>
+    <FaqBlock items={faqs} />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const fmt = (value, max = 4) =>
+    new Intl.NumberFormat('en-US', { maximumFractionDigits: max }).format(value);
+
+  function positiveNumber(id) {
+    const value = Number.parseFloat(el(id).value);
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  function positiveQuantity() {
+    const value = Number.parseInt(el('cbm-quantity').value, 10);
+    return Number.isInteger(value) && value > 0 ? value : null;
+  }
+
+  function setError(message = '') {
+    const error = el('cbm-error');
+    if (message) {
+      error.textContent = message;
+      error.hidden = false;
+    } else {
+      error.textContent = '';
+      error.hidden = true;
+    }
+  }
+
+  function readEntry() {
+    const unit = el('cbm-unit').value;
+    const length = positiveNumber('cbm-length');
+    const width = positiveNumber('cbm-width');
+    const height = positiveNumber('cbm-height');
+    const quantity = positiveQuantity();
+
+    if (!length || !width || !height || !quantity) {
+      setError('أدخل طولاً وعرضاً وارتفاعاً موجباً وكمية لا تقل عن 1.');
+      return null;
+    }
+
+    const cbm = unit === 'm' ? length * width * height : (length * width * height) / 1000000;
+    setError();
+    return { unit, length, width, height, quantity, cbm, total: cbm * quantity };
+  }
+
+  function updateFormula(unit) {
+    el('cbm-formula-single').textContent =
+      unit === 'm'
+        ? 'CBM = الطول (م) × العرض (م) × الارتفاع (م)'
+        : 'CBM = الطول (سم) × العرض (سم) × الارتفاع (سم) ÷ 1,000,000';
+  }
+
+  function calculate() {
+    const entry = readEntry();
+    if (!entry) return;
+
+    el('cbm-single').textContent = `${fmt(entry.cbm)} m³`;
+    el('cbm-total').textContent = `${fmt(entry.total)} m³`;
+
+    const twentyFoot = Math.floor(28 / entry.cbm);
+    const fortyFoot = Math.floor(58 / entry.cbm);
+    el('cbm-20ft').textContent = `~${fmt(twentyFoot, 0)} قطعة`;
+    el('cbm-40ft').textContent = `~${fmt(fortyFoot, 0)} قطعة`;
+  }
+
+  const shipment = [];
+
+  function renderShipment() {
+    const tbody = el('cbm-shipment-rows');
+    const total = shipment.reduce((sum, item) => sum + item.total, 0);
+
+    if (shipment.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="muted">لم تتم إضافة عناصر بعد.</td></tr>';
+      el('cbm-shipment-total').textContent = '—';
+      return;
+    }
+
+    tbody.innerHTML = shipment
+      .map((item, index) => {
+        const size = `${fmt(item.length)} × ${fmt(item.width)} × ${fmt(item.height)} ${item.unit}`;
+        return `<tr><td>${index + 1}</td><td>${size}</td><td>${item.quantity}</td><td>${fmt(item.cbm)}</td><td>${fmt(item.total)}</td></tr>`;
+      })
+      .join('');
+    el('cbm-shipment-total').textContent = `${fmt(total)} m³`;
+  }
+
+  function addToShipment() {
+    const entry = readEntry();
+    if (!entry) return;
+    shipment.push(entry);
+    renderShipment();
+    calculate();
+  }
+
+  function clearShipment() {
+    shipment.length = 0;
+    renderShipment();
+  }
+
+  el('cbm-calculate').addEventListener('click', calculate);
+  el('cbm-add').addEventListener('click', addToShipment);
+  el('cbm-clear').addEventListener('click', clearShipment);
+  el('cbm-unit').addEventListener('change', () => updateFormula(el('cbm-unit').value));
+
+  updateFormula(el('cbm-unit').value);
+</script>

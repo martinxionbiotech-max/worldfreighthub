@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { gccCountriesAr as gccCountries } from '../../data/countries.ar';
+import { methodsAr as methods } from '../../data/methods.ar';
+import { routesAr as routes } from '../../data/routes.ar';
+import { getArPortBySlug } from '../../data/ports.ar';
+import { SITE_URL } from '../../site';
+import { t, type Locale } from '../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const arPortName = (slug: string) => getArPortBySlug(slug)?.name ?? slug;
+
+const dutyRows = gccCountries.map((c) => ({
+  country: { href: `/ar/countries/${c.slug}/`, label: c.name },
+  duty: c.dutyRate,
+  vat: c.vatRate === null ? 'لا يوجد' : `${c.vatRate}%`,
+  ports: c.ports.length,
+}));
+
+const methodCostRows = methods.map((m) => ({
+  method: { href: `/ar/methods/${m.slug}/`, label: m.name },
+  cost: m.costRows.map((r) => `${r.label}: ${r.range}`).join(' · '),
+  transit: m.transitTime.range,
+}));
+
+const routeTransitRows = routes
+  .filter((r) => r.transitDays && r.transitDays.typical)
+  .map((r) => ({
+    route: { href: `/ar/routes/${r.slug}/`, label: `${arPortName(r.originPort)} → ${arPortName(r.destPort)}` },
+    transit: `${r.transitDays.typical} يومًا`,
+    range: `${r.transitDays.range[0]}–${r.transitDays.range[1]} يومًا`,
+    confidence: r.confidence,
+  }));
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'بيانات الشحن من الصين إلى الخليج',
+      description:
+        'رسوم استيراد وضريبة قيمة مضافة ونطاقات تكلفة شحن ومدد نقل استرشادية لممر الصين إلى الخليج، مجمعة من طبقة بيانات WorldFreightHub.',
+      url: `${SITE_URL}/ar/data/`,
+    },
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="بيانات الشحن من الصين إلى الخليج في لمحة"
+  description="رسوم وضريبة قيمة مضافة ونطاقات تكلفة شحن ومدد نقل استرشادية لممر الصين إلى الخليج في مكان واحد — وكل رقم موسوم بمستوى موثوقية."
+  canonical={`${SITE_URL}/ar/data/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale} items={[{ label: 'البيانات' }]} />
+      <h1>بيانات الشحن من الصين إلى الخليج في لمحة</h1>
+      <p class="lead">
+        الرسوم وضريبة القيمة المضافة ونطاقات التكلفة ومدد النقل في مكان واحد — كل رقم تقدير استرشادي بمستوى موثوقية، وليس عرض سعر مباشر أبدًا.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>رسوم الاستيراد وضريبة القيمة المضافة حسب الوجهة</h2>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'country', label: 'الدولة', type: 'link' },
+        { key: 'duty', label: 'الرسوم' },
+        { key: 'vat', label: 'ضريبة القيمة المضافة' },
+        { key: 'ports', label: 'الموانئ المغطاة' },
+      ]}
+      rows={dutyRows}
+      caption="تُحتسب الرسوم على قيمة CIF؛ وتُضاف ضريبة القيمة المضافة فوقها. قطر والكويت بلا ضريبة قيمة مضافة حاليًا. تحقق مع الجهة المختصة."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>نطاقات تكلفة الشحن حسب الوسيلة</h2>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'method', label: 'الوسيلة', type: 'link' },
+        { key: 'cost', label: 'نطاق التكلفة الاسترشادي' },
+        { key: 'transit', label: 'مدة النقل' },
+      ]}
+      rows={methodCostRows}
+      caption="نطاقات استرشادية فقط — تتحرك الأسعار مع الوقود والموسم والمخاطر الجيوسياسية. أكد مع الناقل قبل الحجز."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>مدد النقل حسب المسار</h2>
+    <DataTable locale={locale}
+      columns={[
+        { key: 'route', label: 'المسار', type: 'link' },
+        { key: 'transit', label: 'النموذجي' },
+        { key: 'range', label: 'النطاق' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={routeTransitRows}
+      caption="تقديرات من ميناء إلى ميناء. إعادة الشحن عبر سنغافورة أو مركز إقليمي تضيف 5–10 أيام."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>كيف تقرأ هذه البيانات</h2>
+      <p>
+        كل رقم في هذه الصفحة <strong>تقدير استرشادي</strong> لا عرض سعر مباشر، ويحمل مستوى موثوقية. تأتي الرسوم وضريبة القيمة المضافة من السلطات الوطنية وهي الأكثر استقرارًا هنا؛ بينما تتحرك تكاليف الشحن ومدد النقل باستمرار مع الوقود والموسم وصورة مخاطر مضيق هرمز والبحر الأحمر، ولهذا نطاقاتها واسعة. استخدم هذه الصفحة لتقدير حجم الشحنة — ثم أكد الأرقام الحقيقية مع ناقل أو وكيل شحن مرخص.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/ar/get-quote/">اطلب عرض سعر مؤكد</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} />
+  </section>
+</BaseLayout>

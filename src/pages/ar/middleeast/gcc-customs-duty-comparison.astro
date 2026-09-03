@@ -1,0 +1,636 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { gccCountriesAr as gccCountries } from '../../../data/countries.ar';
+import { gccPortsAr as gccPorts } from '../../../data/ports.ar';
+import type { Source } from '../../../data/types';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/gcc-customs-duty-comparison/`;
+
+const portRoles: Record<string, string> = {
+  jeddah: 'بوابة البحر الأحمر، غرب السعودية',
+  dammam: 'بوابة الخليج العربي، المنطقة الشرقية + الرياض',
+  'riyadh-dry-port': 'ميناء جاف داخلي؛ امتداد سككي/بري لممر الدمام',
+  'jebel-ali': 'أكبر ميناء في الشرق الأوسط؛ مركز إعادة التصدير والمنطقة الحرة في الإمارات',
+  'khalifa-port-abu-dhabi': 'بوابة أبوظبي للمياه العميقة',
+  'port-khalid': 'بوابة الشارقة / ميناء خالد',
+  hamad: 'بوابة قطر التجارية الوحيدة',
+  shuwaikh: 'بوابة مدينة الكويت العامة/للحاويات',
+  shuaiba: 'بوابة الكويت الصناعية والسائبة',
+  sohar: 'بوابة شمال عُمان للحاويات',
+  salalah: 'بوابة جنوب عُمان لإعادة الشحن',
+  'khalifa-bin-salman': 'بوابة البحرين؛ وصلة جسر الملك فهد إلى السعودية',
+};
+
+const portRows = gccPorts.map((port) => ({
+  port: port.name,
+  unlocode: port.unlocode ?? '—',
+  country: port.country,
+  role: portRoles[port.slug] ?? port.hinterland,
+  confidence: 'HIGH',
+}));
+
+const primaryPortByCountry: Record<string, { port: string; typical: string }> = {
+  'saudi-arabia': { port: 'جدة (SAJED) / الدمام (SADMM)', typical: '~18 / ~20 يومًا' },
+  'united-arab-emirates': { port: 'جبل علي (AEJEA)', typical: '~21 يومًا' },
+  qatar: { port: 'ميناء حمد (QAHMD)', typical: '~22 يومًا' },
+  kuwait: { port: 'الشويخ (KWSWK)', typical: '~24 يومًا' },
+  oman: { port: 'صحار (OMSOH)', typical: '~19 يومًا' },
+  bahrain: { port: 'خليفة بن سلمان (BHKBS)', typical: '~22 يومًا' },
+};
+
+const dutyRows = gccCountries.map((country) => {
+  const vat = country.vatRate === null ? '0% (no ضريبة القيمة المضافة)' : `${country.vatRate}%`;
+  return {
+    country: country.name,
+    currency: country.currency,
+    duty: '5% (CIF)',
+    vat,
+    deMinimis: country.deMinimis,
+    confidence: 'HIGH',
+  };
+});
+
+const transitRows = gccCountries.map((country) => {
+  const primary = primaryPortByCountry[country.slug] ?? { port: '—', typical: '—' };
+  return {
+    country: country.name,
+    port: primary.port,
+    typical: primary.typical,
+    note: 'النموذجي من ميناء إلى ميناء من بيانات المسارات؛ توقيت التخليص يختلف حسب الشحنة/رمز HS',
+    confidence: 'MEDIUM',
+  };
+});
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-customs-country-data',
+  name: 'WorldFreightHub GCC country data — ضريبة القيمة المضافة, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const wfhRouteData: Source = {
+  id: 'wfh-gcc-customs-route-data',
+  name: 'WorldFreightHub route data — China to GCC destination ports (typical transit days; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const dutySources: Source[] = [wfhCountryData];
+const transitSources: Source[] = [wfhRouteData, wfhCountryData];
+const decisionSources: Source[] = [wfhCountryData];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const entryRows = [
+  {
+    country: 'السعودية',
+    duty: '5% (CIF)',
+    vat: '15%',
+    multiplier: '×1.2075',
+    aboveCif: '+20.75%',
+    note: 'أعلى ضرائب الخليج؛ يجب الحصول على شهادة SABER/SASO SC قبل الوصول',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'الإمارات',
+    duty: '5% (CIF)',
+    vat: '5%',
+    multiplier: '×1.1025',
+    aboveCif: '+10.25%',
+    note: 'الأقل تعقيدًا؛ يمكن للمناطق الحرة تأجيل الرسوم حتى دخول البر الرئيسي',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'قطر',
+    duty: '5% (CIF)',
+    vat: '0%',
+    multiplier: '×1.05',
+    aboveCif: '+5%',
+    note: 'أقل ضرائب حاليًا؛ من المتوقع ضريبة قيمة مضافة ~5% — خطط لها مستقبلاً',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'الكويت',
+    duty: '5% (CIF)',
+    vat: '0%',
+    multiplier: '×1.05',
+    aboveCif: '+5%',
+    note: 'لا توجد ضريبة قيمة مضافة، لكن التخليص مليء بالمستندات وشهادة PAI',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'عُمان',
+    duty: '5% (CIF)',
+    vat: '5%',
+    multiplier: '×1.1025',
+    aboveCif: '+10.25%',
+    note: 'متوسطة التكلفة؛ صحار أقل ازدحامًا من جبل علي أو جدة',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'البحرين',
+    duty: '5% (CIF)',
+    vat: '10%',
+    multiplier: '×1.155',
+    aboveCif: '+15.5%',
+    note: 'ثاني أعلى ضريبة قيمة مضافة؛ جسر الملك فهد مدخل بديل إلى شرق السعودية',
+    confidence: 'HIGH',
+  },
+];
+
+const costRows = [
+  {
+    item: 'الرسوم الجمركية على الواردات',
+    who: 'سلطة الجمارك الخليجية',
+    magnitude: '5% من قيمة CIF (خط الأساس الخليجي الموحد)',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'ضريبة القيمة المضافة على الواردات',
+    who: 'سلطة الضرائب في الوجهة',
+    magnitude: 'السعودية 15% · الإمارات 5% · قطر 0% · الكويت 0% · عُمان 5% · البحرين 10%',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'السمسرة الجمركية',
+    who: 'المخلص الجمركي المرخص',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'المعاينة / الاختبار',
+    who: 'الجمارك أو جهة المطابقة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'شهادة SABER (السعودية فقط)',
+    who: 'منصة SABER / جهة المطابقة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المستندات / التقديم',
+    who: 'المخلص / الناقل / الوكيل',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'ما الرسوم الجمركية على الواردات من الصين إلى الخليج؟',
+    a: 'الرسوم الجمركية الأساسية الموحدة في الخليج هي 5% من قيمة CIF (التكلفة + التأمين + الشحن) لمعظم البضائع في السعودية والإمارات وقطر والكويت وعُمان والبحرين. وتنطبق معدلات أعلى أو حمائية على فئات محددة مثل الكحول والتبغ وبعض الخطوط الزراعية، لذا أكد معدل رمز HS الدقيق قبل التسعير.',
+  },
+  {
+    q: 'أي دولة خليجية لديها أعلى ضريبة استيراد؟',
+    a: 'السعودية، لأن رسوم 5% وضريبة القيمة المضافة 15% تتراكم إلى مضاعف تكلفة وصول CIF × 1.2075 — أي نحو 20.75% فوق CIF. وتأتي البحرين ثانية بمضاعف CIF × 1.155 (15.5% فوق CIF) مع ضريبة القيمة المضافة 10%.',
+  },
+  {
+    q: 'أي دولة خليجية لديها أقل ضريبة استيراد؟',
+    a: 'قطر والكويت لديهما حاليًا أدنى ضريبة استيراد عند رسوم 5% وضريبة قيمة مضافة 0%، أي مضاعف CIF × 1.05. ومن المتوقع أن تفرض قطر ضريبة قيمة مضافة بنحو 5%، لذا يجب أن يبني التسعير المستقبلي هذا الافتراض.',
+  },
+  {
+    q: 'كيف أحسب التكلفة الإجمالية للوصول مع الرسوم وضريبة القيمة المضافة؟',
+    a: 'ابدأ من CIF، وأضف رسوم 5%، ثم طبّق ضريبة القيمة المضافة على القيمة الشاملة للرسوم. المضاعف المختصر هو CIF × 1.05 × (1 + معدل ضريبة القيمة المضافة). أمثلة: السعودية ×1.2075، الإمارات ×1.1025، قطر والكويت ×1.05، عُمان ×1.1025، البحرين ×1.155. هذه عملية حسابية من معدلات الرسوم وضريبة القيمة المضافة المنشورة، وليست بديلاً عن تقييم المخلص الدقيق.',
+  },
+  {
+    q: 'هل تُفرض الرسوم على قيمة الفاتورة أم قيمة CIF؟',
+    a: 'على قيمة CIF — التكلفة بالإضافة إلى التأمين والشحن — وليس على قيمة الفاتورة وحدها. إذا لم يكن الشحن والتأمين مدرجين في الفاتورة، فستظل سلطة الجمارك تدرجهما في القيمة الخاضعة للتقييم، ولهذا يبدأ حساب التكلفة الإجمالية للوصول من CIF.',
+  },
+  {
+    q: 'هل يوجد حد إعفاء جمركي في الخليج للبضائع التجارية؟',
+    a: 'لا يوجد حد إعفاء تجاري مؤكد منشور لقطر أو الكويت أو عُمان أو البحرين. تنشر السعودية والإمارات حدين قدرهما SAR 1,000 وAED 1,000 للطرود الشخصية/البريدية فقط. يجب أن تفترض البضائع التجارية أن الرسوم تنطبق بغض النظر عن حدود الطرود.',
+  },
+  {
+    q: 'هل أحتاج SABER لكل دولة خليجية؟',
+    a: 'لا. تنطبق مطابقة SABER/SASO على السعودية فقط. للبضائع السعودية الخاضعة للتنظيم، يجب الحصول على شهادة مطابقة الشحنة (SC) قبل الوصول — سارية منذ 1 يناير 2025. تستخدم الإمارات وقطر والكويت وعُمان والبحرين قواعد شهاداتها الخاصة ولا تستخدم SABER.',
+  },
+  {
+    q: 'هل ينطبق ISF على واردات الخليج؟',
+    a: 'لا. ISF (إقرار أمن المستورد) برنامج أمريكي ولا ينطبق على واردات الخليج. الخطوة السعودية المكافئة للتقديم المسبق هي شهادة SABER SC بالإضافة إلى إقرار فسح قبل الوصول؛ وتستخدم الدول الخليجية الأخرى إقراراتها عبر النافذة الموحدة الخاصة بها.',
+  },
+  {
+    q: 'أي سوق خليجية يجب أن أدخلها أولاً؟',
+    a: 'يبدأ معظم المستوردين الجدد في الإمارات لأن جبل علي يوفر أكبر منافسة بين الناقلين، وضريبة قيمة مضافة 5%، وتأجيل رسوم المناطق الحرة، وسوق إعادة تصدير كبير. اختر السعودية للحجم وأكبر سوق استهلاكية رغم الضريبة الأعلى وبوابة SABER؛ واختر قطر أو الكويت لأدنى ضريبة حاليًا إذا كان تعقيد التخليص مقبولاً.',
+  },
+  {
+    q: 'هل البحرين طريق أرخص للوصول إلى السعودية؟',
+    a: 'ليس من ناحية الضريبة — ضريبة القيمة المضافة في البحرين 10% أقل من 15% في السعودية، لكن النقطة الحقيقية هي الجغرافيا. تدخل البحرين إلى شرق السعودية عبر جسر الملك فهد، لذا يمكن أن تكون بديلاً تشغيليًا لبضائع الدمام/الرياض عندما تكون جدة مزدحمة أو التوجيه السعودي المباشر مكلفًا. قارن التكلفة الإجمالية للوصول كاملة، بما في ذلك رحلة الجسر، قبل الاختيار.',
+  },
+  {
+    q: 'ما المستندات التي أحتاجها للتخليص الجمركي في الخليج؟',
+    a: 'المجموعة القياسية هي الفاتورة التجارية وقائمة التعبئة وبوليصة الشحن وشهادة المنشأ وتصنيف HS الصحيح، بالإضافة إلى شهادة SABER للبضائع السعودية الخاضعة للتنظيم. تضيف الكويت شهادة PAI لبعض المنتجات. أكد قائمة المستندات الحالية مع مخلص مرخص لرمز HS المحدد لديك.',
+  },
+  {
+    q: 'هل المناطق الحرة معفاة من الضرائب في الإمارات؟',
+    a: 'لا تخضع البضائع المحتفظ بها في منطقة حرة إماراتية للرسوم الجمركية حتى تدخل البر الرئيسي للإمارات أو سوق خليجية أخرى، وتكون إعادة التصدير من المنطقة الحرة معفاة من الرسوم. ولا تزال ضريبة القيمة المضافة تتبع القواعد العادية، وتأجيل الرسوم هو ميزة رأس المال العامل التي يجب أن يسعرها معظم المستوردين بوضوح.',
+  },
+  {
+    q: 'كم يستغرق التخليص الجمركي في الخليج؟',
+    a: 'توقيت التخليص غير منشور في اللقطة الموثقة ويختلف حسب الشحنة ورمز HS وجاهزية المستندات وسلطة الوجهة. إيقافات SABER في السعودية هي التأخير الأكثر شيوعًا والقابل للتجنب، لذا أكمل شهادة SC قبل الوصول بدلاً من الاعتماد على عدد أيام تخليص محدد.',
+  },
+  {
+    q: 'أين يمكنني الحصول على تقييم دقيق للرسوم وضريبة القيمة المضافة؟',
+    a: 'اطلب عرض سعر مفصلاً للتكلفة الإجمالية للوصول من مخلص خليجي مرخص مع رمز HS الدقيق وقيمة CIF والمنشأ والوجهة. الأرقام على هذه الصفحة هي معدلات الرسوم/ضريبة القيمة المضافة وحدود الإعفاء الجمركي الموثقة، وليست قرارًا تعريفيًا خاصًا بمنتج.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'مقارنة جمارك الصين إلى الخليج والرسوم الجمركية وضريبة القيمة المضافة (6 دول، 2026)',
+      description:
+        'مقارنة جنبًا إلى جنب لست دول حول الرسوم الجمركية على الواردات من الصين إلى الخليج وضريبة القيمة المضافة وحدود الإعفاء الجمركي والعملية الجمركية وامتثال SABER/SASO للسعودية والإمارات وقطر والكويت وعُمان والبحرين.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="مقارنة جمارك الصين إلى الخليج والرسوم الجمركية وضريبة القيمة المضافة (6 دول، 2026)"
+  description="مقارنة جنبًا إلى جنب لست دول حول الرسوم الجمركية على الواردات من الصين إلى الخليج وضريبة القيمة المضافة وحدود الإعفاء الجمركي والعملية الجمركية وامتثال SABER/SASO للسعودية والإمارات وقطر والكويت وعُمان والبحرين."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'مقارنة جمارك الخليج والرسوم وضريبة القيمة المضافة' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث سبتمبر 2026</span>
+      <h1>الجمارك والرسوم الجمركية وضريبة القيمة المضافة من الصين إلى الخليج</h1>
+      <p class="lead">
+        صفحة واحدة لمقارنة العبء الضريبي على التكلفة الإجمالية للوصول عبر الأسواق الخليجية الست — السعودية
+        والإمارات وقطر والكويت وعُمان والبحرين — مع خط أساس الرسوم الموحد 5% من CIF، وضريبة القيمة المضافة
+        لكل دولة، وحدود الإعفاء الجمركي، وبوابة SABER/SASO التي تفرضها السعودية وحدها.
+      </p>
+      <p class="small muted">
+        شارات الموثوقية تفصل الأرقام الموثقة عن ملاحظات التخطيط. أسطر الرسوم وضريبة القيمة المضافة وحد الإعفاء
+        مرتفعة الموثوقية من بيانات دول الخليج في WorldFreightHub؛ والنقل النموذجي للميناء متوسط
+        الموثوقية من بيانات المسارات؛ وتوقيت التخليص ومبالغ الرسوم منخفضة الموثوقية لأنها
+        غير منشورة في اللقطة الموثقة. تعامل مع كل رقم منخفض الموثوقية كاسترشادي
+        وأكده مع مخلص مرخص قبل الاعتماد عليه.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">رسوم الخليج الأساسية</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">أعلى ضريبة</span>
+          <span class="fact-value">السعودية ×1.2075 <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">أقل ضريبة</span>
+          <span class="fact-value">قطر / الكويت ×1.05 <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">نطاق ضريبة القيمة المضافة</span>
+          <span class="fact-value">0%–15% <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">حد الإعفاء الجمركي</span>
+          <span class="fact-value">للطرود الشخصية فقط <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER/SASO</span>
+          <span class="fact-value">السعودية فقط <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. جدول الرسوم وضريبة القيمة المضافة والعملة وحد الإعفاء الجمركي</h2>
+    <p>
+      تتقاسم الدول الخليجية الست <strong>خط أساس 5% من CIF للرسوم الجمركية على الواردات</strong>، لكن ملفات ضريبة القيمة المضافة
+      مختلفة جدًا — وضريبة القيمة المضافة هي ما يخلق الفارق في التكلفة الإجمالية للوصول بين الأسواق. تفرض السعودية
+      15% والبحرين 10% والإمارات وعُمان 5%، بينما لا توجد ضريبة قيمة مضافة بعد في قطر والكويت. حدود الإعفاء
+      الجمركي أدناه للطرود الشخصية/البريدية فقط ولا تعفي البضائع التجارية.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'country', label: 'الدولة' },
+        { key: 'currency', label: 'العملة' },
+        { key: 'duty', label: 'الرسوم الجمركية على الواردات' },
+        { key: 'vat', label: 'ضريبة القيمة المضافة' },
+        { key: 'deMinimis', label: 'حد الإعفاء الجمركي' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={dutyRows}
+      caption="الرسوم وضريبة القيمة المضافة وحد الإعفاء الجمركي عالية الموثوقية من بيانات دول الخليج في WorldFreightHub. وحد الإعفاء الجمركي ينطبق على الطرود الشخصية فقط."
+    />
+    <SourceList locale={locale} sources={dutySources} title="المصادر — الرسوم وضريبة القيمة المضافة وحد الإعفاء في الخليج" />
+
+    <div class="note mt-2">
+      <strong>الرسوم على CIF، لا على الفاتورة:</strong> تقيم كل سلطة خليجية الرسوم على التكلفة + التأمين
+      + الشحن. احتفظ بتوثيق الشحن والتأمين، لأنهما جزء من القيمة الخاضعة للتقييم حتى
+      لو لم يكونا مدرجين في الفاتورة التجارية.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. جدول النقل وتوقيت التخليص</h2>
+    <p>
+      أرقام النقل النموذجية من ميناء إلى ميناء أدناه من بيانات مسارات WorldFreightHub. وهي
+      نطاقات تخطيط لا وعود تسليم، وتغطي الرحلة البحرية فقط — أما التخليص الجمركي
+      فيُضاف فوقها.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'country', label: 'الدولة' },
+        { key: 'port', label: 'البوابة الرئيسية' },
+        { key: 'typical', label: 'النقل النموذجي' },
+        { key: 'note', label: 'توقيت التخليص' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="أيام النقل النموذجية متوسطة الموثوقية من بيانات المسارات؛ وتوقيت التخليص غير منشور ويختلف حسب الشحنة."
+    />
+    <SourceList locale={locale} sources={transitSources} title="المصادر — النقل من الصين إلى الخليج" />
+
+    <div class="note mt-2">
+      <strong>توقيت التخليص غير منشور في اللقطة الموثقة.</strong> فهو يختلف حسب الشحنة ورمز HS وجاهزية المستندات وسلطة الوجهة <ConfidenceBadge locale={locale} level="LOW" />. لا تعامل أي عدد أيام للتخليص كحقيقة؛ بل اطلب من المخلص توقعًا خاصًا بشحنتك وخصص مهلة غرامة التأخير الحرة مقابل ذلك.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. قرار دخول السوق وحساب التكلفة الإجمالية للوصول</h2>
+      <p>
+        نادرًا ما يكون قرار دخول أي سوق خليجية متعلقًا بمعدل الضريبة فقط، لكن العبء الضريبي هو أسهل جزء يمكن قياسه — وهو كبير بما يكفي لتغيير الإجابة. استخدم الصيغة <strong>CIF × 1.05 × (1 + معدل ضريبة القيمة المضافة)</strong> لمقارنة الزيادة النظامية في التكلفة الإجمالية للوصول قبل إضافة السمسرة والمعاينة والشحن الداخلي وأي رسوم مطابقة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'country', label: 'الدولة' },
+          { key: 'duty', label: 'الرسوم' },
+          { key: 'vat', label: 'ضريبة القيمة المضافة' },
+          { key: 'multiplier', label: 'مضاعف التكلفة الإجمالية للوصول' },
+          { key: 'aboveCif', label: 'فوق CIF' },
+          { key: 'note', label: 'ملاحظة السوق' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={entryRows}
+        caption="المضاعفات حسابية من معدلات الرسوم وضريبة القيمة المضافة المنشورة (عالية الموثوقية)، وليست قرارات تعرفة خاصة بمنتج."
+      />
+      <SourceList locale={locale} sources={decisionSources} title="المصادر — حساب التكلفة الإجمالية للوصول في الخليج" />
+
+      <div class="note mt-2">
+        <strong>اقرأ المضاعف، ثم اقرأ السوق.</strong> تملك السعودية أعلى زيادة نظامية
+        (×1.2075) لكن أكبر سوق استهلاكية وبوابة SABER إلزامية؛ وتملك قطر والكويت
+        أدنى زيادة حالية (×1.05) لكن مساراتهما أضأل ومستنداتهما أثقل. استخدم مضاعف
+        الضريبة كمرشح أول، ثم سعّر المسار والامتثال والرحلة الداخلية معًا.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. جميع الموانئ الخليجية الاثني عشر مع رموز UN/LOCODE</h2>
+    <p>
+      طابق قرار الدولة مع البوابة الصحيحة. يوجد في الممر اثنا عشر ميناء خليجيًا مسمى في
+      البيانات، من بينها ميناء جاف داخلي واحد. استخدم <strong>رمز UN/LOCODE</strong> الصحيح في بوليصة
+      الشحن؛ لا يوجد لميناء الرياض الجاف رمز UN/LOCODE بحري لأنه مستودع داخلي.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'الميناء' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'country', label: 'الدولة' },
+        { key: 'role', label: 'الدور' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="أسماء الموانئ والدول ورموز UN/LOCODE تأتي من بيانات الموانئ الخليجية في WorldFreightHub."
+    />
+    <SourceList locale={locale} sources={portSources} title="المصادر — الموانئ الخليجية" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. مكونات التكلفة بعد الرسوم وضريبة القيمة المضافة</h2>
+      <p>
+        الرسوم وضريبة القيمة المضافة ليست سوى جزء من حزمة التكلفة الإجمالية للوصول. فالسمسرة والمعاينة والمستندات — وفي السعودية شهادة سابر — تقع كلها فوق ذلك، ولا يُنشر أي من مبالغ تلك الرسوم في اللقطة الموثقة. وتُعرض منخفضة الموثوقية مع ملاحظة طلب عرض سعر بدلًا من ملئها بأرقام دولارات مخترعة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'بند التكلفة' },
+          { key: 'who', label: 'من يفرضه' },
+          { key: 'magnitude', label: 'القيمة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="الرسوم وضريبة القيمة المضافة عالية الموثوقية؛ ومبالغ الرسوم غير المحددة منخفضة الموثوقية لأن اللقطة لم تنشرها."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — مكونات التكلفة الإجمالية للوصول في الخليج" />
+
+      <div class="note mt-2">
+        <strong>تكلفة شهادة SABER:</strong> رسوم منصة SABER وأي رسوم لجهة مطابقة
+        غير منشورة في اللقطة الموثقة. اطلب عرض سعر SABER مفصلاً لفئة منتجك،
+        وتعامل مع تكلفة الشهادة كبند تكلفة لا تقدير.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. الامتثال: SABER/SASO ورموز HS وشهادة المنشأ وحد الإعفاء الجمركي</h2>
+    <p>
+      تستخدم الدول الست جميعها <strong>خط أساس الرسوم الخليجي الموحد 5% CIF</strong>، وتصنّف البضائع تحت <strong>رمز HS من 10 أرقام</strong>، وتتطلب مجموعة المستندات القياسية: الفاتورة التجارية وبوليصة الشحن وقائمة التعبئة وشهادة المنشأ. وتكمن الاختلافات في ضريبة القيمة المضافة وقواعد المطابقة.
+    </p>
+
+    <h3 class="mt-3">SABER/SASO خاص بالسعودية فقط</h3>
+    <p>
+      <strong>تنطبق مطابقة SABER/SASO على السعودية فقط</strong>، لا على بقية الخليج. للبضائع
+      السعودية الخاضعة للتنظيم، احصل على شهادة مطابقة المنتج (PC) أولاً، ثم شهادة مطابقة
+      الشحنة (SC) للشحنة المحددة. منذ <strong>1 يناير 2025 يجب الحصول على SC
+      قبل وصول البضاعة</strong> وإلا يفشل التخليص — وهو التأخير الأكثر شيوعًا والقابل للتجنب
+      على الممر.
+    </p>
+
+    <h3 class="mt-3">شهادة المنشأ ورموز HS</h3>
+    <p>
+      تدعم شهادة المنشأ المعاملة التفضيلية أو معاملة المنشأ الخليجي حيث تنطبق، ويحدد رمز HS الصحيح سطر الرسوم ومعاملة ضريبة القيمة المضافة وأي فحص مطابقة. صنّف قبل التسعير، لأن الرمز الخاطئ يغيّر الرسوم وضريبة القيمة المضافة ومتطلبات التصريح في كل سوق من الأسواق الست.
+    </p>
+
+    <h3 class="mt-3">حد الإعفاء الجمركي ومسألة ISF غير المطبقة</h3>
+    <p>
+      تنشر السعودية (<strong>SAR 1,000</strong>) والإمارات (<strong>AED 1,000</strong>) حدين للإعفاء الجمركي
+      للطرود الشخصية/البريدية فقط؛ ولا تنشر قطر والكويت وعُمان والبحرين
+      حدًا مؤكدًا. البضائع التجارية خاضعة للرسوم عمومًا بغض النظر. <strong>ISF (إقرار أمن
+      المستورد) برنامج أمريكي ولا ينطبق على واردات الخليج</strong> — الخطوة السعودية
+      للتقديم المسبق هي شهادة SABER SC بالإضافة إلى إقرار فسح قبل الوصول.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الامتثال الخليجي" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>أدلة القرار ذات الصلة وحداثة البيانات</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">بتحديث سبتمبر 2026</span>. تُعاد مراجعة أسطر الرسوم وضريبة القيمة المضافة وحد الإعفاء الجمركي مقابل بيانات دول الخليج في WorldFreightHub، وأرقام النقل النموذجي مقابل بيانات المسارات. وإذا توفر عدد أيام تخليص أو رسوم مخلص أو رسوم معاينة أو مبلغ شهادة سابر، يُحدَّث الجدول وتُرفع شارة الموثوقية ويتغير تاريخ التعديل. وحتى ذلك الحين، تبقى المبالغ غير المنشورة منخفضة الموثوقية مع ملاحظة طلب عرض سعر.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale}
+        title="الشحن FCL مقابل LCL من الصين إلى الخليج"
+        description="الدليل الشامل على مستوى الممر للاختيار بين الحاوية الكاملة والحاوية المشتركة."
+        href="/ar/middleeast/fcl-vs-lcl/"
+      />
+      <Card locale={locale}
+        title="الرسوم الجمركية على الواردات وضريبة القيمة المضافة في السعودية"
+        description="صيغة التكلفة الإجمالية للوصول CIF × 1.05 × 1.15 ومثال سعودي عملي."
+        href="/ar/middleeast/saudi-arabia-import-duty-vat/"
+      />
+      <Card locale={locale}
+        title="الرسوم الجمركية على الواردات وضريبة القيمة المضافة في الإمارات"
+        description="رسوم 5% زائد ضريبة القيمة المضافة 5%، وتأجيل المنطقة الحرة وسير التخليص الإماراتي."
+        href="/ar/middleeast/uae-import-duty-vat/"
+      />
+      <Card locale={locale}
+        title="جمارك قطر ورسوم الاستيراد"
+        description="رسوم 5% CIF مع عدم وجود ضريبة قيمة مضافة بعد — والتغيير المتوقع مستقبلًا في ضريبة القيمة المضافة."
+        href="/ar/middleeast/qatar-customs-duty/"
+      />
+      <Card locale={locale}
+        title="جمارك الكويت ورسوم الاستيراد"
+        description="رسوم 5% CIF مع عدم وجود ضريبة قيمة مضافة عامة وسير تخليص مليء بالمستندات."
+        href="/ar/middleeast/kuwait-customs-duty/"
+      />
+      <Card locale={locale}
+        title="جمارك عُمان ورسوم الاستيراد"
+        description="رسوم 5% زائد ضريبة القيمة المضافة 5% وسير تقديم بيان Bayan."
+        href="/ar/middleeast/oman-customs-duty/"
+      />
+      <Card locale={locale}
+        title="جمارك البحرين ورسوم الاستيراد"
+        description="رسوم 5% زائد ضريبة القيمة المضافة 10% (CIF × 1.155) والبديل عبر الجسر إلى السعودية."
+        href="/ar/middleeast/bahrain-customs-duty/"
+      />
+      <Card locale={locale}
+        title="شهادة SASO وSABER"
+        description="PC مقابل SC، وتدفق التسجيل، وقاعدة 2025 التي تقضي بالحصول على SC قبل الوصول."
+        href="/ar/middleeast/saso-saber-certification/"
+      />
+      <Card locale={locale}
+        title="غرامات التأخير ورسوم الاحتجاز من الصين إلى الخليج"
+        description="فخ غرامة التأخير $75–$300 يوميًا وكيف تتحول إيقافات التخليص إلى احتجاز."
+        href="/ar/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="جدة مقابل الدمام"
+        description="أي ميناء سعودي يجب أن تستخدمه شحنتك من الصين؟ البحر الأحمر مقابل الخليج العربي."
+        href="/ar/middleeast/jeddah-vs-dammam/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="قارن التكلفة الإجمالية للوصول عبر الخليج"
+      text="أخبرنا برمز HS وقيمة CIF والمنشأ والأسواق المرشحة للوجهة، وسنوصلك بمزودين يمكنهم تسعير الرسوم وضريبة القيمة المضافة والتخليص والشحن جنبًا إلى جنب."
+    />
+  </section>
+</BaseLayout>

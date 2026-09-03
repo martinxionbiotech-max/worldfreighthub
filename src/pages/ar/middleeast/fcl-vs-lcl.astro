@@ -1,0 +1,857 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import DataTable from '../../../components/DataTable.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../../components/ConfidenceBadge.astro';
+import SourceList from '../../../components/SourceList.astro';
+import Card from '../../../components/Card.astro';
+import Cta from '../../../components/Cta.astro';
+import { SITE_URL } from '../../../site';
+import { sourcesByIds } from '../../../data/sources';
+import { gccPortsAr as gccPorts } from '../../../data/ports.ar';
+import type { Source } from '../../../data/types';
+import { t, type Locale } from '../../../i18n/ui';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/middleeast/fcl-vs-lcl/`;
+
+const portRoles: Record<string, string> = {
+  jeddah: 'بوابة البحر الأحمر، غرب السعودية',
+  dammam: 'بوابة الخليج العربي، المنطقة الشرقية + الرياض',
+  'riyadh-dry-port': 'ميناء جاف داخلي؛ امتداد سككي/بري لممر الدمام',
+  'jebel-ali': 'أكبر ميناء في الشرق الأوسط؛ مركز إعادة التصدير والمنطقة الحرة في الإمارات',
+  'khalifa-port-abu-dhabi': 'بوابة أبوظبي للمياه العميقة',
+  'port-khalid': 'بوابة الشارقة / ميناء خالد',
+  hamad: 'بوابة قطر التجارية الوحيدة',
+  shuwaikh: 'بوابة مدينة الكويت العامة/للحاويات',
+  shuaiba: 'بوابة الكويت الصناعية والسائبة',
+  sohar: 'بوابة شمال عُمان للحاويات',
+  salalah: 'بوابة جنوب عُمان لإعادة الشحن',
+  'khalifa-bin-salman': 'بوابة البحرين؛ وصلة جسر الملك فهد إلى السعودية',
+};
+
+const portRows = gccPorts.map((port) => ({
+  port: port.name,
+  unlocode: port.unlocode ?? '—',
+  country: port.country,
+  role: portRoles[port.slug] ?? port.hinterland,
+  confidence: 'HIGH',
+}));
+
+const wfhRouteData: Source = {
+  id: 'wfh-gcc-fcl-lcl-route-data',
+  name: 'WorldFreightHub route data — China to the seven main GCC destination ports (FCL 20ft/40ft and LCL per-CBM ranges; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhMethods: Source = {
+  id: 'wfh-gcc-fcl-lcl-methods',
+  name: 'WorldFreightHub methods data — FCL and LCL capacity, transit and demurrage benchmarks',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const rateSources: Source[] = [wfhRouteData, wfhMethods];
+const transitSources: Source[] = [wfhRouteData, wfhMethods];
+const decisionSources: Source[] = [wfhRouteData, wfhMethods];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhMethods,
+  wfhCountryData,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const rateRows = [
+  {
+    port: 'ميناء جدة الإسلامي (SAJED)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    typical: '~18 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء الملك عبدالعزيز الدمام (SADMM)',
+    twenty: '$1,500 – $6,200',
+    forty: '$1,900 – $8,100',
+    lcl: '$20 – $110 per CBM',
+    typical: '~20 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي (AEJEA)',
+    twenty: '$1,500 – $3,250',
+    forty: '$2,200 – $3,950',
+    lcl: '$60 – $180 per CBM',
+    typical: '~21 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء حمد (QAHMD)',
+    twenty: '$1,700 – $2,500',
+    forty: '$2,500 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    typical: '~22 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ (KWSWK)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$70 – $100 per CBM',
+    typical: '~24 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار (OMSOH)',
+    twenty: '$1,500 – $2,600',
+    forty: '$2,200 – $3,800',
+    lcl: '$60 – $110 per CBM',
+    typical: '~19 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان (BHKBS)',
+    twenty: '$1,500 – $2,500',
+    forty: '$2,200 – $3,600',
+    lcl: '$75 – $100 per CBM',
+    typical: '~22 يومًا',
+    confidence: 'MEDIUM',
+  },
+];
+
+const transitRows = [
+  {
+    port: 'جدة (SAJED)',
+    fcl: '~18 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الدمام (SADMM)',
+    fcl: '~20 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'جبل علي (AEJEA)',
+    fcl: '~21 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'ميناء حمد (QAHMD)',
+    fcl: '~22 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'الشويخ (KWSWK)',
+    fcl: '~24 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'صحار (OMSOH)',
+    fcl: '~19 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'خليفة بن سلمان (BHKBS)',
+    fcl: '~22 يومًا نموذجيًا · نطاق تخطيط FCL 14–30 يومًا',
+    lcl: 'FCL +5–10 أيام · نطاق تخطيط LCL 15–35 يومًا',
+    confidence: 'MEDIUM',
+  },
+];
+
+const breakEvenRows = [
+  {
+    metric: 'السعة الاسمية للحاوية 20 قدم',
+    fcl: '≈ 33 CBM',
+    lcl: 'غير منطبق',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'السعة الاسمية للحاوية 40 قدم',
+    fcl: '≈ 67 CBM',
+    lcl: 'غير منطبق',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'اقتصاديات 40 قدم مقابل 20 قدم',
+    fcl: 'حاوية 40 قدم تكلف ~30–50% أكثر من 20 قدم لكنها تستوعب ~ضعف الحجم',
+    lcl: 'غير منطبق',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: 'نقطة التعادل التخطيطية',
+    fcl: 'تفوز عادة فوق ~15 CBM',
+    lcl: 'تفوز عادة تحت ~15 CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: '15 CBM شحن جزئي — المعيار على مستوى الممر',
+    fcl: 'حاوية 20 قدم FCL من $1,500–$6,200 حسب الميناء',
+    lcl: '15 CBM × $20–$110 = $300 – $1,650',
+    confidence: 'MEDIUM',
+  },
+  {
+    metric: '15 CBM شحن جزئي — مثال جبل علي',
+    fcl: 'حاوية 20 قدم FCL $1,500–$3,250',
+    lcl: '15 CBM × $60–$180 = $900 – $2,700',
+    confidence: 'MEDIUM',
+  },
+];
+
+const decisionRows = [
+  {
+    factor: 'حجم الشحنة',
+    fcl: 'حاوية مخصصة 20GP أو 40GP أو 40HQ لشحنة كبيرة بما يكفي لتبرير الاستخدام الحصري',
+    lcl: 'حاوية مشتركة مجمعة، تُفوتر فقط بالحجم الذي تشغله',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'أساس التسعير',
+    fcl: 'لكل حاوية — 20 قدم $1,500–$6,200 و40 قدم $1,900–$8,100 عبر البوابات الخليجية',
+    lcl: 'لكل متر مكعب — $20–$180 لكل CBM حسب ميناء الوجهة',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'حساب نقطة التعادل',
+    fcl: 'تفوز عندما يجعل حجمك سعر الحاوية الثابت أرخص من تسعير كل CBM بالإضافة إلى رسوم CFS',
+    lcl: 'أقل من ~15 CBM يفوز عادة؛ وفوق ~15 CBM تفوز الحاوية الكاملة عادة',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'التعرض للمناولة',
+    fcl: 'وحدة مختومة واحدة من الشاحن إلى المستلم؛ مناولة وسيطة أقل',
+    lcl: 'يضيف تجميع CFS وتفكيك التجميع وتخزينًا قصير الأجل',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'تجربة مدة النقل',
+    fcl: 'نافذة ميناء إلى ميناء 14–30 يومًا، مع النموذجي لكل ميناء في بيانات المسارات',
+    lcl: 'أبطأ بـ 5–10 أيام فوق المسار نفسه، بسبب نوافذ التجميع',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'حزمة رسوم الوجهة',
+    fcl: 'OTHC/DTHC والمستندات والوقود وخطر المعاينة وغرامة التأخير ورسوم الاحتجاز',
+    lcl: 'الحزمة نفسها بالإضافة إلى تفكيك تجميع CFS ورسوم مناولة لكل CBM',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'التعرض الجيوسياسي',
+    fcl: 'خطر التوجيه بين البحر الأحمر ومضيق هرمز مُسعَّر ضمن النطاقات السعودية الواسعة',
+    lcl: 'التعرض نفسه للتوجيه؛ يحمل الشحن الجزئي أيضًا مخاطر جدول الشاحنين المشاركين',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'الملاءمة المعتادة',
+    fcl: 'بضائع كبيرة الحجم أو ثقيلة/كثيفة أو مشاريع أو لمرسل إليه واحد',
+    lcl: 'طلبات تجريبية وتجديد مخزون متعدد الأصناف وعينات وأحجام أقل من حاوية',
+    confidence: 'LOW',
+  },
+];
+
+const vatRows = [
+  { country: 'السعودية', vat: '15%', note: 'أعلى ضريبة قيمة مضافة في الخليج؛ تضاف فوق رسوم 5%', confidence: 'HIGH' },
+  { country: 'الإمارات', vat: '5%', note: 'يمكن للمناطق الحرة تأجيل الرسوم حتى دخول البر الرئيسي', confidence: 'HIGH' },
+  { country: 'قطر', vat: '0% (لا ضريبة بعد)', note: 'من المتوقع ضريبة ~5%؛ أكد الجدول الزمني محليًا', confidence: 'HIGH' },
+  { country: 'الكويت', vat: '0% (لا ضريبة)', note: 'وُقّعت اتفاقية الخليج ولم تُنفذ بعد', confidence: 'HIGH' },
+  { country: 'عُمان', vat: '5%', note: 'نفس ضريبة الإمارات؛ بوابة صحار أقل ازدحامًا', confidence: 'HIGH' },
+  { country: 'البحرين', vat: '10%', note: 'ثاني أعلى ضريبة في الخليج؛ الجسر بديل نحو السعودية', confidence: 'HIGH' },
+];
+
+const costRows = [
+  {
+    item: 'الشحن البحري — FCL',
+    who: 'الناقل / وكيل الشحن',
+    magnitude: '20 قدم $1,500–$6,200؛ 40 قدم $1,900–$8,100 حسب ميناء الوجهة',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'الشحن البحري — LCL',
+    who: 'الناقل / وكيل الشحن',
+    magnitude: '$20–$180 لكل CBM حسب ميناء الوجهة؛ حد أدنى 1 CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'مناولة محطة المنشأ (OTHC)',
+    who: 'محطة الصين / الناقل',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'مناولة محطة الوجهة (DTHC)',
+    who: 'المحطة الخليجية / الناقل',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'تجميع / تفكيك تجميع CFS (شحن جزئي)',
+    who: 'مشغل CFS في الطرفين',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'الوقود / تسوية الوقود',
+    who: 'الناقل البحري',
+    magnitude: 'رسوم إضافية من الناقل؛ غير منشورة منفصلة في اللقطة — اطلب تفصيلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'رسوم المستندات / بوليصة الشحن',
+    who: 'الناقل / وكيل الشحن / المخلص',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+  {
+    item: 'غرامة التأخير / رسوم الاحتجاز',
+    who: 'المحطة + الناقل البحري',
+    magnitude: '$75–$300 يوميًا بعد 3–7 أيام مجانية في المحطات الخليجية',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'رسوم الوجهة الخفية',
+    who: 'الميناء / الجمارك / جهات المعاينة',
+    magnitude: 'غير منشور في اللقطة الموثقة — اطلب عرض سعر مفصلاً',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'ما الفرق بين FCL وLCL؟',
+    a: 'يمنحك FCL (حمولة حاوية كاملة) استخدامًا حصريًا لحاوية 20GP أو 40GP أو 40HQ ويُسعَّر لكل حاوية. أما LCL (حمولة أقل من حاوية) فيجمّع بضاعتك مع مستوردين آخرين في حاوية مشتركة ويُسعَّر لكل متر مكعب، وعادة بحد أدنى 1 CBM. على ممر الصين–الخليج، يناسب FCL البضائع الكبيرة أو الثقيلة أو الموضوعة على منصات، بينما يناسب LCL الطلبات التجريبية والأصناف المتنوعة والأحجام الأقل من حاوية.',
+  },
+  {
+    q: 'عند أي حجم يجب أن أنتقل من LCL إلى FCL في الخليج؟',
+    a: 'نقطة التعادل التخطيطية نحو 15 CBM تقريبًا: أقل من نحو 15 CBM يفوز LCL عادة، وفوقها يفوز FCL عادة بعد احتساب حدود CFS الدنيا ورسوم تفكيك التجميع في الوجهة. وهي ليست عتبة صارمة — اطلب عروض أسعار للخيارين وقارن التكلفة الإجمالية للوصول قبل اتخاذ القرار.',
+  },
+  {
+    q: 'كم تكلفة الشحن الجزئي LCL من الصين إلى الخليج؟',
+    a: 'تختلف النطاقات المنشورة لكل CBM حسب الميناء: جدة والدمام $20–$110، وجبل علي $60–$180، وميناء حمد $75–$100، والشويخ $70–$100، وصحار $60–$110، وخليفة بن سلمان $75–$100. هذه معايير متوسطة الموثوقية وليست عروض أسعار فورية — أكد السعر الحالي والحد الأدنى ورسوم CFS في الوجهة مع وكيل الشحن.',
+  },
+  {
+    q: 'كم تكلفة الشحن الكامل FCL من الصين إلى الخليج؟',
+    a: 'النطاقات المنشورة للحاويات 20 قدم و40 قدم هي: جدة $1,500–$6,200 / $1,900–$8,100، والدمام $1,500–$6,200 / $1,900–$8,100، وجبل علي $1,500–$3,250 / $2,200–$3,950، وميناء حمد $1,700–$2,500 / $2,500–$3,600، والشويخ $1,500–$2,500 / $2,200–$3,600، وصحار $1,500–$2,600 / $2,200–$3,800، وخليفة بن سلمان $1,500–$2,500 / $2,200–$3,600. جميعها متوسطة الموثوقية؛ والنطاقات السعودية هي الأوسع لأن خطر البحر الأحمر ومضيق هرمز مُسعَّر داخلها.',
+  },
+  {
+    q: 'هل يكون LCL دائمًا أرخص للشحنات الصغيرة؟',
+    a: 'عادة نعم، لكن ليس تلقائيًا. يفوز LCL تحت نقطة التعادل التخطيطية ~15 CBM لأنك تدفع فقط مقابل الحجم الذي تستخدمه. وفوق ذلك يمكن أن يصبح FCL أرخص لكل متر مكعب ويتجنب الدفع مقابل حاوية مشتركة مع مناولة CFS إضافية. أدرج في المقارنة حد LCL الأدنى ورسوم تفكيك التجميع في الوجهة وأي خطر غرامة تأخير.',
+  },
+  {
+    q: 'لماذا النطاقات السعودية للشحن الكامل أوسع بكثير من جبل علي؟',
+    a: 'تقع البوابات السعودية على مسارين جيوسياسيين مختلفين: جدة على البحر الأحمر والدمام على الخليج العربي عبر مضيق هرمز. تشير بيانات المسارات إلى أن علاوات مخاطر الحرب وتكاليف الوقود تتغير مع دورة الأخبار، ولهذا يبلغ نطاق الحاوية السعودية 20 قدم $1,500–$6,200 بينما يضغط سوق الناقلين الأكثر تنافسية في جبل علي نطاقه إلى $1,500–$3,250.',
+  },
+  {
+    q: 'كم يكون LCL أبطأ من FCL؟',
+    a: 'يكون LCL أبطأ بـ 5–10 أيام من رحلة FCL المكافئة على المسار نفسه، لأن البضاعة يجب تجميعها قبل المغادرة وتفكيك تجميعها بعد الوصول. تضع بيانات طرق الشحن مدة نقل FCL عند 14–30 يومًا ومدة نقل LCL عند 15–35 يومًا، مع النموذجي لكل ميناء في بيانات المسارات.',
+  },
+  {
+    q: 'ما أكبر تكلفة خفية في الشحن الكامل إلى الخليج؟',
+    a: 'غرامة التأخير ورسوم الاحتجاز. الفترة المجانية في المحطات الخليجية 3–7 أيام فقط، وتبلغ الرسوم اليومية $75–$300 بعد انتهاء تلك المدة. يمكن لإيقاف جمركي أو SABER أن يضيف مئات الدولارات إلى حاوية واحدة ويمحو بهدوء وفورات كل وحدة التي جعلت FCL جذابًا. خطط للتخليص والنقل البري قبل وصول السفينة.',
+  },
+  {
+    q: 'هل يغير قرار FCL مقابل LCL الرسوم وضريبة القيمة المضافة في الخليج؟',
+    a: 'لا. لا يغير النمط المعاملة الضريبية. الرسوم الجمركية الأساسية الموحدة في الخليج هي 5% من قيمة CIF، وتُفرض ضريبة القيمة المضافة على القيمة الشاملة للرسوم بمعدل دولة الوجهة: السعودية 15%، الإمارات 5%، قطر 0%، الكويت 0%، عُمان 5% والبحرين 10%. صنّف رمز HS الصحيح أولاً، لأن الرسوم وضريبة القيمة المضافة تتراكم بالطريقة نفسها لكلا النمطين.',
+  },
+  {
+    q: 'هل أحتاج SABER أو SASO لشحنة LCL؟',
+    a: 'نعم، إذا كانت البضائع خاضعة للتنظيم وكانت السعودية هي الوجهة. مطابقة SABER/SASO تنطبق على السعودية فقط، لا على بقية الخليج، ويجب الحصول على شهادة SABER SC قبل الوصول — سارية منذ 1 يناير 2025. ولا يزيل نمط الشحن (FCL أو LCL) هذا المتطلب.',
+  },
+  {
+    q: 'هل ينطبق ISF على الخليج؟',
+    a: 'لا. ISF (إقرار أمن المستورد) برنامج أمريكي ولا ينطبق على واردات الخليج. وللسعودية متطلبها الخاص قبل الوصول عبر SABER/FASAH، لكن يجب ألا تنسخ خطوة ISF الأمريكية في سير عمل FCL أو LCL من الصين إلى الخليج.',
+  },
+  {
+    q: 'كيف أختار بين حاوية 20 قدم و40 قدم للشحن الكامل إلى الخليج؟',
+    a: 'ابدأ بالحجم والوزن، لا بالسعة الاسمية. تتسع حاوية 20 قدم لنحو 33 CBM وحاوية 40 قدم لنحو 67 CBM. ولأن حاوية 40 قدم تكلف ~30–50% فقط أكثر من 20 قدم لكنها تستوعب نحو ضعف الحجم، فعادة تكون 40 قدم أفضل قيمة بمجرد اقترابك من امتلاء حاوية 20 قدم — تحقق من حد الوزن والسعر الفوري لكليهما قبل الاختيار.',
+  },
+  {
+    q: 'أي ميناء خليجي يجب أن أستخدمه لقرار FCL مقابل LCL؟',
+    a: 'طابق الميناء مع المرسل إليه النهائي، لا مع السعر فقط. استخدم جدة لغرب السعودية، والدمام للمنطقة الشرقية والرياض، وجبل علي لإعادة التصدير الإماراتي ودخول المنطقة الحرة، وميناء حمد لقطر، والشويخ للكويت، وصحار لشمال عُمان، وخليفة بن سلمان للبحرين أو كبديل إلى شرق السعودية. ثم قارن FCL وLCL على تلك البوابة الواحدة.',
+  },
+  {
+    q: 'أين يمكنني الحصول على مقارنة FCL وLCL حقيقية؟',
+    a: 'اطلب عرض سعر مفصلاً بنفس المنشأ والسلعة ورمز HS والحجم والوزن ووجهة الخليج النهائية. اطلب من المزود عرض الشحن البحري وOTHC/DTHC ورسوم CFS للشحن الجزئي والوقود والمستندات وفترة الإعفاء من غرامة التأخير/رسوم الاحتجاز والرسوم وضريبة القيمة المضافة والرحلة الداخلية معًا — فالسطر المعلن ليس التكلفة الإجمالية للوصول أبدًا.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'الشحن FCL مقابل LCL من الصين إلى الخليج (2026): الحاوية الكاملة مقابل الحاوية المشتركة',
+      description:
+        'الشحن بالحاويات FCL مقابل LCL من الصين إلى الخليج: أسعار 20 قدم/40 قدم وكل CBM حسب الميناء، ومدة النقل، وقاعدة التعادل ~15 CBM، وغرامة التأخير والرسوم الخفية، وامتثال SABER، وأي نمط يناسب شحنتك.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'ar',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout locale={locale}
+  title="الشحن FCL مقابل LCL من الصين إلى الخليج (2026): الحاوية الكاملة مقابل الحاوية المشتركة"
+  description="الشحن بالحاويات FCL مقابل LCL من الصين إلى الخليج: أسعار 20 قدم/40 قدم وكل CBM حسب الميناء، ومدة النقل، وقاعدة التعادل ~15 CBM، وغرامة التأخير والرسوم الخفية، وامتثال SABER، وأي نمط يناسب شحنتك."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb locale={locale}
+        items={[
+          { label: t(locale, 'nav.middleeast'), href: '/ar/middleeast/' },
+          { label: 'FCL مقابل LCL' },
+        ]}
+      />
+      <span class="badge badge--amber">تحديث سبتمبر 2026</span>
+      <h1>الشحن FCL مقابل LCL من الصين إلى الخليج</h1>
+      <p class="lead">
+        دليل قرار على مستوى الممر للمستوردين الذين يختارون بين حمولة حاوية كاملة وحمولة مشتركة
+        أقل من حاوية إلى السعودية والإمارات وقطر والكويت وعُمان والبحرين — مع النطاقات المنشورة
+        لحاويات 20 قدم/40 قدم وكل CBM، ونقطة التعادل التخطيطية ~15 CBM، وفخ غرامة التأخير الذي
+        يمحو وفورات FCL، وبوابة SABER/SASO التي تفرضها السعودية وحدها.
+      </p>
+      <p class="small muted">
+        شارات الموثوقية تفصل الأرقام الموثقة عن ملاحظات التخطيط الاسترشادية. تأتي نطاقات 20 قدم/40 قدم
+        وكل CBM للشحن الجزئي من بيانات مسارات WorldFreightHub الخليجية (متوسطة)، وتأتي السعة وغرامة التأخير
+        وقواعد مدة النقل التقريبية من بيانات طرق الشحن (متوسطة). أما رسوم الوجهة غير المحددة كمية
+        وقيم CFS/THC بالدولار فمنخفضة الموثوقية وتُعرض كطلب عرض سعر بدلاً من اختراعها.
+        تعامل مع كل رقم منخفض الموثوقية كاسترشادي وتحقق مع وكيل الشحن قبل الاعتماد عليه.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">السعة الاسمية لحاوية 20 قدم</span>
+          <span class="fact-value">≈ 33 CBM <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">السعة الاسمية لحاوية 40 قدم</span>
+          <span class="fact-value">≈ 67 CBM <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">نقطة التعادل التخطيطية</span>
+          <span class="fact-value">≈ 15 CBM <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة نقل FCL</span>
+          <span class="fact-value">14–30 يومًا <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">مدة نقل LCL</span>
+          <span class="fact-value">15–35 يومًا <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">تباطؤ LCL</span>
+          <span class="fact-value">5–10 أيام <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">الرسوم الخليجية</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge locale={locale} level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">غرامة التأخير</span>
+          <span class="fact-value">$75–$300/day <ConfidenceBadge locale={locale} level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. جدول الأسعار: معايير FCL وLCL عبر البوابات الخليجية السبع</h2>
+    <p>
+      تعطي بيانات المسارات الخليجية المنشورة لكل بوابة وجهة رئيسية ثلاثة أسطر معيارية:
+      <strong>20 قدم FCL</strong>، و<strong>40 قدم FCL</strong>، و<strong>LCL لكل CBM</strong>، وكلها متوسطة
+      الموثوقية. استخدمها لبناء مقارنة الشحن الرئيسية، لكن تذكر أنها نطاقات من
+      لقطة WorldFreightHub — وليست عروض أسعار ناقلين فورية. تقع الفوارق الأوسع على
+      البوابات السعودية لأن مخاطر التوجيه عبر البحر الأحمر ومضيق هرمز مُسعَّرة داخل النطاق، لا
+      لأن السوق صاخبة فحسب.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'ميناء الوجهة' },
+        { key: 'twenty', label: '20 قدم FCL' },
+        { key: 'forty', label: '40 قدم FCL' },
+        { key: 'lcl', label: 'LCL لكل CBM' },
+        { key: 'typical', label: 'مدة النقل النموذجية' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="جميع نطاقات FCL وLCL متوسطة الموثوقية من بيانات مسارات WorldFreightHub الخليجية؛ تحقق من الأرقام الفورية قبل الاعتماد عليها."
+    />
+    <SourceList locale={locale} sources={rateSources} title="المصادر — أسعار FCL مقابل LCL" />
+
+    <div class="note mt-2">
+      <strong>كيف تقرأ النطاقات:</strong> سطر 20 قدم هو المعيار للحاوية الكاملة الواحدة،
+      ويغطي سطر 40 قدم حاويات 40GP/40HQ، وسطر LCL هو السعر لكل متر مكعب للبضائع التي تشارك
+      حاوية. قارن الثلاثة على الميناء نفسه، ثم أضف رسوم الوجهة — فالسطر المعلن ليس
+      التكلفة الإجمالية للوصول أبدًا.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. جدول مدة النقل: FCL مقابل LCL حسب ميناء الوجهة</h2>
+    <p>
+      قرار FCL مقابل LCL لا يغير ساعة النقل الرئيسي؛ بل يغير الفواصل الزمنية للمناولة
+      حوله. تضع بيانات طرق الشحن <strong>مدة نقل FCL عند 14–30 يومًا</strong> و
+      <strong>مدة نقل LCL عند 15–35 يومًا</strong>، ويكون LCL <strong>أبطأ بـ 5–10 أيام</strong>
+      لأن البضاعة تُجمّع قبل الإبحار وتُفكك تجميعها بعد الوصول. الأرقام النموذجية لكل ميناء
+      أدناه من بيانات المسارات.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'ميناء الوجهة' },
+        { key: 'fcl', label: 'مدة نقل FCL' },
+        { key: 'lcl', label: 'مدة نقل LCL' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="النموذجي لـ FCL متوسط الموثوقية من بيانات المسارات؛ ويطبق سطر LCL إضافة التجميع 5–10 أيام من بيانات طرق الشحن."
+    />
+    <SourceList locale={locale} sources={transitSources} title="Sources — China to GCC FCL vs مدة نقل LCL" />
+
+    <div class="note mt-2">
+      <strong>توقيت التخليص غير منشور في اللقطة الموثقة.</strong> مدة التخليص الجمركي
+      تختلف حسب الشحنة ورمز HS وجاهزية المستندات وسلطة الوجهة، لذا لا تعامل أي عدد أيام
+      للتخليص كوعد. اطلب من مخلصك توقعًا خاصًا بالشحنة، وخصص فترة الإعفاء من غرامة التأخير
+      وفقًا لذلك.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. قرار FCL مقابل LCL وحساب نقطة التعادل</h2>
+      <p>
+        يبدأ الاستدلال التخطيطي القياسي بالحجم. حاوية 20 قدم لها سعة اسمية
+        نحو <strong>33 CBM</strong>، بينما تستوعب حاوية 40 قدم نحو <strong>67 CBM</strong>. يُسعَّر LCL
+        لكل متر مكعب، لذا فالسؤال هو هل تكلفة كل CBM من حجمك الفعلي أفضل من
+        الدفع مقابل حاوية كاملة قد تكون فارغة جزئيًا. نقطة التعادل العملية هي
+        <strong>~15 CBM</strong>: تحتها يفوز LCL عادة، وفوقها يفوز FCL عادة بعد احتساب
+        حدود CFS الدنيا والمناولة.
+      </p>
+      <p>
+        الحساب صريح. عند معيار LCL على مستوى الممر <strong>$20–$110 لكل CBM</strong>،
+        تكلف 15 CBM من شحن LCL <strong>15 × $20–$110 = $300–$1,650</strong>. وعلى مسار جبل
+        علي مرتفع الرسوم تكلف 15 CBM نفسها <strong>15 × $60–$180 = $900–$2,700</strong> مقابل حاوية 20 قدم
+        بقيمة <strong>$1,500–$3,250</strong> — ولهذا يمكن لعلاوة LCL في جبل علي أن تخفض حجم
+        التعادل. ليس الهدف من الحساب رقمًا سحريًا واحدًا؛ بل مقارنة الحاوية
+        الكاملة بالحجم الفعلي على الميناء نفسه، ثم إضافة رسوم الوجهة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'metric', label: 'المقياس' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={breakEvenRows}
+        caption="أرقام السعة ونقطة التعادل من بيانات طرق الشحن (متوسطة)؛ ويستخدم الحساب بالدولار نطاقات أسعار متوسطة الموثوقية."
+      />
+      <SourceList locale={locale} sources={decisionSources} title="المصادر — حساب تعادل FCL مقابل LCL" />
+
+      <div class="note mt-2">
+        <strong>اقتصاديات حاوية 40 قدم:</strong> تكلف حاوية 40 قدم ~30–50% فقط أكثر من 20 قدم لكنها تستوعب نحو
+        ضعف الحجم، لذا بمجرد اقترابك من امتلاء حاوية 20 قدم تكون 40 قدم عادة أفضل سعرًا للوحدة.
+        تحقق من حد الوزن والسعر الفوري لكليهما قبل الاختيار.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. مصفوفة قرار FCL مقابل LCL عبر الممر</h2>
+    <p>
+      يطبق الجدول أدناه القرار على مستوى الممر على المخاطر المحددة لمسار الخليج: انقسام البحر
+      الأحمر مقابل مضيق هرمز، وبوابة SABER في السعودية، وحزمة الرسوم الخفية التي
+      تلحق كل حاوية بعد تفريغها.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'factor', label: 'العامل' },
+        { key: 'fcl', label: 'FCL' },
+        { key: 'lcl', label: 'LCL' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={decisionRows}
+      caption="عوامل القرار إرشادات تخطيط نوعية؛ وأسطر التسعير ومدة النقل متوسطة الموثوقية."
+    />
+    <SourceList locale={locale} sources={decisionSources} title="المصادر — مصفوفة قرار FCL مقابل LCL في الخليج" />
+  </section>
+
+  <section class="section container">
+    <h2>5. جميع الموانئ الخليجية الاثني عشر مع رموز UN/LOCODE</h2>
+    <p>
+      يوجد في الممر اثنا عشر ميناء خليجيًا مسمى في البيانات، من بينها ميناء جاف داخلي واحد. استخدم
+      <strong>رمز UN/LOCODE</strong> الصحيح في بوليصة الشحن ومستندات الشحن؛ لا يوجد لميناء الرياض الجاف
+      رمز UN/LOCODE بحري لأنه مستودع داخلي.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'port', label: 'الميناء' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'country', label: 'الدولة' },
+        { key: 'role', label: 'الدور' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="أسماء الموانئ والدول ورموز UN/LOCODE من بيانات موانئ الخليج في WorldFreightHub."
+    />
+    <SourceList locale={locale} sources={portSources} title="المصادر — الموانئ الخليجية" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. مكونات التكلفة وفخ غرامة التأخير</h2>
+      <p>
+        سطر الشحن المعلن ليس التكلفة الإجمالية للوصول أبدًا. في FCL يكون الشحن البحري سعرًا ثابتًا
+        للحاوية بالإضافة إلى مناولة محطة المنشأ والوجهة والوقود والمستندات؛ وفي LCL يكون
+        سعر كل CBM فوق تجميع CFS في المنشأ وتفكيك التجميع في الوجهة. البند الخفي الأغلى
+        على هذا الممر هو <strong>غرامة التأخير ورسوم الاحتجاز:
+        $75–$300 يوميًا بعد 3–7 أيام مجانية</strong> في المحطات الخليجية — ويمكن لإيقاف جمركي أو SABER أن يضيف
+        مئات الدولارات إلى حاوية واحدة.
+      </p>
+
+      <DataTable locale={locale}
+        columns={[
+          { key: 'item', label: 'بند التكلفة' },
+          { key: 'who', label: 'من يفرضه' },
+          { key: 'magnitude', label: 'القيمة' },
+          { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="الشحن البحري وغرامة التأخير متوسطا الموثوقية؛ والرسوم غير المحددة كمية منخفضة الموثوقية لأن اللقطة لم تنشر مبالغ محددة."
+      />
+      <SourceList locale={locale} sources={costSources} title="المصادر — مكونات تكلفة الوجهة الخليجية" />
+
+      <div class="note mt-2">
+        <strong>غرامة التأخير مقابل رسوم الاحتجاز:</strong> تفرض المحطة غرامة التأخير عندما تبقى الحاوية
+        داخل الميناء بعد الفترة المجانية؛ ويفرض الناقل البحري رسوم الاحتجاز عندما تبقى
+        الحاوية خارج الميناء بعد الفترة المجانية. أكمل التخليص وأفرج عن الحاوية واحجز الرحلة
+        الداخلية قبل التفريغ لإبقاء كليهما خارج الفاتورة.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. الامتثال: الرسوم وضريبة القيمة المضافة وSABER/SASO ومسألة ISF غير المطروحة</h2>
+    <p>
+      لا يغير اختيار FCL/LCL المعاملة الجمركية. الرسوم الجمركية الأساسية الموحدة في الخليج هي
+      <strong>5% من قيمة CIF</strong>، وتُفرض ضريبة القيمة المضافة على الواردات على القيمة الشاملة للرسوم
+      بمعدل دولة الوجهة. يفصل الجدول أدناه ملفات ضريبة القيمة المضافة لكل دولة، وهي مصدر
+      اختلافات التكلفة الإجمالية للوصول بين أسواق الخليج.
+    </p>
+
+    <DataTable locale={locale}
+      columns={[
+        { key: 'country', label: 'الدولة' },
+        { key: 'vat', label: 'ضريبة القيمة المضافة' },
+        { key: 'note', label: 'ملاحظة' },
+        { key: 'confidence', label: 'الموثوقية', type: 'confidence' },
+      ]}
+      rows={vatRows}
+      caption="معدلات ضريبة القيمة المضافة لكل دولة مرتفعة الموثوقية من بيانات دول الخليج في WorldFreightHub."
+    />
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الرسوم وضريبة القيمة المضافة في الخليج" />
+
+    <h3 class="mt-3">SABER/SASO تنطبق على السعودية فقط</h3>
+    <p>
+      <strong>مطابقة SABER/SASO متطلب خاص بالسعودية فقط.</strong> للبضائع الخاضعة للتنظيم يجب
+      على المستورد التسجيل في منصة SABER، والحصول على شهادة مطابقة المنتج (PC)، ثم
+      الحصول على شهادة مطابقة الشحنة (SC) للشحنة المحددة. منذ
+      <strong>1 يناير 2025 يجب الحصول على SC قبل وصول البضاعة</strong> وإلا يفشل التخليص —
+      هذه القاعدة سمة مميزة لـ WorldFreightHub والسبب الأكثر شيوعًا لتأخير التخليص الخليجي
+      الذي يمكن تجنبه. وهي لا تنطبق على الإمارات وقطر والكويت وعُمان أو البحرين.
+    </p>
+
+    <h3 class="mt-3">رموز HS وشهادة المنشأ ومسألة ISF غير المطروحة</h3>
+    <p>
+      صنّف البضائع برمز <strong>HS</strong> الصحيح قبل التسعير، لأن الرسوم وضريبة القيمة المضافة وأي
+      فحص مطابقة تعتمد عليه جميعًا. مجموعة المستندات القياسية هي الفاتورة التجارية وبوليصة
+      الشحن وقائمة التعبئة وشهادة المنشأ، بالإضافة إلى شهادة SABER للبضائع السعودية الخاضعة
+      للتنظيم. <strong>ISF (إقرار أمن المستورد) برنامج أمريكي ولا ينطبق على واردات
+      الخليج</strong> — لا تنسخه في سير عمل من الصين إلى الخليج. الخطوة السعودية المكافئة
+      للتقديم المسبق هي شهادة SABER SC بالإضافة إلى إقرار فسح قبل الوصول.
+    </p>
+
+    <h3 class="mt-3">حد الإعفاء الجمركي للطرود الشخصية، لا للبضائع التجارية</h3>
+    <p>
+      تنشر السعودية حد إعفاء جمركي قدره <strong>SAR 1,000</strong> وتنشر الإمارات
+      <strong>AED 1,000</strong>، وكلاهما للطرود الشخصية/البريدية فقط. ولا تنشر قطر والكويت وعُمان والبحرين
+      حدًا مؤكدًا في اللقطة الموثقة. يجب أن تفترض البضائع التجارية أن الرسوم تنطبق
+      بغض النظر عن حدود الطرود هذه.
+    </p>
+
+    <SourceList locale={locale} sources={complianceSources} title="المصادر — الامتثال الخليجي" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>أدلة القرار ذات الصلة وحداثة البيانات</h2>
+    <p>
+      هذه الصفحة موسومة <span class="badge badge--amber">تحديث سبتمبر 2026</span>. يُعاد التحقق من نطاقات
+      FCL/LCL مقابل بيانات مسارات WorldFreightHub الخليجية، ومن قواعد السعة وغرامة التأخير
+      مقابل بيانات طرق الشحن، ومن أسطر ضريبة القيمة المضافة/الرسوم مقابل بيانات دول الخليج. إذا توفر
+      رقم THC أو CFS أو وقود أو معاينة في الوجهة، يُحدث الجدول وتُرفع شارة الموثوقية
+      ويُغير تاريخ التعديل. وحتى ذلك الحين تبقى رسوم الوجهة غير المحددة كمية منخفضة مع
+      ملاحظة اطلب عرض سعر بدلاً من ملئها بالتقديرات.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card locale={locale}
+        title="غرامات التأخير ورسوم الاحتجاز من الصين إلى الخليج"
+        description="فخ غرامة التأخير $75–$300 يوميًا وقواعد الفترة المجانية وكيف تتحول إيقافات SABER إلى تكاليف احتجاز."
+        href="/ar/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="الرسوم الخفية ورسوم الوجهة من الصين إلى الخليج"
+        description="THC وCFS والمستندات وISPS والمعاينة وحزمة تكلفة الوجهة الشاملة."
+        href="/ar/middleeast/hidden-charges-china-to-gcc/"
+      />
+      <Card locale={locale}
+        title="شهادة SASO وSABER"
+        description="PC مقابل SC، وتدفق التسجيل، وقاعدة 2025 التي تقضي بالحصول على SC قبل الوصول."
+        href="/ar/middleeast/saso-saber-certification/"
+      />
+      <Card locale={locale}
+        title="مقارنة الجمارك والرسوم وضريبة القيمة المضافة في الخليج"
+        description="مقارنة جنبًا إلى جنب لست دول حول الرسوم وضريبة القيمة المضافة وحد الإعفاء."
+        href="/ar/middleeast/gcc-customs-duty-comparison/"
+      />
+      <Card locale={locale}
+        title="جدة مقابل الدمام"
+        description="أي ميناء سعودي يجب أن تستخدمه شحنتك من الصين؟ التوجيه بين البحر الأحمر والخليج العربي."
+        href="/ar/middleeast/jeddah-vs-dammam/"
+      />
+      <Card locale={locale}
+        title="الشحن من الصين إلى السعودية"
+        description="ركيزة المسار السعودي الكاملة: الأسعار ومدة النقل وامتثال SABER وجدة مقابل الدمام."
+        href="/ar/middleeast/shipping-from-china-to-saudi-arabia/"
+      />
+      <Card locale={locale}
+        title="الشحن من الصين إلى الإمارات"
+        description="ركيزة المسار الإماراتي الكاملة: أسعار جبل علي ومدة النقل ودخول المنطقة الحرة والتخليص."
+        href="/ar/middleeast/shipping-from-china-to-uae/"
+      />
+      <Card locale={locale}
+        title="الشحن الكامل إلى السعودية"
+        description="تخطيط 20GP/40GP/40HQ وVGM وحدود الوزن وسير عمل FCL السعودي."
+        href="/ar/middleeast/fcl-shipping-from-china-to-saudi-arabia/"
+      />
+      <Card locale={locale}
+        title="الشحن الجزئي إلى السعودية"
+        description="تسعير كل CBM وتجميع CFS والرسوم الخفية ونقطة تعادل LCL السعودية."
+        href="/ar/middleeast/lcl-shipping-from-china-to-saudi-arabia/"
+      />
+      <Card locale={locale}
+        title="الشحن الكامل إلى الإمارات"
+        description="تخطيط FCL في جبل علي ودخول المنطقة الحرة والتوجيه الإماراتي."
+        href="/ar/middleeast/fcl-shipping-china-to-uae/"
+      />
+      <Card locale={locale}
+        title="الشحن الجزئي إلى الإمارات"
+        description="معايير جبل علي لكل CBM ورسوم CFS وسير عمل LCL الإماراتي."
+        href="/ar/middleeast/lcl-shipping-china-to-uae/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale}
+      title="احصل على عرض سعر مفصلاً لشحن FCL وLCL من الصين إلى الخليج"
+      text="أخبرنا بالمنشأ والسلعة ورمز HS والحجم والوزن ووجهة الخليج النهائية، وسنوصلك بمزودين يمكنهم تسعير FCL وLCL معًا مع التخليص والرسوم وضريبة القيمة المضافة وSABER ورسوم الوجهة."
+    />
+  </section>
+</BaseLayout>
