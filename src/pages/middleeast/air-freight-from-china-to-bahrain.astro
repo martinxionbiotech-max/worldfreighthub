@@ -1,0 +1,885 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/air-freight-from-china-to-bahrain/`;
+
+const iata: Source = {
+  id: 'iata',
+  name: 'IATA — air cargo chargeable weight guidance',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const wfhMethodData: Source = {
+  id: 'wfh-air-method-data',
+  name: 'WorldFreightHub methods data — air freight and sea context rate bands and transit windows',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-air-country-data',
+  name: 'WorldFreightHub GCC country data — Bahrain VAT, duty and compliance profile (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const bahrainCustoms = sourcesByIds(['bahrain-customs']);
+
+const rateSources: Source[] = [wfhMethodData, ...bahrainCustoms];
+const transitSources: Source[] = [wfhMethodData];
+const chargeableSources: Source[] = [iata, wfhMethodData];
+const airportSources: Source[] = [iata, wfhMethodData, ...bahrainCustoms];
+const comparisonSources: Source[] = [wfhMethodData, wfhCountryData, ...bahrainCustoms];
+const costSources: Source[] = [wfhMethodData, wfhCountryData, ...bahrainCustoms];
+const complianceSources: Source[] = [...bahrainCustoms, wfhCountryData];
+
+const airRateRows = [
+  {
+    service: 'Air freight · China → GCC corridor reference',
+    benchmark: '$4.3 – $11.0 / kg',
+    transit: '3–7 days airport-to-airport',
+    basis: 'WorldFreightHub methods data (generic China→GCC band)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Air freight · China → Bahrain country-specific',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '3–7 days planning range',
+    basis: 'No verified Bahrain air benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier · China → Bahrain',
+    benchmark: '$6.9 – $11.0 / kg (generic China→GCC corridor band)',
+    transit: '3–7 days door-to-door',
+    basis: 'WorldFreightHub methods data (MEDIUM); Bahrain-specific express rate not published',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air · China → Bahrain',
+    benchmark: 'Not published — request a per-kg quote',
+    transit: '~10–15 days door-to-door',
+    basis: 'DDP air transit from methods data; per-kg rate not published',
+    confidence: 'LOW',
+  },
+];
+
+const seaContextRows = [
+  {
+    item: 'FCL 20ft rate (China → GCC)',
+    value: '$1,500 – $6,200',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'FCL 40ft rate (China → GCC)',
+    value: '$1,900 – $8,100',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL rate (China → GCC)',
+    value: '$20 – $110 / CBM',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'FCL vs LCL crossover',
+    value: 'FCL beats LCL above ~15 CBM',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Sea transit windows',
+    value: '14–30 days FCL · 15–35 days LCL',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage after free time',
+    value: '$75–300/day after 3–7 free days',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Sea rate · China → Bahrain lane',
+    value: 'Not published — request a per-container / per-CBM quote',
+    basis: 'No verified Bahrain sea benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const airTransitRows = [
+  {
+    method: 'Air freight (airport-to-airport)',
+    window: '3–7 days',
+    note: 'Flight is hours; origin pickup, export handling, clearance and delivery sit on top',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Express courier (door-to-door)',
+    window: '3–7 days',
+    note: 'Simplest, fully tracked, highest per-kg cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'DDP air (door-to-door)',
+    window: '~10–15 days',
+    note: 'Adds destination clearance and final delivery to the air leg',
+    confidence: 'LOW',
+  },
+  {
+    method: 'By origin airport (PVG/SZX/CAN/HKG → BAH)',
+    window: 'Not published',
+    note: 'No airport-specific day is published in the snapshot — request a lane estimate',
+    confidence: 'LOW',
+  },
+];
+
+const airVsSeaRows = [
+  {
+    factor: 'Indicative transit',
+    air: '3–7 days airport-to-airport',
+    sea: '14–30 days FCL · 15–35 days LCL',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Unit basis',
+    air: 'Per chargeable kilogram (actual or volumetric, whichever is higher)',
+    sea: 'Per container for FCL; per CBM for LCL',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Cost pattern',
+    air: 'High unit cost that rises with weight, volume and urgency',
+    sea: 'Lowest unit cost once a box is reasonably full',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Volume crossover',
+    air: 'Best for small, time-critical consignments',
+    sea: 'FCL beats LCL above ~15 CBM; 20ft ≈ 33 CBM / 40ft ≈ 67 CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Hidden time cost',
+    air: 'Airport storage after free time (amounts not published)',
+    sea: 'Demurrage $75–300/day after 3–7 free days',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Tax position',
+    air: 'Same 5% CIF duty and 10% VAT apply',
+    sea: 'Same 5% CIF duty and 10% VAT apply — sea does not remove paperwork',
+    confidence: 'HIGH',
+  },
+];
+
+const volumetricRows = [
+  {
+    example: 'Light, bulky carton',
+    actualWeight: '20 kg',
+    dimensions: '80 × 50 × 40 cm',
+    volumetricWeight: '80 × 50 × 40 ÷ 6000 = 26.7 kg',
+    chargeableWeight: '26.7 kg',
+    note: 'You pay for 26.7 kg, not 20 kg',
+  },
+  {
+    example: 'Same carton by courier / express',
+    actualWeight: '20 kg',
+    dimensions: '80 × 50 × 40 cm',
+    volumetricWeight: '80 × 50 × 40 ÷ 5000 = 32 kg',
+    chargeableWeight: '32 kg',
+    note: 'Couriers charge more for bulky light cargo',
+  },
+];
+
+const chinaGatewayRows = [
+  {
+    gateway: 'Shanghai Pudong (PVG)',
+    role: 'East China anchor for Gulf-bound air freight',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Shenzhen Bao’an (SZX)',
+    role: 'South China / Pearl River Delta electronics gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Guangzhou Baiyun (CAN)',
+    role: 'South China air alternative',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Hong Kong (HKG)',
+    role: 'Major regional transshipment and freighter hub',
+    confidence: 'LOW',
+  },
+];
+
+const bahrainAirportRows = [
+  {
+    gateway: 'Bahrain International (BAH)',
+    role: 'Bahrain arrival gateway for China air cargo',
+    confidence: 'LOW',
+  },
+];
+
+const bahrainPortRows = [
+  {
+    gateway: 'Khalifa bin Salman (BHKBS)',
+    role: 'Bahrain main container gateway — APM Terminals, ≈1m TEU; King Fahd Causeway truck link to Saudi Eastern Province',
+    confidence: 'HIGH',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Air freight (chargeable weight)',
+    who: 'Airline / forwarder',
+    magnitude: 'Generic $4.3 – $11.0/kg corridor band (MEDIUM); Bahrain lane not published',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Fuel surcharge',
+    who: 'Airline',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Security surcharge',
+    who: 'Airline',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Terminal / airline handling',
+    who: 'Origin / destination handler',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Airport storage after free time',
+    who: 'Ground handler',
+    magnitude: 'Not published in the verified snapshot — request the free-time window and per-day rate',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance / brokerage',
+    who: 'Licensed broker / Bahrain Customs Affairs',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation',
+    who: 'Forwarder / broker',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty (baseline)',
+    who: 'Bahrain Customs Affairs',
+    magnitude: '5% of CIF value',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Bahrain tax authority',
+    magnitude: '10% since 2022 (raised from 5%)',
+    confidence: 'HIGH',
+  },
+];
+
+const hiddenChargeCards = [
+  {
+    title: 'Fuel surcharge',
+    text: 'An airline-imposed variable added on top of the base per-kg rate. It moves with fuel and is frequently buried in the quote line, which is why the all-in figure matters.',
+  },
+  {
+    title: 'Security surcharge',
+    text: 'Covers security screening and related compliance steps. Specific amounts were not published in the verified snapshot, so ask for it as a separate line.',
+  },
+  {
+    title: 'Terminal handling',
+    text: 'Origin and destination handlers charge for receiving, screening and staging the cargo. This is usually a fixed line that competitors fold into the headline rate.',
+  },
+  {
+    title: 'Airport storage after free time',
+    text: 'Air cargo gets a limited free-storage window at BAH; days beyond that become chargeable. The exact window and per-day rate are not published — request them.',
+  },
+  {
+    title: 'Clearance & brokerage',
+    text: 'Customs brokerage and clearance are separate from the airline bill and depend on the broker, HS code and permit requirements.',
+  },
+  {
+    title: 'Documentation',
+    text: 'AWB, commercial invoice, packing list, certificate of origin and any product-specific permit work all add handling time and fees.',
+  },
+];
+
+const faqs = [
+  {
+    q: "What is air freight from China to Bahrain?",
+    a: "Air freight is airport-to-airport transport on scheduled or chartered aircraft from a Chinese origin airport to Bahrain International (BAH). It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.",
+  },
+  {
+    q: "How is air freight charged — actual weight or volumetric weight?",
+    a: "Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is length × width × height in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.",
+  },
+  {
+    q: "How do I calculate volumetric weight for Bahrain air freight?",
+    a: "Measure the packed carton in centimetres, multiply length × width × height, then divide by 6,000. An 80 × 50 × 40 cm carton is 160,000 cm³ ÷ 6,000 = 26.7 kg volumetric. If its actual weight is 20 kg, you pay for 26.7 kg. Couriers use ÷ 5,000, which makes the same carton 32 kg.",
+  },
+  {
+    q: "What does air freight from China to Bahrain cost?",
+    a: "The verified generic China→GCC corridor band is $4.3–$11.0/kg (MEDIUM confidence) and express is $6.9–$11.0/kg. A country-specific Bahrain per-kg benchmark is not published in the verified snapshot, so request an itemised quote for your actual lane, dimensions and weight rather than relying on a borrowed figure.",
+  },
+  {
+    q: "How long does air freight from China to Bahrain take?",
+    a: "A planning range of 3–7 days is reasonable for direct airport-to-airport moves. Express courier is also 3–7 days door-to-door, and DDP air is ~10–15 days because it adds destination clearance and final delivery. Airport-specific days are not published — confirm the pair and transit point with your carrier.",
+  },
+  {
+    q: "Which Bahrain airport should I use for air freight?",
+    a: "Bahrain International (BAH) is the Bahrain arrival gateway for China air cargo. Match the arrival airport to your consignee and confirm the final-mile leg, because BAH's storage and handling terms are not published in the verified snapshot.",
+  },
+  {
+    q: "When should I choose air freight instead of sea freight for Bahrain?",
+    a: "Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout, and when the chargeable weight is low enough that the premium is acceptable. Choose sea when volume is large — FCL beats LCL above ~15 CBM, with a 20ft at ≈ 33 CBM and a 40ft at ≈ 67 CBM, and FCL transit runs 14–30 days.",
+  },
+  {
+    q: "Does air freight to Bahrain save me duty or VAT?",
+    a: "No. Air freight shortens transit but does not waive the 5% CIF import duty or the 10% VAT (raised from 5% in 2022). That tax position applies equally to sea freight — it is not an air-specific benefit.",
+  },
+  {
+    q: "Is SABER or SASO certification required for Bahrain air freight?",
+    a: "No. SABER/SASO is a Saudi-only conformity programme and does not apply to Bahrain. This is a common GCC-wide assumption that is wrong. Bahrain instead applies a 10-digit HS classification, import declaration via Bahrain Customs Affairs, and product-specific permits for regulated categories.",
+  },
+  {
+    q: "What documents and taxes apply to a Bahrain air freight import?",
+    a: "The standard set is the air waybill, commercial invoice, packing list and certificate of origin, with correct 10-digit HS classification. Duty is 5% on CIF value, VAT is 10%, and de minimis is not published — confirm with Bahrain Customs Affairs before shipping low-value goods.",
+  },
+  {
+    q: "What hidden fees should I expect on Bahrain air freight?",
+    a: "Beyond the per-kg rate: fuel and security surcharges, terminal handling, airport storage after free time, customs clearance and brokerage, and documentation. Specific amounts were not published in the verified snapshot, so request an itemised schedule for every line.",
+  },
+  {
+    q: "How does the King Fahd Causeway affect a Bahrain freight decision?",
+    a: "Khalifa bin Salman Port links to Saudi Arabia's Eastern Province over the King Fahd Causeway, which makes Bahrain a viable alternate entry for Dammam/Riyadh cargo when Jeddah is congested. That is a sea-routing angle — it does not change the air invoice, but it is part of the air-versus-sea comparison when the ultimate consignee is in eastern Saudi Arabia.",
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline:
+        'Air Freight from China to Bahrain: BAH/Khalifa bin Salman Gateways, Chargeable Weight & Rates (September 2026 Updated)',
+      description:
+        'Air freight from China to Bahrain: BAH/Khalifa bin Salman gateway context, the 6,000-divisor chargeable weight rule, the generic $4.3–$11.0/kg corridor band, 3–7 day transit planning, hidden charges and Bahrain compliance.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Air Freight from China to Bahrain: BAH/Khalifa bin Salman Gateways, Chargeable Weight & Rates (September 2026 Updated)"
+  description="Air freight from China to Bahrain: BAH/Khalifa bin Salman gateway context, the 6,000-divisor chargeable weight rule, the generic $4.3–$11.0/kg corridor band, 3–7 day transit planning, hidden charges and Bahrain compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Air freight from China to Bahrain' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Air freight from China to Bahrain: BAH/Khalifa bin Salman gateways, chargeable weight &amp; rates (September 2026 updated)</h1>
+      <p class="lead">
+        Air freight to Bahrain is fast, but the invoice depends on a number most shippers never
+        measure: chargeable weight. This page explains the 6,000-divisor rule that makes bulky
+        cargo expensive, the BAH/Khalifa bin Salman gateway context, the generic corridor per-kg
+        band, 3–7 day transit planning, and Bahrain's 5% duty + 10% VAT position — including why
+        SABER/SASO does not apply.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning context. Treat every
+        LOW-confidence rate and routing note as indicative, and request an itemised quote for
+        unpublished lanes. Bahrain has no country-specific air benchmark in the verified snapshot.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Generic air rate</span>
+          <span class="fact-value">$4.3 – $11.0/kg <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Bahrain air rate</span>
+          <span class="fact-value">Not published <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Chargeable divisor</span>
+          <span class="fact-value">÷6000 (air) / ÷5000 (courier) <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">BAH</span>
+          <span class="fact-value">Bahrain International <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Bahrain VAT</span>
+          <span class="fact-value">10% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Air freight rates from China to Bahrain: what is published and what is not</h2>
+    <p>
+      Air pricing moves weekly with fuel, capacity, season and airport pairing, so this page
+      deliberately separates the verified generic corridor band from the country-specific lane.
+      Bahrain has <strong>no published per-kg air benchmark</strong> in the verified snapshot, so
+      that cell is shown as “not published” rather than padded with a borrowed Saudi or UAE figure.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Air service' },
+        { key: 'benchmark', label: 'Indicative benchmark' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airRateRows}
+      caption="The generic China→GCC air band is MEDIUM confidence from the methods data. Bahrain country-specific and DDP per-kg rates were not published — request a quote."
+    />
+    <SourceList sources={rateSources} title="Sources — Bahrain air rates" />
+
+    <h3 class="mt-3">Sea context for the “should you fly or sail” decision</h3>
+    <p>
+      Sea freight is the comparison that decides whether air is worth it. The FCL/LCL economics
+      below are MEDIUM confidence from the methods data; the Bahrain-lane sea rate itself is not
+      published, so request it before comparing landed costs. See the full
+      <a href="/middleeast/air-freight-china-to-gcc/">air freight China to GCC</a> guide for the
+      corridor-level picture and <a href="/middleeast/fcl-vs-lcl/">FCL vs LCL</a> for the ~15 CBM
+      crossover logic.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Sea context' },
+        { key: 'value', label: 'Verified value' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={seaContextRows}
+      caption="FCL/LCL rates, the ~15 CBM crossover, sea transit and demurrage are MEDIUM confidence. The Bahrain sea rate itself is not published — request a quote."
+    />
+    <SourceList sources={[wfhMethodData]} title="Sources — sea comparison context" />
+
+    <div class="note mt-2">
+      <strong>Do not average the rows together.</strong> The $4.3–$11.0/kg figure is a generic
+      China→GCC band on an unpublished chargeable-weight base. Compare quotes on total chargeable
+      kilograms and the all-in line items, never on the headline per-kg rate alone.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Typical air transit windows from China to Bahrain</h2>
+      <p>
+        The Bahrain corridor is short enough that air transit is measured in days, not weeks. The
+        planning ranges below cover direct airport-to-airport moves, express services and
+        door-to-door DDP air; all depend on schedule, customs and the final-mile leg.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'method', label: 'Method' },
+          { key: 'window', label: 'Transit window' },
+          { key: 'note', label: 'What drives the window' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airTransitRows}
+        caption="Air and express windows are MEDIUM confidence from the methods data; DDP air is LOW confidence. Airport-specific days are not published."
+      />
+      <SourceList sources={transitSources} title="Sources — air transit times" />
+
+      <div class="note mt-2">
+        <strong>Airport pair matters.</strong> The China gateways (PVG/SZX/CAN/HKG) and Bahrain
+        International (BAH) are operational routing context, not verified in the snapshot — confirm
+        the airport pair and transit point with your carrier before relying on a specific day count.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Air vs sea vs express for Bahrain: the decision framework</h2>
+    <p>
+      Bahrain's tax position is the GCC's second-highest: <strong>5% duty on CIF value plus 10% VAT
+      (since 2022, raised from 5%)</strong>. That makes Bahrain less tax-efficient than Oman (5%),
+      the UAE (5%) or Saudi's 5% base duty — but the King Fahd Causeway link to Saudi's Eastern
+      Province can still make the Bahrain sea leg strategically useful for Dammam/Riyadh consignees.
+      The air-vs-sea decision itself remains speed versus per-unit cost, with the chargeable-weight
+      rule deciding how wide the gap really is. See <a
+      href="/middleeast/sea-vs-air-freight-china-to-gcc/">sea vs air freight China to GCC</a> for
+      the corridor-wide trade-offs.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'air', label: 'Air freight' },
+        { key: 'sea', label: 'Sea freight' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airVsSeaRows}
+      caption="Transit and pricing are indicative; the ~15 CBM crossover, FCL/LCL rates and demurrage are MEDIUM confidence. The 5% duty and 10% VAT apply equally to both modes."
+    />
+    <SourceList sources={comparisonSources} title="Sources — air vs sea for Bahrain" />
+
+    <h3 class="mt-3">When the air premium pays off</h3>
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose air freight when...">
+        <ul>
+          <li>Cargo is perishable or has a short shelf life.</li>
+          <li>A stockout costs more than the freight premium.</li>
+          <li>Goods are high-value per kilogram, so freight is a small share of value.</li>
+          <li>Spare parts must reach a stopped operation quickly.</li>
+        </ul>
+      </Card>
+      <Card title="Choose sea freight when...">
+        <ul>
+          <li>Volume is large — FCL beats LCL above ~15 CBM.</li>
+          <li>Cargo is dense, heavy or low-value.</li>
+          <li>The King Fahd Causeway route to eastern Saudi Arabia is worth capturing.</li>
+          <li>You can plan around 14–30 day FCL transit without a stockout.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose express courier when...">
+        <ul>
+          <li>Parcels are small, urgent and door-to-door tracking matters.</li>
+          <li>One booking is worth more than managing an airport-to-airport move.</li>
+          <li>You want the courier to handle clearance.</li>
+          <li>You accept the ÷5000 divisor for bulky light parcels.</li>
+        </ul>
+      </Card>
+    </div>
+
+    <div class="note mt-2">
+      <strong>The tax angle is honest, not a shortcut.</strong> Bahrain's 10% VAT is the GCC's
+      second-highest, so it does not favour air over sea. If the shipment is cost-sensitive and can
+      wait, the slower sea option is usually the better call — even when the final consignee is in
+      eastern Saudi Arabia and you are using Bahrain as an alternate entry.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Airports and ports: China gateways to BAH and Khalifa bin Salman</h2>
+      <p>
+        Air freight routing is about the airport pair, not just the city pair. The China gateways
+        below feed the manufacturing regions, while Bahrain International (BAH) is the Bahrain
+        arrival option. For sea comparison, Khalifa bin Salman (BHKBS) is Bahrain's main container
+        gateway.
+      </p>
+
+      <h3>China origin gateways</h3>
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'China gateway' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chinaGatewayRows}
+        caption="Air gateway roles are LOW-confidence operational routing context — not published in the verified research snapshot."
+      />
+      <SourceList sources={airportSources} title="Sources — China air gateways" />
+
+      <h3 class="mt-3">Bahrain arrival airport</h3>
+      <p>
+        <strong>Bahrain International (BAH)</strong> is the Bahrain arrival gateway for China air
+        cargo. Confirm which airport the quote assumes, and confirm the BAH free-storage window and
+        per-day rate with the handler, because neither is published in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'Bahrain airport' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={bahrainAirportRows}
+        caption="BAH's role is a LOW-confidence planning note; the port facts below are verified."
+      />
+
+      <h3 class="mt-3">Sea-port context: Khalifa bin Salman</h3>
+      <p>
+        <strong>Khalifa bin Salman Port (BHKBS)</strong> is Bahrain's modern deep-water container
+        gateway, operated by APM Terminals at ≈1m TEU. Its defining advantage is the
+        <strong>King Fahd Causeway</strong>, which lets containers truck directly into Saudi Arabia's
+        Eastern Province — a strategic alternate entry for Dammam/Riyadh cargo when Jeddah is
+        congested or direct Saudi routing is expensive. Read
+        <a href="/middleeast/bahrain-ports/">Bahrain ports</a> for the routing decision.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'Bahrain port' },
+          { key: 'role', label: 'Role' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={bahrainPortRows}
+        caption="Khalifa bin Salman facts are HIGH confidence from the WorldFreightHub GCC country and port data."
+      />
+      <SourceList sources={[...bahrainCustoms, wfhCountryData]} title="Sources — Bahrain airport & port" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Cost structure and the chargeable-weight arithmetic</h2>
+    <p>
+      The per-kg rate is only one line of the landed cost. Start from the billing mechanic — the
+      higher of actual and volumetric weight — then layer the surcharges that competitors skip.
+      Worked examples below use the IATA 6,000 divisor and the courier 5,000 divisor.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'example', label: 'Example' },
+        { key: 'actualWeight', label: 'Actual weight' },
+        { key: 'dimensions', label: 'Dimensions' },
+        { key: 'volumetricWeight', label: 'Volumetric weight' },
+        { key: 'chargeableWeight', label: 'Chargeable weight' },
+        { key: 'note', label: 'What happens' },
+      ]}
+      rows={volumetricRows}
+      caption="Volumetric weight = L × W × H (cm) ÷ divisor. Chargeable weight is the higher of actual and volumetric weight."
+    />
+    <SourceList sources={chargeableSources} title="Sources — chargeable weight" />
+
+    <div class="note mt-2">
+      <strong>The comparison trap:</strong> never compare two air quotes on $/kg of actual weight.
+      Compute the chargeable weight for each quote using the same divisor, then compare the total
+      chargeable kilograms and the all-in line items.
+    </div>
+
+    <div class="note mt-2">
+      <strong>Pallet traps inflate chargeable weight.</strong> Wood or plastic pallets add
+      <strong>15–25 kg</strong> of tare weight, and dimensions must be measured at the
+      <strong>widest point</strong> of the palletised unit. A carton that ships fine un-palletised
+      can jump a chargeable class once a pallet is added, so ask your forwarder to quote both the
+      un-palletised and palletised chargeable weight.
+    </div>
+
+    <h3 class="mt-3">Full air freight cost stack for Bahrain</h3>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Cost component' },
+        { key: 'who', label: 'Who charges it' },
+        { key: 'magnitude', label: 'Indicative magnitude' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={costRows}
+      caption="Only duty (5% CIF) and VAT (10%) are verified. Unquantified fees are LOW confidence because the snapshot did not publish specific amounts — request a fee schedule."
+    />
+    <SourceList sources={costSources} title="Sources — air freight cost & Bahrain customs" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Hidden charges on Bahrain air freight: the fees competitors skip</h2>
+      <p>
+        Competitor rate pages often show only a per-kg headline. The real landed cost includes the
+        five charges below, none of which is waived by choosing air. Specific amounts were not
+        published in the verified snapshot, so request each as a separate line item. The
+        <a href="/middleeast/hidden-charges-china-to-gcc/">hidden charges China to GCC</a> guide
+        walks through the full destination-charge stack.
+      </p>
+
+      <div class="grid grid--2 mt-2">
+        {hiddenChargeCards.map((card) => (
+          <Card title={card.title}>
+            <p>{card.text}</p>
+          </Card>
+        ))}
+      </div>
+
+      <p class="mt-2">
+        A quote that does not break out fuel, security, terminal handling, storage and brokerage is
+        not comparable to another that does. Ask for an itemised schedule and compare all-in
+        chargeable-weight totals rather than a single per-kg number.
+      </p>
+      <SourceList sources={costSources} title="Sources — hidden charges" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: duty, VAT, HS codes and the SABER/SASO differentiator</h2>
+
+      <h3>Duty and VAT</h3>
+      <p>
+        Bahrain's baseline import duty is <strong>5% on CIF value</strong>, with higher rates on
+        alcohol (225%), cigarettes (200%) and paper &amp; aluminium (20%), and duty-free treatment
+        for basic food and GCC-origin goods. Import VAT is <strong>10%</strong> (raised from 5% in
+        2022). De minimis is <strong>not published</strong>; confirm with Bahrain Customs Affairs.
+        See <a href="/middleeast/bahrain-customs-duty/">Bahrain customs &amp; import duty</a> for the
+        full clearance workflow.
+      </p>
+
+      <h3>SABER/SASO is Saudi-only</h3>
+      <p>
+        <strong>SABER/SASO is a Saudi conformity programme and does not apply to Bahrain.</strong>
+        This is a key differentiator: shippers who assume GCC-wide SABER is required end up chasing
+        certificates they do not need. Bahrain instead applies a 10-digit HS classification, import
+        declaration via Bahrain Customs Affairs, product-specific permits for regulated categories,
+        and a commercial invoice plus air waybill.
+      </p>
+
+      <h3>Documents and classification</h3>
+      <p>
+        The standard document set is the <strong>air waybill</strong>, commercial invoice, packing
+        list and certificate of origin, with the correct 10-digit HS code. Classify before quoting
+        because duty and any permit requirements depend on the code, and keep the air waybill
+        reference ready for the clearance file.
+      </p>
+
+      <p class="small muted">
+        Duty, VAT, HS classification and Khalifa bin Salman facts on this page are HIGH confidence
+        from the WorldFreightHub GCC country and port data; airport roles are LOW confidence
+        operational routing context.
+      </p>
+
+      <SourceList sources={complianceSources} title="Sources — Bahrain compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Related guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      generic corridor band, transit windows and sea context are re-checked against the
+      WorldFreightHub methods data, and Bahrain compliance facts come from the HIGH-confidence
+      country data. If a Bahrain air benchmark becomes available, the table is updated and the
+      confidence badge raised; until then, the country-specific lane stays “not published”.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Air freight China to GCC"
+        description="Corridor-level air freight reference: per-kg rate benchmarks, chargeable weight, 3-7 day transit and air vs express."
+        href="/middleeast/air-freight-china-to-gcc/"
+      />
+      <Card
+        title="Sea vs air freight China to GCC"
+        description="Corridor-wide decision guide: FCL/LCL rates, per-kg air benchmarks, chargeable weight and a hybrid plan."
+        href="/middleeast/sea-vs-air-freight-china-to-gcc/"
+      />
+      <Card
+        title="Shipping from China to Bahrain"
+        description="Bahrain route pillar: sea, air and express options with Khalifa bin Salman routing and Bahrain clearance."
+        href="/middleeast/shipping-from-china-to-bahrain/"
+      />
+      <Card
+        title="Bahrain shipping cost & transit time"
+        description="Complete China-to-Bahrain landed-cost breakdown: benchmarks, typical Khalifa bin Salman transit, 5% duty and 10% VAT."
+        href="/middleeast/shipping-cost-transit-time-china-to-bahrain/"
+      />
+      <Card
+        title="Bahrain ports"
+        description="Khalifa bin Salman (BHKBS): APM Terminals operation, ≈1m TEU, the King Fahd Causeway link and the routing decision."
+        href="/middleeast/bahrain-ports/"
+      />
+    </div>
+
+    <p class="mt-2">
+      <strong>Explore the related corridor guides:</strong>
+      <a href="/middleeast/fcl-vs-lcl/">FCL vs LCL shipping from China to GCC</a> ·
+      <a href="/middleeast/gcc-customs-duty-comparison/">GCC customs, duty &amp; VAT comparison</a> ·
+      <a href="/middleeast/demurrage-detention-china-to-gcc/">Demurrage &amp; detention China to GCC</a> ·
+      <a href="/middleeast/hidden-charges-china-to-gcc/">Hidden &amp; destination charges China to GCC</a>.
+      Start at the <a href="/middleeast/">Middle East hub</a> for the full corridor.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an itemised China to Bahrain air freight quote"
+      text="Tell us your origin and destination airports, packed dimensions and weight, commodity and delivery deadline, and we will connect you with providers who can quote air freight, duty and destination fees together."
+    />
+  </section>
+</BaseLayout>
