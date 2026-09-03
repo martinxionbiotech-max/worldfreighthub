@@ -1,0 +1,651 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccCountries } from '../../data/gcc-countries';
+import { gccPorts } from '../../data/gcc-ports';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/gcc-customs-duty-comparison/`;
+
+const portRoles: Record<string, string> = {
+  jeddah: 'Red Sea gateway, western Saudi Arabia',
+  dammam: 'Arabian Gulf gateway, Eastern Province + Riyadh',
+  'riyadh-dry-port': 'Inland dry port; rail/road extension of the Dammam corridor',
+  'jebel-ali': 'Largest Middle East port; UAE re-export and free-zone hub',
+  'khalifa-port-abu-dhabi': 'Abu Dhabi deep-water gateway',
+  'port-khalid': 'Sharjah / Port Khalid gateway',
+  hamad: 'Qatar’s sole commercial gateway',
+  shuwaikh: 'Kuwait City general/container gateway',
+  shuaiba: 'Kuwait industrial and bulk gateway',
+  sohar: 'Northern Oman container gateway',
+  salalah: 'Southern Oman transshipment gateway',
+  'khalifa-bin-salman': 'Bahrain gateway; King Fahd Causeway link to Saudi',
+};
+
+const portRows = gccPorts.map((port) => ({
+  port: port.name,
+  unlocode: port.unlocode ?? '—',
+  country: port.country,
+  role: portRoles[port.slug] ?? port.hinterland,
+  confidence: 'HIGH',
+}));
+
+const primaryPortByCountry: Record<string, { port: string; typical: string }> = {
+  'saudi-arabia': { port: 'Jeddah (SAJED) / Dammam (SADMM)', typical: '~18 / ~20 days' },
+  'united-arab-emirates': { port: 'Jebel Ali (AEJEA)', typical: '~21 days' },
+  qatar: { port: 'Hamad (QAHMD)', typical: '~22 days' },
+  kuwait: { port: 'Shuwaikh (KWSWK)', typical: '~24 days' },
+  oman: { port: 'Sohar (OMSOH)', typical: '~19 days' },
+  bahrain: { port: 'Khalifa bin Salman (BHKBS)', typical: '~22 days' },
+};
+
+const dutyRows = gccCountries.map((country) => {
+  const vat = country.vatRate === null ? '0% (no VAT)' : `${country.vatRate}%`;
+  return {
+    country: country.name,
+    currency: country.currency,
+    duty: '5% (CIF)',
+    vat,
+    deMinimis: country.deMinimis,
+    confidence: 'HIGH',
+  };
+});
+
+const transitRows = gccCountries.map((country) => {
+  const primary = primaryPortByCountry[country.slug] ?? { port: '—', typical: '—' };
+  return {
+    country: country.name,
+    port: primary.port,
+    typical: primary.typical,
+    note: 'Port-to-port typical from route data; clearance timing varies by shipment/HS code',
+    confidence: 'MEDIUM',
+  };
+});
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-customs-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const wfhRouteData: Source = {
+  id: 'wfh-gcc-customs-route-data',
+  name: 'WorldFreightHub route data — China to GCC destination ports (typical transit days; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const dutySources: Source[] = [wfhCountryData];
+const transitSources: Source[] = [wfhRouteData, wfhCountryData];
+const decisionSources: Source[] = [wfhCountryData];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const entryRows = [
+  {
+    country: 'Saudi Arabia',
+    duty: '5% (CIF)',
+    vat: '15%',
+    multiplier: '×1.2075',
+    aboveCif: '+20.75%',
+    note: 'Highest GCC tax; SABER/SASO SC must be obtained before arrival',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'United Arab Emirates',
+    duty: '5% (CIF)',
+    vat: '5%',
+    multiplier: '×1.1025',
+    aboveCif: '+10.25%',
+    note: 'Lowest friction; free zones can defer duty until mainland entry',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'Qatar',
+    duty: '5% (CIF)',
+    vat: '0%',
+    multiplier: '×1.05',
+    aboveCif: '+5%',
+    note: 'Lowest tax today; VAT expected ~5% — plan for it forward',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'Kuwait',
+    duty: '5% (CIF)',
+    vat: '0%',
+    multiplier: '×1.05',
+    aboveCif: '+5%',
+    note: 'No VAT, but document-heavy clearance and PAI certification',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'Oman',
+    duty: '5% (CIF)',
+    vat: '5%',
+    multiplier: '×1.1025',
+    aboveCif: '+10.25%',
+    note: 'Mid-cost; Sohar is less congested than Jebel Ali or Jeddah',
+    confidence: 'HIGH',
+  },
+  {
+    country: 'Bahrain',
+    duty: '5% (CIF)',
+    vat: '10%',
+    multiplier: '×1.155',
+    aboveCif: '+15.5%',
+    note: 'Second-highest VAT; Causeway alternate entry into eastern Saudi',
+    confidence: 'HIGH',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Import duty',
+    who: 'GCC Customs authority',
+    magnitude: '5% of CIF value (GCC unified baseline)',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Destination tax authority',
+    magnitude: 'Saudi 15% · UAE 5% · Qatar 0% · Kuwait 0% · Oman 5% · Bahrain 10%',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Customs brokerage',
+    who: 'Licensed broker',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inspection / testing',
+    who: 'Customs or conformity body',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER certificate (Saudi only)',
+    who: 'SABER platform / conformity body',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation / filing fees',
+    who: 'Broker / carrier / agent',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the import duty from China to the GCC?',
+    a: 'The GCC unified baseline import duty is 5% of the CIF value (cost + insurance + freight) for most goods across Saudi Arabia, the UAE, Qatar, Kuwait, Oman and Bahrain. Higher or protective rates apply to specific categories such as alcohol, tobacco and some agricultural lines, so confirm the exact HS-code rate before quoting.',
+  },
+  {
+    q: 'Which GCC country has the highest import tax?',
+    a: 'Saudi Arabia, because the 5% duty and 15% VAT stack to a CIF × 1.2075 landed-cost multiplier — about 20.75% above CIF. Bahrain is second at CIF × 1.155 (15.5% above CIF) with its 10% VAT.',
+  },
+  {
+    q: 'Which GCC country has the lowest import tax?',
+    a: 'Qatar and Kuwait currently have the lowest import tax at 5% duty and 0% VAT, a CIF × 1.05 multiplier. Qatar is expected to introduce VAT at roughly 5%, so forward pricing should build that assumption in.',
+  },
+  {
+    q: 'How do I calculate landed cost with duty and VAT?',
+    a: 'Start from CIF, add the 5% duty, then apply VAT to the duty-inclusive value. The shortcut multiplier is CIF × 1.05 × (1 + VAT rate). Examples: Saudi ×1.2075, UAE ×1.1025, Qatar and Kuwait ×1.05, Oman ×1.1025, Bahrain ×1.155. This is arithmetic from the published duty and VAT rates, not a substitute for a broker’s exact assessment.',
+  },
+  {
+    q: 'Is duty charged on the invoice value or the CIF value?',
+    a: 'On the CIF value — cost plus insurance plus freight — not the bare invoice value. If your freight and insurance are not on the invoice, the customs authority still includes them in the assessable value, which is why the landed-cost calculation starts from CIF.',
+  },
+  {
+    q: 'Does the GCC have a de minimis threshold for commercial cargo?',
+    a: 'No confirmed commercial de minimis is published for Qatar, Kuwait, Oman or Bahrain. Saudi Arabia and the UAE publish SAR 1,000 and AED 1,000 thresholds for personal/courier parcels only. Commercial cargo should assume duty applies regardless of parcel thresholds.',
+  },
+  {
+    q: 'Do I need SABER for every GCC country?',
+    a: 'No. SABER/SASO conformity applies to Saudi Arabia only. For regulated Saudi goods, the shipment conformity certificate (SC) must be obtained before arrival — effective 1 January 2025. The UAE, Qatar, Kuwait, Oman and Bahrain use their own certification rules and do not use SABER.',
+  },
+  {
+    q: 'Does ISF apply to GCC imports?',
+    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival declaration; the other GCC states use their own single-window declarations.',
+  },
+  {
+    q: 'Which GCC market should I enter first?',
+    a: 'Most first-time importers start in the UAE because Jebel Ali offers the most carrier competition, a 5% VAT, free-zone duty deferral and a large re-export market. Choose Saudi Arabia for scale and the largest consumer market despite the higher tax and SABER gate; choose Qatar or Kuwait for the lowest current tax if clearance complexity is manageable.',
+  },
+  {
+    q: 'Is Bahrain a cheaper way to reach Saudi Arabia?',
+    a: 'Not on tax — Bahrain’s 10% VAT is lower than Saudi’s 15%, but the real point is geography. Bahrain routes into eastern Saudi over the King Fahd Causeway, so it can be an operational alternate for Dammam/Riyadh cargo when Jeddah is congested or direct Saudi routing is expensive. Compare the full landed cost, including the causeway leg, before choosing.',
+  },
+  {
+    q: 'What documents do I need for GCC customs clearance?',
+    a: 'The standard set is the commercial invoice, packing list, bill of lading, certificate of origin and the correct HS classification, plus the SABER certificate for regulated Saudi goods. Kuwait adds PAI certification for certain products. Confirm the current document list with a licensed broker for your specific HS code.',
+  },
+  {
+    q: 'Are free zones tax-free in the UAE?',
+    a: 'Goods held in a UAE free zone are not subject to import duty until they enter the UAE mainland or another GCC market, and re-export from the free zone is duty-free. VAT still follows the normal rules, and duty deferral is the working-capital advantage most importers should price explicitly.',
+  },
+  {
+    q: 'How long does GCC customs clearance take?',
+    a: 'Clearance timing is not published in the verified snapshot and varies by shipment, HS code, documentation readiness and the destination authority. SABER holds in Saudi Arabia are the most common avoidable delay, so complete the SC before arrival rather than relying on a specific clearance day-count.',
+  },
+  {
+    q: 'Where can I get an exact duty and VAT assessment?',
+    a: 'Request an itemised landed-cost quote from a licensed GCC broker with the exact HS code, CIF value, origin and destination. The figures on this page are the verified duty/VAT rates and de minimis thresholds, not a product-specific tariff ruling.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'China to GCC Customs, Import Duty & VAT Comparison (6 Countries, 2026)',
+      description:
+        'Side-by-side 6-country comparison of China-to-GCC import duty, VAT, de minimis thresholds, customs process and SABER/SASO compliance for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="China to GCC Customs, Import Duty & VAT Comparison (6 Countries, 2026)"
+  description="Side-by-side 6-country comparison of China-to-GCC import duty, VAT, de minimis thresholds, customs process and SABER/SASO compliance for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'GCC customs, duty & VAT comparison' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>China to GCC customs, import duty &amp; VAT comparison</h1>
+      <p class="lead">
+        One page to compare the landed-cost tax burden across all six GCC markets — Saudi Arabia, the
+        UAE, Qatar, Kuwait, Oman and Bahrain — with the unified 5% CIF duty baseline, per-country VAT,
+        de minimis thresholds, and the SABER/SASO gate that only Saudi Arabia imposes.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from planning notes. Duty, VAT and de minimis lines
+        are HIGH confidence from the WorldFreightHub GCC country data; typical port transit is MEDIUM
+        confidence from the route data; clearance timing and fee amounts are LOW confidence because they
+        are not published in the verified snapshot. Treat every LOW-confidence figure as indicative and
+        confirm with a licensed broker before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">GCC baseline duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Highest tax</span>
+          <span class="fact-value">Saudi ×1.2075 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Lowest tax</span>
+          <span class="fact-value">Qatar / Kuwait ×1.05 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT range</span>
+          <span class="fact-value">0%–15% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">De minimis</span>
+          <span class="fact-value">Personal parcels only <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">SABER/SASO</span>
+          <span class="fact-value">Saudi only <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Duty, VAT, currency and de minimis table</h2>
+    <p>
+      The six GCC states share the <strong>5% CIF import duty baseline</strong>, but their VAT profiles
+      are very different — and VAT is what creates the landed-cost spread between markets. Saudi Arabia
+      charges 15%, Bahrain 10%, the UAE and Oman 5%, and Qatar and Kuwait have no VAT yet. The de minimis
+      thresholds below are for personal/courier parcels only and do not exempt commercial cargo.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'currency', label: 'Currency' },
+        { key: 'duty', label: 'Import duty' },
+        { key: 'vat', label: 'VAT' },
+        { key: 'deMinimis', label: 'De minimis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={dutyRows}
+      caption="Duty, VAT and de minimis are HIGH confidence from the WorldFreightHub GCC country data. De minimis applies to personal parcels only."
+    />
+    <SourceList sources={dutySources} title="Sources — GCC duty, VAT & de minimis" />
+
+    <div class="note mt-2">
+      <strong>Duty is on CIF, not invoice:</strong> every GCC authority assesses duty on cost + insurance
+      + freight. Keep freight and insurance documented, because they are part of the assessable value even
+      if they are not on the commercial invoice.
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>2. Transit and clearance timing table</h2>
+    <p>
+      The typical port-to-port transit figures below come from the WorldFreightHub route data. They are
+      planning ranges, not delivery promises, and they cover the ocean leg only — customs clearance sits
+      on top.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'port', label: 'Primary gateway' },
+        { key: 'typical', label: 'Typical transit' },
+        { key: 'note', label: 'Clearance timing' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Typical transit days are MEDIUM confidence from the route data; clearance timing is not published and varies by shipment."
+    />
+    <SourceList sources={transitSources} title="Sources — China to GCC transit" />
+
+    <div class="note mt-2">
+      <strong>Clearance timing is not published in the verified snapshot.</strong> It varies by shipment,
+      HS code, documentation readiness and the destination authority <ConfidenceBadge level="LOW" />. Do
+      not treat any clearance day-count as fact; ask your broker for a shipment-specific expectation and
+      budget demurrage free time against it.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. Market-entry decision and the landed-cost arithmetic</h2>
+      <p>
+        The decision of which GCC market to enter is rarely just about the tax rate, but the tax burden is
+        the easiest part to quantify — and it is large enough to change the answer. Use the formula
+        <strong>CIF × 1.05 × (1 + VAT rate)</strong> to compare the statutory landed-cost uplift before
+        adding brokerage, inspection, inland freight and any conformity fees.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'country', label: 'Country' },
+          { key: 'duty', label: 'Duty' },
+          { key: 'vat', label: 'VAT' },
+          { key: 'multiplier', label: 'Landed-cost multiplier' },
+          { key: 'aboveCif', label: 'Above CIF' },
+          { key: 'note', label: 'Market note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={entryRows}
+        caption="Multipliers are arithmetic from the published duty and VAT rates (HIGH confidence), not product-specific tariff rulings."
+      />
+      <SourceList sources={decisionSources} title="Sources — GCC landed-cost arithmetic" />
+
+      <div class="note mt-2">
+        <strong>Read the multiplier, then the market.</strong> Saudi Arabia has the highest statutory
+        uplift (×1.2075) but the largest consumer market and a mandatory SABER gate; Qatar and Kuwait have
+        the lowest current uplift (×1.05) but thinner lanes and heavier documentation. Use the tax
+        multiplier as the first filter, then price the lane, compliance and inland leg together.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. All 12 GCC ports with UN/LOCODE</h2>
+    <p>
+      Match the country decision to the correct gateway. The corridor has twelve named GCC ports in the
+      data, including one inland dry port. Use the correct <strong>UN/LOCODE</strong> on the bill of
+      lading; Riyadh Dry Port has no seaport UN/LOCODE because it is an inland depot.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'country', label: 'Country' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portRows}
+      caption="Port names, countries and UN/LOCODEs come from the WorldFreightHub GCC port data."
+    />
+    <SourceList sources={portSources} title="Sources — GCC ports" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Cost composition beyond duty and VAT</h2>
+      <p>
+        Duty and VAT are only part of the landed-cost stack. Brokerage, inspection, documentation and —
+        in Saudi Arabia — the SABER certificate all sit on top, and none of those fee amounts is published
+        in the verified snapshot. They are shown as LOW confidence with a request-for-quote note rather
+        than filled with invented dollar figures.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost item' },
+          { key: 'who', label: 'Charged by' },
+          { key: 'magnitude', label: 'Magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Duty and VAT are HIGH confidence; unquantified fee amounts are LOW confidence because the snapshot did not publish them."
+      />
+      <SourceList sources={costSources} title="Sources — GCC landed-cost composition" />
+
+      <div class="note mt-2">
+        <strong>SABER certificate cost:</strong> the SABER platform fee and any conformity-body charge are
+        not published in the verified snapshot. Request an itemised SABER quote for your product class,
+        and treat the certificate cost as a line item rather than an estimate.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Compliance: SABER/SASO, HS codes, certificate of origin and de minimis</h2>
+    <p>
+      All six states use the <strong>GCC unified 5% CIF duty baseline</strong>, classify goods under the
+      <strong>10-digit HS code</strong>, and require the standard document set: commercial invoice, bill of
+      lading, packing list and certificate of origin. The differences are in VAT and in conformity rules.
+    </p>
+
+    <h3 class="mt-3">SABER/SASO is Saudi-only</h3>
+    <p>
+      <strong>SABER/SASO conformity applies to Saudi Arabia only</strong>, not the rest of the GCC. For
+      regulated Saudi goods, obtain the product conformity certificate (PC) first, then the shipment
+      conformity certificate (SC) for the specific shipment. Since <strong>1 January 2025, the SC must be
+      obtained before cargo arrival</strong> or clearance fails — the single most common avoidable delay
+      on the corridor.
+    </p>
+
+    <h3 class="mt-3">Certificate of origin and HS codes</h3>
+    <p>
+      The certificate of origin supports preferential or GCC-origin treatment where applicable, and the
+      correct HS code drives the duty line, VAT treatment and any conformity screening. Classify before
+      quoting, because a wrong code changes the duty, VAT and permit requirements in every one of the six
+      markets.
+    </p>
+
+    <h3 class="mt-3">De minimis and the ISF non-issue</h3>
+    <p>
+      Saudi Arabia (<strong>SAR 1,000</strong>) and the UAE (<strong>AED 1,000</strong>) publish de minimis
+      thresholds for personal/courier parcels only; Qatar, Kuwait, Oman and Bahrain do not publish a
+      confirmed threshold. Commercial cargo is generally dutiable regardless. <strong>ISF (Importer
+      Security Filing) is a United States program and does not apply to GCC imports</strong> — Saudi
+      Arabia’s advance-filing step is the SABER SC plus the FASAH pre-arrival declaration.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — GCC compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>7. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related decision guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Duty, VAT and
+      de minimis lines are re-checked against the WorldFreightHub GCC country data, and the typical transit
+      figures against the route data. If a clearance day-count, broker fee, inspection fee or SABER
+      certificate amount becomes available, the table is updated, the confidence badge is raised, and the
+      modified date is changed. Until then, unpublished amounts stay LOW with a request-for-quote note.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="FCL vs LCL shipping from China to GCC"
+        description="The corridor-wide full-container vs less-than-container decision guide."
+        href="/middleeast/fcl-vs-lcl/"
+      />
+      <Card
+        title="Saudi Arabia import duty & VAT"
+        description="The CIF × 1.05 × 1.15 landed-cost formula and a worked Saudi example."
+        href="/middleeast/saudi-arabia-import-duty-vat/"
+      />
+      <Card
+        title="UAE import duty & VAT"
+        description="5% duty plus 5% VAT, free-zone deferral and the UAE clearance flow."
+        href="/middleeast/uae-import-duty-vat/"
+      />
+      <Card
+        title="Qatar customs & import duty"
+        description="5% CIF duty with no VAT yet — and the expected future VAT change."
+        href="/middleeast/qatar-customs-duty/"
+      />
+      <Card
+        title="Kuwait customs & import duty"
+        description="5% CIF duty with no general VAT and the document-heavy clearance flow."
+        href="/middleeast/kuwait-customs-duty/"
+      />
+      <Card
+        title="Oman customs & import duty"
+        description="5% duty plus 5% VAT and the Bayan filing flow."
+        href="/middleeast/oman-customs-duty/"
+      />
+      <Card
+        title="Bahrain customs & import duty"
+        description="5% duty plus 10% VAT (CIF × 1.155) and the Causeway alternate into Saudi."
+        href="/middleeast/bahrain-customs-duty/"
+      />
+      <Card
+        title="SASO & SABER certification"
+        description="PC vs SC, the registration flow and the 2025 rule that SC must be obtained before arrival."
+        href="/middleeast/saso-saber-certification/"
+      />
+      <Card
+        title="Demurrage & detention China to GCC"
+        description="The $75–$300/day demurrage trap and how clearance holds turn into detention."
+        href="/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card
+        title="Jeddah vs Dammam"
+        description="Which Saudi port should your China freight use? Red Sea vs Arabian Gulf."
+        href="/middleeast/jeddah-vs-dammam/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Compare landed cost across the GCC"
+      text="Tell us your HS code, CIF value, origin and candidate destination markets, and we will connect you with providers who can quote duty, VAT, clearance and freight side by side."
+    />
+  </section>
+</BaseLayout>
