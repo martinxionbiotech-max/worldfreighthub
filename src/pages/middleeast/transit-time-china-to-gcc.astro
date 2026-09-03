@@ -1,0 +1,839 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/transit-time-china-to-gcc/`;
+
+const wfhRouteData: Source = {
+  id: 'wfh-transit-route-data',
+  name: 'WorldFreightHub route data — China to GCC destination ports (typical transit days; MEDIUM confidence)',
+  url: `${SITE_URL}/routes/`,
+  type: 'organization',
+};
+
+const wfhMethodData: Source = {
+  id: 'wfh-transit-method-data',
+  name: 'WorldFreightHub methods data — FCL, LCL, air, express and rail transit windows',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-transit-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const rateSources: Source[] = [wfhRouteData];
+const seaTransitSources: Source[] = [wfhRouteData];
+const methodTransitSources: Source[] = [wfhMethodData, wfhRouteData];
+const decisionSources: Source[] = [wfhMethodData, wfhRouteData];
+const portSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'dp-world',
+    'abu-dhabi-ports',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+    'sipg',
+    'ningbo-zhoushan-port',
+    'shenzhen-port-group',
+  ]),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'mawani',
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhMethodData,
+  wfhRouteData,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const rateRows = [
+  {
+    port: 'Jeddah Islamic Port (SAJED)',
+    fcl20: '$1,500 – $6,200',
+    fcl40: '$1,900 – $8,100',
+    lcl: '$20 – $110 / CBM',
+    note: 'Red Sea routing widens the spread on Red Sea vs Cape risk',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam (SADMM)',
+    fcl20: '$1,500 – $6,200',
+    fcl40: '$1,900 – $8,100',
+    lcl: '$20 – $110 / CBM',
+    note: 'Strait of Hormuz war-risk premium flexes with the news cycle',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Jebel Ali (AEJEA)',
+    fcl20: '$1,500 – $3,250',
+    fcl40: '$2,200 – $3,950',
+    lcl: '$60 – $180 / CBM',
+    note: 'Narrowest spread — the most carrier competition on the corridor',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad Port (QAHMD)',
+    fcl20: '$1,700 – $2,500',
+    fcl40: '$2,500 – $3,600',
+    lcl: '$75 – $100 / CBM',
+    note: 'Single-gateway market; fewer sailings, thinner schedule',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh (KWSWK)',
+    fcl20: '$1,500 – $2,500',
+    fcl40: '$2,200 – $3,600',
+    lcl: '$70 – $100 / CBM',
+    note: 'Low-frequency lane; wider windows and routing variability',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar (OMSOH)',
+    fcl20: '$1,500 – $2,600',
+    fcl40: '$2,200 – $3,800',
+    lcl: '$60 – $110 / CBM',
+    note: 'Less congestion than Jebel Ali or Jeddah',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa bin Salman (BHKBS)',
+    fcl20: '$1,500 – $2,500',
+    fcl40: '$2,200 – $3,600',
+    lcl: '$75 – $100 / CBM',
+    note: 'King Fahd Causeway onward trucking into eastern Saudi',
+    confidence: 'MEDIUM',
+  },
+];
+
+const seaTransitRows = [
+  {
+    port: 'Jeddah Islamic Port',
+    unlocode: 'SAJED',
+    country: 'Saudi Arabia',
+    typical: '~18 days',
+    range: '15–30 days',
+    routing: 'Red Sea; direct sailings common, some transship via Singapore/Colombo; avoids Strait of Hormuz',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'King Abdulaziz Port Dammam',
+    unlocode: 'SADMM',
+    country: 'Saudi Arabia',
+    typical: '~20 days',
+    range: '15–30 days',
+    routing: 'Mostly transshipped via Singapore/Colombo; transits Strait of Hormuz',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Jebel Ali',
+    unlocode: 'AEJEA',
+    country: 'United Arab Emirates',
+    typical: '~21 days',
+    range: '15–30 days',
+    routing: 'Densest schedule, most direct calls; some services via Singapore',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Hamad Port',
+    unlocode: 'QAHMD',
+    country: 'Qatar',
+    typical: '~22 days',
+    range: '15–30 days',
+    routing: 'Fewer sailings; transshipment common, wider windows',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Shuwaikh',
+    unlocode: 'KWSWK',
+    country: 'Kuwait',
+    typical: '~24 days',
+    range: '15–30 days',
+    routing: 'Low-frequency lane; wider schedule windows',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Sohar',
+    unlocode: 'OMSOH',
+    country: 'Oman',
+    typical: '~19 days',
+    range: '15–30 days',
+    routing: 'Less congestion; Gulf of Oman approach',
+    confidence: 'MEDIUM',
+  },
+  {
+    port: 'Khalifa bin Salman',
+    unlocode: 'BHKBS',
+    country: 'Bahrain',
+    typical: '~22 days',
+    range: '15–30 days',
+    routing: 'Moderate frequency; King Fahd Causeway onward',
+    confidence: 'MEDIUM',
+  },
+];
+
+const methodRows = [
+  {
+    method: 'FCL sea (port-to-port)',
+    window: '14–30 days',
+    note: 'Direct sailings 14–20 days; transshipment adds a week or more',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'LCL sea (port-to-port)',
+    window: '15–35 days',
+    note: 'Add 5–10 days vs an equivalent FCL sailing',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Air freight (airport-to-airport)',
+    window: '3–7 days',
+    note: 'Flight is hours; ground handling, customs and delivery sit on top',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Express courier (door-to-door)',
+    window: '3–7 days',
+    note: 'Simplest and fastest planning shorthand, highest per-kg cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Rail to GCC',
+    window: '18–25 days',
+    note: 'Corridor-dependent and niche; most GCC lanes still need road/sea bridging',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    factor: 'Volume crossover',
+    fcl: 'Best from ~15 CBM and up',
+    lcl: 'Best below ~15 CBM',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Transit time',
+    fcl: 'Faster — direct sailings 14–20 days',
+    lcl: 'Slower — 5–10 days added for consolidation',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Handling risk',
+    fcl: 'Sealed box, fewer touches',
+    lcl: 'Shared box, more handling',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Cost behaviour',
+    fcl: 'Flat rate per container, falls per unit as the box fills',
+    lcl: 'Per-CBM rate plus CFS charges and a 1 CBM minimum',
+    confidence: 'MEDIUM',
+  },
+];
+
+const portListRows = [
+  {
+    gateway: 'Shanghai (CNSHA)',
+    side: 'China origin',
+    role: 'World’s busiest container port — 55.06M TEU (2025); densest direct Gulf sailings',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Ningbo-Zhoushan (CNNGB)',
+    side: 'China origin',
+    role: '#3 container port — 43M TEU (2025); world #1 by cargo tonnage; often slightly cheaper on Gulf lanes',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Shenzhen / Yantian / Shekou (CNSZX)',
+    side: 'China origin',
+    role: 'South China / Pearl River Delta gateway for electronics and consumer goods',
+    confidence: 'HIGH',
+  },
+  {
+    gateway: 'Jeddah Islamic Port (SAJED)',
+    side: 'GCC destination',
+    role: 'Red Sea gateway, western Saudi Arabia',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'King Abdulaziz Port Dammam (SADMM)',
+    side: 'GCC destination',
+    role: 'Arabian Gulf gateway, Eastern Province + Riyadh rail link',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Jebel Ali (AEJEA)',
+    side: 'GCC destination',
+    role: 'Largest Middle East port, UAE re-export and JAFZA free-zone hub',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Hamad Port (QAHMD)',
+    side: 'GCC destination',
+    role: 'Qatar’s sole commercial gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Shuwaikh (KWSWK)',
+    side: 'GCC destination',
+    role: 'Kuwait City general/container gateway',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Sohar (OMSOH)',
+    side: 'GCC destination',
+    role: 'Northern Oman container gateway, Gulf of Oman approach',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Khalifa bin Salman (BHKBS)',
+    side: 'GCC destination',
+    role: 'Bahrain gateway; King Fahd Causeway link to Saudi Arabia',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Demurrage / detention',
+    who: 'Terminal / carrier',
+    magnitude: 'Free time ~3–7 days; daily charges ~$75–$300 after free time',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'War-risk insurance (Strait of Hormuz)',
+    who: 'Carrier / insurer',
+    magnitude: 'Rose from ~0.125% to ~0.4%+ per transit in 2026; Gulf-side rates flex with the news cycle',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'OTHC / DTHC',
+    who: 'Origin / destination terminal',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'CFS charges',
+    who: 'Container freight station',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Bunker / fuel surcharge',
+    who: 'Carrier',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fees',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs inspection',
+    who: 'Destination customs',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER certificate (Saudi only)',
+    who: 'SABER platform / conformity body',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs brokerage',
+    who: 'Licensed broker',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does sea freight take from China to the GCC?',
+    a: 'Typical port-to-port transit runs 18–24 days across the seven main gateways: Jeddah ~18, Sohar ~19, Dammam ~20, Jebel Ali ~21, Hamad ~22, Khalifa bin Salman ~22 and Shuwaikh ~24 days. The planning range is 15–30 days, with transshipment via Singapore or Colombo adding a week or more.',
+  },
+  {
+    q: 'Which GCC port has the fastest transit from China?',
+    a: 'Jeddah Islamic Port is the fastest typical sea transit at ~18 days, largely because Red Sea routing avoids the Strait of Hormuz and direct sailings are common. Sohar is close behind at ~19 days with less congestion than the bigger hubs.',
+  },
+  {
+    q: 'Which GCC port has the slowest transit from China?',
+    a: 'Shuwaikh in Kuwait is the slowest of the seven main gateways at ~24 days typical, on a lower-frequency lane with transshipment and wider schedule windows.',
+  },
+  {
+    q: 'Does the China origin port change the transit time?',
+    a: 'The route data gives a per-destination typical (18–24 days) rather than a separate figure for each origin. Shanghai, Ningbo-Zhoushan and Shenzhen all connect to the same GCC corridors; Shenzhen’s southern position can shave a day or two versus Shanghai on some routings, but origin-level splits are not separately published in the verified snapshot — confirm per lane with your forwarder.',
+  },
+  {
+    q: 'What is the difference between FCL and LCL transit times?',
+    a: 'FCL sea runs 14–30 days port-to-port (direct sailings 14–20), while LCL runs 15–35 days. LCL adds 5–10 days because cargo must be consolidated before sailing and de-consolidated after arrival.',
+  },
+  {
+    q: 'How fast is air freight versus sea freight from China to the GCC?',
+    a: 'Air freight is 3–7 days airport-to-airport and express courier is 3–7 days door-to-door, versus 18–24 days typical for sea freight. The speed comes at a much higher per-kilogram cost.',
+  },
+  {
+    q: 'Does the Strait of Hormuz affect China-to-GCC transit times?',
+    a: 'Yes. Gulf-side routings — Dammam, Jebel Ali, Hamad, Shuwaikh, Sohar and Khalifa bin Salman — can be affected by Strait of Hormuz risk, and war-risk insurance rose from about 0.125% to 0.4%+ per transit in 2026. Jeddah avoids the strait via Red Sea routing but carries its own Red Sea/Cape risk.',
+  },
+  {
+    q: 'Should I worry about the Red Sea and Cape of Good Hope rerouting?',
+    a: 'Yes. Houthi attacks on Red Sea shipping since late 2023 and the July 2026 Houthi naval blockade of Saudi Arabia have forced some carriers to reroute around the Cape, which inflates transit times and rates. Always confirm direct-vs-transshipped and Red Sea-vs-Cape routing with your forwarder before booking.',
+  },
+  {
+    q: 'Is rail a realistic option from China to the GCC?',
+    a: 'Only as a niche choice. Rail is 18–25 days corridor-dependent, and most GCC destinations still need a road or sea bridging leg after the railhead. Price it only for specific inland corridors, not as a default GCC option.',
+  },
+  {
+    q: 'Does customs clearance add time on top of the transit windows?',
+    a: 'Yes. The figures on this page cover the ocean or air leg only. Import clearance sits on top and is not published in the verified snapshot; SABER holds in Saudi Arabia are the most common avoidable delay, so complete the SC certificate before cargo arrival.',
+  },
+  {
+    q: 'How can I keep demurrage from adding days and cost?',
+    a: 'GCC terminals give roughly 3–7 free days, then charge around $75–$300 per day. Arrange clearance, SABER paperwork and inland trucking before the vessel arrives so the container does not sit beyond free time.',
+  },
+  {
+    q: 'How do I get a current transit time for my specific lane?',
+    a: 'Request a live quote through the Get Quote form with your exact origin, destination, HS code and cargo details. A forwarder can confirm direct-vs-transshipped routing and give a shipment-specific window rather than the corridor-wide typicals above.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'China to GCC Transit Time — Full 7-Port Comparison (2026)',
+      description:
+        'Full comparison of China-to-GCC transit times across the seven main destination ports, plus sea, air and express method windows, FCL vs LCL timing differences, hidden charges and compliance.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="China to GCC Transit Time — Full 7-Port Comparison (2026)"
+  description="Full comparison of China-to-GCC transit times across the seven main destination ports, plus sea, air and express method windows, FCL vs LCL timing differences, hidden charges and compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Transit time China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>China to GCC transit time: the full 7-port comparison</h1>
+      <p class="lead">
+        A single reference page for planning how long freight takes from Shanghai, Ningbo-Zhoushan
+        and Shenzhen to all seven main GCC gateways. It compares sea, air and express windows,
+        explains where the extra days come from, and separates the figures you can plan against from
+        the ones you must confirm with a forwarder.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning ranges. Treat every
+        LOW-confidence note as indicative, and always confirm direct-vs-transshipped and Red
+        Sea-vs-Cape routing with your forwarder before booking.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Fastest sea gateway</span>
+          <span class="fact-value">Jeddah ~18 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Slowest sea gateway</span>
+          <span class="fact-value">Shuwaikh ~24 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea planning range</span>
+          <span class="fact-value">15–30 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air freight</span>
+          <span class="fact-value">3–7 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Express courier</span>
+          <span class="fact-value">3–7 days door-to-door <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail to GCC</span>
+          <span class="fact-value">18–25 days, niche <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. FCL and LCL rate ranges by destination port</h2>
+    <p>
+      Transit planning and freight pricing move together, so start from the rate spread before you
+      lock a schedule. These 20ft, 40ft and per-CBM ranges come from the WorldFreightHub route data.
+      The wide Saudi spread is the geopolitical risk premium flexing — not noise.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Destination port' },
+        { key: 'fcl20', label: '20ft FCL' },
+        { key: 'fcl40', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL (per CBM)' },
+        { key: 'note', label: 'Rate-shaping note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={rateRows}
+      caption="FCL/LCL ranges are MEDIUM confidence from the route data. They are planning ranges, not live carrier quotes."
+    />
+    <SourceList sources={rateSources} title="Sources — FCL & LCL rates" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Sea transit: all 7 destination ports compared</h2>
+      <p>
+        The typical port-to-port days below cover the ocean leg only from the three China base ports
+        — Shanghai, Ningbo-Zhoushan and Shenzhen — to each GCC gateway. Customs clearance sits on
+        top, and the route data does not publish separate origin-level splits, so treat the typical
+        as the destination benchmark and confirm the specific lane with your forwarder.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'port', label: 'Destination port' },
+          { key: 'unlocode', label: 'UN/LOCODE' },
+          { key: 'country', label: 'Country' },
+          { key: 'typical', label: 'Typical transit' },
+          { key: 'range', label: 'Planning range' },
+          { key: 'routing', label: 'Routing note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={seaTransitRows}
+        caption="Typical transit days are MEDIUM confidence from the route data; the 15–30 day range applies across all China-to-GCC lanes."
+      />
+      <SourceList sources={seaTransitSources} title="Sources — China to GCC sea transit" />
+
+      <div class="note mt-2">
+        <strong>Origin matters at the margins:</strong> Shenzhen (Yantian/Shekou) sits further south,
+        which can shave a day or two versus a Shanghai loading on the same routing, but this is
+        operational, not separately published <ConfidenceBadge level="LOW" />. Ningbo-Zhoushan is
+        often a slightly cheaper Shanghai alternative with comparable sailings. Confirm the exact
+        terminal and sailing with the forwarder.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit by method: sea, air, express and rail</h2>
+    <p>
+      The method you choose changes the window more than the destination port does. Use this table
+      to place the 7-port sea figures next to the faster options, then decide whether the time saving
+      is worth the per-unit cost.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'method', label: 'Method' },
+        { key: 'window', label: 'Transit window' },
+        { key: 'note', label: 'What drives the window' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={methodRows}
+      caption="FCL, LCL, air and express windows are MEDIUM confidence from the methods data; rail is LOW confidence because Gulf corridors are not standardised."
+    />
+    <SourceList sources={methodTransitSources} title="Sources — China to GCC method transit" />
+
+    <div class="note mt-2">
+      <strong>Air freight is not a day count, it is a ground-handling count.</strong> The flight
+      itself is hours; the 3–7 day window is origin pickup, security screening, export clearance,
+      flight, destination clearance and final delivery. The same 3–7 day shorthand applies to
+      express, but express is door-to-door and bundles the clearance steps.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. FCL vs LCL: how the decision changes your timeline</h2>
+      <p>
+        FCL and LCL are not just different prices — they are different clocks. LCL is slower because
+        consolidation at origin and de-consolidation at destination add 5–10 days, and the shared box
+        moves on the forwarder’s schedule rather than yours.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="FCL vs LCL guidance is heuristic, built from the MEDIUM-confidence method data."
+      />
+      <SourceList sources={decisionSources} title="Sources — FCL vs LCL" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose FCL when...">
+          <ul>
+            <li>Volume is roughly 15 CBM or more.</li>
+            <li>The 14–20 day direct window is worth the container cost.</li>
+            <li>Predictability and fewer handling touches matter.</li>
+            <li>Clearance and trucking can be ready before arrival.</li>
+          </ul>
+        </Card>
+        <Card title="Choose LCL when...">
+          <ul>
+            <li>Volume is below ~15 CBM.</li>
+            <li>You accept 5–10 extra days versus FCL.</li>
+            <li>The CFS charges still leave LCL cheaper all-in.</li>
+            <li>Flexibility matters more than the fastest sailing.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. The 3 China origins and 7 GCC gateways</h2>
+    <p>
+      Match the origin to the manufacturing cluster and the destination to the consignee. The China
+      port facts are HIGH confidence; the GCC port roles are MEDIUM confidence from the port data.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'side', label: 'Side' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portListRows}
+      caption="China origin port facts are HIGH confidence; GCC gateway roles are MEDIUM confidence from the port data."
+    />
+    <SourceList sources={portSources} title="Sources — China origins & GCC ports" />
+
+    <div class="note mt-2">
+      <strong>Use the correct UN/LOCODE on the bill of lading.</strong> A vague “Shenzhen” booking
+      can route to the wrong terminal — specify Yantian vs Shekou vs Chiwan. At the destination, the
+      seven codes above are the ones that appear on the route data.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost composition: the hidden charges that stretch the clock</h2>
+      <p>
+        Transit days turn into cost days when a container sits beyond free time or a routing risk
+        premium is added. Demurrage/detention and the Hormuz war-risk premium are the two quantified
+        items; the rest are real line items whose amounts were not published in the verified snapshot.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost item' },
+          { key: 'who', label: 'Charged by' },
+          { key: 'magnitude', label: 'Magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Demurrage/detention free time and the war-risk premium are MEDIUM confidence; unquantified fees are LOW confidence and require an itemised quote."
+      />
+      <SourceList sources={costSources} title="Sources — transit cost composition" />
+
+      <div class="note mt-2">
+        <strong>Plan clearance before the ship arrives.</strong> Free time at GCC terminals is only
+        ~3–7 days, and daily demurrage/detention runs ~$75–$300 after that. A SABER hold or slow
+        broker can erase the savings of a cheaper sailing within a week.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: duty, VAT, SABER/SASO and the ISF non-issue</h2>
+    <p>
+      All six GCC states use the <strong>5% CIF import duty baseline</strong> and 10-digit HS codes.
+      VAT differs by market: Saudi Arabia 15%, Bahrain 10%, UAE 5%, Oman 5%, and Qatar and Kuwait 0%
+      (no VAT yet). SABER/SASO conformity is <strong>Saudi-only</strong>, and the shipment conformity
+      certificate (SC) must be obtained before cargo arrival — the rule is effective since 1 January
+      2025.
+    </p>
+
+    <h3 class="mt-3">SABER/SASO is Saudi-only and air does not bypass it</h3>
+    <p>
+      For regulated Saudi goods, obtain the product conformity certificate (PC) first, then the
+      shipment-specific SC before the cargo arrives. Air freight shortens transit but does
+      <strong>not</strong> remove the SABER step, and neither sea nor air waives duty or VAT.
+    </p>
+
+    <h3 class="mt-3">ISF is a United States rule</h3>
+    <p>
+      <strong>ISF (Importer Security Filing) does not apply to GCC imports.</strong> It is a US
+      program. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival
+      declaration; the other GCC states use their own single-window declarations. This is stated to
+      pre-empt a common mix-up.
+    </p>
+
+    <h3 class="mt-3">De minimis and certificate of origin</h3>
+    <p>
+      Saudi Arabia (SAR 1,000) and the UAE (AED 1,000) publish de minimis thresholds for
+      personal/courier parcels only; VAT is still due and commercial cargo is generally dutiable
+      regardless. The standard document set remains the commercial invoice, packing list, bill of
+      lading, certificate of origin and the correct HS classification.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — GCC compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related decision guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Typical
+      transit figures are re-checked against the WorldFreightHub route data, and method windows
+      against the methods data. If origin-level splits or clearance day-counts become available, the
+      tables are updated, confidence badges are raised, and the modified date changes. Until then,
+      unpublished figures stay LOW with a request-for-quote note.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Saudi Arabia transit time"
+        description="Jeddah vs Dammam sea windows, FCL vs LCL differences, air/express transit and the delays that stretch the clock."
+        href="/middleeast/transit-time-china-to-saudi-arabia/"
+      />
+      <Card
+        title="UAE transit time"
+        description="Jebel Ali's typical 21-day sea window, Khalifa and Sharjah port notes, 3-7 day air freight and the delays that stretch the clock."
+        href="/middleeast/transit-time-china-to-uae/"
+      />
+      <Card
+        title="FCL vs LCL shipping from China to GCC"
+        description="The corridor-wide full-container vs less-than-container decision guide."
+        href="/middleeast/fcl-vs-lcl/"
+      />
+      <Card
+        title="GCC customs, duty & VAT comparison"
+        description="Six-country side-by-side of import duty, VAT, de minimis and SABER/SASO compliance."
+        href="/middleeast/gcc-customs-duty-comparison/"
+      />
+      <Card
+        title="Sea vs air freight China to GCC"
+        description="Corridor-wide decision guide: 7-port FCL/LCL rates, per-kg air benchmarks, chargeable weight and a hybrid plan."
+        href="/middleeast/sea-vs-air-freight-china-to-gcc/"
+      />
+      <Card
+        title="Demurrage & detention China to GCC"
+        description="The $75–$300/day demurrage trap and how clearance holds turn into detention."
+        href="/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card
+        title="Hidden & destination charges China to GCC"
+        description="THC, port service, documentation, ISPS, inspection, brokerage, SABER, storage and the all-in destination cost breakdown."
+        href="/middleeast/hidden-charges-china-to-gcc/"
+      />
+    </div>
+    <p class="mt-2">
+      <strong>Explore the full corridor:</strong> start at the
+      <a href="/middleeast/">Middle East hub</a>, or jump to the six route pillars —
+      <a href="/middleeast/shipping-from-china-to-saudi-arabia/">Saudi Arabia</a>,
+      <a href="/middleeast/shipping-from-china-to-uae/">UAE</a>,
+      <a href="/middleeast/shipping-from-china-to-qatar/">Qatar</a>,
+      <a href="/middleeast/shipping-from-china-to-kuwait/">Kuwait</a>,
+      <a href="/middleeast/shipping-from-china-to-oman/">Oman</a> and
+      <a href="/middleeast/shipping-from-china-to-bahrain/">Bahrain</a>.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Confirm your lane before you book"
+      text="Tell us your origin port, destination, cargo volume and HS code, and we will connect you with providers who can confirm direct-vs-transshipped routing and give a shipment-specific transit window."
+    />
+  </section>
+</BaseLayout>

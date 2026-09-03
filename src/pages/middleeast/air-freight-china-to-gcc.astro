@@ -1,0 +1,893 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/air-freight-china-to-gcc/`;
+
+const freightos: Source = {
+  id: 'freightos-air-gcc',
+  name: 'Freightos — Shanghai to Riyadh air route data',
+  url: 'https://www.freightos.com',
+  type: 'industry',
+};
+
+const ddpchain: Source = {
+  id: 'ddpchain-air-gcc',
+  name: 'DDP Chain — China to Saudi Arabia air freight examples',
+  url: 'https://ddpchain.com/saudi-arabia/',
+  type: 'industry',
+};
+
+const cargofromchina: Source = {
+  id: 'cargofromchina-air-gcc',
+  name: 'Cargo From China — China to Saudi Arabia and UAE air freight guides',
+  url: 'https://cargofromchina.com/china-saudiarabia/',
+  type: 'industry',
+};
+
+const sinoShipping: Source = {
+  id: 'sino-shipping-air-gcc',
+  name: 'Sino Shipping — China to Saudi express snapshot (August 2026)',
+  url: 'https://www.sino-shipping.com',
+  type: 'industry',
+};
+
+const iata: Source = {
+  id: 'iata-air-gcc',
+  name: 'IATA — air cargo chargeable weight guidance',
+  url: 'https://www.iata.org',
+  type: 'organization',
+};
+
+const wfhMethodData: Source = {
+  id: 'wfh-air-method-data',
+  name: 'WorldFreightHub methods data — air freight and express rate bands and transit windows',
+  url: `${SITE_URL}/methods/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-air-country-data',
+  name: 'WorldFreightHub GCC country data — VAT, duty and de minimis profiles (HIGH confidence)',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const rateSources: Source[] = [freightos, ddpchain, cargofromchina, sinoShipping, wfhMethodData];
+const chargeableSources: Source[] = [iata, wfhMethodData];
+const transitSources: Source[] = [wfhMethodData, ddpchain, sinoShipping];
+const comparisonSources: Source[] = [wfhMethodData, freightos, ddpchain, cargofromchina];
+const airportSources: Source[] = [
+  iata,
+  ...sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']),
+];
+const costSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+  wfhMethodData,
+  iata,
+];
+const complianceSources: Source[] = [
+  ...sourcesByIds([
+    'zatca',
+    'dubai-customs',
+    'qatar-customs',
+    'kuwait-customs',
+    'oman-customs',
+    'bahrain-customs',
+  ]),
+  wfhCountryData,
+];
+
+const airRateRows = [
+  {
+    service: 'Air freight · Shanghai → Riyadh',
+    benchmark: '$917 – $1,223 per 100 kg',
+    perKg: '≈ $9.17 – $12.23 / kg',
+    transit: '6–10 days',
+    basis: 'Freightos air route data',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · China → Saudi by route',
+    benchmark: '$880 – $1,350 per 100 kg',
+    perKg: '≈ $8.80 – $13.50 / kg',
+    transit: 'By route',
+    basis: 'ddpchain route examples',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · Shenzhen → Riyadh',
+    benchmark: '$920 – $1,250 per 100 kg',
+    perKg: '≈ $9.20 – $12.50 / kg',
+    transit: 'By route',
+    basis: 'ddpchain Shenzhen→Riyadh example',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · Saudi market brackets',
+    benchmark: 'SAR 26.5 – 30.5 / kg',
+    perKg: 'SAR 26.5 – 30.5 / kg',
+    transit: '2–5 business days',
+    basis: 'cargofromchina (22kg+ / 101kg+ brackets)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight · UAE market',
+    benchmark: 'AED 20 – 23.5 / kg',
+    perKg: 'AED 20 – 23.5 / kg',
+    transit: '2–4 days express',
+    basis: 'cargofromchina UAE guide',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier · China → GCC',
+    benchmark: '~$6.90 / kg',
+    perKg: '≈ $6.90 / kg',
+    transit: '3–5 days',
+    basis: 'sino-shipping (Aug 2026)',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP air · China → Saudi',
+    benchmark: '33 – 48 RMB / kg',
+    perKg: '33 – 48 RMB / kg',
+    transit: '10–15 days',
+    basis: 'ddpchain DDP air',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Generic air freight · China → GCC',
+    benchmark: '$4.3 – $11.0 / kg',
+    perKg: '$4.3 – $11.0 / kg',
+    transit: '3–7 days airport-to-airport',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Generic express · China → GCC',
+    benchmark: '$6.9 – $11.0 / kg',
+    perKg: '$6.9 – $11.0 / kg',
+    transit: '3–7 days door-to-door',
+    basis: 'WorldFreightHub methods data',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Qatar air freight',
+    benchmark: 'Not published',
+    perKg: 'Not published — request a per-kg quote for your lane',
+    transit: 'Not published',
+    basis: 'No verified Qatar benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Kuwait air freight',
+    benchmark: 'Not published',
+    perKg: 'Not published — request a per-kg quote for your lane',
+    transit: 'Not published',
+    basis: 'No verified Kuwait benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Oman air freight',
+    benchmark: 'Not published',
+    perKg: 'Not published — request a per-kg quote for your lane',
+    transit: 'Not published',
+    basis: 'No verified Oman benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Bahrain air freight',
+    benchmark: 'Not published',
+    perKg: 'Not published — request a per-kg quote for your lane',
+    transit: 'Not published',
+    basis: 'No verified Bahrain benchmark in the snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    method: 'Air freight (airport-to-airport)',
+    window: '3–7 days',
+    note: 'Flight is hours; origin pickup, export handling, clearance and delivery sit on top',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Express courier (door-to-door)',
+    window: '3–7 days',
+    note: 'Simplest, fully tracked, highest per-kg cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'DDP air (door-to-door)',
+    window: '10–15 days',
+    note: 'Adds destination clearance, duty/VAT and final delivery to the air leg',
+    confidence: 'LOW',
+  },
+  {
+    method: 'Sea FCL (port-to-port)',
+    window: '14–30 days',
+    note: 'Direct 14–20; transshipment adds a week or more',
+    confidence: 'MEDIUM',
+  },
+  {
+    method: 'Sea LCL (port-to-port)',
+    window: '15–35 days',
+    note: '5–10 days slower than equivalent FCL',
+    confidence: 'MEDIUM',
+  },
+];
+
+const volumetricRows = [
+  {
+    case: 'Box 80 × 50 × 40 cm, gross weight 20 kg',
+    divisor: 'Air freight ÷6000',
+    volumetric: '80 × 50 × 40 ÷ 6000 = 26.7 kg',
+    chargeable: '26.7 kg (volumetric exceeds gross)',
+    confidence: 'MEDIUM',
+  },
+  {
+    case: 'Box 80 × 50 × 40 cm, gross weight 20 kg',
+    divisor: 'Courier / express ÷5000',
+    volumetric: '80 × 50 × 40 ÷ 5000 = 32 kg',
+    chargeable: '32 kg (volumetric exceeds gross)',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airVsExpressRows = [
+  {
+    factor: 'Scope',
+    air: 'Airport-to-airport for commercial cargo',
+    express: 'Door-to-door courier for small parcels',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Chargeable divisor',
+    air: '÷6000',
+    express: '÷5000 (bulky light parcels cost more)',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Rate band',
+    air: '$4.3 – $11.0 / kg',
+    express: '$6.9 – $11.0 / kg',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Best fit',
+    air: 'Heavier commercial consignments where you arrange pickup/delivery',
+    express: 'Parcels roughly under 30 kg needing one booking and tracking',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airVsSeaRows = [
+  {
+    factor: 'Transit',
+    air: '3–7 days',
+    sea: '14–30 days FCL / 15–35 days LCL',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Cost per kg',
+    air: 'Typically 5–10× sea freight',
+    sea: 'Lowest per-unit cost once a box is reasonably full',
+    confidence: 'MEDIUM',
+  },
+  {
+    factor: 'When air wins',
+    air: 'Stockout-critical, perishable, high value density, small shipments',
+    sea: 'Large, dense, heavy or stable-demand cargo',
+    confidence: 'MEDIUM',
+  },
+];
+
+const airportRows = [
+  {
+    gateway: 'Shanghai Pudong (PVG)',
+    side: 'China origin',
+    role: 'East China anchor for Gulf-bound air freight',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Shenzhen Bao’an (SZX)',
+    side: 'China origin',
+    role: 'South China / Pearl River Delta electronics gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Guangzhou Baiyun (CAN)',
+    side: 'China origin',
+    role: 'South China air alternative',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Hong Kong (HKG)',
+    side: 'China origin',
+    role: 'Major regional transshipment and freighter hub',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Jeddah (JED) / Riyadh (RUH) / Dammam (DMM)',
+    side: 'GCC destination',
+    role: 'Saudi Arabia arrival airports — match to western / central / eastern consignee',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Dubai (DXB / DWC)',
+    side: 'GCC destination',
+    role: 'UAE and regional re-export air hub',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Doha (DOH)',
+    side: 'GCC destination',
+    role: 'Qatar arrival gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Kuwait (KWI)',
+    side: 'GCC destination',
+    role: 'Kuwait arrival gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Muscat (MCT)',
+    side: 'GCC destination',
+    role: 'Oman arrival gateway',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Bahrain (BAH)',
+    side: 'GCC destination',
+    role: 'Bahrain arrival gateway',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Air freight base rate',
+    who: 'Airline / forwarder',
+    magnitude: 'Generic $4.3 – $11.0/kg (MEDIUM); competitor snapshots vary by lane (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Fuel surcharge',
+    who: 'Airline',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Security surcharge',
+    who: 'Airline',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Terminal handling',
+    who: 'Origin / destination handler',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Airport storage after free time',
+    who: 'Ground handler',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs clearance / brokerage',
+    who: 'Licensed broker',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'SABER certificate (Saudi only)',
+    who: 'SABER platform / conformity body',
+    magnitude: 'Not published in the verified snapshot — request an itemised quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty',
+    who: 'GCC Customs authority',
+    magnitude: '5% of CIF value (GCC unified baseline)',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Import VAT',
+    who: 'Destination tax authority',
+    magnitude: 'Saudi 15% · UAE 5% · Qatar 0% · Kuwait 0% · Oman 5% · Bahrain 10%',
+    confidence: 'HIGH',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How is air freight from China to the GCC priced?',
+    a: 'On chargeable weight — the greater of gross weight and volumetric weight. Volumetric weight is length × width × height in centimetres divided by 6000 for air freight (5000 for most couriers). A light but bulky box is charged on its volume, not its scale weight.',
+  },
+  {
+    q: 'What are typical air freight rates from China to the GCC?',
+    a: 'The verified generic band is $4.3–$11.0/kg (MEDIUM confidence). Published market snapshots show Shanghai→Riyadh around $917–$1,223 per 100 kg and Shenzhen→Riyadh around $920–$1,250 per 100 kg, plus Saudi brackets of SAR 26.5–30.5/kg and UAE brackets of AED 20–23.5/kg — all LOW confidence. Qatar, Kuwait, Oman and Bahrain air rates are not published in the verified snapshot.',
+  },
+  {
+    q: 'Why are Qatar, Kuwait, Oman and Bahrain air rates not shown?',
+    a: 'Because the verified data does not publish per-kg air benchmarks for those four lanes. We do not invent plausible-looking numbers: those lanes are marked “not published — request a per-kg quote for your lane”.',
+  },
+  {
+    q: 'How fast is air freight versus express from China to the GCC?',
+    a: 'Both are 3–7 days in the generic planning data. Air freight is airport-to-airport and you arrange pickup and delivery; express is door-to-door with tracking and bundled clearance. DDP air is longer at 10–15 days because it adds destination clearance and final delivery.',
+  },
+  {
+    q: 'Does air freight save me duty, VAT or SABER?',
+    a: 'No. Air freight shortens transit but does not waive import duty (5% CIF baseline), VAT, or SABER/SASO conformity for regulated Saudi goods. The shipment conformity certificate (SC) must still be obtained before cargo arrival.',
+  },
+  {
+    q: 'How do I calculate chargeable weight?',
+    a: 'Take the greater of gross weight and volumetric weight. A worked example: an 80 × 50 × 40 cm box weighing 20 kg is 26.7 kg by air freight (÷6000) and 32 kg by courier (÷5000). The chargeable weight is the larger number in each case.',
+  },
+  {
+    q: 'When should I choose air freight instead of express?',
+    a: 'Use air freight for heavier commercial consignments where you arrange pickup and delivery yourself and the ÷6000 divisor plus lower per-kg rate helps. Use express for small parcels under roughly 30 kg where one door-to-door booking and tracking are worth the premium.',
+  },
+  {
+    q: 'When does air freight beat sea freight on total cost?',
+    a: 'When holding, insurance, perishability or lost-sale costs exceed the air premium. Typical candidates are stockout-critical replenishment, perishables, fragile high-value goods and small shipments where sea minimums are wasteful.',
+  },
+  {
+    q: 'Which airports are used for China to GCC air freight?',
+    a: 'Common China gateways are Shanghai Pudong (PVG), Shenzhen Bao’an (SZX), Guangzhou Baiyun (CAN) and Hong Kong (HKG). GCC arrival airports include Jeddah, Riyadh and Dammam in Saudi Arabia, Dubai (DXB/DWC), Doha, Kuwait, Muscat and Bahrain. Airport roles are operational routing context, not verified in the snapshot — confirm the airport pair and transit point with your carrier.',
+  },
+  {
+    q: 'What hidden fees should I expect on air freight?',
+    a: 'Beyond the per-kg rate: fuel and security surcharges, terminal handling, airport storage after free time, customs clearance and brokerage, SABER PC/SC fees for Saudi Arabia, import duty of 5% CIF and destination VAT. Specific surcharge amounts were not published in the verified snapshot, so request an itemised schedule.',
+  },
+  {
+    q: 'Is there a de minimis or duty-free threshold for air freight to the GCC?',
+    a: 'Saudi Arabia (SAR 1,000) and the UAE (AED 1,000) publish de minimis thresholds for personal/courier parcels only, and VAT is still due. Commercial air cargo is generally dutiable regardless, and the other four GCC states do not publish a confirmed threshold.',
+  },
+  {
+    q: 'Does ISF apply to air freight from China to the GCC?',
+    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports by air or sea. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival declaration.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Air Freight from China to GCC — Rates, Chargeable Weight & Transit Times (2026)',
+      description:
+        'Corridor-level air freight reference for China to the GCC: per-kg rate benchmarks, chargeable vs volumetric weight, 3–7 day transit planning, air vs express, hidden charges and compliance.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Air Freight from China to GCC — Rates, Chargeable Weight & Transit Times (2026)"
+  description="Corridor-level air freight reference for China to the GCC: per-kg rate benchmarks, chargeable vs volumetric weight, 3–7 day transit planning, air vs express, hidden charges and compliance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Air freight China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Air freight from China to GCC: rates, chargeable weight &amp; transit</h1>
+      <p class="lead">
+        The pure air-freight “how it works + what it costs” reference for the China → GCC corridor.
+        It explains chargeable weight, lists the published per-kg benchmarks with confidence labels,
+        and shows why air does not exempt you from duty, VAT or SABER — all without inventing
+        figures for lanes that have no verified data.
+      </p>
+      <p class="small muted">
+        Confidence badges separate the generic verified bands from competitor market snapshots.
+        Treat every LOW-confidence rate and routing note as indicative, and request a quote for
+        unpublished lanes.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Generic air rate</span>
+          <span class="fact-value">$4.3 – $11.0/kg <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Generic express rate</span>
+          <span class="fact-value">$6.9 – $11.0/kg <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Air transit</span>
+          <span class="fact-value">3–7 days airport-to-airport <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Chargeable divisor</span>
+          <span class="fact-value">÷6000 (air) / ÷5000 (courier) <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Duty / VAT / SABER</span>
+          <span class="fact-value">Not waived by air <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Qatar / Kuwait / Oman / Bahrain</span>
+          <span class="fact-value">Not published <ConfidenceBadge level="LOW" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Air freight rate benchmarks: what is published and what is not</h2>
+    <p>
+      Air rates move weekly with fuel, capacity, season and airport pairing, so the table splits
+      published market snapshots from the verified generic bands. Do not average the LOW-confidence
+      rows together — they use different weight brackets, routes and date bases. Qatar, Kuwait, Oman
+      and Bahrain are shown as “not published” rather than padded with invented numbers.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'service', label: 'Air service' },
+        { key: 'benchmark', label: 'Published benchmark' },
+        { key: 'perKg', label: 'Indicative per kg' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airRateRows}
+      caption="The two generic bands are MEDIUM confidence from the methods data; competitor snapshots are LOW confidence. Per-kg figures are arithmetic conversions from published 100 kg brackets where relevant."
+    />
+    <SourceList sources={rateSources} title="Sources — air freight rates" />
+
+    <div class="note mt-2">
+      <strong>Headline rate vs landed cost:</strong> the per-kg figure is only one line. Fuel and
+      security surcharges, terminal handling, clearance, SABER and duty/VAT all sit on top, so
+      request an all-in itemised quote for a realistic comparison.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Chargeable weight: the pricing mechanic first-time importers miss</h2>
+      <p>
+        Airlines bill on <strong>chargeable weight</strong> — the greater of gross weight and
+        volumetric weight. The worked example below is the same 80 × 50 × 40 cm, 20 kg box through
+        both divisors, so you can see exactly how couriers charge more for bulky light cargo.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'case', label: 'Worked example' },
+          { key: 'divisor', label: 'Divisor' },
+          { key: 'volumetric', label: 'Volumetric weight' },
+          { key: 'chargeable', label: 'Chargeable weight' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={volumetricRows}
+        caption="Volumetric weight arithmetic is MEDIUM confidence: length × width × height (cm) ÷ divisor. Chargeable weight is the greater of gross and volumetric."
+      />
+      <SourceList sources={chargeableSources} title="Sources — chargeable weight" />
+
+      <div class="note mt-2">
+        <strong>Compare quotes on chargeable kilograms, not actual kilograms.</strong> Compute the
+        chargeable weight for each quote using the same divisor, then compare total chargeable
+        kilograms and the all-in line items — never just the $/kg headline.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Air transit windows and how they compare to sea</h2>
+    <p>
+      The 3–7 day air window is a ground-handling count, not a flight duration. Place it next to
+      sea and DDP air below, then use the comparison table to decide when speed justifies the
+      premium.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'method', label: 'Method' },
+        { key: 'window', label: 'Transit window' },
+        { key: 'note', label: 'What drives the window' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Air, express and sea windows are MEDIUM confidence from the methods data; DDP air is LOW confidence from a competitor snapshot."
+    />
+    <SourceList sources={transitSources} title="Sources — air transit windows" />
+
+    <h3 class="mt-3">When air beats sea</h3>
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'air', label: 'Air freight' },
+        { key: 'sea', label: 'Sea freight' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airVsSeaRows}
+      caption="Decision factors are heuristic; transit and unit-cost figures are MEDIUM confidence from the methods data."
+    />
+    <SourceList sources={comparisonSources} title="Sources — air vs sea" />
+
+    <div class="note mt-2">
+      <strong>Air is not a tax shortcut.</strong> Choosing air removes ocean days but does not remove
+      the destination compliance steps — SABER for Saudi Arabia, duty/VAT and clearance all still
+      apply, so build them into the comparison from the start.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Air vs express: the two air products are not the same</h2>
+      <p>
+        Air freight and express courier are often used interchangeably, but they are different
+        products with different divisors, scopes and cost behaviour. Choose the product, then the
+        lane.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'factor', label: 'Factor' },
+          { key: 'air', label: 'Air freight' },
+          { key: 'express', label: 'Express courier' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={airVsExpressRows}
+        caption="Divisor, scope and rate bands are MEDIUM confidence from the methods data."
+      />
+      <SourceList sources={chargeableSources} title="Sources — air vs express" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="Choose air freight when...">
+          <ul>
+            <li>Consignment is heavier commercial cargo.</li>
+            <li>You can arrange pickup and delivery yourself.</li>
+            <li>The ÷6000 divisor protects bulky-but-dense cargo.</li>
+            <li>The lower per-kg rate matters at scale.</li>
+          </ul>
+        </Card>
+        <Card title="Choose express courier when...">
+          <ul>
+            <li>Parcels are roughly under 30 kg.</li>
+            <li>Door-to-door convenience and tracking are worth the premium.</li>
+            <li>You want the courier to handle clearance.</li>
+            <li>One booking beats managing an airport-to-airport move.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Airports: China origins and GCC arrivals</h2>
+    <p>
+      Airport roles below are operational routing context, not verified in the snapshot. Confirm the
+      exact airport pair, transit point and clearance office with the airline or forwarder before
+      booking.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'side', label: 'Side' },
+        { key: 'role', label: 'Role' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={airportRows}
+      caption="Airport names and roles are LOW confidence operational routing context — not published in the verified research snapshot."
+    />
+    <SourceList sources={airportSources} title="Sources — China origins & GCC airports" />
+
+    <div class="note mt-2">
+      <strong>Match the arrival airport to the consignee.</strong> In Saudi Arabia, Jeddah serves the
+      west, Riyadh the centre and Dammam the east; in the UAE, Dubai is the main air hub. The final
+      trucking leg can change the total door-to-door time as much as the flight routing.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Air freight cost composition: the fees competitors skip</h2>
+      <p>
+        The per-kg rate is only the first line of the landed cost. Surcharges, terminal handling,
+        airport storage, clearance and SABER all sit on top — and only duty and VAT are verified in
+        the snapshot. Everything else is marked LOW with a request-for-quote note.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only import duty (5% CIF) and VAT are HIGH confidence. Unquantified fees are LOW confidence because the snapshot did not publish specific amounts."
+      />
+      <SourceList sources={costSources} title="Sources — air freight cost composition" />
+
+      <div class="note mt-2">
+        <strong>Request the storage schedule before booking.</strong> Air cargo gets a limited
+        free-storage period at the arrival airport, then storage becomes chargeable. Free-time
+        allowances and per-day rates were not published in the verified snapshot — ask for them and
+        clear within the free window.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: duty, VAT, SABER/SASO and the ISF non-issue</h2>
+    <p>
+      All six GCC states use the <strong>5% CIF import duty baseline</strong> and 10-digit HS codes.
+      VAT is Saudi Arabia 15%, Bahrain 10%, UAE 5%, Oman 5%, Qatar 0% and Kuwait 0%. SABER/SASO is
+      <strong>Saudi-only</strong>, and the shipment conformity certificate (SC) must be obtained
+      before cargo arrival — effective since 1 January 2025.
+    </p>
+
+    <h3 class="mt-3">Air freight does not waive duty, VAT or SABER</h3>
+    <p>
+      This is the most important compliance point on this page: flying the goods instead of sailing
+      them removes transit days but does <strong>not</strong> remove duty, VAT or SABER/SASO
+      conformity. For regulated Saudi goods, complete the PC/SC work before the cargo lands, exactly
+      as you would for sea freight.
+    </p>
+
+    <h3 class="mt-3">ISF is a United States rule</h3>
+    <p>
+      <strong>ISF (Importer Security Filing) does not apply to GCC imports by air or sea.</strong>
+      Saudi Arabia’s advance-filing step is the SABER SC plus the FASAH pre-arrival declaration; the
+      other GCC states use their own single-window declarations. This is stated to pre-empt a common
+      mix-up.
+    </p>
+
+    <h3 class="mt-3">De minimis and documents</h3>
+    <p>
+      Saudi Arabia (SAR 1,000) and the UAE (AED 1,000) publish de minimis thresholds for
+      personal/courier parcels only; VAT is still due and commercial cargo is generally dutiable.
+      The air waybill (AWB), commercial invoice, packing list, certificate of origin and correct HS
+      code remain the standard document set.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — GCC air freight compliance" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related decision guides and data freshness</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. Generic
+      rate bands and transit windows are re-checked against the WorldFreightHub methods data, and
+      the competitor snapshots are labelled LOW with their source and date basis. If Qatar, Kuwait,
+      Oman or Bahrain benchmarks become available, the table is updated and the confidence badge
+      raised; until then, unpublished lanes stay “not published”.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Air freight from China to Saudi Arabia"
+        description="Chargeable vs volumetric weight, indicative per-kg rates, 3-7 day transit and the air vs sea decision."
+        href="/middleeast/air-freight-from-china-to-saudi-arabia/"
+      />
+      <Card
+        title="Air freight from China to UAE"
+        description="DXB/DWC gateways, the 6,000-divisor chargeable weight rule, indicative AED/kg rates and lithium limits."
+        href="/middleeast/air-freight-from-china-to-uae/"
+      />
+      <Card
+        title="Sea vs air freight China to GCC"
+        description="Corridor-wide decision guide: 7-port FCL/LCL rates, per-kg air benchmarks, chargeable weight and a hybrid plan."
+        href="/middleeast/sea-vs-air-freight-china-to-gcc/"
+      />
+      <Card
+        title="FCL vs LCL shipping from China to GCC"
+        description="The corridor-wide full-container vs less-than-container decision guide."
+        href="/middleeast/fcl-vs-lcl/"
+      />
+      <Card
+        title="GCC customs, duty & VAT comparison"
+        description="Six-country side-by-side of import duty, VAT, de minimis and SABER/SASO compliance."
+        href="/middleeast/gcc-customs-duty-comparison/"
+      />
+      <Card
+        title="Demurrage & detention China to GCC"
+        description="The $75–$300/day demurrage trap and how clearance holds turn into detention."
+        href="/middleeast/demurrage-detention-china-to-gcc/"
+      />
+      <Card
+        title="Hidden & destination charges China to GCC"
+        description="THC, port service, documentation, ISPS, inspection, brokerage, SABER, storage and the all-in destination cost breakdown."
+        href="/middleeast/hidden-charges-china-to-gcc/"
+      />
+    </div>
+    <p class="mt-2">
+      <strong>Explore the full corridor:</strong> start at the
+      <a href="/middleeast/">Middle East hub</a>, or jump to the six route pillars —
+      <a href="/middleeast/shipping-from-china-to-saudi-arabia/">Saudi Arabia</a>,
+      <a href="/middleeast/shipping-from-china-to-uae/">UAE</a>,
+      <a href="/middleeast/shipping-from-china-to-qatar/">Qatar</a>,
+      <a href="/middleeast/shipping-from-china-to-kuwait/">Kuwait</a>,
+      <a href="/middleeast/shipping-from-china-to-oman/">Oman</a> and
+      <a href="/middleeast/shipping-from-china-to-bahrain/">Bahrain</a>.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in air freight quote"
+      text="Tell us your origin airport, destination, cargo dimensions, weight and HS code, and we will connect you with providers who can quote chargeable weight, surcharges and clearance side by side."
+    />
+  </section>
+</BaseLayout>
