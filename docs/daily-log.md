@@ -591,3 +591,25 @@
   2. Cloudflare Pages 部署 + `middleeast`/`europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
 
+
+
+## 2026-09-04（GCC 走廊级决策页回填 — FCL vs LCL + 6 国关税/增值税横比）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；Europe 走廊 8 国 + 8 决策轴深度指南全部交付；Arabic 49 页收尾。逐页 `ls src/pages` + `wc -w` 比对发现 GCC 侧缺两张 Europe 已交付的「走廊级」决策/数据页——① `fcl-vs-lcl`（Europe 有、GCC 只有按国 FCL/LCL 页、无走廊级决策页）；② 6 国关税/增值税单页横比（各国 customs-duty 页齐全但无单页横比）。本轮补齐这两张结构性 Gap。
+- **本轮动作**：
+  1. `ls src/pages` + `wc -w` 逐页比对 → GCC 无剩余薄页、无剩余路线页，但存在两张「走廊级决策页」缺位 → 回填。
+  2. 复用已有已验证数据（routes.ts 7 港费率/时效 + gcc-countries.ts 6 国 duty/VAT/de minimis + methods.ts FCL/LCL 盈亏分界 ~15 CBM + 33/67 CBM 容量 + demurrage $75–300/天），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 全量已验证数据清单，禁止杜撰）→ 交给 Codex 写 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信徽标/schema/build/push 均核验）。
+- **Content（commit 41dc0ab）**：
+  - `src/pages/middleeast/fcl-vs-lcl.astro`（新建，渲染 ~4,033 词，14 FAQ）——走廊级 FCL vs LCL 决策：7 港 FCL 20/40ft + LCL $/CBM 费率表（MEDIUM，routes.ts）+ 分港时效表（Jeddah 18 / Dammam 20 / Jebel Ali 21 / Hamad 22 / Shuwaikh 24 / Sohar 19 / Khalifa bin Salman 22 天）+ ~15 CBM 盈亏分界算术（20ft ≈33 CBM / 40ft ≈67 CBM / 40ft 成本 +30–50%）+ 成本构成（OTHC/DTHC/CFS/bunker/单证均 LOW + request，demurrage $75–300/天 MEDIUM）+ 合规（GCC 5% 关税 + 六国 VAT 15/5/0/0/5/10 + SABER SC 到港前 + ISF 不适用 GCC）+ 直航 vs 中转 + 红海/霍尔木兹风险溢价（解释沙特费率区间为何最宽）。
+  - `src/pages/middleeast/gcc-customs-duty-comparison.astro`（新建，渲染 ~2,899 词，14 FAQ）——6 国关税/增值税/de minimis 单页横比：duty 5% (CIF) 全 GCC + VAT SA 15% / AE 5% / QA 0% / KW 0% / OM 5% / BH 10% + landed-cost 乘法表（SA ×1.2075 / AE·OM ×1.1025 / QA·KW ×1.05 / BH ×1.155，由 HIGH 税率显式推导）+ 12 GCC 港 UN/LOCODE + 合规（SABER/SASO 仅沙特 + SC 到港前 2025-01-01 + HS/CO + de minimis）+ 清关时长标 LOW「not published」不臆造。
+  - 两页均 9 模块齐全 + "September 2026 updated" 徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）；未验证数字（OTHC/DTHC/CFS/单证/broker/查验/SABER 证书费）一律 LOW +「request an itemised quote」，零杜撰。
+  - `src/pages/middleeast/index.astro` 新增 2 张决策卡（fcl-vs-lcl / gcc-customs-duty-comparison）+ 互为交叉链接 + 链各国 route pillar / customs-duty / demurrage / hidden-charges / saso-saber / jeddah-vs-dammam。
+- **数据诚信**：fcl-vs-lcl 置信标记 HIGH 9 / MEDIUM 43 / LOW 16（含 data 数组 confidence 字段）；gcc-customs-duty-comparison HIGH 21 / MEDIUM 4 / LOW 10。费率/时效全部来自 routes.ts（MEDIUM）；duty/VAT/de minimis 来自 gcc-countries.ts（HIGH）；landed-cost 乘数为 HIGH 税率显式推导；未量化杂费一律 LOW + request。零杜撰。
+- **QA**：`npm run build` **585 页零 error**（+2）；FAQ 14/14 条均 ≥8；9 模块齐全；schema 齐全；工作区干净；`41dc0ab content(middleeast): add FCL-vs-LCL and GCC customs-duty comparison decision guides` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. GCC 走廊级决策页已补齐（fcl-vs-lcl / gcc-customs-duty-comparison）。后续可选：GCC 侧「Sea vs Air 走廊级横比」（现有 sea-vs-air 为 UAE-only）或「Air Freight 时效/成本深化」。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
