@@ -15,7 +15,7 @@ const title = 'Freight Cost Calculator: China to GCC Landed-Cost Estimator (Augu
 const description =
   'Estimate the landed cost of a China-to-GCC shipment with this free freight cost calculator — ocean or air freight, GCC duty, VAT, insurance and the destination charges most quotes leave out.';
 
-const notPublished = '待核实 / not published in our research snapshot — request an itemised schedule from your forwarder';
+const notPublished = 'not published in our research snapshot — request an itemised schedule from your forwarder';
 
 const freightRows = [
   {
@@ -24,7 +24,7 @@ const freightRows = [
     fcl20: '$1,500–$6,200',
     fcl40: '$1,900–$8,100',
     lcl: '$20–$110/CBM',
-    note: 'Red Sea gateway; wide range reflects route and geopolitical risk 待核实 / verify with forwarder',
+    note: 'Red Sea gateway; wide range reflects route and geopolitical risk — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -33,7 +33,7 @@ const freightRows = [
     fcl20: '$1,500–$6,200',
     fcl40: '$1,900–$8,100',
     lcl: '$20–$110/CBM',
-    note: 'Gulf-side Saudi gateway; Strait of Hormuz routing 待核实 / verify with forwarder',
+    note: 'Gulf-side Saudi gateway; Strait of Hormuz routing — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -42,7 +42,7 @@ const freightRows = [
     fcl20: '$1,500–$3,250',
     fcl40: '$2,200–$3,950',
     lcl: '$60–$180/CBM',
-    note: 'Highest-frequency GCC corridor; most carrier options 待核实 / verify with forwarder',
+    note: 'Highest-frequency GCC corridor; most carrier options — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -51,7 +51,7 @@ const freightRows = [
     fcl20: '$1,700–$2,500',
     fcl40: '$2,500–$3,600',
     lcl: '$75–$100/CBM',
-    note: 'Single-gateway Qatar market; transshipment common 待核实 / verify with forwarder',
+    note: 'Single-gateway Qatar market; transshipment common — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -60,7 +60,7 @@ const freightRows = [
     fcl20: '$1,500–$2,500',
     fcl40: '$2,200–$3,600',
     lcl: '$70–$100/CBM',
-    note: 'Kuwait gateway; confirm Shuwaikh vs Shuaiba routing 待核实 / verify with forwarder',
+    note: 'Kuwait gateway; confirm Shuwaikh vs Shuaiba routing — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -69,7 +69,7 @@ const freightRows = [
     fcl20: '$1,500–$2,600',
     fcl40: '$2,200–$3,800',
     lcl: '$60–$110/CBM',
-    note: 'Oman gateway outside the Strait of Hormuz 待核实 / verify with forwarder',
+    note: 'Oman gateway outside the Strait of Hormuz — verify with forwarder',
     confidence: 'MEDIUM',
   },
   {
@@ -78,7 +78,7 @@ const freightRows = [
     fcl20: '$1,500–$2,500',
     fcl40: '$2,200–$3,600',
     lcl: '$75–$100/CBM',
-    note: 'Causeway link to eastern Saudi; niche alternate entry 待核实 / verify with forwarder',
+    note: 'Causeway link to eastern Saudi; niche alternate entry — verify with forwarder',
     confidence: 'MEDIUM',
   },
 ];
@@ -88,28 +88,28 @@ const transitRows = [
     lane: 'Sea · China to Saudi Arabia (Jeddah / Dammam)',
     window: '≈ 20–45 days',
     basis: 'Corridor estimate',
-    note: 'Red Sea rerouting and schedule volatility keep the window wide 待核实 / verify with forwarder',
+    note: 'Red Sea rerouting and schedule volatility keep the window wide — verify with forwarder',
     confidence: 'LOW',
   },
   {
     lane: 'Sea · China to UAE (Jebel Ali / Khalifa Port)',
     window: '≈ 14–18 days',
     basis: 'Corridor estimate',
-    note: 'The fastest verified GCC sea window in the snapshot 待核实 / verify with forwarder',
+    note: 'The fastest verified GCC sea window in the snapshot — verify with forwarder',
     confidence: 'LOW',
   },
   {
     lane: 'Sea · China to Qatar / Kuwait / Oman / Bahrain',
     window: notPublished,
     basis: 'Research snapshot',
-    note: 'Request the current sailing schedule; use Saudi/UAE windows only as direction 待核实 / verify with forwarder',
+    note: 'Request the current sailing schedule; use Saudi/UAE windows only as direction — verify with forwarder',
     confidence: 'LOW',
   },
   {
     lane: 'Air freight · China to GCC',
     window: notPublished,
     basis: 'Research snapshot',
-    note: 'Much faster than sea, but destination handling and clearance still add time 待核实 / verify with forwarder',
+    note: 'Much faster than sea, but destination handling and clearance still add time — verify with forwarder',
     confidence: 'LOW',
   },
 ];
@@ -175,7 +175,7 @@ const costRows = [
   {
     layer: 'Marine cargo insurance',
     basis: 'Visible input, default 0.3% of freight-inclusive value',
-    note: 'Industry-norm assumption, not in the research snapshot — 待核实; set to 0 if not required',
+    note: 'Industry-norm assumption, not in the research snapshot — set to 0 if not required',
     confidence: 'LOW',
   },
   {
@@ -303,7 +303,7 @@ const faqs = [
     a: 'Yes, but only as an explicit assumption. The research snapshot does not publish a standard marine cargo insurance rate, so the calculator defaults to 0.3% of the freight-inclusive value as an industry-norm placeholder. You can set it to 0 or to your actual quoted rate.',
   },
   {
-    q: 'What does “待核实” mean?',
+    q: 'What does “verify with forwarder” mean?',
     a: 'It means the figure has not been verified against a primary source in the current research snapshot. WorldFreightHub marks those numbers LOW confidence and directs you to request an itemised schedule from your forwarder rather than presenting an invented amount as fact.',
   },
   {
@@ -868,7 +868,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       </p>
       <p>
         This is an indicative model, not a guarantee. Where the snapshot has no number, the page
-        says <em>待核实 / not published in our research snapshot</em> and points you back to a
+        says <em>not published in our research snapshot</em> and points you back to a
         forwarder. The alternative — inventing a plausible-looking figure — would make the calculator
         look precise while making the estimate wrong.
       </p>
@@ -955,7 +955,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       lcl: [60, 180],
       air: [5.45, 6.4],
       airNote: 'UAE air benchmark from research snapshot (LOW)',
-      fallbackNote: 'Khalifa Port sea-freight range not published; directional fallback to Jebel Ali UAE range — request an itemised schedule (待核实)',
+      fallbackNote: 'Khalifa Port sea-freight range not published; directional fallback to Jebel Ali UAE range — request an itemised schedule',
     },
     'hamad': {
       country: 'Qatar',
@@ -964,7 +964,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       fcl40: [2500, 3600],
       lcl: [75, 100],
       air: null,
-      airNote: 'Qatar air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+      airNote: 'Qatar air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'shuwaikh': {
       country: 'Kuwait',
@@ -973,7 +973,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       fcl40: [2200, 3600],
       lcl: [70, 100],
       air: null,
-      airNote: 'Kuwait air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+      airNote: 'Kuwait air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'sohar': {
       country: 'Oman',
@@ -982,7 +982,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       fcl40: [2200, 3800],
       lcl: [60, 110],
       air: null,
-      airNote: 'Oman air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+      airNote: 'Oman air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'khalifa-bin-salman': {
       country: 'Bahrain',
@@ -991,7 +991,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       fcl40: [2200, 3600],
       lcl: [75, 100],
       air: null,
-      airNote: 'Bahrain air freight not published in snapshot — directional Saudi/UAE fallback (待核实)',
+      airNote: 'Bahrain air freight not published in snapshot — directional Saudi/UAE fallback',
     },
   };
 
@@ -1120,7 +1120,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
 
     const rows = [
       rowHtml('Freight', USD.format(low), USD.format(mid), USD.format(high), freightLevel, freightNote),
-      rowHtml('Marine insurance', USD.format(insurance), USD.format(insurance), USD.format(insurance), 'LOW', '≈0.3% industry norm, not in snapshot — 待核实'),
+      rowHtml('Marine insurance', USD.format(insurance), USD.format(insurance), USD.format(insurance), 'LOW', '≈0.3% industry norm, not in snapshot'),
       rowHtml('CIF value', USD.format(cifs[0]), USD.format(cifs[1]), USD.format(cifs[2]), 'LOW', 'Derived from MEDIUM freight bracket + LOW insurance assumption'),
       rowHtml('GCC import duty', USD.format(duties[0]), USD.format(duties[1]), USD.format(duties[2]), 'HIGH', '5% of CIF; alcohol and tobacco are higher'),
       rowHtml(`${dest.country} VAT`, USD.format(vats[0]), USD.format(vats[1]), USD.format(vats[2]), 'HIGH', dest.vatRate === 0 ? 'No VAT currently in the research snapshot' : `${dest.vatRate}% of CIF + duty`),
@@ -1136,7 +1136,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
           USD.format(demHigh),
           'LOW',
           chargeableDays > 0
-            ? `${chargeableDays} chargeable day(s) after the 5-free-day assumption; $50–$300+/day range, 2025 average $150–$300/day — 待核实`
+            ? `${chargeableDays} chargeable day(s) after the 5-free-day assumption; $50–$300+/day range, 2025 average $150–$300/day`
             : 'Within the 5-free-day assumption; no chargeable days',
         ),
       );
