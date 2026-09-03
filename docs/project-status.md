@@ -94,7 +94,9 @@
 - **GCC 走廊级 Sea vs Air 横比 ✅（2026-09-04，commit `471a8cb`）**：`middleeast/sea-vs-air-freight-china-to-gcc`（源码 5,010 词 / 渲染 `<main>` ~4,000 词，12 FAQ）补齐唯一剩余结构性 Gap（原 sea-vs-air 为 UAE-only）。build **586 页零 error**。
 - **GCC 走廊级 Transit Time + Air Freight 横比 ✅（2026-09-04，commit `61c0918`）**：`middleeast/transit-time-china-to-gcc`（渲染 4,015 词，12 FAQ，7 港时效矩阵）+ `middleeast/air-freight-china-to-gcc`（渲染 4,323 词，12 FAQ，空运基准价 + chargeable weight + 机场对）。至此 GCC 走廊级决策/数据页全部补齐（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight）。build **588 页零 error**。
 - **Arabic 走廊页 + 工具/站点页本地化提交 ✅（2026-09-04，commit `ed786a8`）**：`ar/middleeast/` 新增 5 张走廊级 Arabic 版（fcl-vs-lcl / gcc-customs-duty-comparison / sea-vs-air / transit-time / air-freight，FAQ 14/14/12/12/12）+ `ar/` 站点/工具页（about / contact / data / editorial-policy / methodology / get-quote / tools 4 计算器 + index）+ Footer/Header locale-aware prefix 修复。build **604 页零 error**（588→604，+16 页）。**至此 China→GCC + Europe 英文 + Arabic 内容全部交付完毕。**
-- **按国 air 专属页补齐（Qatar + Kuwait）✅（2026-09-04，commit `944d220`）**：`middleeast/air-freight-from-china-to-qatar`（4,446 词）+ `air-freight-from-china-to-kuwait`（4,451 词），各 12 FAQ、9 模块、Article/FAQPage/Organization/BreadcrumbList schema，卡/科空运基准价零杜撰（Not published），build 606 页零 error。剩余 Oman + Bahrain 留待下轮。
+- **按国 air 专属页补齐（Qatar + Kuwait）✅（2026-09-04，commit `944d220`）**：`middleeast/air-freight-from-china-to-qatar`（4,446 词）+ `air-freight-from-china-to-kuwait`（4,451 词），各 12 FAQ、9 模块、Article/FAQPage/Organization/BreadcrumbList schema，卡/科空运基准价零杜撰（Not published），build 606 页零 error。Oman + Bahrain 已补齐（见下条）。
+- **按国 air 专属页补齐（Oman + Bahrain）✅（2026-09-04，commit `ced4a5a`）**：`middleeast/air-freight-from-china-to-oman`（渲染 3,734 词）+ `air-freight-from-china-to-bahrain`（渲染 3,704 词），各 12 FAQ、9 模块、Article/FAQPage/Organization/BreadcrumbList schema，阿曼/巴林空运基准价零杜撰（Not published），build 608 页零 error。**至此 China→GCC 按国 air 专属页全部补齐（沙特/阿联酋/卡塔尔/科威特/阿曼/巴林），英文内容 100% 完成。**
+
 
 4. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain 规划（需 Martin CF 账号）
 5. Directory 继续扩充（当前 103 家，12 verified）→ 接 Qichacha/天眼查/国家企业信用信息公示系统 API 提级 verified

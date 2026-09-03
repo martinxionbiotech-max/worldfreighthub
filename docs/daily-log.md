@@ -722,3 +722,24 @@
   1. 按国 air 专属页剩余：Oman（MCT/Sohar）+ Bahrain（BAH/Khalifa bin Salman）——同样零杜撰处理（通用走廊 $4.3–$11.0/kg MEDIUM + 国别「Not published」）。
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
+
+
+## 2026-09-04（第六轮 — Oman + Bahrain 专属 air freight 页）
+
+- **时间窗口**：凌晨 cron（Asia/Shanghai）
+- **背景**：China→GCC 路线图（Day 8–50）+ GCC 走廊级决策/数据页 + Europe + Arabic 均已交付。上一轮补齐卡塔尔 + 科威特 air 页，剩余 Oman + Bahrain 两页为最后的内容 Gap。本轮收尾。
+- **本轮动作**：
+  1. `ls src/pages/middleeast` 核对：`air-freight-from-china-to-oman.astro`、`air-freight-from-china-to-bahrain.astro` 均不存在，确认是本轮唯一剩余内容 Gap。
+  2. 复用已验证数据（methods.ts 空运 $4.3–$11.0/kg + 3–7 天 + ÷6000/÷5000 计费重；gcc-countries.ts 阿曼 5% 关税/5% VAT/苏哈尔+塞拉莱、巴林 5% 关税/10% VAT/哈利法·本·萨勒曼港；gcc-ports.ts 港情），零新抓取、零杜撰。
+  3. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 全量已验证数据清单；阿曼/巴林空运基准价一律「Not published — request」、严禁借用沙特/阿联酋数字；差异化指令：chargeable weight 陷阱 + SABER/SASO 仅限沙特的辟谣 + 苏哈尔港在霍尔木兹海峡之外 + 巴林法赫德国王大桥进东沙特）→ Codex 写 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信徽标/schema/build/push 均核验）。
+- **Content（commit ced4a5a）**：
+  - `src/pages/middleeast/air-freight-from-china-to-oman.astro`（新建，渲染 3,734 词 / 源码 4,740 词，12 FAQ）——阿曼空运：费率表（通用走廊 $4.3–$11.0/kg MEDIUM + 阿曼格「Not published」）+ 时效表（air 3–7 / express 3–7）+ air vs sea vs express 决策（5% VAT 税收 + ~15 CBM 分界 + 苏哈尔港在霍尔木兹海峡之外的韧性角度）+ 机场/港（PVG/SZX/CAN/HKG → MCT + 苏哈尔 OMSOH + 塞拉莱 OMSLL）+ 计费重算术（÷6000/÷5000）+ 隐藏费用专节 + 合规（5% 关税 CIF + 5% VAT + HS + SABER/SASO 仅限沙特）。
+  - `src/pages/middleeast/air-freight-from-china-to-bahrain.astro`（新建，渲染 3,704 词 / 源码 4,712 词，12 FAQ）——巴林空运：同结构，BAH/哈利法·本·萨勒曼港 + 法赫德国王大桥进东沙特角度 + 10% VAT + 5% 关税 + SABER/SASO 仅限沙特。
+  - 两页均 9 模块齐全 + 「September 2026 updated」徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）+ 交叉链接（走廊 air/sea-vs-air/fcl-vs-lcl/gcc-customs-duty-comparison/hidden-charges/demurrage + 各自 route pillar/cost/ports 页）+ `index.astro` 新增 2 张决策卡。
+- **数据诚信**：阿曼/巴林空运基准价零杜撰（各 6+ 处「Not published — request」）；费率/时效来自 methods.ts（MEDIUM）；关税/VAT/de minimis 来自 gcc-countries.ts（HIGH）；机场对 LOW 运营路由语境；CJK 泄漏 = 0。零杜撰。
+- **QA**：`npm run build` **608 页零 error**（606→608，+2）；FAQ 12/12 条均 ≥8；9 模块齐全；schema（Article+FAQPage+Organization+BreadcrumbList）齐全；工作区干净；`ced4a5a content(middleeast): add Oman and Bahrain air freight pages` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. **China→GCC 按国 air 专属页全部补齐 ✅**（沙特/阿联酋/卡塔尔/科威特/阿曼/巴林）。英文内容 100% 完成。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
