@@ -701,3 +701,24 @@
   2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
   3. 按国 air 专属页（卡/科/阿曼/巴林）——需先补一手空运基准价数据，否则一律标「Not published」（质量红线禁止杜撰）。
 
+
+
+## 2026-09-04（第五轮 — Qatar + Kuwait 专属 air freight 页）
+
+- **时间窗口**：凌晨 cron（Asia/Shanghai）
+- **背景**：China→GCC 路线图（Day 8–50）已 100% 完成；GCC 走廊级 5 张决策/数据页 + Europe 走廊 + Arabic 均已交付。逐页 `ls src/pages/middleeast` + `wc -w` 比对确认唯一剩余内容 Gap = 按国 air 专属页（沙特/阿联酋已有，卡/科/阿曼/巴林缺）。本轮补齐卡塔尔 + 科威特两页（阿曼/巴林留待下轮）。
+- **本轮动作**：
+  1. 复用已验证数据（methods.ts 空运 $4.3–$11.0/kg + 3–7 天时效 + ÷6000/÷5000 计费重；gcc-countries.ts 卡塔尔 5% 关税/0% VAT/哈马德港 QAHMD/多哈 DOH、科威特 5% 关税/0% VAT/舒瓦伊赫 KWSWK + 舒艾巴 KWSHB/科威特 KWI + PAI 认证；gcc-ports.ts 港情），零新抓取、零杜撰。
+  2. 构造自包含 Codex prompt（9 模块公式 + 质量红线 + 全量已验证数据清单；卡/科空运基准价一律「Not published — request」、严禁借用沙特/阿联酋数字）→ Codex 写 2 页 → Codex 自检 + 我独立复核（词数/FAQ/9模块/置信徽标/schema/build/push 均核验）。
+  3. 修正一处环境坑：非交互 SSH 不加载 ~/.profile 导致 `DEEPSEEK_API_KEY` 缺失、Codex 首次启动失败 → 在命令前加 `. ~/.profile` 后重跑成功。
+- **Content（commit 944d220）**：
+  - `src/pages/middleeast/air-freight-from-china-to-qatar.astro`（新建，4,446 词，12 FAQ）——卡塔尔空运：费率表（通用走廊 $4.3–$11.0/kg MEDIUM + 卡塔尔格「Not published」）+ 时效表（air 3–7 / express 3–7 / DDP air ~10–15 天）+ air vs sea vs express 决策（0% VAT 税收优势 + ~15 CBM FCL/LCL 分界）+ 机场/港（PVG/SZX/CAN/HKG → DOH + 哈马德港 QAHMD）+ 计费重算术（÷6000 空运 / ÷5000 快递）+ 隐藏费用专节 + 合规（5% 关税 CIF + 0% VAT + HS + SABER/SASO 仅限沙特）。
+  - `src/pages/middleeast/air-freight-from-china-to-kuwait.astro`（新建，4,451 词，12 FAQ）——科威特空运：同结构，KWI/舒瓦伊赫+舒艾巴 + PAI 认证 + 5% 关税/0% VAT + SABER/SASO 仅限沙特。
+  - 两页均 9 模块齐全 + 「September 2026 updated」徽标 + Schema（Article + FAQPage + Organization + BreadcrumbList 组件）+ 交叉链接（走廊 air/sea-vs-air/fcl-vs-lcl/gcc-customs-duty-comparison/demurrage/hidden-charges + 各自 route pillar/cost/ports 页）+ `index.astro` 新增 2 张决策卡。
+- **数据诚信**：卡/科空运基准价零杜撰（各 12 处「Not published — request」）；费率/时效来自 methods.ts（MEDIUM）；关税/VAT/de minimis 来自 gcc-countries.ts（HIGH）；机场对 LOW 运营路由语境；CJK 泄漏 = 0。零杜撰。
+- **QA**：`npm run build` **606 页零 error**（604→606，+2）；FAQ 12/12 条均 ≥8；9 模块齐全；schema（Article+FAQPage+Organization+BreadcrumbList）齐全；工作区干净；`944d220 content(middleeast): add Qatar and Kuwait air freight pages` 已推 origin/main（`git status -sb` = `## main...origin/main` 同步）。
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号）。
+- **Next**：
+  1. 按国 air 专属页剩余：Oman（MCT/Sohar）+ Bahrain（BAH/Khalifa bin Salman）——同样零杜撰处理（通用走廊 $4.3–$11.0/kg MEDIUM + 国别「Not published」）。
+  2. Cloudflare Pages 部署 + `middleeast` / `europe` 子站 subdomain（需 Martin CF 账号）。
+  3. Directory verified 提级（接企查查/天眼查/国家企业信用信息公示系统 API）。
