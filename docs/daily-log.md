@@ -98,6 +98,33 @@
   2. 下一批：Oman（Route Pillar + Sohar/Salalah + Customs + 5% VAT）→ Bahrain（Route Pillar + Khalifa bin Salman + Customs + 10% VAT）
   3. Cloudflare Pages 部署 + 子站 subdomain 规划
   4. 解决 Saudi de minimis 冲突（ZATCA 一手确认）
+## 2026-09-04（夜间 — GCC 成本页 CJK 标记清理 + 费率数据交叉核查）
+
+- **时间窗口**：凌晨 cron 03:30 (Asia/Shanghai)
+- **服务器资源**：远程 OpenCode healthy v1.18.15，load 0.00 / 内存 2.2G 可用；disk 38G 可用
+- **背景**：cron prompt 仍停留在 Day 1 架构期（已过时）；项目实际已到 588 页、Phase 1+2 全完成。本轮先核对远程真身（远程 HEAD 已领先本地归档，上次核对后新落 GCC transit-time + air-freight corridor 批次）。
+- **核对结论（远程实测）**：
+  - HEAD 从 6a43797 → 8137777（GCC transit-time/air-freight 批次）→ 本轮 111d399
+  - 构建 588 pages zero error（vs 本地快照 534，说明更多内容已远程落地）
+  - src/data/rates.ts 仍为 8 条 amount=0 占位，但已证实是死代码——无任何引用；Freight Cost Calculator 的费率走内联数据，不受此文件影响
+- **发现的真缺陷（可修复）**：3 个英文页面（freight-cost-calculator / hidden-charges-china-to-gcc / demurrage-detention-china-to-gcc）的用户可见 UI 文本中残留开发标记「待核实」，混入英文页面，共约 60 处，损害 EEAT/专业感
+- **Tasks**：
+  1. 全量「待核实」标记清理（英文页约 60 处，两轮 sed：主模式 → 英文「verify with forwarder」+ 尾部变体）
+  2. 费率数据交叉核查（Tavily 多源）：确认 Hormuz/Red Sea 风险溢价下 China→Saudi 20ft $5,085–$6,215 / 40ft $6,615–$8,085（sino-shipping Aug 2026）、China→UAE 20ft $3,294–$4,086 / 40ft $4,688–$6,563；Goodhope Freight 实际报价 Shekou→Jeddah 40hq $3,450、Dammam 20ft $1,550；Drewry WCI 复合约 $4,526/40ft 仍高位；Maersk 远东→中东 PSS $1,000/40ft（7/1 起）+ 多承运人 EFS
+- **Verification**：费率区间至少 3 个独立来源交叉（sino-shipping / goodhope / sz-junqing / ddpchain + Drewry 指数）；数据冲突（$900 vs $6,615 同航线）归因为 base-ocean-only vs all-in + 直航 vs 转运 + 2026 Hormuz 风险溢价摆动，已记录方法论
+- **Content**：无（未新增页面；QUALITY > QUANTITY，修复优先）
+- **Gap Analysis**：确认「Freight Cost Calculator 数据源回填」backlog 项实质已失效（rates.ts 死代码），无需回填；真实价值点在清理泄露标记，费率区间已内联正确
+- **SEO / AIO / EEAT**：移除非英文标记，提升英文页专业度与可信度
+- **Engineering**：两轮 sed 精确替换，diff 60 insertions / 60 deletions（纯标记清理，无净内容变更）
+- **QA**：npm run build 588 pages zero error；git status clean
+- **Build Result**：588 pages clean（3.47s）
+- **Git Commit**：111d399 fix: remove leaked CJK marker from GCC cost/charge pages（已推 origin/main）
+- **Deployment**：未部署（Cloudflare 待 Martin CF 账号，唯一真阻塞）
+- **Remaining / Next Priority**：
+  1. 仍阻塞：Cloudflare Pages 部署（Martin CF 账号）+ Directory verified 提级（企查查/天眼查 API 密钥）
+  2. 非阻塞候选：Freight Cost Calculator 的保险率(0.3%)与 5-free-day 假设可接一手承运人 free-time 数据提级；欧洲时效聚合页；既有高潜页 Content Refresh
+
+
 （模板）
 ## 2026-09-01（夜间，Day 36–50 其它 GCC — Kuwait 收尾批次）
 
