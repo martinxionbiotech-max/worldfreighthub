@@ -295,7 +295,7 @@ const faqs = [
   },
   {
     q: 'Is LCL always cheaper for small shipments?',
-    a: 'Usually, but not automatically. LCL wins below the ~15 CBM planning crossover because you only pay for the cube you use. Above that, an FCL can become cheaper per cubic metre and avoids paying for a shared container with added CFS handling. The comparison must include the LCL minimum charge, destination deconsolidation fee and the FCL empty-box cost, not just the headline rate.',
+    a: 'Below the ~15 CBM planning crossover, LCL\'s $60–$170 per CBM usually beats FCL because you only pay for the cube you use — but the win is not automatic. Above that, an FCL can become cheaper per cubic metre and avoids paying for a shared container with added CFS handling. The comparison must include the LCL minimum charge, destination deconsolidation fee and the FCL empty-box cost, not just the headline rate.',
   },
   {
     q: 'Does FCL arrive faster than LCL?',
@@ -303,11 +303,11 @@ const faqs = [
   },
   {
     q: 'What destination charges should I compare for FCL versus LCL?',
-    a: 'Both modes face THC, documentation, ISPS, customs clearance and brokerage, inland trucking, and demurrage/detention risk. LCL adds destination CFS/deconsolidation and per-CBM handling on top of the same stack. The verified snapshot does not publish these destination dollar figures, so request an itemised schedule from your forwarder for both modes before comparing landed cost.',
+    a: 'Both modes share the same 6 base charges — THC, documentation, ISPS, customs clearance, brokerage and inland trucking — plus demurrage/detention risk. LCL then adds destination CFS/deconsolidation and per-CBM handling on top of that stack. The verified snapshot does not publish these destination dollar figures, so request an itemised schedule from your forwarder for both modes before comparing landed cost.',
   },
   {
     q: 'Do I need an EORI number for both FCL and LCL?',
-    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is mandatory for any EU import, whether the goods arrive in a full container or a shared one, and it must exist before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. The shipment mode does not remove the EORI requirement.',
+    a: 'Yes — the EORI (Economic Operators Registration and Identification) number is mandatory for both of the 2 shipment modes (FCL and LCL) and for every EU import, and it must exist before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. The shipment mode does not remove the EORI requirement.',
   },
   {
     q: 'What is CFS and why does LCL add it?',
@@ -319,7 +319,7 @@ const faqs = [
   },
   {
     q: 'What EU duty and VAT apply to FCL and LCL?',
-    a: 'The mode does not change the tax treatment. The EU Common Customs Tariff applies 0–12% by HS code, with no China–EU free-trade agreement, and import VAT is charged on the duty-inclusive value. Country standard VAT rates run 19% (DE), 20% (UK/FR), 21% (NL/BE/ES), 22% (IT) and 23% (PL). Use the correct TARIC/HS code first, because duty and VAT compound regardless of FCL or LCL.',
+    a: 'Neither mode changes the tax line — EU duty is 0–12% by HS code with no China–EU free-trade agreement, and country standard VAT runs 19–23%, charged on the duty-inclusive value. Country standard VAT rates run 19% (DE), 20% (UK/FR), 21% (NL/BE/ES), 22% (IT) and 23% (PL). Use the correct TARIC/HS code first, because duty and VAT compound regardless of FCL or LCL.',
   },
   {
     q: 'Do SASO, SABER or the GCC 5% tariff apply to Europe?',
@@ -327,7 +327,7 @@ const faqs = [
   },
   {
     q: 'How do I choose between a 20ft and a 40ft for FCL?',
-    a: 'Start with the usable cube and weight, not the nominal capacity. A 20ft holds roughly 28 CBM of usable cargo, while a 40ft holds roughly double and usually costs less per CBM when the volume justifies it. If your shipment is above the ~15 CBM LCL crossover but well below a full 20ft, a 20ft is the natural step up; if it approaches or exceeds a full 20ft, compare the 40ft unit economics plus your weight limit before choosing.',
+    a: 'Start from a 20ft\'s ~28 CBM usable cargo (vs ~33 CBM nominal) and a 40ft\'s roughly double 56 CBM usable, then check the weight limit before choosing. If your shipment is above the ~15 CBM LCL crossover but well below a full 20ft, a 20ft is the natural step up; if it approaches or exceeds a full 20ft, compare the 40ft unit economics plus your weight limit before choosing.',
   },
 ];
 
@@ -409,6 +409,21 @@ const schema = [
         per-CBM ranges, the ~15 CBM planning crossover, hidden destination charges, EU duty and VAT,
         and the EORI gate.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> FCL and LCL cross over around 15 CBM of charged cube — below it LCL's
+            $60–$170 per CBM usually wins, and above it a 20ft's $1,200–$5,200 flat rate is cheaper per
+            cubic metre. A 20ft's ~28 CBM usable capacity sits just above the ~27 CBM volumetric parity
+            point at published midpoints, so the practical switch is the 15–28 CBM zone where CFS minimums
+            and deconsolidation fees decide. Both modes share the same 28–33 day sea window (25–45 day
+            planning range), while a 40ft at roughly 56 CBM usable (~2× the 20ft's 28 CBM) becomes the
+            better per-CBM buy as volume nears a full box.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. The 20ft/40ft and
         LCL per-CBM ranges come from the WorldFreightHub Europe route data (MEDIUM), while capacity

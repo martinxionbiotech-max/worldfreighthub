@@ -23,7 +23,7 @@ const rows = europeRoutes.map((route) => ({
 const faqs = [
   {
     q: 'Which China port should I ship from?',
-    a: 'Shanghai has the densest direct sailings to Northwest Europe. Ningbo-Zhoushan is a strong Zhejiang alternative, often slightly cheaper. Shenzhen and Guangzhou serve the Pearl River Delta, while Qingdao and Tianjin are the natural origins for North China. Choose the port closest to your factory to minimise inland trucking.',
+    a: 'The 7 origin ports split by region — Shanghai and Ningbo-Zhoushan for East China, Shenzhen and Guangzhou for the Pearl River Delta, Qingdao and Tianjin for the North, Xiamen for the Southeast. Shanghai has the densest direct sailings to Northwest Europe, while Ningbo-Zhoushan is a strong Zhejiang alternative often slightly cheaper. Choose the port closest to your factory to minimise inland trucking.',
   },
   {
     q: 'How long does a China-to-Europe route take?',
@@ -31,11 +31,11 @@ const faqs = [
   },
   {
     q: 'Do these routes go direct or transship?',
-    a: 'Both, and it splits by geography. The Northwest European range (Rotterdam, Hamburg, Antwerp) has the most direct China calls. Mediterranean ports (Valencia, Genoa) usually transship via a hub like Tanger Med or Malta. Felixstowe is a separate UK regime since Brexit and needs its own clearance.',
+    a: 'Of the 8 destination ports, the 3 northern-range gateways (Rotterdam, Hamburg, Antwerp) take the densest direct China calls, while the 2 Mediterranean gateways (Valencia, Genoa) usually transship via a hub like Tanger Med or Malta. Felixstowe is a separate UK regime since Brexit and needs its own clearance.',
   },
   {
     q: 'Why do China-to-Europe transit times vary so much?',
-    a: 'One dominant cause: Red Sea routing. When carriers reroute around the Cape of Good Hope, transit stretches by 10–14 days and rates spike with the extra fuel and capacity. Add Mediterranean transshipment and seasonal congestion, and the spread between a fast direct sailing and a slow transshipped one is wide — which is why the ranges here are broad.',
+    a: 'Cape-of-Good-Hope rerouting stretches transit by 10–14 days versus the pre-crisis Suez routing, and Mediterranean transshipment plus seasonal congestion then widen the gap between a fast direct and a slow transshipped sailing. That is why the ranges here are broad — the 10–14 day Cape penalty alone is the largest single variable.',
   },
 ];
 
@@ -87,6 +87,19 @@ const schema = [
       </p>
     </div>
   </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> Seven China loading ports × eight European gateways produce a 56-pair route
+        matrix (7 × 8), so a China-to-Europe lane decision is really a 56-option search before inland legs are
+        added. Direct Northwest-Europe sea sailings typically run 28–33 days while China–Europe rail to
+        Germany/Poland runs ~18–22 days, cutting 6–15 days off the ocean window at roughly 2–3× the sea rate.
+        Mediterranean destinations run 32–33 days typical (Valencia 32, Genoa 33) versus Rotterdam's 28, a
+        4–5 day penalty that usually includes a Tanger Med or Malta transshipment.
+      </p>
+    </blockquote>
+  </section>
 
   <section class="section container">
     <h2>Route directory</h2>

@@ -317,7 +317,7 @@ const costRows = [
 const faqs = [
   {
     q: 'Which is cheaper, sea freight or air freight from China to Europe?',
-    a: 'Sea is the cheaper mode by a wide margin. The WorldFreightHub Europe route data publishes sea ranges of $1,200–$5,200 for a 20ft, $1,600–$7,200 for a 40ft, and $60–$170 per CBM for LCL across the eight main gateways. Air dollar figures were not published in the verified snapshot, so air must be requested as a quote — but it is almost always much dearer than sea.',
+    a: 'Sea is cheaper by a wide margin — published Europe ranges run $1,200–$5,200 for a 20ft, $1,600–$7,200 for a 40ft, and $60–$170 per CBM for LCL across the eight main gateways. Air dollar figures were not published in the verified snapshot, so air must be requested as a quote — but it is almost always much dearer than sea.',
   },
   {
     q: 'How much longer is sea freight than air freight?',
@@ -325,31 +325,31 @@ const faqs = [
   },
   {
     q: 'When should I choose air freight over sea freight?',
-    a: 'Choose air when the value of faster delivery exceeds the air freight premium: time-critical goods, light or high-value cargo, perishables, or a shipment where a stock-out, launch date or production deadline would cost more than the freight saving. For heavy, low-value or price-sensitive cargo, sea remains the default.',
+    a: 'Air cuts transit from the 28–33 day sea window down to roughly 3–8 days — a 20–30 day saving — so choose air when that recovered time is worth more than the freight premium. Time-critical goods, light or high-value cargo, perishables, or a shipment where a stock-out, launch date or production deadline would cost more than the freight saving justify air; for heavy, low-value or price-sensitive cargo, sea remains the default.',
   },
   {
     q: 'How do I calculate the value-of-time break-even between sea and air?',
-    a: 'Compare the inventory financing cost against the air premium. The formula is: cargo value × annual cost of capital × (sea transit days − air transit days) ÷ 365. Add the cost of a missed deadline or stock-out to the sea side of the equation. If the implied time-value plus risk exceeds the air premium, air is economically justified even though its freight line is dearer.',
+    a: 'Value-of-time break-even is cargo value × annual cost of capital × (sea transit days − air transit days) ÷ 365 — with sea at 28–33 days and air at roughly 3–8 days, that gap is 20–30 days of financing to compare against the air premium. Add the cost of a missed deadline or stock-out to the sea side of the equation. If the implied time-value plus risk exceeds the air premium, air is economically justified even though its freight line is dearer.',
   },
   {
     q: 'Are air freight rates published in the WorldFreightHub snapshot?',
-    a: 'No. The verified snapshot publishes sea FCL/LCL ranges and sea/rail transit, but not air dollar rates or air transit. Air lines are marked LOW with a request-for-quote note, so do not treat any generic per-kg figure as verified. Ask the airline or air forwarder for an all-in quote with fuel, security and handling.',
+    a: 'Air dollar rates and air transit are not published in the verified snapshot — the only published dollar figures are sea FCL ($1,200–$5,200 for a 20ft, $1,600–$7,200 for a 40ft) and LCL ($60–$170 per CBM). Air lines are marked LOW with a request-for-quote note, so do not treat any generic per-kg figure as verified. Ask the airline or air forwarder for an all-in quote with fuel, security and handling.',
   },
   {
     q: 'Does air freight avoid the Red Sea / Cape routing issue?',
-    a: 'Yes. Air freight is not routed through the Red Sea or around the Cape, so it removes that specific geopolitical delay from the timeline. The trade-off is cost: the verified snapshot does not publish air rates, but the price premium over sea is the reason air is used only when time is the binding constraint.',
+    a: 'Yes — air is not routed through the Red Sea or around the Cape, so it removes the 10–14 day Cape reroute penalty that sea freight carries. The trade-off is cost: the verified snapshot does not publish air rates, but the price premium over sea is the reason air is used only when time is the binding constraint.',
   },
   {
     q: 'What hidden charges should I compare for sea versus air?',
-    a: 'Both modes face origin and destination handling, documentation, customs clearance and brokerage, and inland trucking. Sea adds THC, ISPS, the Red Sea/Cape surcharge and demurrage/detention risk; air adds airport screening and airline weight/volume charges. Destination dollar figures are not published in the verified snapshot, so request an itemised schedule for both modes before comparing.',
+    a: 'Both modes share the same 6 base charges — origin handling, destination handling, documentation, customs clearance, brokerage and inland trucking — and sea then adds THC, ISPS, the Red Sea/Cape surcharge and demurrage/detention risk. Air adds airport screening and airline weight/volume charges. Destination dollar figures are not published in the verified snapshot, so request an itemised schedule for both modes before comparing.',
   },
   {
     q: 'Do I need an EORI number for sea and air freight?',
-    a: 'Yes. The EORI is mandatory for any EU import regardless of transport mode and must be registered before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. Air does not remove the EORI requirement — it only shortens the timeline in which to have it ready.',
+    a: 'Yes — the EORI is mandatory for both of the 2 transport modes (sea and air) and for every EU import, and it must be registered before arrival. For the United Kingdom, use a GB EORI under the separate post-Brexit customs regime. Air does not remove the EORI requirement — it only shortens the timeline in which to have it ready.',
   },
   {
     q: 'Does air freight change EU duty, VAT or CE/REACH requirements?',
-    a: 'No. The mode does not change the tax or conformity treatment. The EU Common Customs Tariff applies 0–12% by HS code, import VAT is charged on the duty-inclusive value, CE marking applies to regulated products, and REACH applies to chemical substances. The same TARIC/HS classification drives the duty and VAT for both sea and air.',
+    a: 'No — the mode changes none of the 4 obligations: EU Common Customs Tariff at 0–12% by HS code, import VAT on the duty-inclusive value, CE marking for regulated products, and REACH for chemical substances. The same TARIC/HS classification drives the duty and VAT for both sea and air.',
   },
   {
     q: 'Is rail a middle option between sea and air?',
@@ -443,6 +443,20 @@ const schema = [
         ranges, the 28–33 day Cape window, the value-of-time tiebreaker, hidden charges, EU duty and
         VAT, and the EORI gate.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Sea to Europe runs a 28–33 day typical window (25–45 day planning
+            range), while air is roughly 3–8 days — a 20–30 day gap that is the entire value-of-time
+            decision. On freight cost, sea is published at $1,200–$5,200 for a 20ft and $60–$170 per CBM
+            LCL, while air dollar rates are unpublished and must be quoted, so the premium is confirmed
+            only per shipment. Rail splits the difference at ~18–22 days, cutting 6–15 days off sea at
+            roughly 2–3× the sea rate, so Europe is the one corridor with a true third mode.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. The sea FCL/LCL
         ranges and sea/rail transit come from the WorldFreightHub Europe route data (MEDIUM), while air
