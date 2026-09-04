@@ -8,6 +8,10 @@ import { routes } from '../../data/routes';
 import { portName, countryName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
 
+const routeCount = routes.length;
+const originCount = new Set(routes.map((route) => route.originPort)).size;
+const destinationCount = new Set(routes.map((route) => route.destPort)).size;
+
 const rows = routes.map((route) => ({
   route: {
     href: `/routes/${route.slug}/`,
@@ -23,7 +27,7 @@ const rows = routes.map((route) => ({
 const faqs = [
   {
     q: 'Which China port should I ship from?',
-    a: 'Shanghai is the default for East China with the densest sailings. Ningbo-Zhoushan is a strong alternative for Zhejiang cargo, often slightly cheaper. Shenzhen (Yantian) is the natural origin for South China and the Pearl River Delta. Choose the port closest to your factory to minimise inland trucking.',
+    a: 'Among 3 origin ports, Shanghai is the default for East China with the densest sailings. Ningbo-Zhoushan is a strong alternative for Zhejiang cargo, often slightly cheaper, and Shenzhen (Yantian) is the natural South China origin. Choose the port closest to your factory to minimise inland trucking.',
   },
   {
     q: 'How long does a China-to-GCC route take?',
@@ -31,7 +35,7 @@ const faqs = [
   },
   {
     q: 'Do these routes go direct or transship?',
-    a: 'Both. Jebel Ali, Jeddah and Dammam have the most direct calls; the smaller Gulf markets (Hamad, Shuwaikh, Khalifa bin Salman) are often served by transshipment via Singapore or a regional hub. Direct sailings are faster and less likely to be delayed.',
+    a: 'Of the 7 destination ports, Jebel Ali, Jeddah and Dammam have the most direct calls; the smaller Gulf markets (Hamad, Shuwaikh, Khalifa bin Salman) are often served by transshipment via Singapore or a regional hub. Direct sailings are faster and less likely to be delayed.',
   },
   {
     q: 'Why do transit times vary so much?',
@@ -79,6 +83,11 @@ const schema = [
         Main corridors from Shanghai, Ningbo-Zhoushan and Shenzhen to major Gulf
         ports, with indicative transit times and the routing risks behind them.
       </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> The route table is {routeCount} China-to-GCC lanes built from {originCount} origins × {destinationCount} destinations. Of the {destinationCount} destinations, 3 (Jebel Ali, Jeddah and Dammam) get the most direct calls, while the smaller markets usually transship and add 5–10 days. The practical win is the highest-density lanes: Shanghai/Ningbo to Jebel Ali or Dammam, where direct sailings run 14–20 days port-to-port.
+        </p>
+      </blockquote>
     </div>
   </div>
 

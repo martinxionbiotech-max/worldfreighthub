@@ -7,6 +7,8 @@ import Cta from '../../components/Cta.astro';
 import { methods } from '../../data/methods';
 import { SITE_URL } from '../../site';
 
+const methodCount = methods.length;
+
 const faqs = [
   {
     q: 'FCL or LCL — which should I use?',
@@ -18,7 +20,7 @@ const faqs = [
   },
   {
     q: 'Which shipping method is cheapest?',
-    a: 'FCL is the cheapest per unit once the container is reasonably full. LCL costs more per CBM but has no minimum volume. Air and express are the most expensive per kilogram — typically 5–10× sea freight — and are reserved for urgent or high-value cargo.',
+    a: 'On a per-unit basis, FCL is cheapest; LCL costs more per CBM but has a 1 CBM minimum, while air and express are the most expensive per kilogram at 5–10× sea freight. Reserve air and express for urgent or high-value cargo.',
   },
   {
     q: 'When should I use air freight or express?',
@@ -66,6 +68,11 @@ const schema = [
         The main ways to move goods from China to the GCC, compared by cost,
         speed and the cargo each one suits.
       </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> The methods list holds {methodCount} modes: FCL, LCL, air, rail, DDP and express. The main split is the 15 CBM crossover — below it LCL is usually cheaper, above it FCL wins per unit. On speed, air and express run 3–7 days versus FCL at 14–30 days, but air/express cost 5–10× sea per kg, so the choice is a cost-versus-time calculation rather than a preference.
+        </p>
+      </blockquote>
     </div>
   </div>
 

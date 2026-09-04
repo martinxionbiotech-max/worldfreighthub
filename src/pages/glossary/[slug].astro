@@ -14,9 +14,12 @@ export function getStaticPaths() {
 
 const { term } = Astro.props;
 
+const termCount = glossary.length;
+
 const relatedTerms = term.related
   .map((slug) => glossary.find((t) => t.slug === slug))
   .filter((t) => t !== undefined);
+const relatedCount = relatedTerms.length;
 
 const schema = [
   {
@@ -69,6 +72,11 @@ const schema = [
       <h1>{term.term}</h1>
       <p class="lead">{term.definition}</p>
       <span class="badge">{term.category}</span>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> This term is one of {termCount} definitions in the China–GCC freight glossary, so the signal is the number it changes — not the acronym. It sits in the {term.category} category and links to {relatedCount} related terms for adjacent freight math. Use the example below to turn the definition into a before/after calculation before you quote or clear cargo.
+        </p>
+      </blockquote>
     </div>
   </div>
 

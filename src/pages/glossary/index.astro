@@ -5,6 +5,8 @@ import Card from '../../components/Card.astro';
 import { glossary } from '../../data/glossary';
 import { SITE_URL } from '../../site';
 
+const termCount = glossary.length;
+
 const schema = [
   {
     type: 'ItemList',
@@ -34,6 +36,11 @@ const schema = [
       <p class="lead">
         Key terms used across the China–GCC freight corridor.
       </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> This glossary defines {termCount} freight and customs terms across the China–GCC corridor. The terms that change cost most are chargeable weight (÷6000 vs ÷5000), demurrage/detention, and landed-cost multipliers like Saudi Arabia at ×1.2075 versus Qatar at ×1.05. The reason each term matters is the number it changes — not the acronym.
+        </p>
+      </blockquote>
     </div>
   </div>
 

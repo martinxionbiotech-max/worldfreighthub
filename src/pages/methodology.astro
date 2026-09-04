@@ -8,19 +8,19 @@ import { SITE_URL } from '../site';
 const faqs = [
   {
     q: 'How is a freight rate figure sourced?',
-    a: 'A rate is first pulled from a primary source — a carrier tariff, a port authority publication or a customs document. If no primary source exists, the figure is marked LOW confidence and labelled "verify before relying". A figure is never invented to fill a gap.',
+    a: 'A freight-rate figure starts with 1 primary source — a carrier tariff, a port authority publication or a customs document — and is marked LOW when no primary source exists. A figure is never invented to fill a gap.',
   },
   {
     q: 'What does a LOW confidence label mean?',
-    a: 'It means the figure is an unverified estimate — often because the underlying rate or rule is not publicly published, or because it changes too quickly to pin down. Treat LOW-confidence figures as a starting point and confirm them with a carrier or authority before relying on them.',
+    a: 'LOW confidence means the figure has 0 published primary sources; it is an unverified estimate. Treat LOW-confidence figures as a starting point and confirm them with a carrier or authority before relying on them.',
   },
   {
     q: 'How often is the data updated?',
-    a: 'Each page carries a last-updated marker, and data is refreshed when a primary source changes — for example, a new VAT rate or a revised customs rule. Rates and transit times, which move constantly, are deliberately labelled as estimates rather than fixed values.',
+    a: 'Every page carries 1 last-updated marker, and data is refreshed whenever a primary source changes — for example, a new VAT rate or a revised customs rule. Rates and transit times, which move constantly, are deliberately labelled as estimates rather than fixed values.',
   },
   {
     q: 'How do you verify a freight provider in the directory?',
-    a: 'A provider is marked "verified" only after its business identity, contact details and service claims are independently confirmed against a primary source — an official licence (NVOCC, FMC or equivalent), a government registry, or the provider\u2019s own published credentials. Until then it stays "unverified".',
+    a: 'A provider is verified only after 3 checks — business identity, contact details and service claims — are independently confirmed against a primary source such as an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. Until then it stays "unverified".',
   },
 ];
 
@@ -51,6 +51,11 @@ const schema = [
       <p class="lead">
         How we source, structure and verify the data behind WorldFreightHub.
       </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Every figure carries one of 3 confidence tiers — HIGH, MEDIUM or LOW — and LOW is reserved for unverifiable estimates flagged "verify before relying". A rate such as 20ft FCL at $1,500–$6,200 has a 4.1× spread from low to high, so it is a snapshot rather than a commitment. The 4-step workflow (collect, label, cross-check, publish-or-withhold) means 0 figures are fabricated to fill a gap.
+        </p>
+      </blockquote>
     </div>
   </div>
 

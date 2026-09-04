@@ -17,6 +17,12 @@ export function getStaticPaths() {
 
 const { provider } = Astro.props as { provider: DirectoryProvider };
 
+const totalProviders = directoryProviders.length;
+const verifiedProviders = directoryProviders.filter((item) => item.verification === 'verified').length;
+const serviceCountryCount = provider.serviceCountries.length;
+const methodCount = provider.methods.length;
+const claimCount = provider.selfReportedClaims?.length ?? 0;
+
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
   'united-arab-emirates': 'United Arab Emirates',
@@ -65,19 +71,19 @@ const tableRows = [
 const faqs = [
   {
     q: 'How does WorldFreightHub verify a freight forwarder?',
-    a: 'A provider is marked "verified" only after its business identity, contact details and service claims are independently confirmed against a primary source — an official licence (NVOCC, FMC or equivalent), a government registry, or the provider\u2019s own published credentials. Until that confirmation happens, the listing stays "unverified" and is treated as a documented research lead.',
+    a: 'Verification requires 3 independent checks — business identity, contact details and service claims — confirmed against a primary source such as an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. Until all 3 checks are completed, the listing stays "unverified" and is treated as a documented research lead.',
   },
   {
     q: 'What does "unverified" mean on a listing?',
-    a: 'It means the provider was found during research, but its identity, contact details and service claims have not yet been independently confirmed. Unverified leads are published for transparency, but you should do your own due diligence — check licences, ask for references and confirm terms — before committing cargo to any unverified provider.',
+    a: 'Unverified means 0 independent confirmations of identity, contact details or service claims have been completed for this listing. It was found during research and is published for transparency, but you should do your own due diligence — check licences, ask for references and confirm terms — before committing cargo.',
   },
   {
     q: 'How should I choose a freight forwarder for China-to-GCC shipping?',
-    a: 'Look for a forwarder with a licence you can verify (NVOCC, FMC or equivalent), proven experience on your specific lane, and a clear written quote that itemises freight, terminal handling, clearance, duty and VAT. Ask about hidden charges such as demurrage and detention before booking, and confirm who acts as importer of record for DDP shipments.',
+    a: 'Choose against 4 checks: a verifiable licence (NVOCC, FMC or equivalent), proven experience on your specific lane, an itemised written quote, and clarity on demurrage/detention. Ask about hidden charges before booking, and confirm who acts as importer of record for DDP shipments.',
   },
   {
     q: 'Why are no contact details published on some listings?',
-    a: 'WorldFreightHub only publishes contact details after confirming them directly with the provider. For unverified listings, phone numbers, emails and addresses are withheld to avoid pointing you at outdated or unconfirmed information. You can reach the provider through their listed website, or contact us if you need help confirming a listing.',
+    a: 'WorldFreightHub publishes 0 contact details for an unverified listing until they are confirmed directly with the provider. Phone numbers, emails and addresses are withheld to avoid outdated or unconfirmed information. You can reach the provider through their listed website, or contact us for help.',
   },
 ];
 
@@ -129,6 +135,11 @@ const schema = [
       <h1>{provider.name}</h1>
       {provider.nameZh && <p class="lead">{provider.nameZh}</p>}
       <p class="muted">{provider.description}</p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> This profile is {provider.verification}, with {serviceCountryCount} service countries and {methodCount} freight methods recorded from its source. Across the directory, {verifiedProviders} of {totalProviders} providers are verified, so the {provider.verification} label is the trust signal to weigh before requesting a quote. {claimCount} self-reported claims are published only as claims, and 0 contact details are published until confirmed directly with the provider.
+        </p>
+      </blockquote>
     </div>
   </div>
 

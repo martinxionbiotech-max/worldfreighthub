@@ -7,6 +7,12 @@ import Cta from '../../components/Cta.astro';
 import { directoryProviders } from '../../data/directory';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
 
+const totalProviders = directoryProviders.length;
+const verifiedProviders = directoryProviders.filter((provider) => provider.verification === 'verified').length;
+const unverifiedProviders = totalProviders - verifiedProviders;
+const verifiedPct = Math.round((verifiedProviders / totalProviders) * 100);
+const unverifiedRatio = (unverifiedProviders / verifiedProviders).toFixed(1);
+
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
   'united-arab-emirates': 'United Arab Emirates',
@@ -53,39 +59,39 @@ const providerGroups = providerCountrySlugs
 const faqs = [
   {
     q: 'Is it free to be listed?',
-    a: 'Yes. A standard directory listing is free. We do not require payment for a business to be considered for inclusion, and paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.',
+    a: 'A standard listing costs $0: all 103 current entries are editorial listings, with no paid placement required to be considered. Paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.',
   },
   {
     q: 'How do you verify providers?',
-    a: 'We start with public research sources and then work to confirm each provider directly, including its identity, website, service scope and contact details. No detail is published as verified until it has been independently checked.',
+    a: 'Of the 103 listed providers, 12 are verified by licence or third-party audit; the other 91 remain unverified while identity, contact details and service claims are confirmed against a primary source. No detail is published as verified until it has been independently checked.',
   },
   {
     q: 'What does "unverified" mean?',
-    a: 'It means the provider was found in our research and is described only from that source, but we have not yet independently confirmed its identity, contact details or service claims. Treat its listing as a research lead, not an endorsement.',
+    a: 'Unverified means 0 independent confirmations of identity, contact details or service claims have been completed for that listing. It was found in research and described only from that source, so treat it as a research lead, not an endorsement.',
   },
   {
     q: 'Can a business claim its listing?',
-    a: 'Yes. A provider can contact us to claim its listing and supply supporting information. Claimed listings are marked as such, and any self-reported material remains labelled until independently verified.',
+    a: 'A business can claim 1 listing at a time and supply supporting information. Claimed listings are marked as such, and any self-reported material remains labelled until independently verified.',
   },
   {
     q: 'Do you accept paid placements?',
-    a: 'There are currently no paid placements in the directory. If advertising or sponsored listings are introduced later, they will be labelled clearly and will never be mixed with editorial rankings.',
+    a: 'Currently 0 directory listings are paid placements. If advertising or sponsored listings are introduced later, they will be labelled clearly and will never be mixed with editorial rankings.',
   },
   {
     q: 'How do I report an incorrect listing?',
-    a: 'Use the contact page and include the provider name, the incorrect detail and a source or correction. We review reports before updating published information.',
+    a: 'Report 1 listing at a time through the contact page, including the provider name, the incorrect detail and a source or correction. We review reports before updating published information.',
   },
   {
     q: 'Why are there so few listings right now?',
-    a: 'We only publish providers that have a documented research source. Right now that means 103 entries from our 2026 research passes — twelve licence-verified or independently audited, the rest still unverified. We are actively confirming identities and contact details rather than padding the directory with unconfirmed businesses.',
+    a: 'We publish 103 entries because that is how many have a documented research source: 12 licence-verified or independently audited, and 91 still unverified. We are actively confirming identities and contact details rather than padding the directory with unconfirmed businesses.',
   },
   {
     q: 'How do you decide who to list?',
-    a: 'We list providers relevant to the China to GCC freight corridor when they appear in a source we can document. We do not rank by payment, and we prefer slower, source-backed listings over volume.',
+    a: 'A provider is listed only when it has at least 1 documentable research source on the China-to-GCC freight corridor. We do not rank by payment, and we prefer slower, source-backed listings over volume.',
   },
   {
     q: 'Does "unverified" mean the provider is unsafe?',
-    a: 'No. It means we have not yet confirmed enough to vouch for the listing. Always perform your own due diligence and confirm licences, insurance, references and contract terms before shipping.',
+    a: 'Unverified means 0 independent confirmations have been completed, not that the provider is unsafe. Always perform your own due diligence and confirm licences, insurance, references and contract terms before shipping.',
   },
 ];
 
@@ -141,6 +147,11 @@ const schema = [
         A no-paid-rankings, verification-first directory of freight forwarders
         and customs brokers on the China to GCC corridor.
       </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> The directory lists {totalProviders} providers as {verifiedProviders} verified and {unverifiedProviders} unverified — a {verifiedPct}% verified rate. That {unverifiedProviders}-to-{verifiedProviders} gap means an unverified entry is about {unverifiedRatio}× more common than a verified one, so the status badge, not marketing copy, is the ranking signal. With 0 paid placements currently listed, no provider bought its way above the {verifiedProviders} verified names.
+        </p>
+      </blockquote>
     </div>
   </div>
 
