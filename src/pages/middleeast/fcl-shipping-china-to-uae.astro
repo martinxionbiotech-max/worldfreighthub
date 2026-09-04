@@ -300,7 +300,7 @@ const costRows = [
 const faqs = [
   {
     q: 'How much does FCL shipping from China to the UAE cost?',
-    a: 'The research snapshot did not publish verified UAE FCL container rates, so request an all-in 20GP/40GP/40HQ quote rather than relying on a published number. For context, LCL is AED 880–980 per CBM and air is AED 20–23.5 per kg, both LOW-confidence market figures. These are collected public figures, not carrier quotes — verify before booking.',
+    a: 'The verified corridor benchmark is 20ft $1,500–$6,200 and 40ft $1,900–$8,100 (MEDIUM), but the snapshot publishes no UAE-specific FCL rate, so request an all-in 20GP/40GP/40HQ quote. For context, LCL is AED 880–980 per CBM and air is AED 20–23.5 per kg, both LOW-confidence market figures. These are collected public figures, not carrier quotes — verify before booking.',
   },
   {
     q: 'How long does FCL take from China to the UAE?',
@@ -312,35 +312,35 @@ const faqs = [
   },
   {
     q: '20ft or 40ft — which is cheaper per CBM?',
-    a: 'For volume cargo, the 40ft normally wins on unit cost because it carries roughly double the 20ft cube for materially less than double the rate, so per-CBM cost falls once you exceed about 30–33 CBM. For heavy, dense cargo the 20ft is usually the better unit because its payload is higher. This is general container economics, LOW confidence without a route-specific quote — compare per-CBM landed cost, not the headline rate.',
+    a: 'The 40ft wins per CBM once volume passes about 30–33 CBM, because a 40GP carries roughly 67 CBM versus 33 CBM in a 20GP for materially less than 2× the rate. For heavy, dense cargo the 20ft is usually the better unit because its payload is higher. This is general container economics, LOW confidence without a route-specific quote — compare per-CBM landed cost, not the headline rate.',
   },
   {
     q: 'FCL or LCL — which should I book for the UAE?',
-    a: 'Choose FCL when your cargo fills most of a container, is heavy, fragile, high-value, or needs a single clearance entry. Choose LCL when the volume is small and you want to pay only for the space used. Use the LCL per-CBM figure against an FCL all-in quote for your actual volume; as volume rises there is usually a crossover where FCL becomes cheaper per CBM.',
+    a: 'FCL beats LCL above ~15 CBM, for heavy, fragile, high-value or single-entry cargo; below ~15 CBM LCL’s per-CBM pricing usually wins. Use the LCL per-CBM figure against an FCL all-in quote for your actual volume; as volume rises there is usually a crossover where FCL becomes cheaper per CBM.',
   },
   {
     q: 'What is VGM and when do I submit it?',
-    a: 'VGM is the Verified Gross Mass of the packed container, required under the SOLAS rule so the vessel can plan stowage safely. The shipper must declare the verified weight before the carrier’s VGM cutoff; submit it early because a missed cutoff means the container is rolled to the next vessel.',
+    a: 'VGM — Verified Gross Mass — is one required declaration under SOLAS, and a missed cutoff means the container rolls to the next vessel. Submit it before the carrier’s VGM cutoff.',
   },
   {
     q: 'What weight limits apply to an FCL shipment to the UAE?',
-    a: 'Each container has a maximum gross mass and payload rating, but the operative limit is often the road-legal weight on the UAE leg. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
+    a: 'The operative limit is usually UAE road-legal weight, not the container rating — a 20GP is nominally rated 28,200 kg payload and a 40GP 26,500 kg. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
   },
   {
     q: 'Can I ship dangerous goods in an FCL container to the UAE?',
-    a: 'Yes, but only with the correct IMDG class, UN number, proper shipping name, packing group, dangerous goods declaration and container packing certificate, plus the required placards. Undeclared dangerous goods are the classic cause of port rejections, so declare the commodity accurately on the booking and the bill of lading.',
+    a: 'Dangerous goods can move FCL only with 7 items — IMDG class, UN number, proper shipping name, packing group, DGD, container packing certificate and placards. Undeclared dangerous goods are the classic cause of port rejections, so declare the commodity accurately on the booking and the bill of lading.',
   },
   {
     q: 'Which UAE port should I use for FCL — Jebel Ali, Khalifa or Sharjah?',
-    a: 'Jebel Ali is the Middle East’s largest container port and the default China import and regional transshipment gateway. Khalifa Port Abu Dhabi suits Abu Dhabi consignees and industrial/project cargo. Port Khalid in Sharjah suits the northern emirates. Match the discharge port to your consignee and confirm the inland trucking cost.',
+    a: 'Three UAE discharge ports map to consignee: Jebel Ali for most China imports, Khalifa Port for Abu Dhabi, and Port Khalid Sharjah for the northern emirates. Match the discharge port to your consignee and confirm the inland trucking cost.',
   },
   {
     q: 'How does Jebel Ali transshipment help my shipment?',
-    a: 'As the region’s largest container port and a DP World hub, Jebel Ali is a natural relay point for cargo moving onward to the GCC, Middle East, Africa and the Indian subcontinent. Specific relay schedules and volumes were not published in the research snapshot, so confirm the transshipment window and any handling with your carrier if Jebel Ali is a waypoint rather than the final stop.',
+    a: 'Jebel Ali’s relay role adds 1 handling touch, but the snapshot publishes zero relay schedule or volume, so confirm the transshipment window and any handling with your carrier if Jebel Ali is a waypoint rather than the final stop.',
   },
   {
     q: 'How do demurrage and detention work on an FCL container?',
-    a: 'Demurrage is charged by the terminal when the container stays inside the port beyond free time after discharge; detention is charged by the carrier when the container stays outside the port beyond free time. Avoid both by filing the UAE import declaration early, keeping the invoice/packing list/BL ready, and booking trucking before discharge.',
+    a: 'Demurrage and detention are two separate clocks — terminal (inside the port) and carrier (outside the port) — and the only published UAE planning rule is to file early and book trucking before discharge.',
   },
 ];
 
@@ -422,6 +422,9 @@ const schema = [
         transit windows, when to stay full-container instead of sharing LCL space, and the load-side
         rules — VGM, weight limits, dangerous goods and palletised versus floor-loaded.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> FCL to the UAE runs the corridor’s 20ft $1,500–$6,200 and 40ft $1,900–$8,100 brackets at a typical 21-day Shanghai→Jebel Ali sailing (15–30 day range) — the highest schedule density and lowest ocean cost in the GCC. The 20ft-vs-40ft crossover is about 30–33 CBM: a 40GP carries roughly 67 CBM versus 33 CBM in a 20GP for materially less than 2× the rate, so per-CBM cost falls once volume exceeds the 20ft cube. Below ~15 CBM, FCL is paying for empty space against LCL’s $20–$180/CBM, so the switch rule is CBM first, box size second.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and container-planning figure as indicative, verify with carrier

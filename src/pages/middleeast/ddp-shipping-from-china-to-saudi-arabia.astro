@@ -417,19 +417,19 @@ const hiddenFeeRows = [
 const faqs = [
   {
     q: 'What does DDP shipping from China to Saudi Arabia include?',
-    a: 'A true DDP quote should cover China export clearance, international transport, Saudi import clearance, import duty, VAT, SABER conformity fees and last-mile delivery to the named address. In practice, scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
+    a: 'A true DDP quote must include 6 cost blocks — China export clearance, freight, Saudi clearance, duty, VAT and last-mile — plus SABER conformity fees. In practice, scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
   },
   {
     q: 'Who pays Saudi import duty and VAT under DDP?',
-    a: 'The seller pays them as part of the delivered duty paid arrangement. Saudi VAT is 15% on the CIF value plus customs duty, and the baseline import duty is 5% of CIF under the GCC Common External Tariff. The forwarder normally settles these on the seller’s behalf during Saudi clearance.',
+    a: 'The seller pays both lines: 15% VAT on CIF+duty plus 5% duty on CIF, a ×1.2075 stack. The forwarder normally settles these on the seller’s behalf during Saudi clearance.',
   },
   {
     q: 'Does DDP include SABER PC and SC fees?',
-    a: 'It should, but inclusion is not automatic. A Product Conformity Certificate (PC) is issued per product and is usually valid for about one year, while a Shipment Conformity Certificate (SC) is issued per shipment. Since 1 January 2025 the SC must be obtained before cargo arrival. Ask the forwarder to confirm that both PC and SC fees are inside the DDP price.',
+    a: 'PC/SC inclusion is not automatic: a PC is 1 product certificate (about 1 year) and an SC is 1 shipment certificate required before arrival from 1 January 2025. Ask the forwarder to confirm that both PC and SC fees are inside the DDP price.',
   },
   {
     q: 'What is the difference between DDP, DDU/DAP and EXW/FOB?',
-    a: 'DDP puts the most responsibility on the seller: the seller clears export, pays freight, handles Saudi import clearance, and pays duty and VAT. DAP (the Incoterms 2020 successor to the old DDU term) delivers to a named place but leaves import clearance and taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
+    a: 'DDP is the maximum-seller term: 1 party clears export, pays freight, clears Saudi import and pays the ×1.2075 stack; DAP leaves import clearance/taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
   },
   {
     q: 'How much does DDP shipping from China to Saudi Arabia cost?',
@@ -441,27 +441,27 @@ const faqs = [
   },
   {
     q: 'Are demurrage and detention included in a DDP quote?',
-    a: 'Usually not after the free-time allowance. Demurrage is charged by the terminal and detention by the carrier once the container exceeds free time, and these per-day charges are commonly excluded or capped in DDP pricing. Confirm the free-time policy and any per-day rates in writing before booking.',
+    a: 'Demurrage/detention are excluded after free time, and the snapshot publishes no per-day figures, so confirm the free-time policy and any per-day rates in writing before booking.',
   },
   {
     q: 'Do I need a Saudi importer of record with DDP?',
-    a: 'A DDP forwarder with a local partner normally provides the Saudi clearance capability, but the practical answer depends on the forwarder’s local structure and your product’s licensing. Some DDP providers use their own importer of record or work with the buyer’s commercial registration. Confirm this before the first shipment because it affects SABER registration and duty/VAT settlement.',
+    a: 'A DDP forwarder’s local partner usually supplies 1 importer-of-record capability, but 0 universal rule exists — it depends on local structure and licensing. Some DDP providers use their own importer of record or work with the buyer’s commercial registration. Confirm this before the first shipment because it affects SABER registration and duty/VAT settlement.',
   },
   {
     q: 'What happens if the SABER SC certificate is not obtained before arrival?',
-    a: 'Clearance fails. Since 1 January 2025, an SC applied after cargo arrival is treated as void, so the shipment cannot clear until the certificate issue is resolved — which typically means delays, storage and demurrage. Under DDP, the forwarder still needs the bill of lading and product PC before it can apply for the SC, so send documents early.',
+    a: 'Clearance fails: from 1 January 2025, an SC applied after cargo arrival is void, so a 0-arrival-certificate shipment cannot clear until the issue is resolved — typically delays, storage and demurrage. Under DDP, the forwarder still needs the bill of lading and product PC before it can apply for the SC, so send documents early.',
   },
   {
     q: 'Can a DDP shipment still attract Saudi excise tax?',
-    a: 'Yes. DDP does not remove Saudi excise tax. Tobacco attracts 100%, energy drinks 50% and carbonated drinks 50% on top of VAT where applicable. A compliant DDP quote should reflect these amounts, but confirm the calculation for your HS codes.',
+    a: 'Yes: DDP removes 0% of Saudi excise — tobacco 100%, energy drinks 50% and carbonated drinks 50% still apply on top of VAT. A compliant DDP quote should reflect these amounts, but confirm the calculation for your HS codes.',
   },
   {
     q: 'Is 45 RMB per kg a real DDP rate?',
-    a: 'It is a real example recorded during research — a Guangzhou/Shenzhen-to-Saudi door-to-door quote. It is a LOW-confidence benchmark, not a universal tariff: density, product type, SABER requirements, delivery address and market conditions all move the final price. Use it as a sanity check, not as a booking rate.',
+    a: '45 RMB/kg is a real recorded Guangzhou/Shenzhen-to-Saudi door-to-door quote, not a universal tariff — density, product type, SABER requirements, delivery address and market conditions all move the final price. Use it as a sanity check, not as a booking rate.',
   },
   {
     q: 'How do I compare DDP with a self-arranged CIF or DAP shipment?',
-    a: 'Build the same landed-cost stack for both: freight, origin fees, destination THC and port charges, clearance and brokerage, SABER PC/SC, duty, VAT, last-mile trucking, plus the risk of demurrage/detention. DDP is usually easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
+    a: 'Compare DDP and self-arranged CIF/DAP on the same 7-line stack: freight, origin fees, destination THC/port charges, clearance/brokerage, SABER PC/SC, duty/VAT, and last-mile trucking, plus demurrage/detention risk. DDP is usually easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
   },
 ];
 
@@ -543,6 +543,9 @@ const schema = [
         what a realistic all-in DDP benchmark looks like, how DDP compares with DAP, EXW and FOB,
         and the destination charges that hide outside a “tax-inclusive” headline.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> DDP to Saudi Arabia is an all-in landed-cost quote, not a freight rate: it bundles freight + the ×1.2075 duty/VAT stack (15% VAT on CIF+duty) + SABER/SASO + clearance + last-mile, so $10,000 CIF becomes $12,075 before any service fees. The page’s LOW-confidence benchmarks are DDP sea from 1,600 RMB/CBM, DDP air at 33–48 RMB/kg, and a Guangzhou/Shenzhen door-to-door sample of 45 RMB/kg — the 45 RMB/kg sits 36% above the 33 RMB/kg air floor, which is exactly why quotes must be itemised. Since 1 January 2025 an SC applied after cargo arrival is void, so a late-certificate shipment can lose the 30–35 day sea window to demurrage while paperwork is fixed.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence price, transit and DDP benchmark as indicative, verify with carrier or

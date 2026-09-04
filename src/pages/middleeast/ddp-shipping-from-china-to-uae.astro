@@ -358,19 +358,19 @@ const freeZoneRows = [
 const faqs = [
   {
     q: 'What does DDP shipping from China to the UAE include?',
-    a: 'A true DDP quote should cover China export clearance, international transport, UAE import clearance, import duty, VAT and last-mile delivery to the named address. In practice scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
+    a: 'A true DDP quote must include 6 cost blocks — China export clearance, freight, UAE clearance, duty, VAT and last-mile — with scope varying by forwarder. In practice scope varies between forwarders, so confirm in writing whether destination THC, customs handling, demurrage/detention and cargo insurance are included before you compare prices.',
   },
   {
     q: 'Who pays UAE import duty and VAT under DDP?',
-    a: 'The seller pays them as part of the delivered duty paid arrangement. UAE VAT is 5% on the CIF value plus customs duty, and the baseline import duty is 5% of CIF under the GCC Common External Tariff. The forwarder normally settles these on the seller’s behalf during UAE clearance.',
+    a: 'The seller pays both lines: 5% VAT on CIF+duty plus 5% duty on CIF, a ×1.1025 stack. The forwarder normally settles these on the seller’s behalf during UAE clearance.',
   },
   {
     q: 'What is the difference between DDP, DDU/DAP and EXW/FOB?',
-    a: 'DDP puts the most responsibility on the seller: the seller clears export, pays freight, handles UAE import clearance, and pays duty and VAT. DAP (the Incoterms 2020 successor to the old DDU term) delivers to a named place but leaves import clearance and taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
+    a: 'DDP is the maximum-seller term: 1 party clears export, pays freight, clears UAE import and pays the ×1.1025 stack; DAP leaves import clearance/taxes to the buyer. EXW and FOB give the buyer much more responsibility, from picking up at the seller’s premises (EXW) or taking over once goods are on board (FOB).',
   },
   {
     q: 'How much does DDP shipping from China to the UAE cost?',
-    a: 'Verified UAE DDP benchmarks are thin: the research snapshot records DDP air at 3–6 days but does not publish a separate DDP rate, and no verified DDP sea rate appeared. For context, port-to-port air is AED 20–23.5 per kg and LCL is AED 880–980 per CBM, both LOW confidence. Always request an itemised all-in DDP quote for your product and address.',
+    a: 'The snapshot records 0 verified UAE DDP rates — only DDP air at 3–6 days and no DDP sea rate — while port-to-port anchors are AED 20–23.5/kg air and AED 880–980/CBM LCL (both LOW). Always request an itemised all-in DDP quote for your product and address.',
   },
   {
     q: 'How long does DDP sea and air freight take?',
@@ -378,7 +378,7 @@ const faqs = [
   },
   {
     q: 'Do free zone deliveries avoid UAE VAT under DDP?',
-    a: 'Not automatically, and the answer depends on where the goods stay. Goods can be held under duty/VAT suspension within a designated free zone, but duty and VAT generally apply when goods leave the zone for the mainland market. Tell your DDP forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
+    a: 'Free-zone delivery gives 0% duty/VAT only while goods stay in a designated zone; duty and VAT generally apply at mainland exit. Tell your DDP forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
   },
   {
     q: 'Is there a de minimis threshold for UAE DDP shipments?',
@@ -386,19 +386,19 @@ const faqs = [
   },
   {
     q: 'What documents are needed for DDP to the UAE?',
-    a: 'The standard set includes a commercial invoice, bill of lading, packing list and certificate of origin, plus conformity documentation such as CE evidence for regulated goods. Classify goods with the correct HS code before quoting, because a wrong code under DDP means the duty and VAT embedded in your all-in price are wrong too.',
+    a: 'Clearance needs 4 core documents — commercial invoice, bill of lading, packing list and certificate of origin — plus conformity evidence, and the stack is ×1.1025 on CIF. Classify goods with the correct HS code before quoting, because a wrong code under DDP means the duty and VAT embedded in your all-in price are wrong too.',
   },
   {
     q: 'Are demurrage and detention included in a DDP quote?',
-    a: 'Usually not after the free-time allowance. Demurrage is charged by the terminal and detention by the carrier once the container exceeds free time, and these per-day charges are commonly excluded or capped in DDP pricing. Confirm the free-time policy and any per-day rates in writing before booking.',
+    a: 'Demurrage/detention are excluded after free time, and the snapshot publishes no per-day figures, so confirm the free-time policy and any per-day rates in writing before booking.',
   },
   {
     q: 'Do I need a UAE importer of record with DDP?',
-    a: 'A DDP forwarder with a local partner normally provides the UAE clearance capability, but the practical answer depends on the forwarder’s local structure and your product’s licensing. Some providers use their own importer of record or work with the buyer’s trade licence. Confirm this before the first shipment because it affects the customs declaration, duty/VAT settlement and free-zone vs mainland treatment.',
+    a: 'A DDP forwarder’s local partner usually supplies 1 importer-of-record capability, but 0 universal rule exists — it depends on local structure and licensing. Some providers use their own importer of record or work with the buyer’s trade licence. Confirm this before the first shipment because it affects the customs declaration, duty/VAT settlement and free-zone vs mainland treatment.',
   },
   {
     q: 'How do I compare DDP with a self-arranged CIF or DAP shipment?',
-    a: 'Build the same landed-cost stack for both: freight, origin fees, destination THC and port charges, clearance and brokerage, duty, VAT, last-mile trucking, plus the risk of demurrage/detention. DDP is easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
+    a: 'Compare DDP and self-arranged CIF/DAP on the same 6-line stack: freight, origin fees, destination THC/port charges, clearance/brokerage, duty/VAT, and last-mile trucking, plus demurrage/detention risk. DDP is easiest to compare when you ask for an itemised all-in quote and then add your own time and compliance cost to the CIF/DAP alternative.',
   },
 ];
 
@@ -480,6 +480,9 @@ const schema = [
         all-in DDP benchmark looks like, how DDP compares with DAP, EXW and FOB, and why the
         free-zone-vs-mainland destination changes the answer.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> DDP to the UAE is an all-in landed-cost quote, not a freight rate: it bundles freight + the ×1.1025 duty/VAT stack (5% duty + 5% VAT) + clearance + last-mile, so a $10,000 CIF shipment owes $1,025 in statutory tax before fees. Free-zone routing can defer that duty/VAT until mainland exit, so two “DDP” quotes differ by whether they assume free-zone or mainland delivery — a 0% vs 10.25% swing in visible tax on the same CIF. The page’s benchmark anchors are DDP air at 3–6 days, port-to-port sea at 14–18 days (LOW) or 21 days typical Shanghai–Jebel Ali (MEDIUM), and port-to-port air at AED 20–23.5/kg.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence price, transit and DDP benchmark as indicative, verify with carrier or

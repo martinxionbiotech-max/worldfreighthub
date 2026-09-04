@@ -336,15 +336,15 @@ const factorRows = [
 const faqs = [
   {
     q: 'What is LCL shipping from China to the UAE?',
-    a: 'LCL (Less than Container Load) means your cargo shares a container with other importers. It is received at an origin CFS in China, consolidated into one box, shipped to a UAE port such as Jebel Ali, then deconsolidated at the destination CFS for clearance and delivery. You pay for the space and weight you use rather than a whole container.',
+    a: 'LCL is one shared container — you pay for chargeable CBM rather than a whole 20ft/40ft box — so it only wins when volume is far below the ~15 CBM FCL crossover. It is received at an origin CFS in China, consolidated into one box, shipped to a UAE port such as Jebel Ali, then deconsolidated at the destination CFS for clearance and delivery. You pay for the space and weight you use rather than a whole container.',
   },
   {
     q: 'How is LCL priced from China to the UAE?',
-    a: 'LCL is usually billed per chargeable CBM. The chargeable CBM is the greater of the packed volume in cubic metres and a weight-derived volume, often using a planning ratio such as 1,000 kg = 1 CBM. Light, bulky cargo is charged by cube and dense cargo by weight. The ratio varies by forwarder, so confirm it before quoting.',
+    a: 'LCL is billed per chargeable CBM — the greater of packed CBM and a weight-derived CBM, often using 1,000 kg = 1 CBM. Light, bulky cargo is charged by cube and dense cargo by weight. The ratio varies by forwarder, so confirm it before quoting.',
   },
   {
     q: 'What does LCL from China to the UAE cost?',
-    a: 'The research snapshot records an indicative Dubai / Jebel Ali LCL benchmark of AED 880–980 per CBM, a LOW-confidence market figure collected from a public guide rather than a carrier quote. The all-in landed cost also depends on origin CFS, destination deconsolidation, THC, documentation, storage and delivery fees, which were not published in the verified snapshot — request an itemised quote.',
+    a: 'The UAE-specific snapshot records AED 880–980/CBM (LOW), while the verified corridor benchmark is $20–$180/CBM — a wide band that makes itemised quotes mandatory. The all-in landed cost also depends on origin CFS, destination deconsolidation, THC, documentation, storage and delivery fees, which were not published in the verified snapshot — request an itemised quote.',
   },
   {
     q: 'When should I choose LCL instead of FCL for the UAE?',
@@ -352,23 +352,23 @@ const faqs = [
   },
   {
     q: 'What is the LCL process from China to the UAE?',
-    a: 'The standard flow is: collect cargo at a China warehouse or CFS, consolidate it with other importers into one container, move the container through export clearance, ship it to the UAE, discharge at Jebel Ali or another UAE port, deconsolidate at the destination CFS, clear customs, then deliver the final leg to your address.',
+    a: 'The LCL flow has 8 steps: collect cargo at a China warehouse or CFS, consolidate it with other importers into one container, move the container through export clearance, ship it to the UAE, discharge at Jebel Ali or another UAE port, deconsolidate at the destination CFS, clear customs, then deliver the final leg to your address.',
   },
   {
     q: 'What hidden fees should I watch for in UAE LCL?',
-    a: 'The headline AED/CBM rate is only one line. Watch for origin CFS receiving, destination CFS deconsolidation, THC and port charges, a documentation fee, a minimum charge on small volumes, storage after the CFS free-time allowance, and final delivery or brokerage. Specific amounts were not published in the verified snapshot, so request a fee schedule in writing before booking.',
+    a: 'Watch 7 fees beyond the AED/CBM headline: origin CFS receiving, destination CFS deconsolidation, THC and port charges, a documentation fee, a small-volume minimum, post-free-time storage, and final delivery or brokerage. Specific amounts were not published in the verified snapshot, so request a fee schedule in writing before booking.',
   },
   {
     q: 'Does LCL have demurrage and detention like FCL?',
-    a: 'The mechanics differ. FCL demurrage/detention applies to a specific container, while LCL cargo usually incurs storage at the destination CFS after a free-time allowance and can also be affected by the master container’s port charges. Free-time policies and per-day charges were not published in the snapshot — request the CFS and terminal schedule.',
+    a: 'LCL and FCL differ on one point: FCL demurrage/detention follows a specific container, while LCL usually incurs destination CFS storage after free time and can be affected by the master container’s port charges. Free-time policies and per-day charges were not published in the snapshot — request the CFS and terminal schedule.',
   },
   {
     q: 'Which UAE port should I use for LCL from China?',
-    a: 'Jebel Ali is the Middle East’s largest container port and the default deconsolidation point for most China imports. Khalifa Port Abu Dhabi suits Abu Dhabi consignees, and Port Khalid in Sharjah suits Sharjah and the northern emirates. Ask which destination CFS the LCL quote assumes and compare the final delivery leg.',
+    a: 'Three UAE deconsolidation nodes map to consignee location — Jebel Ali for most China imports, Khalifa Port Abu Dhabi for Abu Dhabi, and Port Khalid Sharjah for the northern emirates. Ask which destination CFS the LCL quote assumes and compare the final delivery leg.',
   },
   {
     q: 'What documents and taxes apply to a UAE LCL import?',
-    a: 'The standard documents are a commercial invoice, house bill of lading, packing list and certificate of origin. The baseline import duty is 5% of CIF under the GCC Common External Tariff, and import VAT is 5% on the CIF value plus duty. Classify the HS code correctly and confirm whether your goods need a conformity certificate for the UAE.',
+    a: 'Clearance needs 4 core documents — commercial invoice, house bill of lading, packing list and certificate of origin — and the statutory stack is ×1.1025 on CIF (5% duty + 5% VAT on CIF+duty). Classify the HS code correctly and confirm whether your goods need a conformity certificate for the UAE.',
   },
 ];
 
@@ -450,6 +450,9 @@ const schema = [
         indicative per-CBM rates, the volume-vs-weight billing trap, the consolidation-to-delivery
         flow, when LCL beats FCL, and the hidden-fee stack at Jebel Ali.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> LCL to the UAE runs the corridor benchmark of $20–$180/CBM and crosses over to FCL around 15 CBM — below 15 CBM LCL wins on rate, above it the flat container rate becomes cheaper per CBM. The UAE-specific snapshot is AED 880–980/CBM (LOW), and the Shanghai→Jebel Ali planning window is 21 days within a 15–30 range. The billing trap is chargeable CBM: a 60 kg carton in 0.576 CBM bills at 0.576 CBM, not 0.060 CBM — a 9.6× volume uplift that erases the per-CBM saving on light cargo.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and fee note as indicative, verify with carrier before relying

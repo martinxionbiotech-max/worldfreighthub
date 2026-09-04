@@ -427,7 +427,7 @@ const chinaOriginRows = [
 const faqs = [
   {
     q: 'Where are Oman’s main ports located?',
-    a: 'Oman has two main seaports in the WorldFreightHub port data. Sohar is the northern industrial, commercial and container gateway near Muscat on the Gulf of Oman, while Salalah is a major deep-water transshipment hub on the southern Arabian Sea coast in the Dhofar region. Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
+    a: 'Oman splits two verified seaports by geography: Sohar (OMSOH) is the northern/Muscat gateway and Salalah (OMSLL) is the southern/transshipment hub — both under a ×1.1025 stack (5% duty + 5% VAT). Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
   },
   {
     q: 'What are the UN/LOCODEs for Sohar and Salalah?',
@@ -435,11 +435,11 @@ const faqs = [
   },
   {
     q: 'What is the difference between Sohar and Salalah ports?',
-    a: 'Sohar (OMSOH) is the northern industrial and container gateway serving Muscat and the Al Batinah corridor, with an adjacent port and free zone. Salalah (OMSLL) is a deep-water Arabian Sea transshipment hub on the southern Dhofar coast that feeds the wider Gulf, Indian Ocean and East Africa. The exact terminal capabilities are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
+    a: 'The Sohar-vs-Salalah split is a geography call, not a tax call: both OMSOH and OMSLL clear under the same ×1.1025 (5% duty + 5% VAT), while Sohar serves Muscat/northern Oman and Salalah serves the southern Dhofar transshipment relay. The exact terminal capabilities are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
   },
   {
     q: 'Who operates Oman’s ports?',
-    a: 'Oman’s ports are overseen by the Oman port authorities, with terminal operations and services handled by port operators and service providers. The verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput, so request the current operational details from the port authority or your forwarder.',
+    a: 'The snapshot publishes zero operator, terminal, berth or throughput details for either OMSOH or OMSLL, so the 2-port split cannot be refined below port level. Request the current operational details from the port authority or your forwarder.',
   },
   {
     q: 'How long does sea freight take from China to Sohar?',
@@ -447,7 +447,7 @@ const faqs = [
   },
   {
     q: 'How long does sea freight take from China to Salalah?',
-    a: 'No verified Salalah-specific sea transit is published in the research snapshot. Request a carrier-specific transit rather than assuming the Sohar 19-day estimate automatically applies to Salalah.',
+    a: 'Zero verified Salalah-specific sea transit is published, so do not copy Sohar’s 19-day (15–30 day range) figure to Salalah. Request a carrier-specific transit rather than assuming the Sohar 19-day estimate automatically applies to Salalah.',
   },
   {
     q: 'What import duty and VAT apply at Oman ports?',
@@ -455,23 +455,23 @@ const faqs = [
   },
   {
     q: 'What documents are needed for clearance at Sohar or Salalah?',
-    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Certificate of origin requirements can differ for GCC-origin versus non-GCC goods, and restricted goods may require an import licence or permit before arrival.',
+    a: 'Clearance needs 4 core documents — commercial invoice, bill of lading, packing list and certificate of origin — plus correct HS codes and country-of-origin information. Certificate of origin requirements can differ for GCC-origin versus non-GCC goods, and restricted goods may require an import licence or permit before arrival.',
   },
   {
     q: 'How do demurrage and detention work at Oman ports?',
-    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Oman free-day allowances and per-diem amounts were not published in the snapshot, so request the fee schedule and book trucking before discharge.',
+    a: 'Demurrage and detention are two separate clocks — terminal (inside the port) and carrier (outside the port) — with zero Oman free-day or per-diem figures published, so request the fee schedule and book trucking before discharge. This keeps the ×1.1025 duty/VAT line from compounding into storage charges.',
   },
   {
     q: 'Is there a free zone at Sohar or Salalah?',
-    a: 'Sohar has a port-and-free-zone structure commonly cited for industrial and logistics activity, while Salalah is better known as a transshipment hub. The verified research snapshot does not publish which free-zone treatment attaches to a specific consignment, so confirm the zone rules and discharge point with Oman Customs and the relevant authority.',
+    a: 'Sohar and Salalah differ on free-zone profile — Sohar has a port-plus-free-zone structure, Salalah is a transshipment hub — but the snapshot publishes zero consignment-level free-zone treatment for either. Confirm the zone rules and discharge point with Oman Customs and the relevant authority.',
   },
   {
     q: 'Is SABER or SASO required for shipments to Oman?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into an Oman import. Oman has its own standards and conformity regime, which may require product-specific certification for certain goods, but those specifics are not published in the verified snapshot — confirm the applicable Oman process for your product.',
+    a: 'Zero: SABER and SASO are Saudi-only systems, so neither applies to an Oman import. Do not copy a Saudi SABER/SASO step into an Oman import. Oman has its own standards and conformity regime, which may require product-specific certification for certain goods, but those specifics are not published in the verified snapshot — confirm the applicable Oman process for your product.',
   },
   {
     q: 'Which Oman port should I use for China imports?',
-    a: 'Use Sohar as the planning default for general containerised, commercial and industrial cargo bound for Muscat and northern Oman. Consider Salalah when the cargo is destined for southern Oman (Dhofar) or is part of a transshipment relay. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
+    a: 'Use Sohar (OMSOH) for Muscat/northern demand and Salalah (OMSLL) for Dhofar or transshipment — a 2-port default that must be confirmed at terminal level. Consider Salalah when the cargo is destined for southern Oman (Dhofar) or is part of a transshipment relay. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
   },
 ];
 
@@ -553,6 +553,9 @@ const schema = [
         China ocean moves take, what the destination cost stack looks like, and the 5% duty + 5% VAT
         clearance rules that apply at the Oman gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Oman runs two verified seaports — Sohar (OMSOH) for northern/Muscat cargo and Salalah (OMSLL) for southern/transshipment — both under a ×1.1025 stack (5% duty + 5% VAT), so the port split is a geography/resilience call, not a tax call. The statutory line equals the UAE’s ×1.1025 — $1,025 on $10,000 CIF — while the China→Sohar transit is a typical 19 days (15–30 range), 2 days faster than the UAE’s 21-day Jebel Ali benchmark. Because the snapshot publishes no Salalah-specific transit, the default rule is Sohar for Muscat/northern demand and Salalah only when Dhofar or transshipment is the actual destination.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified port codes and the GCC duty/VAT baseline from indicative
         routing and fee notes. Treat every LOW-confidence port, transit and fee note as a planning

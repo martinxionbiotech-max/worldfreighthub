@@ -254,15 +254,15 @@ const hybridRows = [
 const faqs = [
   {
     q: 'Is sea or air freight cheaper from China to the UAE?',
-    a: 'Sea is almost always cheaper per unit for meaningful volume. The research snapshot records UAE LCL at an indicative AED 880–980 per CBM and air at AED 20–23.5 per kg. Air is justified by speed, value density or urgency, not by cost. Both figures are LOW confidence and should be re-quoted for your actual shipment.',
+    a: 'Sea wins on cost: the snapshot records AED 880–980/CBM LCL and AED 20–23.5/kg air, with corridor brackets of $20–$180/CBM and $4.3–$11.0/kg. Air is justified by speed, value density or urgency, not by cost. Both figures are LOW confidence and should be re-quoted for your actual shipment.',
   },
   {
     q: 'When should I choose sea freight to Dubai?',
-    a: 'Choose sea when cargo is large, dense, heavy or stable-demand, when unit cost matters more than transit, and when the consignee can absorb a 15–30 day planning window. FCL suits container-share volumes; LCL suits smaller moves.',
+    a: 'Choose sea when the consignee can absorb the 15–30 day planning window and unit cost matters more than the 3–7 day air clock. FCL suits container-share volumes; LCL suits smaller moves.',
   },
   {
     q: 'When should I choose air freight to the UAE?',
-    a: 'Choose air when cargo is urgent, high-value, perishable, fragile or stockout-critical, and when the chargeable weight is low enough that the premium is minor relative to the item value. Air makes sense when a 3–7 day arrival cycle is worth the extra cost.',
+    a: 'Choose air when a 3–7 day arrival cycle is worth more than the premium, and when the chargeable weight is low enough that the extra cost is minor relative to item value.',
   },
   {
     q: 'How does chargeable weight change the air vs sea decision?',
@@ -274,23 +274,23 @@ const faqs = [
   },
   {
     q: 'Are lithium batteries restricted on air freight to the UAE?',
-    a: 'Yes, lithium batteries and other dangerous goods face strict IATA Dangerous Goods Regulations acceptance limits on air freight. They must be declared, packaged and documented correctly, and the airline must accept the consignment. Sea freight has a different but still regulated dangerous-goods flow, so declare the goods either way.',
+    a: 'Yes: lithium batteries face IATA DGR acceptance limits, with no undeclared route — they must be declared, packaged, documented and airline-accepted. Sea freight has a different but still regulated dangerous-goods flow, so declare the goods either way.',
   },
   {
     q: 'What is the best hybrid sea + air approach?',
-    a: 'Use sea for forecasted main stock at the lowest unit cost, and air only for the units needed to cover a stockout, a seasonal promotion or a launch top-up. This keeps the base margin low while protecting availability, without paying air rates for the entire volume.',
+    a: 'The hybrid rule is a two-tier split: sea for the forecasted base at the lower unit rate, air only for the units needed to cover a stockout, launch or promotion. This keeps the base margin low while protecting availability, without paying air rates for the entire volume.',
   },
   {
     q: 'Do duty and VAT differ between sea and air freight?',
-    a: 'No. UAE import duty is 5% of CIF and import VAT is 5% on CIF plus duty regardless of transport mode. Air shortens the transport clock but not the compliance clock — Mirsal 2, HS classification and duty/VAT settlement still apply.',
+    a: 'No: the mode never changes the ×1.1025 stack — 5% duty on CIF plus 5% VAT on CIF+duty — whether sea or air. Air shortens the transport clock but not the compliance clock — Mirsal 2, HS classification and duty/VAT settlement still apply.',
   },
   {
     q: 'Which UAE airport or port should I use?',
-    a: 'For sea, Jebel Ali is the primary China import gateway, Khalifa Port serves Abu Dhabi, and Port Khalid serves Sharjah and the northern emirates. For air, Dubai International (DXB) is the primary gateway and Al Maktoum International (DWC) is the Dubai South cargo gateway. Match the node to your consignee and final-mile route.',
+    a: 'Match the node to the consignee: for sea, Jebel Ali is primary, Khalifa Port serves Abu Dhabi and Port Khalid serves Sharjah/northern emirates; for air, DXB is primary and DWC is Dubai South cargo. The final-mile route should follow the node you choose.',
   },
   {
     q: 'How do I make the final sea vs air decision?',
-    a: 'Score the shipment on value, urgency, volume, density, shelf life and working capital. Then run two all-in quotes on the same chargeable basis — including destination fees, Mirsal 2, duty and VAT — and compare the total landed cost and delivery date, not just the headline rate.',
+    a: 'Score 6 factors — value, urgency, volume, density, shelf life and working capital — then run 2 all-in quotes on the same chargeable basis. Compare total landed cost and delivery date, not just the headline rate.',
   },
 ];
 
@@ -372,6 +372,9 @@ const schema = [
         weight, the 6,000-divisor rule, lithium restrictions, and the hybrid plan that uses sea for
         the base and air for the emergency.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> To the UAE, sea is 14–30 days at LCL $20–$180/CBM while air is 3–7 days at AED 20–23.5/kg (corridor $4.3–$11.0/kg), so the choice is whether ~15 extra sea days are worth more than the air premium. A 2 CBM / 180 kg example shows the arithmetic: air bills 333.33 kg (2,000,000 cm³ ÷ 6,000), costing AED 6,666.60–7,833.26, versus sea LCL at AED 1,760–1,960 — a 3.4–4.5× premium. The breakpoint is the stockout cost of those extra ~15 days; if a lost sale exceeds the premium, fly the exception and keep the base on sea.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified rules from indicative market snapshots. Treat every
         LOW-confidence rate and transit figure as indicative, verify with carrier before relying on

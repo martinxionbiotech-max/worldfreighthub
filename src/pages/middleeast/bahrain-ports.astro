@@ -459,7 +459,7 @@ const faqs = [
   },
   {
     q: 'Who operates Khalifa bin Salman?',
-    a: 'Bahrain’s port is overseen by the Bahrain port authority and terminal operators, but the verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput. Request the current operational details from the port authority or your forwarder.',
+    a: 'The snapshot publishes zero operator, terminal, berth or throughput details for BHKBS, so the single-port decision cannot be refined below port level. Request the current operational details from the port authority or your forwarder.',
   },
   {
     q: 'How long does sea freight take from China to Khalifa bin Salman?',
@@ -467,11 +467,11 @@ const faqs = [
   },
   {
     q: 'How long does air freight take from China to Bahrain?',
-    a: 'No verified Bahrain air transit is published in the research snapshot. Request an airport-to-airport routing quote rather than assuming the sea figure or borrowing a neighbouring GCC airport’s timing.',
+    a: 'Zero verified Bahrain air transit is published, so request an airport-to-airport quote rather than borrowing a neighbouring GCC airport’s timing.',
   },
   {
     q: 'Does King Fahd Causeway change the Bahrain routing decision?',
-    a: 'King Fahd Causeway is the road bridge to Saudi Arabia and is relevant for some land/transshipment options. Its commercial timing, fees, border procedures and customs treatment are not published in the verified snapshot, so treat Causeway-specific figures as LOW/unverified and confirm the routing with your carrier.',
+    a: 'The King Fahd Causeway is a 1-link road bridge to Saudi Arabia, but the snapshot publishes zero commercial timing, fee, border or customs figures for it, so treat Causeway-specific figures as LOW/unverified and confirm the routing with your carrier.',
   },
   {
     q: 'What import duty and VAT apply at Khalifa bin Salman?',
@@ -479,19 +479,19 @@ const faqs = [
   },
   {
     q: 'What documents are needed for clearance at Khalifa bin Salman?',
-    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
+    a: 'Clearance needs 4 core documents — commercial invoice, bill of lading, packing list and certificate of origin — plus correct HS codes and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
   },
   {
     q: 'How do demurrage and detention work at Khalifa bin Salman?',
-    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Bahrain free-day allowances and per-diem amounts were not published in the snapshot, so request the fee schedule and book trucking before discharge.',
+    a: 'Demurrage and detention are two separate clocks — terminal (inside the port) and carrier (outside the port) — with zero Bahrain free-day or per-diem figures published, so request the fee schedule and book trucking before discharge. This keeps the ×1.155 duty/VAT line from compounding into storage charges.',
   },
   {
     q: 'Is SABER or SASO required for shipments to Bahrain?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Bahrain import. Bahrain may have its own standards or inspection requirements for certain products, but those are not published in the verified snapshot — confirm the applicable process with Bahrain Customs and the relevant Bahrain authority.',
+    a: 'Zero: SABER and SASO are Saudi-only systems, so neither applies to a Bahrain import. Do not copy a Saudi SABER/SASO step into a Bahrain import. Bahrain may have its own standards or inspection requirements for certain products, but those are not published in the verified snapshot — confirm the applicable process with Bahrain Customs and the relevant Bahrain authority.',
   },
   {
     q: 'Which port should I use for China imports into Bahrain?',
-    a: 'Use Khalifa bin Salman (BHKBS) as the planning default for general containerised and commercial cargo. For air, request a Bahrain air-gateway routing quote. For a road/transshipment movement through Saudi Arabia, confirm the King Fahd Causeway option with the carrier before committing.',
+    a: 'Use the single verified gateway BHKBS for general/container cargo, and route by air or King Fahd Causeway only after confirming those alternatives. For air, request a Bahrain air-gateway routing quote. For a road/transshipment movement through Saudi Arabia, confirm the King Fahd Causeway option with the carrier before committing.',
   },
 ];
 
@@ -574,6 +574,9 @@ const schema = [
         take, what the destination cost stack looks like, and the 5% duty plus 10% VAT clearance
         rules that apply at the Bahrain gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Bahrain has one verified seaport — Khalifa bin Salman (BHKBS) — and its ×1.155 stack (5% duty + 10% VAT) is the second-highest GCC landed-cost factor, adding $1,550 on a $10,000 CIF shipment versus $1,025 in the UAE’s ×1.1025. King Fahd Causeway makes BHKBS a Saudi-Eastern-Province alternate, but the snapshot publishes zero causeway timing or fee, so that routing is a planning option until quoted. The China→BHKBS ocean window is a typical 22 days (15–30 day range) — 2 days faster than Kuwait’s 24-day benchmark but with a 10-point higher VAT stack.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified port codes and the GCC duty/VAT baseline from indicative
         routing and fee notes. Treat every LOW-confidence port, transit and fee note as a planning

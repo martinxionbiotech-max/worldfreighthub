@@ -421,7 +421,7 @@ const chinaOriginRows = [
 const faqs = [
   {
     q: 'Where are Kuwait’s main ports located?',
-    a: 'Kuwait has two main seaports in the WorldFreightHub port data. Shuwaikh is the commonly used commercial and container gateway near Kuwait City, while Shuaiba lies to the south and is commonly associated with industrial, petrochemical, bulk and project cargo. Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
+    a: 'Two verified Kuwait seaports split the China corridor: Shuwaikh (KWSWK) is the general/container gateway near Kuwait City, while Shuaiba (KWSHB) is the southern industrial/petrochemical gateway — both under a ×1.05 statutory stack (5% duty + 0% VAT). Their exact berths, depths and throughput are not published in the verified snapshot, so confirm the discharge point with the carrier before booking.',
   },
   {
     q: 'What are the UN/LOCODEs for Shuwaikh and Shuaiba?',
@@ -429,11 +429,11 @@ const faqs = [
   },
   {
     q: 'What is the difference between Shuwaikh and Shuaiba ports?',
-    a: 'Shuwaikh (KWSWK) is the commonly quoted commercial and container gateway for Kuwait City, while Shuaiba (KWSHB) is commonly linked to the industrial and petrochemical corridor south of Kuwait City. The exact terminal capabilities and cargo mix are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
+    a: 'The Shuwaikh-vs-Shuaiba split is a cargo-type call, not a tax call: both KWSWK and KWSHB clear under the same ×1.05 (5% duty + 0% VAT), while Shuwaikh (KWSWK) is the commonly quoted commercial/container gateway and Shuaiba (KWSHB) is linked to the industrial corridor. The exact terminal capabilities and cargo mix are not published in the verified snapshot, so treat the role split as a LOW-confidence planning guide and verify with the port authority or carrier.',
   },
   {
     q: 'Who operates Kuwait’s ports?',
-    a: 'Kuwait’s ports are overseen by the Kuwait Ports Authority, with terminal operations and services handled by port operators and service providers. The verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput, so request the current operational details from the port authority or your forwarder.',
+    a: 'Kuwait Ports Authority oversees both ports, but the snapshot publishes zero operator, terminal, berth or throughput specifics for either KWSWK or KWSHB. The verified research snapshot does not publish the specific operator, terminal allocation, berths or throughput, so request the current operational details from the port authority or your forwarder.',
   },
   {
     q: 'How long does sea freight take from China to Shuwaikh?',
@@ -441,7 +441,7 @@ const faqs = [
   },
   {
     q: 'How long does sea freight take from China to Shuaiba?',
-    a: 'No verified Shuaiba-specific sea transit is published in the research snapshot. Request a carrier-specific transit rather than assuming the Shuwaikh 24-day estimate automatically applies to Shuaiba.',
+    a: 'Zero verified Shuaiba-specific sea transit is published, so do not copy Shuwaikh’s 24-day (15–30 day range) figure to Shuaiba. Request a carrier-specific transit rather than assuming the Shuwaikh 24-day estimate automatically applies to Shuaiba.',
   },
   {
     q: 'What import duty and VAT apply at Kuwait ports?',
@@ -449,23 +449,23 @@ const faqs = [
   },
   {
     q: 'What documents are needed for clearance at Shuwaikh or Shuaiba?',
-    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
+    a: 'Clearance at either port starts with 4 core documents — commercial invoice, bill of lading, packing list and certificate of origin — plus correct HS codes and country-of-origin information. Restricted goods may require an import licence or permit before arrival.',
   },
   {
     q: 'How do demurrage and detention work at Kuwait ports?',
-    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Kuwait free-day allowances and per-diem amounts were not published in the snapshot, so request the fee schedule and book trucking before discharge.',
+    a: 'Demurrage and detention are two separate clocks — terminal (inside the port) and carrier (outside the port) — with zero Kuwait free-day or per-diem figures published in the snapshot, so request the fee schedule and book trucking before discharge. This keeps the 5% duty line from compounding into storage charges.',
   },
   {
     q: 'Is there a free zone at Shuwaikh or Shuaiba?',
-    a: 'Kuwait has free-zone and logistics-linked activity, but the verified research snapshot does not publish which free-zone treatment attaches to a specific Shuwaikh or Shuaiba consignment. Do not assume a UAE or Qatar free-zone pattern; confirm the zone rules and discharge point with Kuwait Customs and the relevant authority.',
+    a: 'The snapshot publishes zero free-zone treatment for a specific Shuwaikh or Shuaiba consignment, so the 0% VAT position cannot be extended to zone-linked cargo without confirmation. Do not assume a UAE or Qatar free-zone pattern; confirm the zone rules and discharge point with Kuwait Customs and the relevant authority.',
   },
   {
     q: 'Is SABER or SASO required for shipments to Kuwait?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a Kuwait import. Kuwait may have its own standards or inspection requirements for certain products, but those are not published in the verified snapshot — confirm the applicable process with Kuwait Customs and the relevant Kuwait authority.',
+    a: 'Zero: SABER and SASO are Saudi-only conformity systems, so neither applies to Kuwait. Do not copy a Saudi SABER/SASO step into a Kuwait import. Kuwait may have its own standards or inspection requirements for certain products, but those are not published in the verified snapshot — confirm the applicable process with Kuwait Customs and the relevant Kuwait authority.',
   },
   {
     q: 'Which Kuwait port should I use for China imports?',
-    a: 'Use Shuwaikh as the planning default for general containerised and commercial cargo bound for Kuwait City. Consider Shuaiba when the cargo is industrial, petrochemical, bulk or project-linked and the southern corridor is a better fit. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
+    a: 'Use Shuwaikh (KWSWK) for general/container cargo and Shuaiba (KWSHB) for industrial/project cargo — a 2-port default that the snapshot cannot resolve to terminal level. Consider Shuaiba when the cargo is industrial, petrochemical, bulk or project-linked and the southern corridor is a better fit. Because the snapshot does not publish terminal-level capabilities, the final choice should be confirmed with the carrier and the receiver.',
   },
 ];
 
@@ -547,6 +547,9 @@ const schema = [
         how long China ocean moves take, what the destination cost stack looks like, and the 5% duty
         clearance rules that apply at the Kuwait gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Kuwait splits two verified seaports — Shuwaikh (KWSWK) for general/container cargo and Shuaiba (KWSHB) for industrial/petrochemical — while both clear under a ×1.05 stack (5% duty + 0% VAT), so the port choice is a cargo-type call, not a tax call. On a $10,000 CIF shipment that ×1.05 adds $500 in statutory cost — $1,050 less than Bahrain’s ×1.155 on the same load — and the typical China→Shuwaikh transit is 24 days within a 15–30 day range. The planning rule is two gates, two codes: route general cargo to KWSWK and industrial/project cargo to KWSHB, then confirm the terminal because no berth or throughput figure is published.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified port codes and the GCC duty/VAT baseline from indicative
         routing and fee notes. Treat every LOW-confidence port, transit and fee note as a planning
