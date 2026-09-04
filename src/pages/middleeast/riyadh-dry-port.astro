@@ -299,7 +299,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is Riyadh Dry Port?',
-    a: 'Riyadh Dry Port is Saudi Arabia’s inland container depot (ICD) serving the capital region. It is not a seaport; containers are discharged at a coastal port, usually King Abdulaziz Port Dammam, and moved inland by rail or road for customs clearance and final distribution around Riyadh and central Saudi Arabia.',
+    a: 'Riyadh Dry Port is an inland container depot that carries the same Saudi ×1.2075 stack while adding the Dammam rail/road leg to the ocean quote. It is not a seaport; containers are discharged at a coastal port, usually King Abdulaziz Port Dammam, and moved inland by rail or road for customs clearance and final distribution around Riyadh and central Saudi Arabia.',
   },
   {
     q: 'Is Riyadh Dry Port a seaport?',
@@ -307,11 +307,11 @@ const faqs = [
   },
   {
     q: 'How does cargo reach Riyadh Dry Port from China?',
-    a: 'The usual routing is ocean freight from China to King Abdulaziz Port Dammam, followed by an inland rail or road transfer to Riyadh Dry Port, where the container is cleared and delivered to the final consignee. Confirm the exact inland mode and handover point with your forwarder.',
+    a: 'The usual routing is a ~20-day China–Dammam ocean leg plus an inland rail or road transfer to Riyadh Dry Port, producing the 30–45 day full corridor before delivery. The container is cleared and delivered to the final consignee at the dry port. Confirm the exact inland mode and handover point with your forwarder.',
   },
   {
     q: 'Why use Riyadh Dry Port instead of clearing at Dammam?',
-    a: 'The main reasons are inland clearance close to the Riyadh consumer base, shorter final trucking, and a route that avoids some coastal-port congestion and cross-country delivery after release. It is a hinterland decision: if the goods are destined for Riyadh or central Saudi Arabia, the dry-port flow is usually the conventional choice.',
+    a: 'Use it when the Riyadh/central-KSA final leg is shorter than a coastal discharge, so the 30–45 day full corridor can beat clearing at Dammam and trucking cross-country. It is a hinterland decision: if the goods are destined for Riyadh or central Saudi Arabia, the dry-port flow is usually the conventional choice.',
   },
   {
     q: 'How long does China to Riyadh Dry Port take?',
@@ -323,11 +323,11 @@ const faqs = [
   },
   {
     q: 'Can I clear customs at Riyadh Dry Port?',
-    a: 'Riyadh Dry Port can function as an inland clearance point under Saudi Arabia’s FASAH single-window system. Confirm with your broker whether the shipment clears at Dammam or at Riyadh Dry Port, because that changes the document timing and the inland handover point.',
+    a: 'Riyadh Dry Port can clear under FASAH, so the choice between Dammam and Riyadh clearance changes document timing on the same 5% duty + 15% VAT stack. Confirm with your broker whether the shipment clears at Dammam or at Riyadh Dry Port, because that changes the inland handover point.',
   },
   {
     q: 'What costs are added by the inland leg to Riyadh?',
-    a: 'The inland rail or trucking charge, the dry-port ICD handling and any CFS or storage charges are added on top of the ocean freight and destination THC. Specific amounts were not published in the verified snapshot, so request an all-in destination quote from your forwarder.',
+    a: 'The inland leg adds rail/trucking, ICD handling and any CFS or storage on top of the ocean freight and destination THC, but no verified per-CBM or per-container rate is published. Request an all-in destination quote from your forwarder.',
   },
   {
     q: 'Do SABER rules apply to Riyadh Dry Port shipments?',
@@ -343,7 +343,7 @@ const faqs = [
   },
   {
     q: 'Which goods suit the Riyadh Dry Port route?',
-    a: 'Goods destined for Riyadh and central Saudi Arabia — especially consumer goods, retail distribution, LCL consolidations and regular FCL flows — usually suit the Dammam → Riyadh Dry Port corridor. Western-KSA and Red Sea cargo is normally better served through Jeddah instead.',
+    a: 'Riyadh/central-KSA consumer goods, retail, LCL and regular FCL flows suit the Dammam → Riyadh Dry Port corridor, with the 30–45 day full window versus Jeddah’s ~18-day ocean to a long cross-country haul. Western-KSA and Red Sea cargo is normally better served through Jeddah instead.',
   },
 ];
 
@@ -441,6 +441,9 @@ const schema = [
         coastal discharge for Riyadh cargo, what the corridor costs, and the SABER/VAT rules that
         still apply at the inland gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Riyadh Dry Port is an inland customs point roughly 400+ km from the coast, so its landed-cost math must add the Dammam rail/road leg to the coastal ocean quote. The full China&#8211;Riyadh Dry Port corridor is 30&#8211;45 days versus a ~20-day China&#8211;Dammam ocean leg, meaning the inland segment can add 10&#8211;25 days and its own rail/truck charge before the Saudi &#215;1.2075 duty+VAT is applied. A $10,000 CIF shipment still clears at $12,075 under Saudi&#8217;s 5% duty + 15% VAT, but any quote that stops at coastal CIF omits the inland cost that makes this a true landed-cost comparison.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market and port snapshots. Treat
         every LOW-confidence transit, facility and fee note as indicative, verify with Mawani or your

@@ -287,7 +287,7 @@ const costRows = [
 const faqs = [
   {
     q: 'Where is Jeddah Islamic Port located?',
-    a: 'Jeddah Islamic Port is on the Red Sea coast of western Saudi Arabia, close to the city of Jeddah and the Makkah–Madinah corridor. It is the principal Red Sea container gateway for the country.',
+    a: 'Jeddah Islamic Port is western Saudi Arabia’s Red Sea gateway, and its Saudi duty+VAT stack multiplies CIF by 1.2075, so a $10,000 CIF shipment clears at $12,075. It is the principal Red Sea container gateway for the country, close to the Makkah–Madinah corridor.',
   },
   {
     q: 'What is the UN/LOCODE for Jeddah port?',
@@ -299,15 +299,15 @@ const faqs = [
   },
   {
     q: 'Is Jeddah the right port for cargo to Riyadh?',
-    a: 'Usually no. Riyadh and central Saudi Arabia are commonly served through Dammam and Riyadh Dry Port, because the Gulf-side gateway has the shorter and more established inland corridor. Jeddah is the natural choice for western KSA, Makkah, Madinah and Red Sea trade.',
+    a: 'Usually no: Dammam’s ~20-day ocean leg plus the 30–45 day inland corridor serves Riyadh more directly than Jeddah’s ~18-day ocean leg plus a much longer cross-country haul. Riyadh and central Saudi Arabia are commonly served through Dammam and Riyadh Dry Port. Jeddah is the natural choice for western KSA, Makkah, Madinah and Red Sea trade.',
   },
   {
     q: 'Why is Jeddah important for Makkah and Madinah cargo?',
-    a: 'Jeddah is the nearest major container gateway to the two holy cities, so religious goods and Hajj/Umrah-related freight naturally route through the port. Proximity shortens the final trucking leg, although the operational routing decision should still be confirmed with your forwarder.',
+    a: 'Jeddah is the nearest major container gateway to Makkah and Madinah, so the final trucking leg is shorter than any Gulf-side port, while the Saudi ×1.2075 stack is unchanged. Religious goods and Hajj/Umrah-related freight naturally route through the port. Confirm the operational routing decision with your forwarder.',
   },
   {
     q: 'Do I need SABER certificates for a Jeddah shipment?',
-    a: 'Yes, if your goods are regulated. Obtain the Product Conformity Certificate (PC) per product, then the Shipment Conformity Certificate (SC) per shipment. Since 1 January 2025 the SC must be obtained before cargo arrival or clearance fails, regardless of which Saudi port you use.',
+    a: 'Yes, for regulated goods: since 1 January 2025 the SC must be obtained before cargo arrival or clearance fails, with one PC per product and one SC per shipment. This applies regardless of which Saudi port you use.',
   },
   {
     q: 'What import taxes apply at Jeddah?',
@@ -319,7 +319,7 @@ const faqs = [
   },
   {
     q: 'What is FASAH and how does it apply at Jeddah?',
-    a: 'FASAH is Saudi Arabia’s single-window system that connects importers, brokers, terminals and ZATCA. The pre-arrival declaration, duty/VAT assessment and clearance status sit in one flow. Filing before the vessel arrives helps keep demurrage and detention off the final invoice.',
+    a: 'FASAH is Saudi Arabia’s single-window system that calculates the 5% duty + 15% VAT and connects importers, brokers, terminals and ZATCA in one flow. Filing before the vessel arrives helps keep demurrage and detention off the final invoice.',
   },
   {
     q: 'How do demurrage and detention work at Jeddah?',
@@ -327,11 +327,11 @@ const faqs = [
   },
   {
     q: 'How should I compare Jeddah and Dammam?',
-    a: 'Match the discharge port to your consignee and final inland leg. Jeddah suits the western region, Makkah/Madinah and Red Sea trade; Dammam suits the Eastern Province, Riyadh via Riyadh Dry Port, and oil & gas project cargo. Always confirm the inland distance, cost and transit before choosing.',
+    a: 'Compare by final inland leg and not tax, because both Saudi ports share the ×1.2075 stack. Jeddah suits the western region, Makkah/Madinah and Red Sea trade; Dammam suits the Eastern Province, Riyadh via Riyadh Dry Port, and oil & gas project cargo. Always confirm the inland distance, cost and transit before choosing.',
   },
   {
     q: 'Are the berth and throughput figures on this page verified?',
-    a: 'Port-specific berth, depth and throughput figures are not published in the verified research snapshot, so they are marked LOW and attributed to Mawani. The verified aggregate is Mawani ports handling 8.3M TEU in 2025. Confirm the current port-specific figures with Mawani before planning capacity-sensitive cargo.',
+    a: 'Port-specific berth, depth and throughput are not published, but the verified aggregate is 8.3M TEU in 2025, and the Saudi ×1.2075 stack is independent of the port. Confirm current port-specific figures with Mawani before planning capacity-sensitive cargo.',
   },
 ];
 
@@ -428,6 +428,9 @@ const schema = [
         how long China ocean moves take, what the port costs after arrival, and the SABER/VAT
         clearance rules that apply at the gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Jeddah Islamic Port is Saudi Arabia&#8217;s Red Sea gateway, but the Saudi &#215;1.2075 stack (5% duty + 15% VAT) applies whether cargo lands at Jeddah or Dammam. A $10,000 CIF shipment therefore clears at $12,075 before fees at either Saudi port, so choosing Jeddah cannot change the $2,075 statutory tax. Jeddah&#8217;s ~18-day typical China sea transit beats Dammam&#8217;s ~20 days by ~2 days, making the port choice a western-region transit and inland-haul decision, not a tax decision.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market and port snapshots. Treat
         every LOW-confidence transit, facility and fee note as indicative, verify with Mawani or your

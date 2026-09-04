@@ -301,7 +301,7 @@ const costRows = [
 const faqs = [
   {
     q: 'Where is Khalifa Port Abu Dhabi located?',
-    a: 'Khalifa Port is on the Arabian Gulf coast of Abu Dhabi, in the United Arab Emirates. It is Abu Dhabi’s main deep-water container gateway and is integrated with KIZAD, the Khalifa Industrial Zone Abu Dhabi.',
+    a: 'Khalifa Port is Abu Dhabi’s Arabian Gulf deep-water gateway, where a $10,000 CIF shipment clears at $11,025 under the 5% duty + 5% VAT stack. It is integrated with KIZAD, the Khalifa Industrial Zone Abu Dhabi.',
   },
   {
     q: 'What is the UN/LOCODE for Khalifa Port?',
@@ -309,27 +309,27 @@ const faqs = [
   },
   {
     q: 'What is CSP Abu Dhabi Terminal?',
-    a: 'CSP Abu Dhabi Terminal is the semi-automated container terminal at Khalifa Port. The semi-automated operation is a verified characteristic of the port and distinguishes it from older fully manual Gulf terminals.',
+    a: 'CSP Abu Dhabi Terminal is Khalifa Port’s semi-automated container terminal, whose operational advantage is separate from the fiscal line — cargo still clears under the same 5% duty + 5% VAT stack. The semi-automated operation is a verified characteristic of the port and distinguishes it from older fully manual Gulf terminals.',
   },
   {
     q: 'Who operates Khalifa Port?',
-    a: 'Khalifa Port is operated by Abu Dhabi Ports, now known as AD Ports Group. The container terminal itself is run through the CSP Abu Dhabi joint venture.',
+    a: 'Khalifa Port is operated by AD Ports Group through the CSP Abu Dhabi joint venture, but the operator choice does not change the 5% duty + 5% VAT stack on imported cargo. Abu Dhabi Ports is the port authority and operator.',
   },
   {
     q: 'How long does sea freight take from China to Khalifa Port?',
-    a: 'The verified snapshot does not publish a direct China–Khalifa transit figure. For planning context, the fast China–UAE sea guide is 14–18 days and the Jebel Ali route-data benchmark is a typical 21 days with a 15–30 day range. Many Abu Dhabi routings relay through Jebel Ali, so request the actual vessel schedule from your carrier.',
+    a: 'No direct China–Khalifa figure is published, so plan from the 14–18 day China–UAE fast-direct guide and the 21-day Jebel Ali benchmark with a 15–30 day range. Many Abu Dhabi routings relay through Jebel Ali, so request the actual vessel schedule from your carrier.',
   },
   {
     q: 'Should I route Abu Dhabi cargo through Khalifa or Jebel Ali?',
-    a: 'Khalifa is usually the better fit for Abu Dhabi mainland and KIZAD consignees because it is closer to the capital and offers the semi-automated CSP terminal. Jebel Ali is the default for Dubai, the northern emirates and re-export/transhipment flows. Confirm the inland leg and cost before choosing.',
+    a: 'Khalifa usually wins for Abu Dhabi mainland and KIZAD consignees because the 14–18 day UAE fast-direct window plus a shorter capital trucking leg can offset Jebel Ali’s ~21-day benchmark. Jebel Ali remains the default for Dubai, the northern emirates and re-export/transhipment flows. Confirm the inland leg and cost before choosing.',
   },
   {
     q: 'What is KIZAD and how does it connect to Khalifa Port?',
-    a: 'KIZAD is the Khalifa Industrial Zone Abu Dhabi, an industrial and free zone adjoining Khalifa Port. Goods can move between the port and the zone for manufacturing, warehousing and distribution, similar to the Jebel Ali–JAFZA model.',
+    a: 'KIZAD adjoins Khalifa Port, so goods can move port-to-zone under the same 5% duty + 5% VAT stack and defer duty/VAT until mainland exit. The zone supports manufacturing, warehousing and distribution, similar to the Jebel Ali–JAFZA model.',
   },
   {
     q: 'What is the difference between Abu Dhabi and Dubai port routing?',
-    a: 'It is a hinterland decision. Dubai’s Jebel Ali wins on line connectivity, transhipment and Dubai/northern-emirate distribution. Abu Dhabi’s Khalifa wins when the consignee is in the capital or KIZAD and when semi-automated deep-water capacity matters. Match the discharge port to the final inland leg, not to the headline ocean rate alone.',
+    a: 'It is a hinterland calculation: Jebel Ali’s ~21-day benchmark wins on line connectivity and transhipment, while Khalifa’s 14–18 day fast UAE window wins for Abu Dhabi/KIZAD consignees. Match the discharge port to the final inland leg, not to the headline ocean rate alone.',
   },
   {
     q: 'What import taxes apply at Khalifa Port?',
@@ -337,7 +337,7 @@ const faqs = [
   },
   {
     q: 'What documents are needed for customs clearance at Khalifa Port?',
-    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin. Classify the goods with the correct HS code and file the pre-arrival declaration through the Abu Dhabi customs authority. Confirm the current electronic system with AD Ports or your broker, because Dubai’s Mirsal 2 is specific to Dubai.',
+    a: 'The standard set is four documents — commercial invoice, bill of lading, packing list and certificate of origin — plus the correct HS code for the 5% duty + 5% VAT assessment. File the pre-arrival declaration through the Abu Dhabi customs authority. Confirm the current electronic system with AD Ports or your broker, because Dubai’s Mirsal 2 is specific to Dubai.',
   },
   {
     q: 'How do demurrage and detention work at Khalifa Port?',
@@ -345,11 +345,11 @@ const faqs = [
   },
   {
     q: 'How should I compare Khalifa, Jebel Ali and Port Khalid?',
-    a: 'Match the discharge port to your consignee and final inland leg. Khalifa suits Abu Dhabi and KIZAD; Jebel Ali suits Dubai, the northern emirates and re-export/transhipment; Port Khalid suits Sharjah. Always confirm the inland distance, cost and transit before choosing.',
+    a: 'Compare by final inland leg and not tax, because all three UAE ports share the same 5% duty + 5% VAT stack. Khalifa suits Abu Dhabi and KIZAD; Jebel Ali suits Dubai, the northern emirates and re-export/transhipment; Port Khalid suits Sharjah. Always confirm the inland distance, cost and transit before choosing.',
   },
   {
     q: 'Are the berth and throughput figures on this page verified?',
-    a: 'The verified facts are the semi-automated CSP Abu Dhabi Terminal and the port’s Abu Dhabi gateway role. Port-specific berth, depth and TEU figures were not published in the research snapshot, so they are marked LOW and attributed to Abu Dhabi Ports. Confirm the current figures with AD Ports before planning capacity-sensitive cargo.',
+    a: 'The verified facts are the semi-automated CSP terminal and the port’s Abu Dhabi gateway role, while port-specific berth, depth and TEU figures are not published. The only fiscal benchmark here is the UAE 5% duty + 5% VAT stack. Confirm current port figures with AD Ports before planning capacity-sensitive cargo.',
   },
 ];
 
@@ -446,6 +446,9 @@ const schema = [
         it Abu Dhabi’s answer to Jebel Ali, how the Abu Dhabi-vs-Dubai port decision works, what the
         port costs after arrival, and the 5% duty / 5% VAT clearance rules at the gate.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Khalifa Port (Abu Dhabi) is a deep-water UAE gateway whose 5% duty + 5% VAT stack compiles to CIF &#215; 1.1025, the same statutory multiplier as Jebel Ali. A $10,000 CIF shipment clears at $11,025 before operational fees, and free-zone status can defer the 5% duty + 5% VAT until mainland exit, deferring $1,025 on the same base. On schedule, the China&#8211;UAE fast sea guide is 14&#8211;18 days versus Jebel Ali&#8217;s ~21-day benchmark, so Khalifa is a congestion/schedule trade-off, not a tax trade-off.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market and port snapshots. Treat
         every LOW-confidence transit, facility and fee note as indicative, verify with Abu Dhabi Ports
