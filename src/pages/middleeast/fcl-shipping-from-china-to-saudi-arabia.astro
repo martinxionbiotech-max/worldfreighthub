@@ -354,7 +354,7 @@ const faqs = [
   },
   {
     q: 'FCL or LCL — which is cheaper for my cargo?',
-    a: 'There is no fixed break-even volume in the verified research snapshot. Use the LCL per-CBM table against an FCL all-in quote for your actual volume; as volume rises, FCL usually becomes cheaper per CBM because you stop paying consolidation handling and for unused space is reduced. Ask for both quotes before deciding.',
+    a: 'There is no fixed verified break-even CBM, but the planning rule is ~15 CBM — below that LCL usually wins per CBM, above it FCL usually becomes cheaper as you stop paying consolidation handling. Use the LCL per-CBM table against an FCL all-in quote for your actual volume, and ask for both quotes before deciding.',
   },
   {
     q: 'What is VGM and when do I submit it?',
@@ -362,7 +362,7 @@ const faqs = [
   },
   {
     q: 'What weight limits apply to an FCL shipment to Saudi Arabia?',
-    a: 'Each container has a maximum gross mass and payload rating, but the operative limit is often the road-legal weight on the Saudi leg. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
+    a: 'The operative limit is usually the Saudi road-legal weight, not the container rating — a 20GP is rated around 28,200 kg payload, but the trucker’s axle limits and road corridor often bind first. Confirm the container payload, the trucker’s axle limits and the road corridor before loading, especially for dense goods in a 20GP.',
   },
   {
     q: 'Can I ship dangerous goods in an FCL container?',
@@ -370,11 +370,11 @@ const faqs = [
   },
   {
     q: 'Should I palletise or floor-load my FCL container?',
-    a: 'Palletised cargo is faster to load and unload and easier to inspect, but pallets consume volume and add weight. Floor-loading maximises cube but needs proper blocking and bracing and is slower to handle. Match the choice to your product, destination labour and whether the consignee can handle either type.',
+    a: 'Palletised cargo is faster to load, unload and inspect but adds 15–25 kg of tare per pallet and consumes volume, while floor-loading maximises cube but needs blocking and bracing and is slower to handle. Match the choice to your product, destination labour and whether the consignee can handle either type.',
   },
   {
     q: 'What hidden fees should I expect on an FCL shipment?',
-    a: 'Beyond ocean freight, expect origin charges, destination THC and port charges, clearance and cargo service fees, SABER PC/SC conformity fees, and potential demurrage/detention after free time. Import duty is 5% of CIF and VAT is 15% on CIF plus duty. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
+    a: 'Beyond ocean freight, expect a 5% CIF duty plus 15% VAT on CIF-plus-duty — a ×1.2075 landed-cost multiplier — then origin charges, destination THC and port charges, clearance and cargo service fees, SABER PC/SC conformity fees, and potential demurrage/detention after free time. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
   },
   {
     q: 'Do I need SABER certificates for an FCL shipment?',
@@ -382,7 +382,7 @@ const faqs = [
   },
   {
     q: 'Which Saudi port should I use for FCL — Jeddah or Dammam?',
-    a: 'Jeddah is the principal Red Sea gateway and suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and suits Riyadh and Eastern Province, with Riyadh Dry Port for the inland leg. Match the discharge port to your consignee and confirm inland trucking cost.',
+    a: 'Jeddah is the principal Red Sea gateway for western/central Saudi consignees, Dammam serves Riyadh and the Eastern Province, and Riyadh Dry Port covers the inland leg — with FCL transit of 30–40 days, so inland trucking cost often decides the port. Match the discharge port to your consignee and confirm inland trucking cost.',
   },
   {
     q: 'How do demurrage and detention work on an FCL container?',
@@ -469,6 +469,9 @@ const schema = [
         limits, dangerous goods and palletised versus floor-loaded — that decide whether the box
         moves on time.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Saudi FCL is priced per box, not per CBM: page data puts a 20GP at $3,333–$6,215 and a 40GP at $4,623–$8,085, with FCL transit of 30–40 days. The tax stack is the larger multiplier: 15% VAT on top of 5% duty is ×1.2075 on CIF, turning a $10,000 CIF value into $12,075 — a $2,075 duty-plus-VAT add-on. That $2,075 tax bill equals 62% of the cheapest 20GP freight ($3,333) and 33% of the highest ($6,215), so the all-in landed cost — not the container rate — is the real decision.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and container-planning figure as indicative, verify with carrier

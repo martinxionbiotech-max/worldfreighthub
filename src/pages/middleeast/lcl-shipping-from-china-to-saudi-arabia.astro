@@ -333,7 +333,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is LCL shipping and when should I use it?',
-    a: 'LCL (Less than Container Load) is ocean freight where your cargo shares a container with other importers. It is usually the right starting point for small volumes — commonly below about 15 CBM as a planning heuristic — because you pay only for the space you use instead of a whole container. The 15 CBM figure is a LOW-confidence planning rule, not a verified break-even point: always compare an LCL quote against an FCL quote at your actual volume.',
+    a: 'LCL is ocean freight where your cargo shares a container, and it is usually the starting point below ~15 CBM — the planning heuristic at which FCL becomes worth comparing. You pay only for the space you use instead of a whole container, but the 15 CBM figure is a LOW-confidence rule, not a verified break-even: always compare an LCL quote against an FCL quote at your actual volume.',
   },
   {
     q: 'How is LCL priced from China to Saudi Arabia?',
@@ -349,11 +349,11 @@ const faqs = [
   },
   {
     q: 'LCL or FCL — which is cheaper?',
-    a: 'There is no fixed verified break-even CBM in the research snapshot. As volume rises, FCL usually becomes cheaper per CBM because you stop paying consolidation handling and avoid paying for unused space in a shared box. A common planning heuristic is to compare FCL once cargo approaches roughly 15 CBM, but treat that as LOW confidence and ask for both quotes.',
+    a: 'There is no fixed verified break-even CBM, but the planning rule is ~15 CBM — below it LCL usually wins per CBM, above it FCL usually becomes cheaper per CBM. As volume rises, FCL usually becomes cheaper because you stop paying consolidation handling and avoid paying for unused space in a shared box, but treat 15 CBM as LOW confidence and ask for both quotes.',
   },
   {
     q: 'What are the hidden fees on an LCL shipment?',
-    a: 'The classic LCL traps are the minimum charge, origin CFS receiving, destination CFS deconsolidation/handling, THC and other port charges, customs clearance, final-mile delivery, and storage after the CFS free time expires. Specific amounts were not published in the verified snapshot, so ask the forwarder to itemise each fee in writing before booking.',
+    a: 'The classic LCL traps sit on top of the $267–$955/CBM ocean rate: the minimum charge, origin CFS receiving, destination CFS deconsolidation/handling, THC and other port charges, customs clearance, final-mile delivery, and storage after the CFS free time expires. Specific amounts were not published in the verified snapshot, so ask the forwarder to itemise each fee in writing before booking.',
   },
   {
     q: 'Does LCL have demurrage and detention like FCL?',
@@ -373,7 +373,7 @@ const faqs = [
   },
   {
     q: 'Which Saudi port should I use for LCL?',
-    a: 'Jeddah is the principal Red Sea gateway and suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and suits Riyadh and Eastern Province, with Riyadh Dry Port for the inland leg. Ask your forwarder which destination CFS the LCL quote assumes and compare the final delivery cost.',
+    a: 'Jeddah is the principal Red Sea gateway for western/central Saudi consignees, Dammam serves Riyadh and the Eastern Province, and Riyadh Dry Port covers the inland leg — with LCL transit of 32–45 days. Ask your forwarder which destination CFS the LCL quote assumes and compare the final delivery cost.',
   },
   {
     q: 'What documents do I need for an LCL import into Saudi Arabia?',
@@ -459,6 +459,9 @@ const schema = [
         per-CBM rates, LCL transit, when LCL beats FCL, the hidden-fee traps at both CFS points, and
         the SABER/SASO rules that can hold a whole consolidated container.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Saudi LCL is priced per CBM but falls sharply with volume: 1 CBM at $716–$955/CBM, 5 CBM at $330–$440/CBM, and 10 CBM at $267–$356/CBM. The crossover sits near 15 CBM: at 10 CBM LCL totals $2,669–$3,559, while a 20GP's 33 CBM at $3,333–$6,215 works out to $101–$188/CBM when full — so FCL undercuts LCL per-CBM once you pass the heuristic. Saudi's 15% VAT + 5% duty stack is ×1.2075 on CIF, adding $2,075 to a $10,000 CIF shipment — so the real comparison is all-in landed cost, not the per-CBM headline.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and fee note as indicative, verify with carrier before relying

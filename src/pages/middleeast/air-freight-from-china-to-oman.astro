@@ -336,15 +336,15 @@ const hiddenChargeCards = [
 const faqs = [
   {
     q: "What is air freight from China to Oman?",
-    a: "Air freight is airport-to-airport transport on scheduled or chartered aircraft from a Chinese origin airport to Muscat International (MCT). It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.",
+    a: "Air freight from China to Oman typically moves on the $4.3–$11.0/kg corridor band in 3–7 days to Muscat International (MCT), billed on chargeable weight — the higher of actual and volumetric weight. It is used when speed, shelf life or value density justify the higher cost.",
   },
   {
     q: "How is air freight charged — actual weight or volumetric weight?",
-    a: "Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is length × width × height in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.",
+    a: "Air freight is billed on the higher of actual gross weight and volumetric weight, where volumetric weight is L × W × H (cm) ÷ 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.",
   },
   {
     q: "How do I calculate volumetric weight for Oman air freight?",
-    a: "Measure the packed carton in centimetres, multiply length × width × height, then divide by 6,000. An 80 × 50 × 40 cm carton is 160,000 cm³ ÷ 6,000 = 26.7 kg volumetric. If its actual weight is 20 kg, you pay for 26.7 kg. Couriers use ÷ 5,000, which makes the same carton 32 kg.",
+    a: "Volumetric weight is L × W × H (cm) ÷ 6,000, so an 80 × 50 × 40 cm carton is 160,000 cm³ ÷ 6,000 = 26.7 kg. If its actual weight is 20 kg, you pay for 26.7 kg — a 33.5% uplift. Couriers use ÷ 5,000, which makes the same carton 32 kg — a 60% uplift.",
   },
   {
     q: "What does air freight from China to Oman cost?",
@@ -356,11 +356,11 @@ const faqs = [
   },
   {
     q: "Which Oman airport should I use for air freight?",
-    a: "Muscat International (MCT) is the Oman arrival gateway for China air cargo. Match the arrival airport to your consignee and confirm the final-mile leg, because MCT's storage and handling terms are not published in the verified snapshot.",
+    a: "Muscat International (MCT) is the Oman arrival gateway for China air cargo, sitting under the same $4.3–$11.0/kg, 3–7 day corridor band — match the arrival airport to your consignee and confirm the final-mile leg, because MCT's storage and handling terms are not published.",
   },
   {
     q: "When should I choose air freight instead of sea freight for Oman?",
-    a: "Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout, and when the chargeable weight is low enough that the premium is acceptable. Choose sea when volume is large — FCL beats LCL above ~15 CBM, with a 20ft at ≈ 33 CBM and a 40ft at ≈ 67 CBM, and FCL transit runs 14–30 days.",
+    a: "Air wins on time — 3–7 days versus 14–30 by sea — while sea wins on volume, since FCL beats LCL above ~15 CBM with a 20ft at ≈ 33 CBM and a 40ft at ≈ 67 CBM. Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout; choose sea when volume is large.",
   },
   {
     q: "Does air freight to Oman save me duty or VAT?",
@@ -368,11 +368,11 @@ const faqs = [
   },
   {
     q: "Is SABER or SASO certification required for Oman air freight?",
-    a: "No. SABER/SASO is a Saudi-only conformity programme and does not apply to Oman. This is a common GCC-wide assumption that is wrong. Oman instead applies a 10-digit HS classification, import declaration via the Directorate General of Customs, and product-specific permits for regulated categories.",
+    a: "No — SABER/SASO is a Saudi-only conformity programme, so Oman clearance instead runs on a 5% CIF duty and 5% VAT basis. This is a common GCC-wide assumption that is wrong. Oman instead applies a 10-digit HS classification, import declaration via the Directorate General of Customs, and product-specific permits for regulated categories.",
   },
   {
     q: "What documents and taxes apply to an Oman air freight import?",
-    a: "The standard set is the air waybill, commercial invoice, packing list and certificate of origin, with correct 10-digit HS classification. Duty is 5% on CIF value, VAT is 5%, and de minimis is not published — confirm with the Directorate General of Customs before shipping low-value goods.",
+    a: "An Oman air freight import carries 5% CIF duty plus 5% VAT — a ×1.1025 landed-cost multiplier — with an air waybill, commercial invoice, packing list, certificate of origin and correct 10-digit HS classification. De minimis is not published — confirm with the Directorate General of Customs before shipping low-value goods.",
   },
   {
     q: "What hidden fees should I expect on Oman air freight?",
@@ -380,7 +380,7 @@ const faqs = [
   },
   {
     q: "Why is Sohar relevant to an air freight decision?",
-    a: "Sohar is Oman's primary container gateway and sits outside the Strait of Hormuz, which is a resilience advantage for sea cargo. It does not change air freight, but it matters when you compare air against the sea alternative: Sohar is less congested than Jebel Ali or Jeddah, so the sea leg you are weighing against air may clear faster on some lanes.",
+    a: "Sohar matters to air only through the sea comparison — 3–7 days by air versus 14–30 days by sea — because it is Oman's primary container gateway outside the Strait of Hormuz and is less congested than Jebel Ali or Jeddah. It does not change the air invoice, but the sea leg you are weighing against air may clear faster on some lanes.",
   },
 ];
 
@@ -464,6 +464,9 @@ const schema = [
         3–7 day transit planning, and Oman's 5% duty + 5% VAT position — including why SABER/SASO
         does not apply.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Air to Oman (Muscat MCT) runs the $4.3–$11.0/kg corridor band at 3–7 days against 14–30 days by sea — a 2–10× speed gap, but Oman's own per-kg benchmark is not published, so the lane rate must be quoted. Chargeable weight is the first breakpoint: the page's 80 × 50 × 40 cm carton bills at 26.7 kg on ÷6,000 or 32 kg on ÷5,000 versus 20 kg actual — a 33.5% to 60% billable-kg uplift. Oman's 5% duty + 5% VAT is the same ×1.1025 landed-cost multiplier as the UAE, so a $10,000 CIF shipment adds $1,025 in duty and VAT — making the air premium a pure time-value call.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning context. Treat every
         LOW-confidence rate and routing note as indicative, and request an itemised quote for

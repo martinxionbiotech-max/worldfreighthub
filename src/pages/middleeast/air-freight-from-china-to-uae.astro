@@ -301,15 +301,15 @@ const factorRows = [
 const faqs = [
   {
     q: 'What is air freight from China to the UAE?',
-    a: 'Air freight is airport-to-airport transport of goods on scheduled or chartered aircraft from a Chinese origin airport to a UAE gateway such as Dubai International (DXB) or Al Maktoum International (DWC). It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.',
+    a: 'China–UAE air freight typically moves in 3–7 days at an indicative AED 20–23.5/kg (LOW confidence), billed on chargeable weight — the higher of actual and volumetric weight — from a Chinese origin airport to Dubai International (DXB) or Al Maktoum International (DWC). It is used when speed, shelf life or value density justify the higher cost.',
   },
   {
     q: 'How is air freight charged — actual weight or volumetric weight?',
-    a: 'Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is usually L × W × H in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.',
+    a: 'Air freight is billed on the higher of actual gross weight and volumetric weight, where volumetric weight is L × W × H (cm) ÷ 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.',
   },
   {
     q: 'How do I calculate volumetric weight for UAE air freight?',
-    a: 'Measure the packed carton in centimetres, multiply length × width × height, then divide by 6,000. For example, a 60 × 50 × 40 cm carton is 120,000 cm³ ÷ 6,000 = 20 kg volumetric. If its actual weight is 12 kg, you pay for 20 kg. Confirm the carrier’s divisor because some services use 5,000.',
+    a: 'Volumetric weight is L × W × H (cm) ÷ 6,000, so a 60 × 50 × 40 cm carton is 120,000 cm³ ÷ 6,000 = 20 kg. If its actual weight is 12 kg, you pay for 20 kg — a 66.7% billable uplift. Confirm the carrier’s divisor because some services use 5,000.',
   },
   {
     q: 'What does air freight from China to the UAE cost?',
@@ -321,19 +321,19 @@ const faqs = [
   },
   {
     q: 'Which UAE airport should I use for air freight — DXB or DWC?',
-    a: 'Dubai International (DXB) is the primary Dubai passenger and air cargo gateway and is ranked among the world’s busiest airports by international passenger traffic. Al Maktoum International (DWC) at Dubai South is positioned as a cargo and future-expansion gateway. Match the arrival airport to your consignee and confirm the final-mile leg.',
+    a: 'DXB is the primary Dubai air cargo gateway and DWC at Dubai South is the cargo and future-expansion gateway — both sit under the same indicative AED 20–23.5/kg, 3–7 day planning band, so match the arrival airport to your consignee and confirm the final-mile leg.',
   },
   {
     q: 'When should I choose air freight instead of sea freight for the UAE?',
-    a: 'Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout, and when the chargeable weight is low enough that the premium is acceptable. Choose sea when the cargo is large, dense or cost-sensitive. Use the air-vs-sea decision table on this page for the full comparison.',
+    a: 'Air beats sea when the time saved is worth the premium: 3–7 days by air versus 15–30 days by sea, at an indicative AED 20–23.5/kg on chargeable weight. Choose air when the cargo is urgent, high-value, perishable, fragile or needed to avoid a stockout; choose sea when the cargo is large, dense or cost-sensitive. Use the air-vs-sea decision table on this page for the full comparison.',
   },
   {
     q: 'Can I ship lithium batteries by air to the UAE?',
-    a: 'Lithium batteries are regulated as dangerous goods under the IATA Dangerous Goods Regulations. Lithium-ion batteries are commonly shipped under UN3480 (batteries alone) or UN3481 (contained in or packed with equipment), and require compliant packaging, labelling and documentation — many carriers restrict or refuse them. Confirm acceptance, testing and paperwork with the carrier before booking.',
+    a: 'Lithium batteries are regulated as dangerous goods under IATA, shipped as UN3480 (batteries alone) or UN3481 (contained in or packed with equipment), and require compliant packaging, labelling and documentation — many carriers restrict or refuse them. Confirm acceptance, testing and paperwork with the carrier before booking.',
   },
   {
     q: 'What documents and taxes apply to a UAE air freight import?',
-    a: 'Standard documents are a commercial invoice, air waybill, packing list and certificate of origin. The baseline import duty is 5% of CIF under the GCC Common External Tariff, and import VAT is 5% on the CIF value plus duty. Classify the HS code correctly and confirm any UAE conformity requirements for regulated goods.',
+    a: 'A UAE air freight import carries 5% CIF duty plus 5% VAT on the CIF-plus-duty base — a ×1.1025 landed-cost multiplier — alongside a commercial invoice, air waybill, packing list and certificate of origin. Classify the HS code correctly and confirm any UAE conformity requirements for regulated goods.',
   },
 ];
 
@@ -415,6 +415,9 @@ const schema = [
         the DXB and DWC airport options, indicative AED per-kg rates, 3–7 day transit planning, and
         the lithium-battery and dangerous-goods restrictions you must clear before booking.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Air to the UAE runs an indicative AED 20–23.5/kg with 3–7 day transit versus a 15–30 day sea window — a 2–10× speed advantage that is priced per chargeable kg, not per CBM. Chargeable weight is the real multiplier: the page's 60 × 50 × 40 cm carton is billed at 20 kg volumetric against 12 kg actual — a 66.7% uplift before fuel and security surcharges. The UAE's 5% duty + 5% VAT stack is ×1.1025 on CIF, so a $10,000 CIF shipment adds $1,025 in duty and VAT — air is justified by urgency or value density, not by a cheaper landed cost.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate and transit number as an indicative figure to verify with your carrier
