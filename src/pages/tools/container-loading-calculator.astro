@@ -12,27 +12,27 @@ const description =
 const faqs = [
   {
     q: 'How many cartons fit in a 20ft container?',
-    a: 'It depends on carton size and weight. Using an indicative 28 CBM of usable volume, divide 28 by the CBM of one carton. The result is a volume estimate only, not a guaranteed load.',
+    a: 'Divide the indicative 28 CBM of usable volume by one carton’s CBM, so a 0.12 CBM carton gives roughly 233 pieces before any stowage loss. The result is a volume estimate only, not a guaranteed load.',
   },
   {
     q: 'Why is the container loading estimate only indicative?',
-    a: 'The calculator uses usable-volume benchmarks, but real loading also depends on pallets, dunnage, door height, carton stacking, cargo weight and any dangerous-goods or heavy-cargo restrictions.',
+    a: 'The calculator uses usable-volume benchmarks of 28/58/68 CBM, but real loading also depends on pallets, dunnage, door height, carton stacking, cargo weight and any dangerous-goods or heavy-cargo restrictions.',
   },
   {
     q: 'What is the difference between 40ft and 40ft High Cube?',
-    a: 'A 40ft High Cube has roughly the same footprint as a standard 40ft but about one extra foot of internal height, so it is often planned at about 68 CBM instead of 58 CBM. These are indicative figures.',
+    a: 'A 40ft High Cube has roughly the same footprint as a standard 40ft but about one extra foot of internal height, so it is often planned at about 68 CBM instead of 58 CBM — a 17% cube gain on paper. These are indicative figures.',
   },
   {
     q: 'Should I estimate container loading by volume or by weight?',
-    a: 'Check both. High-volume cargo may fill the cube first, while dense cargo may hit the container payload weight limit before the volume is full. Confirm both the usable CBM and maximum payload with the carrier.',
+    a: 'Check both, because the same 28 CBM can be a volume problem or a payload problem: high-volume cargo may fill the cube first, while dense cargo may hit the container payload weight limit before the volume is full. Confirm both the usable CBM and maximum payload with the carrier.',
   },
   {
     q: 'What happens if my cartons are oversized or very heavy?',
-    a: 'Oversized cartons may waste space around the door, and heavy cartons may exceed the payload limit before volume is filled. For these cases, have a load planner or carrier validate the stowage.',
+    a: 'Oversized cartons may waste space around the door, and heavy cartons may exceed the payload limit before volume is filled — in both cases the 28/58/68 CBM planning ceiling becomes unreachable. For these cases, have a load planner or carrier validate the stowage.',
   },
   {
     q: 'Can I actually load the full usable CBM?',
-    a: 'Rarely. Pallet footprints, dunnage, carton shapes, cargo care rules and stowage efficiency all reduce the practical fill. Treat the full usable volume as a planning ceiling, not a booking guarantee.',
+    a: 'Rarely. Pallet footprints, dunnage, carton shapes, cargo care rules and stowage efficiency all reduce the practical fill, so treat 28 CBM for a 20ft and 58 CBM for a 40ft as a planning ceiling, not a booking guarantee.',
   },
 ];
 
@@ -80,6 +80,9 @@ const schema = [
         Estimate how many cartons — and how many total pieces — fit in a 20ft,
         40ft or 40ft High Cube container using indicative volume benchmarks.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> A 20ft container is planned at ~28 CBM and a 40ft at ~58 CBM, so a 40ft carries roughly 2.07× the 20ft’s usable cube. Two 20fts give ~56 CBM against one 40ft’s ~58 CBM — a 2 CBM / 3.6% planning difference that decides whether one 40ft or two 20fts is the right buy. A 40ft High Cube adds about 10 CBM over the standard 40ft, so cube checks should use 68 CBM before over-declaring volume.</p>
+      </blockquote>
     </div>
   </div>
 

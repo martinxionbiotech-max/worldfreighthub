@@ -264,51 +264,51 @@ const complianceRows = [
 const faqs = [
   {
     q: 'Is this freight cost calculator a real quote?',
-    a: 'No. It is an indicative planning estimate, not a quotation or a contractual offer. Freight rates move weekly, destination charges vary by terminal and carrier, and every result must be confirmed with a licensed forwarder before booking.',
+    a: 'No — the output is a planning estimate, not a quotation, because a $10,000 CIF shipment already moves from $10,500 in Qatar to $12,075 in Saudi Arabia before freight volatility or local charges. Freight rates move weekly, destination charges vary by terminal and carrier, and every result must be confirmed with a licensed forwarder before booking.',
   },
   {
     q: 'Why are freight rates shown as a range?',
-    a: 'The China-to-GCC corridor is volatile. Spot rates move with capacity, seasonality, Red Sea and Strait of Hormuz risk, congestion and fuel. A range shows the realistic spread between a calm market and a stressed market; a single number would pretend the volatility does not exist.',
+    a: 'The corridor’s verified Saudi 20ft bracket is $1,500–$6,200, a 4.1× spread between a calm market and a stressed market, so a single number would pretend the volatility does not exist. Spot rates move with capacity, seasonality, Red Sea and Strait of Hormuz risk, congestion and fuel.',
   },
   {
     q: 'What is CIF and how is duty calculated?',
-    a: 'CIF means cost, insurance and freight. In this calculator, the CIF basis is the goods value plus the freight midpoint plus insurance. GCC duty is then 5% of that CIF value, and VAT is applied to CIF plus duty.',
+    a: 'CIF means cost, insurance and freight, and GCC duty is 5% of that CIF value, so a $10,000 CIF basis becomes $10,500 before VAT. In this calculator, the CIF basis is the goods value plus the freight midpoint plus insurance, and VAT is then applied to CIF plus duty.',
   },
   {
     q: 'What VAT rate applies to my destination?',
-    a: 'The calculator maps the destination port to the country rate: Saudi Arabia 15%, United Arab Emirates 5%, Oman 5%, Bahrain 10%, Qatar 0%, Kuwait 0%. Qatar and Kuwait currently have no VAT in the research snapshot.',
+    a: 'The calculator maps the destination port to the country rate — Saudi Arabia 15%, UAE and Oman 5%, Bahrain 10%, and Qatar/Kuwait 0% — so on a $10,000 CIF basis the VAT layer ranges from $0 to $1,575 after duty. Qatar and Kuwait currently have no VAT in the research snapshot.',
   },
   {
     q: 'Which charges are NOT included?',
-    a: 'Destination and local charges are not quantified in the snapshot. That includes THC, port service fee, documentation/DO fee, ISPS, inspection, brokerage, SABER PC/SC, storage and inland trucking. The calculator shows them as a request-the-schedule line, not as a made-up number.',
+    a: 'Destination and local charges are not quantified in the snapshot, so the calculator shows them as a request-the-schedule line rather than a made-up dollar figure. That includes THC, port service fee, documentation/DO fee, ISPS, inspection, brokerage, SABER PC/SC, storage and inland trucking.',
   },
   {
     q: 'How do I estimate demurrage and detention?',
-    a: 'Enter the number of days the container is expected to be held after discharge. The calculator subtracts a 5-free-day planning assumption and applies the snapshot range of roughly $50 to $300+ per day, with the 2025 average at about $150–$300 per day. This is a directional estimate, not a terminal tariff.',
+    a: 'The calculator subtracts a 5-free-day planning assumption from your entered hold days and applies roughly $50–$300+ per day, with the 2025 average at about $150–$300 per day. This is a directional estimate, not a terminal tariff.',
   },
   {
     q: 'Does this include DDP?',
-    a: 'No. This is a landed-cost estimate, not a DDP quote. DDP includes duty, VAT, clearance and delivery in the forwarder\u2019s obligation, but the underlying arithmetic is the same. Use the calculator to sanity-check a DDP price against its cost components.',
+    a: 'No — this is a landed-cost estimate, not a DDP quote, because DDP adds clearance and delivery on top of the same $10,500–$12,075 tax stack for a $10,000 CIF shipment. DDP includes duty, VAT, clearance and delivery in the forwarder’s obligation, but the underlying arithmetic is the same; use the calculator to sanity-check a DDP price against its cost components.',
   },
   {
     q: 'Why is air freight shown as a range?',
-    a: 'Air rates are published in the research snapshot only as directional benchmarks: Saudi Arabia roughly $8.80–$13.50/kg and the UAE roughly $5.45–$6.40/kg. For other GCC destinations the snapshot has no published air figure, so the calculator uses the Saudi/UAE span as a directional fallback only.',
+    a: 'Air rates are published only as directional benchmarks of $8.80–$13.50/kg for Saudi Arabia and $5.45–$6.40/kg for the UAE, a 40% wider Saudi spread. For other GCC destinations the snapshot has no published air figure, so the calculator uses the Saudi/UAE span as a directional fallback only.',
   },
   {
     q: 'How often is this data updated?',
-    a: 'The page carries the August 2026 update badge. Verified tax rules and port-level freight brackets are re-checked against the data files; volatile market ranges are treated as monthly-review items and kept LOW confidence until a primary source publishes a specific figure.',
+    a: 'The page carries the August 2026 update badge and re-checks the two stable layers — 5% GCC duty and 0–15% VAT — against the data files. Verified tax rules are re-checked against the data files; volatile market ranges are treated as monthly-review items and kept LOW confidence until a primary source publishes a specific figure.',
   },
   {
     q: 'Is marine insurance included?',
-    a: 'Yes, but only as an explicit assumption. The research snapshot does not publish a standard marine cargo insurance rate, so the calculator defaults to 0.3% of the freight-inclusive value as an industry-norm placeholder. You can set it to 0 or to your actual quoted rate.',
+    a: 'Yes, but only as a 0.3% default on the freight-inclusive value — $30 on a $10,000 freight-inclusive base — because the research snapshot does not publish a standard marine cargo insurance rate. You can set it to 0 or to your actual quoted rate.',
   },
   {
     q: 'What does “verify with forwarder” mean?',
-    a: 'It means the figure has not been verified against a primary source in the current research snapshot. WorldFreightHub marks those numbers LOW confidence and directs you to request an itemised schedule from your forwarder rather than presenting an invented amount as fact.',
+    a: 'It means the research snapshot contains 0 primary-source verifications for that figure, so WorldFreightHub marks it LOW confidence and directs you to request an itemised schedule from your forwarder rather than presenting an invented amount as fact.',
   },
   {
     q: 'Should I use this for customs declaration values?',
-    a: 'No. Use it for planning and for challenging quotes, not for declaring customs value. The declared value must follow the actual commercial invoice and the destination customs rules for the specific goods and HS code.',
+    a: 'No — the declared value must be the actual commercial-invoice figure, not the calculator output, because 5% duty on every $100 of CIF means the declaration directly changes the customs cost. Use the calculator for planning and for challenging quotes, then follow the destination customs rules for the specific goods and HS code.',
   },
 ];
 
@@ -426,6 +426,9 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
         GCC import duty, destination VAT, insurance and the destination charges most online quotes
         leave out.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Freight cost is freight + surcharges + duty + VAT, not the headline rate. On a $10,000 CIF shipment the duty+VAT alone is $500 in Qatar/Kuwait (5% duty, 0% VAT) but $2,075 in Saudi Arabia (5% duty + 15% VAT). The calculator separates the rate from the landed cost, so the number you compare is the all-in total, not the per-kilo or per-CBM quote.</p>
+      </blockquote>
       <p class="small muted">
         Every dollar figure is confidence-badged. Verified tax rules are HIGH; freight brackets are
         MEDIUM; air freight, insurance and time-based charges are LOW until a forwarder publishes a
@@ -611,7 +614,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
     <div class="container">
       <h2>1. Freight rate table: the seven published GCC ports</h2>
       <p>
-        The calculator\u2019s sea-freight basis is the same per-destination bracket used across
+        The calculator’s sea-freight basis is the same per-destination bracket used across
         WorldFreightHub, sourced from the route data file. These are screening ranges, not tariffs:
         the spread is the market signal, and a forwarder should compress it to a firm all-in quote
         for your exact commodity, HS code and sailing week.

@@ -12,27 +12,27 @@ const description =
 const faqs = [
   {
     q: 'What is volumetric weight?',
-    a: 'Volumetric weight is the space a shipment occupies converted into a weight equivalent. Carriers use it to charge fairly for light but bulky cargo that fills space without adding much physical weight.',
+    a: 'Volumetric weight converts a shipment’s L×W×H volume into a notional kilogram figure, so a 60×50×40 cm carton becomes 20 kg under the air ÷6000 rule even if it weighs 8 kg. Carriers use it to charge fairly for light but bulky cargo that fills space without adding much physical weight.',
   },
   {
     q: 'Why does air freight divide by 6000?',
-    a: 'The 6000 divisor is a common international air freight standard. It means 1 CBM of space is billed as the equivalent of about 167 kg (1,000,000 ÷ 6000 ≈ 166.67 kg). Some carriers use 5000 for express freight.',
+    a: 'The 6000 divisor is a common international air freight standard, and it prices 1 CBM as about 167 kg (1,000,000 ÷ 6000 ≈ 166.67 kg). Some carriers use 5000 for express freight, which lifts the same 1 CBM to 200 kg.',
   },
   {
     q: 'When is the sea freight 1000 divisor used?',
-    a: 'For ocean freight, volume is usually quoted in CBM rather than volumetric weight. The 1000 divisor is used in some comparisons and by some operators to treat 1 CBM as 1000 kg; check the exact rate basis with your carrier.',
+    a: 'The 1000 divisor is a comparison convention that treats 1 CBM as 1000 kg, which is 6× heavier than the air ÷6000 equivalent of 167 kg per CBM. For actual ocean LCL pricing, volume is usually quoted in CBM, so confirm the exact rate basis with your carrier.',
   },
   {
     q: 'How is chargeable weight calculated?',
-    a: 'Chargeable weight is the higher of the actual weight and the volumetric weight. For example, a 10 kg parcel with 15 kg volumetric weight would be billed at 15 kg.',
+    a: 'Chargeable weight is the higher of the actual weight and the volumetric weight, so a 10 kg parcel with 15 kg volumetric weight bills at 15 kg. The carrier always charges the greater of the two numbers.',
   },
   {
     q: 'Does express courier use a different factor?',
-    a: 'Yes. Express and parcel carriers often use a divisor of 5000 instead of 6000, producing a higher volumetric weight for the same carton. Always confirm the divisor in the rate sheet.',
+    a: 'Yes — express and parcel carriers often use ÷5000 instead of ÷6000, which turns a 60×50×40 cm carton from 20 kg into 24 kg, a 20% higher billable weight. Always confirm the divisor in the rate sheet.',
   },
   {
     q: 'Can volumetric weight ever be lower than actual weight?',
-    a: 'Yes. Dense cargo has a low volumetric weight relative to its actual weight, so the chargeable weight is simply the actual weight. The carrier always charges the higher of the two.',
+    a: 'Yes. Dense cargo can have a volumetric weight below its actual weight, in which case chargeable weight simply equals actual weight because the carrier takes the higher of the two.',
   },
 ];
 
@@ -80,6 +80,9 @@ const schema = [
         Compare actual weight with volumetric weight using the air freight 6000
         divisor or the sea freight 1000 divisor, and see the chargeable weight.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Volumetric weight is L×W×H(cm)÷6000 for air but ÷5000 for courier/express. A 60×50×40 cm box is 20 kg by air but 24 kg by courier, a 20% billable-weight jump that catches people who quote on actual weight. The same box is 0.12 CBM, so at 1 CBM ≈ 167 kg the ÷6000 standard charges for 20 kg of space instead of the carton’s physical weight.</p>
+      </blockquote>
     </div>
   </div>
 

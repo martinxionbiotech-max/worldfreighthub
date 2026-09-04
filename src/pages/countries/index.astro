@@ -19,19 +19,19 @@ const rows = gccCountries.map((country) => ({
 const faqs = [
   {
     q: 'Which GCC country has the lowest import tax?',
-    a: 'Qatar and Kuwait currently have no VAT, so they are the lowest-tax destinations today — though Qatar is expected to introduce VAT at around 5% soon. The UAE and Oman charge 5% VAT, Bahrain 10%, and Saudi Arabia the highest at 15% on top of the standard 5% duty.',
+    a: 'Qatar and Kuwait are the lowest-tax destinations today at ×1.05 on CIF (5% duty, 0% VAT), while Saudi Arabia is the highest at ×1.2075 (5% duty + 15% VAT). The UAE and Oman charge 5% VAT at ×1.1025, Bahrain 10% at ×1.155, and Saudi Arabia 15% at ×1.2075.',
   },
   {
     q: 'Saudi Arabia or the UAE — which is easier to import into?',
-    a: 'The UAE is generally the lower-friction entry point: 5% VAT, 5% duty, and free zones that defer duty. Saudi Arabia has higher VAT (15%) and mandatory SABER/SASO product conformity for most goods, which adds paperwork and lead time. Choose by destination market — they serve different regions.',
+    a: 'The UAE is the lower-friction entry point with a ×1.1025 landed-cost multiplier (5% VAT + 5% duty) and free zones that defer duty, while Saudi Arabia runs ×1.2075 plus mandatory SABER/SASO conformity for most goods. Choose by destination market — they serve different regions.',
   },
   {
     q: 'How is GCC import duty calculated?',
-    a: 'On the CIF value (cost + insurance + freight), not the invoice value, at a baseline of 5% under the GCC Common Customs Tariff. Higher rates apply to alcohol, tobacco and some goods, and VAT is charged on top of the duty-inclusive value.',
+    a: 'On the CIF value (cost + insurance + freight), not the invoice value, at a baseline of 5% under the GCC Common Customs Tariff. VAT is then charged on top of the duty-inclusive value, which is why the headline 5% becomes ×1.05 before any VAT is added.',
   },
   {
     q: 'Which port should I choose for each country?',
-    a: 'Each GCC state has a primary gateway: Jeddah and Dammam for Saudi Arabia, Jebel Ali for the UAE, Hamad for Qatar, Shuwaikh/Shuaiba for Kuwait, Sohar for Oman, and Khalifa bin Salman for Bahrain. The right port depends on where in the country your goods are destined.',
+    a: 'Each GCC state has a primary gateway — Jeddah and Dammam for Saudi Arabia, Jebel Ali for the UAE, Hamad for Qatar, Shuwaikh/Shuaiba for Kuwait, Sohar for Oman, and Khalifa bin Salman for Bahrain — so the port decision is really a final-destination decision. The right port depends on where in the country your goods are destined.',
   },
 ];
 
@@ -76,6 +76,9 @@ const schema = [
         corridor — each with its own VAT rate, duty rules, compliance
         requirements and entry ports.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> The GCC’s 6 countries span a 15.75-point landed-cost spread: Qatar and Kuwait clear at ×1.05, while Saudi Arabia clears at ×1.2075. Saudi’s 15% VAT plus 5% duty means CIF × 1.05 × 1.15, or CIF × 1.2075, before freight or compliance. UAE and Oman sit in the middle at ×1.1025 and Bahrain at ×1.155, so destination choice changes the tax stack before any quote.</p>
+      </blockquote>
     </div>
   </div>
 

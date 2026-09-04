@@ -12,27 +12,27 @@ const description =
 const faqs = [
   {
     q: 'What is CBM?',
-    a: 'CBM stands for cubic meter. It is the metric unit of volume used to quote LCL, FCL and volumetric cargo. One CBM equals a cube of 1 m × 1 m × 1 m.',
+    a: 'CBM is the cubic-metre volume unit used for LCL, FCL and volumetric cargo, and 1 CBM equals a cube of 1 m × 1 m × 1 m. It is the pricing basis for most sea-freight LCL quotes.',
   },
   {
     q: 'How do I convert cubic centimeters to cubic meters?',
-    a: 'Divide the volume in cubic centimeters by 1,000,000. For example, 60 cm × 40 cm × 50 cm = 120,000 cm³, which equals 0.12 CBM.',
+    a: 'Divide the volume in cubic centimetres by 1,000,000: a 60 cm × 40 cm × 50 cm carton is 120,000 cm³, which equals 0.12 CBM. Entering 120,000 as the CBM would be a 1,000,000× error.',
   },
   {
     q: 'How is total CBM calculated for multiple cartons?',
-    a: 'Calculate the CBM of one carton, then multiply by the number of identical cartons. If the shipment contains different sizes, add the total CBM for each carton type together.',
+    a: 'Calculate the CBM of one carton, then multiply by the number of identical cartons — 100 cartons of 0.12 CBM each total 12 CBM, just under the ~15 CBM LCL/FCL crossover. If the shipment contains different sizes, add the total CBM for each carton type together.',
   },
   {
     q: 'Does CBM differ between air and sea freight?',
-    a: 'The physical volume is the same, but air freight usually converts CBM to volumetric weight using a divisor such as 6000, while sea freight generally quotes by actual volume for LCL.',
+    a: 'The physical volume is the same, but air freight usually converts CBM to volumetric weight at ÷6000, making 1 CBM ≈ 167 kg, while sea freight generally quotes LCL by actual CBM. The mode changes the billing unit, not the measured cube.',
   },
   {
     q: 'How many CBM fit in a 20ft or 40ft container?',
-    a: 'A 20ft container is often planned at about 28 CBM and a 40ft at about 58 CBM of usable volume. These are indicative figures only; actual load depends on pallets, dunnage, carton dimensions and weight.',
+    a: 'A 20ft container is often planned at about 28 CBM and a 40ft at about 58 CBM of usable volume, so a 40ft holds roughly 2.07× the 20ft cube. These are indicative figures only; actual load depends on pallets, dunnage, carton dimensions and weight.',
   },
   {
     q: 'What is the difference between CBM and chargeable weight?',
-    a: 'CBM measures space, while chargeable weight compares actual weight with volumetric weight and charges the higher value. Carriers use one or the other depending on the freight mode and cargo density.',
+    a: 'CBM measures space in cubic metres, while chargeable weight compares actual weight with volumetric weight and charges the higher value — at ÷6000, 0.12 CBM is equivalent to 20 kg of billable space. Carriers use one or the other depending on the freight mode and cargo density.',
   },
 ];
 
@@ -81,6 +81,9 @@ const schema = [
         multi-piece shipment, and see how the volume compares with indicative
         container capacity.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> CBM is L×W×H in metres, and the error that matters is mixing centimetres and metres — that is a 1,000,000× mistake. A 60×40×50 cm carton is 120,000 cm³ = 0.12 CBM, which is why LCL is quoted per CBM with a ~15 CBM FCL crossover. Below ~15 CBM LCL usually wins, while a 20ft is planned at ~28 CBM and a 40ft at ~58 CBM.</p>
+      </blockquote>
     </div>
   </div>
 

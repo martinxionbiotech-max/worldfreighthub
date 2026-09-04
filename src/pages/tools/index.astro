@@ -32,23 +32,23 @@ const tools = [
 const faqs = [
   {
     q: 'Which tool should I use first?',
-    a: 'Start with the CBM Calculator to get your shipment\u2019s total volume. If the volume is below roughly 15 CBM, you are likely an LCL shipment and the CBM figure is your pricing basis. If it is above 15 CBM, use the Container Loading Calculator to work out how many cartons fill a 20ft or 40ft container. Then run the Volumetric Weight Calculator for any air leg, and finish with the Freight Cost Calculator to turn volume, weight and value into a landed-cost estimate.',
+    a: 'Start with the CBM Calculator because the ~15 CBM mark is the LCL/FCL crossover — below 15 CBM you pay per CBM, above it a 20ft’s ~28 CBM of usable volume starts to make sense. Then run the Container Loading Calculator to see whether one 40ft at ~58 CBM beats two 20fts at ~56 CBM, and finish with the Volumetric Weight and Freight Cost calculators to lock chargeable weight and landed cost.',
   },
   {
     q: 'Do these calculators charge me?',
-    a: 'No. All four tools are free, run entirely in your browser, and never send your data to a server. They are planning aids, not quotes — use them to estimate, then confirm figures with a licensed forwarder before booking.',
+    a: 'All four tools are free and run 100% in your browser with $0 fees and no server upload. They are planning aids, not quotes — use them to estimate, then confirm figures with a licensed forwarder before booking.',
   },
   {
     q: 'How accurate are the results?',
-    a: 'They are planning estimates. Real loadable volume depends on packaging, carton rigidity, palletisation and how well cargo stacks, so a container fits less in practice than the raw volume suggests. Treat every result as a starting point, not a commitment.',
+    a: 'They align with planning benchmarks — a 20ft at ~28 CBM, a 40ft at ~58 CBM, and air freight at ÷6000 — rather than promising a live rate. Real loadable volume depends on packaging, carton rigidity, palletisation and how well cargo stacks, so a container fits less in practice than the raw volume suggests. Treat every result as a starting point, not a commitment.',
   },
   {
     q: 'What is the difference between CBM and volumetric weight?',
-    a: 'CBM measures physical volume in cubic metres and drives LCL sea-freight pricing. Volumetric weight converts dimensions into a notional kilogram figure and drives air-freight and express billing — the carrier charges on the greater of actual and volumetric weight.',
+    a: 'CBM prices space in cubic metres for LCL, while volumetric weight converts space to a notional kilogram figure — 1 CBM ≈ 167 kg at ÷6000 — for air and express billing. The carrier charges the greater of actual and volumetric weight, so a light 60×50×40 cm box bills at 20 kg by air even if it weighs less.',
   },
   {
     q: 'Do the calculators apply to the China-to-GCC corridor specifically?',
-    a: 'The formulas are universal, but the calculators are tuned for the corridor\u2019s reality: a 20ft container holds roughly 28 CBM and a 40ft roughly 58 CBM of practical cargo, air freight uses the IATA \u00f76000 volumetric divisor, and the Freight Cost Calculator applies the published China-to-GCC freight brackets, duty and VAT. Read the relevant corridor pages for the context behind each number.',
+    a: 'Yes, the calculators use the corridor’s published benchmarks: 20ft ≈ 28 CBM and 40ft ≈ 58 CBM, air freight at ÷6000, and the Freight Cost Calculator’s China-to-GCC freight brackets, duty and VAT. That keeps the results calibrated to the numbers on this site rather than a generic world rate.',
   },
 ];
 
@@ -92,6 +92,9 @@ const schema = [
         Four free, client-side calculators to plan a China–GCC shipment — volume,
         container loading, chargeable weight and landed cost, in the order you actually need them.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> WorldFreightHub’s four tools turn three recurring freight math traps into calculators — chargeable weight (÷6000 air vs ÷5000 courier, up to a 20% billable swing), CBM, and container loading. A 60×50×40 cm box is 20 kg by air but 24 kg by courier, a 4 kg jump on one carton. Start with CBM below ~15 CBM for LCL and move to container loading above it, so the number you quote is the number you’ll actually be billed on.</p>
+      </blockquote>
     </div>
   </div>
 
@@ -107,7 +110,7 @@ const schema = [
       <div class="fact-grid">
         <div class="fact">
           <span class="fact-label">CBM Calculator</span>
-          <span class="fact-value">Your shipment\u2019s volume in cubic metres — the pricing basis for LCL sea freight below ~15 CBM.</span>
+          <span class="fact-value">Your shipment’s volume in cubic metres — the pricing basis for LCL sea freight below ~15 CBM.</span>
         </div>
         <div class="fact">
           <span class="fact-label">Container Loading Calculator</span>
@@ -130,7 +133,7 @@ const schema = [
     <ol>
       <li>
         <strong>Measure the volume.</strong> Enter carton dimensions into the CBM Calculator to get
-        the shipment\u2019s total cubic metres. This single number decides LCL versus FCL: below
+        the shipment’s total cubic metres. This single number decides LCL versus FCL: below
         roughly 15 CBM you share a container (LCL), above it you book a full box (FCL).
       </li>
       <li>
