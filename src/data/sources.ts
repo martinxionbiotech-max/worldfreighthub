@@ -319,4 +319,10 @@ export const sources: Source[] = [
     url: 'https://www.portgot.se',
     type: 'port-authority',
   },
+  {
+    id: 'gov-uk',
+    name: 'GOV.UK — UK Global Tariff, VAT, EORI and product-marking guidance',
+    url: 'https://www.gov.uk',
+    type: 'government',
+  },
 ];

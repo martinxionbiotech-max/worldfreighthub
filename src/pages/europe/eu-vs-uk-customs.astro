@@ -1,0 +1,676 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+
+const pageUrl = `${SITE_URL}/europe/eu-vs-uk-customs/`;
+const notPublished = 'Not published in verified snapshot — request an itemised schedule';
+
+const landedCostRows = [
+  { market: 'Germany', vat: '19%', multiplier: '×1.2852', total: '$12,852', tax: '$2,852', confidence: 'MEDIUM' },
+  { market: 'United Kingdom', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'France', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'Austria', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'Netherlands', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Belgium', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Spain', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Italy', vat: '22%', multiplier: '×1.3176', total: '$13,176', tax: '$3,176', confidence: 'MEDIUM' },
+  { market: 'Poland', vat: '23%', multiplier: '×1.3284', total: '$13,284', tax: '$3,284', confidence: 'MEDIUM' },
+  { market: 'Sweden', vat: '25%', multiplier: '×1.35', total: '$13,500', tax: '$3,500', confidence: 'MEDIUM' },
+];
+
+const tariffRows = [
+  {
+    regime: 'United Kingdom',
+    basis: 'UK Global Tariff (UKGT)',
+    scope: 'UK-specific schedule with simplified lines and many low “nuisance” tariffs removed',
+    appliesTo: 'All UK imports unless a trade agreement, an exception/relief/tariff suspension, or the Developing Countries Trading Scheme (DCTS) applies',
+    chinaStatus: 'China is not covered by a UK trade agreement or DCTS, so goods face the UKGT MFN rate by HS code',
+    confidence: 'HIGH',
+  },
+  {
+    regime: 'European Union',
+    basis: 'EU Common Customs Tariff (TARIC)',
+    scope: 'Uniform schedule applied by all 27 member states',
+    appliesTo: 'All EU imports; duty varies by HS code, typically 0–12% for consumer goods and up to ~12% on clothing',
+    chinaStatus: 'No China–EU free-trade agreement, so goods face the TARIC MFN rate by HS code',
+    confidence: 'MEDIUM',
+  },
+];
+
+const frictionRows = [
+  {
+    item: 'Customs declarations',
+    preBrexit: 'Zero customs declarations for a Rotterdam→UK move — Intrastat only',
+    postBrexit: 'Two: an EU exit declaration plus a UK import declaration',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'EORI numbers',
+    preBrexit: 'One EU EORI covered the UK',
+    postBrexit: 'Two: a GB EORI and an EU EORI',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Intra-movement checks',
+    preBrexit: 'Intra-EU movement treatment without a customs declaration',
+    postBrexit: notPublished,
+    confidence: 'LOW',
+  },
+];
+
+const cashflowRows = [
+  {
+    aspect: 'Mechanism',
+    uk: 'Postponed VAT Accounting (PVA)',
+    eu: 'Article 23 licence or customs warehousing procedures 42/63',
+    confidence: 'HIGH',
+  },
+  {
+    aspect: 'Approval',
+    uk: 'No approval needed for a VAT-registered importer',
+    eu: 'Licence or warehouse procedure required',
+    confidence: 'HIGH',
+  },
+  {
+    aspect: 'VAT return timing',
+    uk: 'Declare and recover import VAT on the same VAT Return instead of paying at the border',
+    eu: 'Deferral runs through the approved licence or warehousing procedure',
+    confidence: 'MEDIUM',
+  },
+  {
+    aspect: 'Scope',
+    uk: 'Great Britain and Northern Ireland',
+    eu: 'Member-state specific; the Netherlands is the standard Article 23 reference',
+    confidence: 'MEDIUM',
+  },
+];
+
+const deMinimisRows = [
+  {
+    rule: 'De minimis threshold',
+    uk: '£135 for non-excise goods',
+    eu: '€150 IOSS threshold; the €22 duty-free threshold was abolished in 2021',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'Below threshold',
+    uk: 'No customs duty; VAT is collected at the point of sale by the seller',
+    eu: 'Import VAT applies from the first euro via IOSS',
+    confidence: 'MEDIUM',
+  },
+  {
+    rule: 'Above threshold',
+    uk: 'Customs duty plus VAT at the border',
+    eu: 'Customs duty plus import VAT at the border',
+    confidence: 'MEDIUM',
+  },
+];
+
+const markingRows = [
+  {
+    area: 'General regulated goods (21 product regulations)',
+    ce: 'CE recognised indefinitely — businesses may use UKCA or CE in Great Britain',
+    ukca: 'UKCA is optional for these goods',
+    confidence: 'HIGH',
+  },
+  {
+    area: 'Exception sectors',
+    ce: 'CE is not sufficient',
+    ukca: 'UKCA still required: medical devices, construction products, marine equipment, rail products, cableways, transportable pressure equipment, unmanned aircraft systems',
+    confidence: 'HIGH',
+  },
+];
+
+const niRows = [
+  {
+    goods: 'Goods “not at risk” of entering the EU',
+    rule: 'UK tariff applies',
+    confidence: 'HIGH',
+  },
+  {
+    goods: 'Goods “at risk” of entering the EU',
+    rule: 'EU duty rate applies',
+    confidence: 'HIGH',
+  },
+  {
+    goods: 'Non-excise goods worth £135 or less',
+    rule: 'No duty',
+    confidence: 'HIGH',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is importing into the UK more expensive than the EU after Brexit?',
+    a: "On pure tax, no — on a $10,000 CIF shipment at 8% duty, the UK's 20% VAT compounds to ×1.296 ($12,960 landed), identical to France and Austria (20%), $108 above Germany's ×1.2852 ($12,852), and $108–$540 below the Netherlands, Belgium and Spain (×1.3068), Italy (×1.3176), Poland (×1.3284) and Sweden (×1.35). The post-Brexit cost is friction — two customs declarations and a second EORI — not a higher tax rate.",
+  },
+  {
+    q: 'Do I need both a GB EORI and an EU EORI?',
+    a: "Yes, two numbers. A GB EORI (starting 'GB') is required for UK clearance and an EU EORI is a separate number for EU member states; neither works for the other. A China shipper splitting a shipment between the UK and the EU therefore carries two registrations where pre-Brexit a single EU EORI covered both.",
+  },
+  {
+    q: 'What actually changed for China-to-UK shipments after Brexit?',
+    a: "Customs events went from zero to two. Before 2021 the UK was inside the EU customs union, so a Rotterdam-to-UK move needed no customs declaration; now it needs an EU exit declaration plus a UK import declaration — two declarations where one used to be zero, plus the GB EORI. The freight did not change; the paperwork layer did.",
+  },
+  {
+    q: 'Is UK VAT higher than EU VAT?',
+    a: "No. The UK's 20% standard rate sits mid-band against the EU's 19% (Germany) to 25% (Sweden) range. On a duty-inclusive $10,800 base, UK VAT is $2,160, versus $2,052 in Germany, $2,268 in the Netherlands, and $2,700 in Sweden.",
+  },
+  {
+    q: 'Does CE marking still apply in the UK?',
+    a: 'Yes, for 21 product regulations. The UK laid legislation to continue recognising EU requirements including CE indefinitely, so businesses can use UKCA or CE in Great Britain. CE does not apply in 7 exception sectors — medical devices, construction products, marine equipment, rail products, cableways, transportable pressure equipment and unmanned aircraft systems — where UKCA is still required.',
+  },
+  {
+    q: 'What is the UK de minimis threshold?',
+    a: '£135. Non-excise goods worth £135 or less pay no customs duty and have VAT collected at the point of sale by the seller; goods above £135 pay duty plus VAT at the border. The EU equivalent is €150 with IOSS — two thresholds within roughly €5 of each other at typical exchange rates.',
+  },
+  {
+    q: 'Can I defer UK import VAT?',
+    a: 'Yes, and with no approval. Postponed VAT Accounting (PVA) lets a VAT-registered importer declare and recover import VAT on the same VAT return instead of paying at the border — no licence needed. EU VAT deferral by contrast runs through Article 23 (Netherlands licence) or customs warehousing procedures 42/63.',
+  },
+  {
+    q: 'What is the UK Global Tariff?',
+    a: "The UK's own tariff schedule, independent of the EU since 1 January 2021, which applies to all imports unless a trade agreement, relief/suspension, or the Developing Countries Trading Scheme applies. China is not covered by any UK trade agreement, so China goods face the UKGT MFN rate by HS code — typically 0–12% for consumer goods.",
+  },
+  {
+    q: 'Does Northern Ireland follow EU or UK customs rules?',
+    a: "Both, depending on the goods. Under the Windsor Framework, NI applies the UK tariff to goods 'not at risk' of entering the EU but the EU duty rate to goods 'at risk'; non-excise goods worth £135 or less pay no duty. NI is therefore a dual-regime market that sits between the two systems.",
+  },
+  {
+    q: 'Which is cheaper, a UK or a German import base?',
+    a: "Germany, by $108 on a $10,000 CIF at 8% duty — ×1.2852 ($12,852) versus the UK's ×1.296 ($12,960) — before adding the double-declaration friction the UK carries. That gap is a rounding error on the freight, so the decision should run on market access and paperwork, not the $108.",
+  },
+  {
+    q: 'What is the biggest hidden post-Brexit cost?',
+    a: 'The second declaration layer. Brokerage and customs fees are not published as fixed tariffs, but every UK-bound shipment now needs an EU exit declaration plus a UK import declaration where pre-Brexit it needed none — so count two brokerage events per consignment, not one, when comparing UK and EU landed quotes.',
+  },
+  {
+    q: 'UKCA or CE for my product?',
+    a: 'CE is sufficient for most goods, because the UK recognises CE for 21 product regulations indefinitely. Check the 7 exception sectors — medical devices, construction products, marine, rail, cableways, transportable pressure equipment and unmanned aircraft — where UKCA is still the requirement.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'EU vs UK Customs for China Imports — Post-Brexit Landed-Cost Comparison',
+      description:
+        'EU versus UK customs for China imports: UK Global Tariff, GB EORI, UKCA, £135 de minimis, PVA and 20% VAT against EU TARIC, EU EORI, CE, €150 IOSS and member-state VAT — with the post-Brexit friction quantified.',
+      datePublished: '2026-09-05',
+      dateModified: '2026-09-05',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const vatSources = sourcesByIds([
+  'hmrc',
+  'eu-taric',
+  'german-customs',
+  'french-customs',
+  'dutch-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+  'austrian-customs',
+  'swedish-tax',
+]);
+const tariffSources = sourcesByIds(['gov-uk', 'eu-taric', 'hmrc']);
+const frictionSources = sourcesByIds(['hmrc', 'gov-uk']);
+const cashflowSources = sourcesByIds(['hmrc', 'dutch-customs', 'eu-taric']);
+const deMinimisSources = sourcesByIds(['gov-uk', 'eu-taric']);
+const markingSources = sourcesByIds(['gov-uk', 'eu-taric']);
+const niSources = sourcesByIds(['gov-uk', 'hmrc']);
+---
+
+<BaseLayout
+  title="EU vs UK Customs for China Imports — the Post-Brexit Landed-Cost Comparison"
+  description="EU versus UK customs for China imports: UK Global Tariff, GB EORI, UKCA, £135 de minimis, PVA and 20% VAT against EU TARIC, EU EORI, CE, €150 IOSS and member-state VAT."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'EU vs UK Customs' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>EU vs UK customs for China imports</h1>
+      <p class="lead">
+        Post-Brexit, the UK is a separate customs system from the EU — but not
+        uniformly more expensive. The real landed-cost story is the second
+        declaration and the second EORI, not the 20% VAT headline.
+      </p>
+      <p class="small muted">
+        Confidence badges separate verified facts from planning notes. Statutory
+        VAT rates and thresholds are HIGH; the 8% and 12% duty examples are
+        stated worked examples and are MEDIUM; unpublished brokerage and fee
+        lines are LOW and request-for-schedule.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">UK standard VAT</span>
+          <span class="fact-value">20% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">GB EORI</span>
+          <span class="fact-value">Separate from EU EORI <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UK de minimis</span>
+          <span class="fact-value">£135 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">UK Global Tariff</span>
+          <span class="fact-value">Independent since 2021 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">CE still recognised</span>
+          <span class="fact-value">21 product regs <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> On a $10,000 CIF shipment at 8% duty, the UK's
+        ×1.296 landed-cost compound is tied 2nd-cheapest of 10 markets — equal
+        to France and Austria, only Germany (×1.2852) cheaper, and below the
+        Netherlands, Belgium, Spain, Italy, Poland and Sweden. The real
+        post-Brexit cost is friction: customs events went from 0 to 2 plus a
+        second EORI. UK PVA needs no approval, while EU deferral runs through a
+        licence or warehouse procedure. CE remains valid for 21 product
+        regulations in Great Britain.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>1. The compound landed-cost table</h2>
+    <p>
+      Landed cost is multiplicative, not additive. The formula is
+      <strong>landed total = CIF × (1 + duty) × (1 + VAT)</strong>, and
+      <strong>tax paid = landed total − CIF</strong>. On a
+      <strong>$10,000 CIF</strong> shipment with a stated
+      <strong>8% duty</strong> worked example, the UK calculation is
+      <strong>10,000 × 1.08 × 1.20 = $12,960</strong>, of which
+      <strong>$2,960</strong> is tax <ConfidenceBadge level="MEDIUM" />. The 8%
+      figure is an assumption for illustration, not a market-wide duty fact; the
+      arithmetic below is what changes when you substitute a real HS-code rate.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'market', label: 'Market' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'multiplier', label: 'Landed multiplier' },
+        { key: 'total', label: 'Landed total on $10,000' },
+        { key: 'tax', label: 'Tax paid' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Standard VAT rates are HIGH statutory values; the multiplier, total and tax cells are MEDIUM because the 8% duty is a stated worked example."
+    />
+    <p class="mt-2">
+      The ranking is the insight competitors tend to miss: the UK is tied for
+      <strong>2nd-cheapest of these 10 markets</strong> with France and Austria
+      at <strong>×1.296</strong>, above only Germany at <strong>×1.2852</strong>.
+      The UK is cheaper than the Netherlands, Belgium and Spain
+      (<strong>×1.3068</strong>), Italy (<strong>×1.3176</strong>), Poland
+      (<strong>×1.3284</strong>) and Sweden (<strong>×1.35</strong>). On the same
+      $10,000/8% basis, the UK's <strong>$2,960</strong> tax bill is
+      <strong>$540 cheaper than Sweden's $3,500</strong> and
+      <strong>$108 above Germany's $2,852</strong>.
+    </p>
+    <p>
+      That is why “8% + 20% = 28%” is wrong: the true compound is
+      <strong>×1.296 = a 29.6% uplift</strong>, not 28%. Sweden proves the same
+      point — 8% plus 25% is <strong>×1.35 = a 35% uplift</strong>, not 33%.
+      VAT is applied to the duty-inclusive base, so every percentage point of
+      duty is also VAT-taxed.
+    </p>
+    <p>
+      The sensitivity is equally mechanical. At a stated
+      <strong>12% duty</strong> worked example, the UK lands at
+      <strong>1.12 × 1.20 = ×1.344 → $13,440</strong>, Germany at
+      <strong>1.12 × 1.19 = ×1.3328 → $13,328</strong>, and Sweden at
+      <strong>1.12 × 1.25 = ×1.40 → $14,000</strong> <ConfidenceBadge level="MEDIUM" />.
+      Higher duty widens the UK–EU spread because VAT compounds on the
+      duty-inclusive base; at 0% duty the comparison collapses to pure VAT.
+    </p>
+    <SourceList sources={vatSources} title="Sources — standard VAT rates and the compound calculation" />
+    <p class="mt-2">
+      The UK's 20% rate has been in place since 4 January 2011 and sits at the
+      midpoint of the European range, which is why the headline “UK VAT is the
+      post-Brexit problem” claim does not survive the arithmetic. For the UK
+      baseline, see
+      <a href="/europe/shipping-from-china-to-united-kingdom/">Shipping from China to the United Kingdom</a>;
+      for the German comparator, see
+      <a href="/europe/shipping-from-china-to-germany/">Shipping from China to Germany</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Tariff basis: UK Global Tariff vs EU TARIC</h2>
+      <p>
+        The two systems are different lookup tables, not two dialects of the same
+        schedule. The <strong>UK Global Tariff (UKGT)</strong> has applied to all
+        UK imports since <strong>1 January 2021</strong> unless a trade
+        agreement, exception/relief/tariff suspension, or the
+        <strong>Developing Countries Trading Scheme (DCTS)</strong> applies
+        <ConfidenceBadge level="HIGH" />. The EU uses the
+        <strong>Common Customs Tariff (TARIC)</strong>, which is uniform across
+        all <strong>27 member states</strong>; duty varies by HS code, typically
+        <strong>0–12% for consumer goods</strong> and up to
+        <strong>~12% on clothing</strong> <ConfidenceBadge level="MEDIUM" />.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'regime', label: 'Regime' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'scope', label: 'Scope' },
+          { key: 'appliesTo', label: 'Applies to' },
+          { key: 'chinaStatus', label: 'China status' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={tariffRows}
+        caption="UKGT facts are HIGH confidence from GOV.UK; EU TARIC duty behaviour is MEDIUM because the final rate depends on the HS-code line."
+      />
+      <p class="mt-2">
+        China is not covered by a UK trade agreement and is not a DCTS
+        beneficiary, so China goods face the UKGT MFN rate by HS code. The EU
+        also has <strong>no China–EU free-trade agreement</strong>, so China
+        goods face the TARIC MFN rate by HS code. That symmetry is the planning
+        conclusion: duty is the same <em>kind</em> of input on both sides, but
+        the specific HS line can diverge because the UKGT and TARIC are separate
+        schedules — a buyer must run both lookups and cannot assume either side
+        is cheaper without checking the code.
+      </p>
+      <p>
+        The UKGT also removed many low “nuisance” tariff lines when it replaced
+        the inherited EU schedule, which means some China SKUs can carry a
+        materially different rate in Great Britain than in the EU even when the
+        product is identical. That is a lookup gap, not a general tax advantage,
+        and it should be priced per commodity.
+      </p>
+      <SourceList sources={tariffSources} title="Sources — UK Global Tariff and EU TARIC" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The real post-Brexit cost is friction, not tax</h2>
+    <p>
+      The most verifiable post-Brexit change is the declaration count. When the
+      UK was inside the EU customs union, a Rotterdam→UK move needed
+      <strong>zero customs declarations</strong> — Intrastat only. Now the same
+      consignment needs <strong>two customs events</strong>: an EU exit
+      declaration plus a UK import declaration
+      <ConfidenceBadge level="HIGH" />. The freight did not change; the paperwork
+      layer doubled from zero to two.
+    </p>
+    <p>
+      Registration follows the same split. Pre-Brexit, one
+      <strong>EU EORI</strong> covered the UK. Post-Brexit, you carry
+      <strong>two registrations</strong>: a <strong>GB EORI</strong> (starting
+      “GB”) and a separate <strong>EU EORI</strong> — neither works for the
+      other <ConfidenceBadge level="HIGH" />. For a China shipper splitting one
+      shipment between the UK and the EU, that is a second clearance identity
+      and a second declaration stack.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Friction item' },
+        { key: 'preBrexit', label: 'Pre-Brexit' },
+        { key: 'postBrexit', label: 'Post-Brexit' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={frictionRows}
+      caption="Declaration and EORI counts are HIGH confidence from GOV.UK and HMRC. Intra-movement check volumes are not published, so that row is LOW and request-for-schedule."
+    />
+    <p class="mt-2">
+      Brokerage and clearance fees are <strong>not published as fixed
+      tariffs</strong>, so this page does not invent a GBP/EUR figure
+      <ConfidenceBadge level="LOW" />. The calculation that is verifiable is the
+      <strong>count</strong>: if clearance is charged per event, a post-Brexit
+      consignment exposes the importer to two fee events where pre-Brexit the
+      same Rotterdam-to-UK move exposed none. The UK is not uniformly more
+      expensive on tax; it is structurally more expensive on paperwork.
+    </p>
+    <SourceList sources={frictionSources} title="Sources — GB EORI, UK declaration and the post-Brexit split" />
+    <p class="mt-2">
+      For the UK clearance workflow, read
+      <a href="/europe/shipping-from-china-to-united-kingdom/">Shipping from China to the United Kingdom</a>;
+      for the EU-side base decision, read
+      <a href="/europe/netherlands-vs-germany/">Netherlands vs Germany for China Imports</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. VAT cash-flow: UK PVA vs EU deferral</h2>
+      <p>
+        This is where the UK's default is friendlier than the EU's default.
+        <strong>Postponed VAT Accounting (PVA)</strong> lets a UK VAT-registered
+        importer declare and recover import VAT on the
+        <strong>same VAT Return</strong> instead of paying at the border — with
+        <strong>no approval needed</strong> <ConfidenceBadge level="HIGH" />. EU
+        VAT deferral, by contrast, runs through an
+        <strong>Article 23 licence</strong> (the Netherlands is the standard
+        reference) or <strong>customs warehousing procedures 42/63</strong>,
+        which require a licence or warehouse procedure
+        <ConfidenceBadge level="MEDIUM" />.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'aspect', label: 'Aspect' },
+          { key: 'uk', label: 'UK PVA' },
+          { key: 'eu', label: 'EU deferral' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={cashflowRows}
+        caption="PVA is a statutory UK mechanism at HIGH confidence. EU Article 23 and procedures 42/63 are MEDIUM because the licence and warehouse conditions are member-state specific."
+      />
+      <p class="mt-2">
+        The practical conclusion reverses the usual narrative: because PVA
+        removes the border VAT outflow at zero approval cost, the UK's
+        <strong>20%</strong> rate is effectively deferred by default for
+        VAT-registered importers. That cash-flow property offsets the
+        one-point gap to Germany's <strong>19%</strong> and changes the answer
+        from “which rate is lower?” to “which rate is paid now?”
+      </p>
+      <SourceList sources={cashflowSources} title="Sources — PVA, Article 23 and warehousing deferral" />
+      <p class="mt-2">
+        For the parcel-versus-container VAT mechanism, read
+        <a href="/europe/ioss-vs-vat-deferral/">IOSS vs VAT Deferral</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. De minimis: £135 vs €150</h2>
+    <p>
+      The two low-value thresholds sit near parity. The UK threshold is
+      <strong>£135</strong>: non-excise goods worth £135 or less pay
+      <strong>no customs duty</strong>, and VAT is collected at the point of
+      sale by the seller; goods above £135 pay duty plus VAT at the border
+      <ConfidenceBadge level="HIGH" />. The EU equivalent is the
+      <strong>€150 IOSS threshold</strong>; the pre-2021
+      <strong>€22 duty-free threshold was abolished in 2021</strong>, so import
+      VAT applies from the first euro <ConfidenceBadge level="MEDIUM" />.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'rule', label: 'Rule' },
+        { key: 'uk', label: 'United Kingdom' },
+        { key: 'eu', label: 'European Union' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={deMinimisRows}
+      caption="The UK £135 rule is HIGH confidence from GOV.UK; the EU €150 IOSS mechanics are MEDIUM and depend on the IOSS registration."
+    />
+    <p class="mt-2">
+      For e-commerce planning, the two thresholds are close enough that a
+      parcel strategy built on one can usually be reused on the other — but the
+      collection point differs: UK below-threshold VAT sits with the seller at
+      point of sale, while EU sub-€150 VAT flows through IOSS.
+    </p>
+    <SourceList sources={deMinimisSources} title="Sources — UK and EU low-value import thresholds" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. CE vs UKCA — the outdated assumption</h2>
+      <p>
+        The old advice that “CE no longer applies in the UK — use UKCA” is
+        outdated. The UK laid legislation to continue recognising EU requirements
+        including <strong>CE marking indefinitely</strong> for
+        <strong>21 product regulations</strong>, so businesses may use
+        <strong>UKCA or CE</strong> in Great Britain <ConfidenceBadge level="HIGH" />.
+        The 21 regulations cover 18 DBT plus ecodesign, civil explosives and
+        RoHS; the continuing recognition was confirmed as of
+        <strong>17 May 2024</strong>.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'area', label: 'Product area' },
+          { key: 'ce', label: 'CE recognition' },
+          { key: 'ukca', label: 'UKCA requirement' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={markingRows}
+        caption="CE/UKCA recognition is HIGH confidence from GOV.UK, including the 21-regulations position confirmed 17 May 2024."
+      />
+      <p class="mt-2">
+        The calculation for a China exporter is therefore a default-and-check:
+        most goods can continue with CE, but the
+        <strong>7 exception sectors</strong> — medical devices, construction
+        products, marine equipment, rail products, cableways, transportable
+        pressure equipment and unmanned aircraft systems — still require
+        <strong>UKCA</strong>. The default is not UKCA; the default is CE with a
+        seven-sector exception list.
+      </p>
+      <SourceList sources={markingSources} title="Sources — CE recognition and UKCA exception sectors" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Northern Ireland sits between the two systems</h2>
+    <p>
+      Northern Ireland is not a clean UK or EU answer under the
+      <strong>Windsor Framework</strong>. Goods “not at risk” of entering the EU
+      apply the <strong>UK tariff</strong>, goods “at risk” of entering the EU
+      apply the <strong>EU duty rate</strong>, and non-excise goods worth
+      <strong>£135 or less pay no duty</strong> <ConfidenceBadge level="HIGH" />.
+      NI is therefore a dual-regime market.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'goods', label: 'Goods' },
+        { key: 'rule', label: 'Applicable rule' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={niRows}
+      caption="The Windsor Framework dual regime is HIGH confidence from GOV.UK and HMRC."
+    />
+    <p class="mt-2">
+      The modelling consequence is that NI cannot be priced as a single regime:
+      the same consignment can attract either the UKGT line or the TARIC line
+      depending on the “at risk” determination, so a landed-cost calculator must
+      branch before duty is applied. That split is not a tax-rate headline; it
+      is a classification event.
+    </p>
+    <SourceList sources={niSources} title="Sources — Windsor Framework and Northern Ireland duty" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness and update basis</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>.
+      The standard VAT rates were re-checked against each member-state authority
+      — Germany 19%, France 20%, the Netherlands 21%, Spain 21%, Italy 22%,
+      Poland 23%, Belgium 21%, Austria 20% and Sweden 25% — and the UK 20%
+      rate, UKGT independence, GB EORI, PVA and £135 de minimis were re-checked
+      against GOV.UK and HMRC. The CE/UKCA position was re-checked against the
+      2024 Product Safety &amp; Metrology regulations, including the indefinite
+      recognition for 21 product regulations and the seven UKCA-required
+      exception sectors.
+    </p>
+    <p>
+      Brokerage fees and per-HS duty rates stay
+      <span class="muted">notPublished</span> rather than invented. The page
+      therefore treats the 8% and 12% duty figures as stated worked examples,
+      keeps every unpublished fee line LOW, and derives every landed-cost result
+      from the multiplicative formula so a reader can recompute it line by line.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an EU-vs-UK landed-cost comparison for your HS code"
+      text="Tell us your origin, commodity, HS/TARIC code, value, volume and final market, and we will run the (1+duty)×(1+VAT) compound on both the UK Global Tariff and EU TARIC so you can price the split on one basis."
+    />
+  </section>
+</BaseLayout>
