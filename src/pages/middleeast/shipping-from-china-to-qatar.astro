@@ -415,35 +415,35 @@ const faqs = [
   },
   {
     q: 'Which port should I use when shipping from China to Qatar?',
-    a: 'Hamad Port, south of Doha, is Qatar’s primary commercial seaport and the default discharge point for containerised China cargo. The old Doha Port no longer handles commercial container traffic and has been repositioned for cruise use, so use Hamad Port on the bill of lading.',
+    a: 'The calculation is simple: use Hamad Port for 100% of new China container consignments, because the legacy Doha Port handles none of that commercial traffic. Hamad Port, south of Doha, is the default discharge point on the bill of lading, while Doha Port has been repositioned for cruise use.',
   },
   {
     q: 'Is Qatar part of the GCC common customs area?',
-    a: 'Yes. Qatar is a Gulf Cooperation Council member and applies the GCC Common External Tariff framework, which gives a 5% customs duty baseline on most imported goods. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
+    a: 'The statutory math is 5% duty on CIF — the GCC Common External Tariff baseline — so Qatar’s GCC membership adds duty but no VAT on top. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
   },
   {
     q: 'Does Qatar charge VAT on imports?',
-    a: 'The current Qatar import framework has no general VAT. The main statutory import charge is the 5% customs duty on CIF value. This is a MEDIUM-confidence current-state finding and should be verified with the General Authority of Customs or your broker before finalising a landed-cost quote.',
+    a: 'The landed-cost calculation is CIF × 1.05, not × 1.2075, because Qatar applies a 5% duty and no general VAT. This is a MEDIUM-confidence current-state finding and should be verified with the General Authority of Customs or your broker before finalising a landed-cost quote.',
   },
   {
     q: 'What is the difference between Hamad Port and Doha Port?',
-    a: 'Doha Port was Qatar’s legacy commercial port. Container traffic moved to the new Hamad Port after it opened, and Doha Port has since been redeveloped as a cruise terminal. For China freight, Hamad Port is the modern commercial gateway and Doha Port is not the destination for new container consignments.',
+    a: 'The split is absolute: 100% of new commercial container traffic routes through Hamad Port, while Doha Port is no longer a destination for new China freight. Container traffic moved to the new Hamad Port after it opened, and Doha Port has since been redeveloped as a cruise terminal.',
   },
   {
     q: 'What documents do I need to ship from China to Qatar?',
-    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods, so confirm the specific requirement before shipping.',
+    a: 'The baseline clearance pack is four documents — commercial invoice, bill of lading or air waybill, packing list and certificate of origin — with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods, so confirm the specific requirement before shipping.',
   },
   {
     q: 'What is Al-Nadeeb and how does Qatar customs clearance work?',
-    a: 'Al-Nadeeb is Qatar’s electronic customs clearance system. The importer or broker submits the import declaration through Al-Nadeeb, attaches the required documents, pays the assessed 5% duty on CIF, and receives the release after any inspection or permit checks are completed.',
+    a: 'Qatar clearance runs through Al-Nadeeb, where the assessable math is a 5% duty on CIF before release. The importer or broker submits the import declaration through Al-Nadeeb, attaches the required documents, pays the assessed 5% duty on CIF, and receives release after any inspection or permit checks are completed.',
   },
   {
     q: 'What goods are restricted or prohibited in Qatar?',
-    a: 'Qatar is strict on alcohol, tobacco, pork and any goods that conflict with Islamic values. Narcotics, weapons, counterfeit goods, hazardous materials and certain animal/plant products are also tightly controlled or prohibited. Check the commodity against the General Authority of Customs before booking.',
+    a: 'Qatar screens four high-risk categories strictly — alcohol, tobacco, pork and Islamic-sensitive goods — before adding narcotics, weapons, counterfeit goods, hazardous materials and certain animal/plant products to the controlled or prohibited list. Check the commodity against the General Authority of Customs before booking.',
   },
   {
     q: 'How does door-to-door shipping from China to Qatar work?',
-    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Hamad Port or Doha, files the Qatar import declaration, pays the 5% duty on CIF, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
+    a: 'The door-to-door sequence wraps a 5% CIF duty and either a 22-day sea or 2–4-day air move into one forwarder-managed chain. The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Hamad Port or Doha, files the Qatar import declaration, pays the 5% duty on CIF, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
   },
 ];
 
@@ -525,6 +525,15 @@ const schema = [
         window, the sea/air/express decision, and the 5% duty with no general VAT that shapes the
         Qatar landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Qatar is the lowest-tax GCC destination at ×1.05 (5% duty, 0% VAT), so a US$10,000 CIF shipment lands at ~$10,500 versus $12,075 in Saudi Arabia — a $1,575 saving from a 15.75-point lower statutory stack. That tax gap is Qatar’s main draw, not freight scale: LCL runs $70–$155/CBM and air $4.5–$7.5/kg against a typical 22-day sea window (15–30 days) versus 2–4 days by air. Plan around Hamad Port and the 5% duty because the tax advantage only materialises if clearance and the 22-day transit fit the delivery plan.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate and transit number as an indicative figure to verify with your carrier

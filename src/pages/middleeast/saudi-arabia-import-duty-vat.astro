@@ -312,11 +312,11 @@ const faqs = [
   },
   {
     q: 'Is VAT charged on the customs duty as well as the CIF value?',
-    a: 'Yes. The VAT base is CIF value plus customs duty, so VAT is calculated on the duty-inclusive amount. This is the detail that makes the effective tax slightly higher than a naive 5% + 15% total.',
+    a: 'VAT is charged on a duty-inclusive base of CIF × 1.05, so 15% VAT adds 15.75% of CIF and lifts the total statutory stack to ×1.2075. This is the detail that makes the effective tax slightly higher than a naive 5% + 15% total.',
   },
   {
     q: 'How does the HS code affect Saudi import duty and VAT?',
-    a: 'The HS code decides the duty line — baseline, protective/anti-dumping, reduced or zero — and can also drive SABER conformity scope and licensing. VAT is generally 15% on the duty-inclusive CIF base, but the duty component changes with the code. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
+    a: 'The HS code changes the duty line from the 5% baseline to 0%, 15–25% protective/anti-dumping or another line, and it can also drive SABER conformity scope and licensing. VAT is generally 15% on the duty-inclusive CIF base, but the duty component changes with the code. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
   },
   {
     q: 'Are there any Saudi import duty or VAT exemptions?',
@@ -328,19 +328,19 @@ const faqs = [
   },
   {
     q: 'What is the difference between DDP and paying Saudi duty and VAT myself?',
-    a: 'Self-payment keeps the importer as the taxpayer with full FASAH line-item visibility and, for a VAT-registered importer, the possibility of reclaiming eligible input VAT. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying duty and VAT rates do not change — only who pays, how visible the tax is, and how the cash flow is structured.',
+    a: 'The DDP-vs-self decision does not change the ×1.2075 statutory math — both paths pay the same 5% duty and 15% VAT — only who pays, how visible the tax is, and how cash flow is structured. Self-payment keeps the importer as the taxpayer with full FASAH line-item visibility and, for a VAT-registered importer, the possibility of reclaiming eligible input VAT. DDP moves the payment to the seller or forwarder and packages it into one all-in price.',
   },
   {
     q: 'Does Saudi Arabia charge excise tax on imported goods?',
-    a: 'Yes, where the goods are taxable. The verified snapshot records 100% on tobacco, 50% on energy drinks and 50% on carbonated drinks, applied on top of the ordinary duty and VAT stack. These are MEDIUM-confidence secondary figures — confirm the current excise treatment for your HS codes with ZATCA.',
+    a: 'Saudi excise adds 100% on tobacco, 50% on energy drinks and 50% on carbonated drinks on top of the ×1.2075 duty+VAT stack where goods are taxable. These are MEDIUM-confidence secondary figures — confirm the current excise treatment for your HS codes with ZATCA.',
   },
   {
     q: 'Can a registered importer reclaim Saudi import VAT?',
-    a: 'Potentially yes, for VAT-registered importers that meet ZATCA input-VAT recovery conditions. The research snapshot does not document the full recovery procedure, so treat the reclaim mechanics as LOW confidence and confirm the documentation and timing with ZATCA or your tax advisor before relying on the cash-flow benefit.',
+    a: 'Input-VAT recovery is possible but unquantified in the snapshot, so treat it as a cash-flow benefit, not a reduction in the 15% statutory VAT line. The research snapshot does not document the full recovery procedure, so treat the reclaim mechanics as LOW confidence and confirm the documentation and timing with ZATCA or your tax advisor before relying on the cash-flow benefit.',
   },
   {
     q: 'Where should I verify current Saudi import duty and VAT rates?',
-    a: 'Verify against ZATCA (Saudi Customs and Tax Authority) and the current Saudi Customs tariff lookup for your HS code. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
+    a: 'Before finalising any quote, recheck two items against ZATCA: the 5% duty line for your HS code and the current 15% VAT rule. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
   },
 ];
 
@@ -423,6 +423,15 @@ const schema = [
         shows the formula, a worked example, the HS-code levers, exemptions and the DDP-versus-self-paid
         decision.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Saudi Arabia is the highest-tax GCC destination because 5% duty and 15% VAT compound rather than add: CIF × 1.05 × 1.15 = ×1.2075, so a $10,000 CIF shipment adds ~$2,075 in duty+VAT, not the $2,000 a 20% flat rate would imply. That 0.75 percentage point of compounding is the difference between 20% and 20.75%, and it grows with every extra dollar of CIF. Budget the ×1.2075 statutory figure first, then layer protective duty (15–25% possible) and operational fees only from an itemised quote.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate the verified 15% VAT (HIGH) and 5% CIF duty baseline (MEDIUM) from
         unquantified operational fees and disputed exemptions. Rates are subject to change — verify

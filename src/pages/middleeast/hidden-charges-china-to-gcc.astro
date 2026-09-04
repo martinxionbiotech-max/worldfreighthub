@@ -324,43 +324,43 @@ const complianceRows = [
 const faqs = [
   {
     q: 'What is the difference between THC and a port service fee?',
-    a: 'THC is the terminal handling charge for receiving, moving and loading/discharging the container; it usually appears as OTHC at origin and DTHC at destination. A port service fee is an additional local port-imposed line that can sit on top. The research snapshot does not publish either amount, so request both as separate lines.',
+    a: 'The split is two terminal lines — OTHC at origin and DTHC at destination — with a port service fee as a possible third local line. THC covers receiving, moving and loading/discharging the container; a port service fee is an additional local port-imposed line that can sit on top. The research snapshot does not publish either amount, so request both as separate lines.',
   },
   {
     q: 'Why is my destination invoice higher than the ocean freight quote?',
-    a: 'The ocean freight quote is only the international move. Destination invoices add THC, port service, documentation/DO, ISPS, brokerage, possible inspection, SABER conformity fees, storage and demurrage/detention after free time, plus inland delivery. All of those amounts were not published in the research snapshot and must come from an itemised schedule.',
+    a: 'The gap between an ocean quote and a destination invoice is at least seven additional cost lines — THC, port service, documentation/DO, ISPS, brokerage, inspection/SABER and demurrage/storage — all unpublished in this snapshot. The ocean freight quote is only the international move; the destination invoice adds those local charges plus inland delivery. Request an itemised schedule before comparing rates.',
   },
   {
     q: 'Is SABER a hidden charge or a compliance step?',
-    a: 'Both. SABER is a mandatory Saudi conformity step, and it has two cost lines: the PC (Product Conformity Certificate) per product and the SC (Shipment Conformity Certificate) per shipment. The SC must be obtained before vessel arrival. The research snapshot does not publish the fee amounts, so quote them by HS code and shipment value.',
+    a: 'SABER adds two fee lines — a Product Conformity Certificate per product and a Shipment Conformity Certificate per shipment — and the SC must be obtained before vessel arrival. The research snapshot does not publish the fee amounts, so quote them by HS code and shipment value.',
   },
   {
     q: 'What is ISPS and will I be charged for it?',
-    a: 'ISPS is the International Ship and Port Facility Security surcharge. It is commonly passed through on both FCL and LCL shipments. The amount was not published in the research snapshot, so it should appear as a named line on your destination schedule.',
+    a: 'ISPS is a single pass-through surcharge that applies to both FCL and LCL, and it should appear as one named destination line. The amount was not published in the research snapshot, so it should appear as a named line on your destination schedule.',
   },
   {
     q: 'Does customs inspection always cost extra?',
-    a: 'Not always, but when an inspection or exam is required the associated facility, handling and attendance charges can be added. Inspection depends on cargo, HS classification and declaration risk. Request the inspection-fee rule and confirm who is responsible before the cargo arrives.',
+    a: 'Inspection cost is conditional, not guaranteed: when it triggers, one exam can add facility, handling and attendance charges on top of the scheduled fees. Inspection depends on cargo, HS classification and declaration risk. Request the inspection-fee rule and confirm who is responsible before the cargo arrives.',
   },
   {
     q: 'How much are hidden destination charges on China-to-GCC shipments?',
-    a: 'The research snapshot does not publish specific amounts for THC, port service, cargo service, documentation, ISPS, brokerage, SABER, storage or inland trucking. The only quantified charge is demurrage/detention at roughly $50–$300+ per day, with a 2025 average of about $150–$300 per day. Everything else should be requested as an itemised schedule.',
+    a: 'The only quantified hidden-charge line in the snapshot is demurrage/detention at $50–$300+ per day, with a 2025 average of about $150–$300; every other destination line is request-for-quote. THC, port service, cargo service, documentation, ISPS, brokerage, SABER, storage and inland trucking were not published. Ask for an itemised schedule rather than a lump sum.',
   },
   {
     q: 'Are duty and VAT hidden charges?',
-    a: 'No, they are statutory costs, but they are frequently forgotten in early freight comparisons. Saudi VAT is 15% on CIF plus duty, UAE VAT is 5%, and GCC duty is 5% of CIF. Budget them separately from the commercial destination-fee stack.',
+    a: 'Duty and VAT are not hidden, but they are missed in early quotes: GCC duty is 5% of CIF, Saudi VAT is 15% on CIF plus duty and UAE VAT is 5%. Budget them separately from the commercial destination-fee stack.',
   },
   {
     q: 'Which charges does FCL attract that LCL does not?',
-    a: 'FCL exposes you directly to box-level demurrage/detention and the full destination THC/port charges on the box. LCL usually spreads THC across consignees and adds CFS deconsolidation, cargo-service and storage lines, while box detention normally sits with the CFS operator.',
+    a: 'The FCL-vs-LCL fee split is the container boundary: FCL pays the full box-level THC/demurrage, while LCL spreads THC and adds CFS deconsolidation plus cargo-service/storage lines. Box detention normally sits with the CFS operator for LCL.',
   },
   {
     q: 'How do I ask a forwarder for a full charge schedule?',
-    a: 'Request a written, line-by-line schedule from origin to delivery: OTHC/DTHC, port service, cargo service, documentation/DO, ISPS, inspection, brokerage, SABER PC/SC, storage, demurrage/detention and inland. Ask which items are fixed, which are conditional and which accrue by day. Compare schedules, not headline rates.',
+    a: 'A complete schedule has 11+ named lines — OTHC/DTHC, port service, cargo service, documentation/DO, ISPS, inspection, brokerage, SABER PC/SC, storage, demurrage/detention and inland — before you compare anything. Ask which items are fixed, which are conditional and which accrue by day. Compare schedules, not headline rates.',
   },
   {
     q: 'Why should I link this page to the demurrage guide?',
-    a: 'Demurrage and detention are the time-based subset of the larger destination-fee stack. Read the companion page to understand free time, the combined clock and how a Jeddah hold turns into $1,050–$2,100 of per-container exposure, then use this page to audit the other fixed and conditional charges.',
+    a: 'Demurrage/detention is the time-based subset of the stack, and a Jeddah hold can turn 7 days into $1,050–$2,100 per container at the snapshot’s $150–$300/day average. Read the companion page to understand free time and the combined clock, then use this page to audit the other fixed and conditional charges.',
   },
 ];
 
@@ -441,6 +441,15 @@ const schema = [
         every destination and local charge an importer should see on a proper China-to-GCC schedule,
         so you can ask for a full itemisation instead of accepting a lump-sum quote.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Headline freight is the first cost, not the landed cost — origin charges, THC, documentation, brokerage, inspection and demurrage/detention typically add 20–40% beyond the ocean rate, which is why the itemised schedule always beats the first quote. The only quantified destination line in this snapshot is demurrage/detention at $50–$300+ per day (a 2025 average of roughly $150–$300), so a Jeddah hold compounds to $1,050–$2,100 per container. Add statutory costs separately: GCC duty is 5% of CIF, with Saudi VAT at 15% and UAE VAT at 5%.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Fee amounts are deliberately left unquantified where the research snapshot did not publish
         them. Treat those lines as LOW confidence and request the schedule from your forwarder.

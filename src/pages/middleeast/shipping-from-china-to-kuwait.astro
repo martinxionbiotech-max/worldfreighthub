@@ -416,19 +416,19 @@ const faqs = [
   },
   {
     q: 'How much does shipping from China to Kuwait cost?',
-    a: 'Kuwait-specific LCL, FCL, air, express and DDP benchmarks were not published in the verified research snapshot, so this page does not invent a number. Request an all-in quote from a forwarder and ask them to itemise ocean or air freight, THC, port service fees, customs clearance, inspection and any demurrage/detention exposure. Treat any headline quote as LOW confidence until it is tied to your commodity, CBM/container count and routing.',
+    a: 'The verified cost baseline is zero published Kuwait freight numbers — LCL, FCL, air, express and DDP all show “request a quote” — so the only calculable statutory figure is 5% duty on CIF. Request an all-in quote from a forwarder and ask them to itemise ocean or air freight, THC, port service fees, customs clearance, inspection and any demurrage/detention exposure. Treat any headline quote as LOW confidence until it is tied to your commodity, CBM/container count and routing.',
   },
   {
     q: 'Which port should I use when shipping from China to Kuwait: Shuwaikh or Shuaiba?',
-    a: 'Use Shuwaikh for general containerised cargo, breakbulk or commercial freight serving Kuwait City and the main commercial corridor. Use Shuaiba when the cargo is industrial, petrochemical or project-linked and the receiving facility is in the southern/industrial corridor. Berths, depth, throughput and operator-specific capabilities are not published in the verified snapshot, so confirm the final discharge point with the carrier and Kuwait Ports Authority.',
+    a: 'The port choice splits two ways: Shuwaikh (KWSWK) for general containerised, breakbulk or commercial freight serving Kuwait City, and Shuaiba (KWSHB) for industrial, petrochemical or project cargo in the southern corridor. Berths, depth, throughput and operator-specific capabilities are not published in the verified snapshot, so confirm the final discharge point with the carrier and Kuwait Ports Authority.',
   },
   {
     q: 'Is Kuwait part of the GCC common customs area?',
-    a: 'Yes. Kuwait is a Gulf Cooperation Council member and applies the shared GCC Common External Tariff framework, which gives a 5% customs duty baseline on CIF value for most imported goods. Treat the 5% as MEDIUM confidence because the shared framework is verified for Saudi Arabia, the UAE and Qatar in the snapshot, but Kuwait-specific confirmation is pending with the Kuwait authority.',
+    a: 'The statutory baseline is 5% duty on CIF because Kuwait applies the GCC Common External Tariff, with no VAT added. Treat the 5% as MEDIUM confidence because the shared framework is verified for Saudi Arabia, the UAE and Qatar in the snapshot, but Kuwait-specific confirmation is pending with the Kuwait authority.',
   },
   {
     q: 'Does Kuwait charge VAT on imports?',
-    a: 'Kuwait has not introduced a general VAT in the current framework shown in this site’s country data, so the main statutory import charge is the 5% customs duty on CIF value. This is a MEDIUM-confidence current-state finding — verify the current VAT position with the Kuwait tax or customs authority before finalising a landed-cost quote.',
+    a: 'The landed-cost math is CIF × 1.05 — 5% duty and 0% VAT — so a $10,000 CIF shipment adds ~$500 rather than Saudi Arabia’s $2,075. This is a MEDIUM-confidence current-state finding — verify the current VAT position with the Kuwait tax or customs authority before finalising a landed-cost quote.',
   },
   {
     q: 'What is the difference between Shuwaikh and Shuaiba ports?',
@@ -436,23 +436,23 @@ const faqs = [
   },
   {
     q: 'What documents do I need to ship from China to Kuwait?',
-    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods, so confirm the specific requirement before shipping.',
+    a: 'The baseline clearance pack is four documents — commercial invoice, bill of lading or air waybill, packing list and certificate of origin — with the correct HS codes and country-of-origin information. Import licences or permits are required for restricted goods, so confirm the specific requirement before shipping.',
   },
   {
     q: 'How does Kuwait customs clearance work?',
-    a: 'The importer or broker submits the import declaration through the Kuwait customs electronic clearance system, attaches the required documents, pays the assessed 5% duty on CIF, and receives release after any inspection or permit checks. The exact system name, service fees and processing steps are not published in the verified snapshot — confirm the current flow with a licensed Kuwait broker.',
+    a: 'Kuwait clearance lands at a 5% CIF duty, not the higher Saudi ×1.2075, but the current system fees and processing steps are unpublished. The importer or broker submits the import declaration through the Kuwait customs electronic clearance system, attaches the required documents, pays the assessed 5% duty on CIF, and receives release after any inspection or permit checks. Confirm the current flow with a licensed Kuwait broker.',
   },
   {
     q: 'What goods are restricted or prohibited in Kuwait?',
-    a: 'Kuwait screens alcohol, tobacco, pork, narcotics, weapons, counterfeit goods, hazardous materials, religious/cultural-sensitive items and certain regulated products strictly. A Kuwait-specific restricted/prohibited list is not published in the verified research snapshot, so do not rely on the Saudi or UAE list — screen the exact commodity with Kuwait Customs before booking.',
+    a: 'Kuwait screens at least six strict categories — alcohol, tobacco, pork, narcotics, weapons and counterfeit goods — plus hazardous materials and religious/cultural-sensitive items. A Kuwait-specific restricted/prohibited list is not published in the verified research snapshot, so do not rely on the Saudi or UAE list — screen the exact commodity with Kuwait Customs before booking.',
   },
   {
     q: 'How does door-to-door shipping from China to Kuwait work?',
-    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Shuwaikh, Shuaiba or Kuwait airport, files the Kuwait import declaration, pays the 5% duty on CIF, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
+    a: 'Door-to-door wraps the 5% CIF duty and a typical 24-day sea move into one sequence through Shuwaikh, Shuaiba or the airport. The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Shuwaikh, Shuaiba or Kuwait airport, files the Kuwait import declaration, pays the 5% duty on CIF, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
   },
   {
     q: 'Is there a de minimis threshold for Kuwait imports?',
-    a: 'No reliable Kuwait de minimis threshold is published in the verified research snapshot. Do not assume a low-value exemption for courier or personal shipments without confirming the current position with Kuwait Customs.',
+    a: 'There is no published Kuwait de minimis, so the only quantified duty position is 5% on CIF for most goods. Do not assume a low-value exemption for courier or personal shipments without confirming the current position with Kuwait Customs.',
   },
 ];
 
@@ -534,6 +534,15 @@ const schema = [
         decision, the Shuwaikh-vs-Shuaiba routing question, and the 5% duty with no general VAT that
         shapes the Kuwait landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Kuwait matches Qatar as a ×1.05 landed-cost market (5% duty, 0% VAT), so a US$10,000 CIF shipment adds only ~$500 in statutory cost versus $2,075 in Saudi Arabia — a $1,575/15.75-point tax saving. But that saving is partly consumed by corridor economics: Kuwait-specific LCL, FCL, air, express and DDP rates were not published, so the quantifiable schedule is a typical 24-day sea window with a 15–30-day range and no verified air line. Budget the ×1.05 as the only firm number and force the forwarder to itemise every freight and destination line before comparing Kuwait with Dubai or Dammam.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate and transit number as an indicative figure to verify with your carrier

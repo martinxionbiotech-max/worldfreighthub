@@ -382,15 +382,15 @@ const faqs = [
   },
   {
     q: 'How much does shipping from China to Oman cost?',
-    a: 'Oman-specific freight rates were not published in the verified research snapshot, so this page does not invent a dollar or per-CBM figure. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, clearance, 5% duty, 5% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+    a: 'The verified Oman freight position is zero published LCL/FCL/air/DDP numbers, so the only calculable cost is the statutory stack: 5% duty plus 5% VAT on the duty-inclusive CIF = ×1.1025. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, clearance, 5% duty, 5% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
   },
   {
     q: 'Which port should I use when shipping from China to Oman?',
-    a: 'Sohar (OMSOH) is the northern gateway and the planning default for containerised China cargo bound for Muscat and northern Oman, with an industrial port and free zone. Salalah (OMSLL) is a major Arabian Sea transshipment hub on the southern coast serving southern Oman and feeding the Gulf, Indian Ocean and East Africa. Confirm the discharge point with the carrier and receiver before the bill of lading is cut.',
+    a: 'The routing logic is a two-port split: Sohar (OMSOH) is the default for containerised China cargo bound for Muscat and northern Oman, while Salalah (OMSLL) serves southern Oman and transshipment relays. Sohar has an industrial port and free zone; Salalah is a major Arabian Sea transshipment hub feeding the Gulf, Indian Ocean and East Africa. Confirm the discharge point with the carrier and receiver before the bill of lading is cut.',
   },
   {
     q: 'Is Oman part of the GCC common customs area?',
-    a: 'Yes. Oman is a Gulf Cooperation Council member and applies the GCC Common External Tariff framework, which gives a 5% customs duty baseline on most imported goods. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
+    a: 'The baseline duty math is 5% of CIF under the GCC Common External Tariff, before the 5% VAT layer is added. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
   },
   {
     q: 'Does Oman charge VAT on imports?',
@@ -398,23 +398,23 @@ const faqs = [
   },
   {
     q: 'What is the difference between Sohar and Salalah ports?',
-    a: 'Sohar is the northern Oman industrial and container gateway serving Muscat and the Al Batinah corridor, with a port and adjacent free zone. Salalah is a deep-water Arabian Sea transshipment hub on the southern (Dhofar) coast that feeds the wider Gulf, Indian Ocean and East Africa trade. For a Muscat-bound consignment Sohar is the usual default; Salalah is the fit for southern Oman or a transshipment relay. Neither port’s terminal capabilities are published in the verified snapshot, so confirm with the carrier.',
+    a: 'The two-way decision is Sohar for the north/Muscat and Salalah for the south/transshipment; neither terminal’s capabilities are published in the verified snapshot. Sohar is the northern Oman industrial and container gateway serving Muscat and the Al Batinah corridor, while Salalah is a deep-water Arabian Sea transshipment hub on the southern (Dhofar) coast that feeds the wider Gulf, Indian Ocean and East Africa trade. Confirm with the carrier before booking.',
   },
   {
     q: 'What documents do I need to ship from China to Oman?',
-    a: 'The standard set is a commercial invoice, bill of lading or air waybill, packing list and certificate of origin, with the correct HS codes and country-of-origin information. Product-specific conformity or permits may be required for regulated goods, so confirm the specific requirement before shipping.',
+    a: 'The baseline Oman clearance pack is four documents — commercial invoice, bill of lading or air waybill, packing list and certificate of origin — with the correct HS codes and country-of-origin information. Product-specific conformity or permits may be required for regulated goods, so confirm the specific requirement before shipping.',
   },
   {
     q: 'What is Bayan and how does Oman customs clearance work?',
-    a: 'Bayan is Oman’s electronic customs clearance system. The importer or broker submits the import declaration through Bayan, attaches the required documents, pays the assessed 5% duty and 5% VAT, and receives release after any inspection or permit checks. The exact system flow and processing fees were not published in the verified snapshot, so confirm with a licensed Oman broker.',
+    a: 'Oman clearance through Bayan applies a 5% duty plus 5% VAT — a ×1.1025 statutory stack on the duty-inclusive CIF — before release. The importer or broker submits the import declaration through Bayan, attaches the required documents, pays the assessed 5% duty and 5% VAT, and receives release after any inspection or permit checks. The exact system flow and processing fees were not published in the verified snapshot, so confirm with a licensed Oman broker.',
   },
   {
     q: 'Do I need SABER or SASO to import into Oman?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into an Oman quote. Oman uses its own standards and conformity regime, which may require product-specific certification for certain goods, but those specifics are not published in the verified snapshot — confirm the applicable Oman process for your product.',
+    a: 'The compliance split is absolute: 0% of Oman imports use SABER/SASO because those are Saudi-only systems, while Oman applies its own standards and conformity regime. Do not copy a Saudi SABER/SASO step into an Oman quote; confirm the applicable Oman process for your product, because those specifics are not published in the verified snapshot.',
   },
   {
     q: 'How does door-to-door shipping from China to Oman work?',
-    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Sohar, Salalah or Muscat, files the Oman import declaration through Bayan, pays the 5% duty and 5% VAT, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
+    a: 'Door-to-door wraps the ×1.1025 statutory stack (5% duty + 5% VAT) and either a Sohar/Salalah sea or Muscat air move into one forwarder-managed chain. The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea or air to Sohar, Salalah or Muscat, files the Oman import declaration through Bayan, pays the 5% duty and 5% VAT, and arranges last-mile trucking to the named address. Under DDP the seller or forwarder carries those costs; under EXW or DAP the buyer handles more of the import side.',
   },
 ];
 
@@ -496,6 +496,15 @@ const schema = [
         typical 19-day Sohar sea window, the sea/air/express decision, and the 5% duty plus 5% VAT
         stack that shapes the Oman landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Oman’s statutory stack is CIF × 1.1025 (5% duty × 5% VAT) — identical to the UAE’s multiplier, so a US$10,000 CIF shipment adds ~$1,025 in duty+VAT versus Saudi Arabia’s ~$2,075. The real Oman edge is routing risk, not tax: Sohar is outside the Strait of Hormuz chokepoint and a less-congested gateway, with a typical 19-day sea window (15–30-day range) and no verified Salalah or air line published. Pick Sohar for Muscat/northern Oman and Salalah for southern Oman or transshipment, while budgeting the ×1.1025 stack on top of an itemised freight quote.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. Oman freight rates
         were not published in the verified snapshot, so every rate is shown as “request a quote”

@@ -513,19 +513,19 @@ const faqs = [
   },
   {
     q: 'Does air freight remove GCC duty, VAT or SABER?',
-    a: 'No. Air shortens the transport clock, not the compliance clock. The GCC baseline duty is 5% of CIF value, VAT is charged on the duty-inclusive value at the destination rate, HS classification applies, and the Saudi SABER SC must be obtained before arrival. Sea and air face identical paperwork.',
+    a: 'Compliance cost is unchanged by mode: GCC duty remains 5% of CIF and VAT remains the destination rate on the duty-inclusive value, whether cargo flies or sails. HS classification applies, and the Saudi SABER SC must be obtained before arrival. Sea and air face identical paperwork.',
   },
   {
     q: 'Do I need SABER for air freight to Saudi Arabia?',
-    a: 'Yes, if the goods are regulated. SABER/SASO is Saudi-only, and the SABER SC must be obtained before arrival — effective 1 January 2025. Air cargo arriving without it racks up storage and demurrage just like sea cargo. The other five GCC states do not require SABER.',
+    a: 'The SABER rule is unchanged by mode: regulated Saudi air cargo needs the SC before arrival under the 1 January 2025 rule, and the other five GCC states require 0 SABER filings. Air cargo arriving without it racks up storage and demurrage just like sea cargo.',
   },
   {
     q: 'What hidden charges apply to sea freight to the GCC?',
-    a: 'Beyond ocean freight, expect OTHC/DTHC, CFS consolidation and deconsolidation for LCL, bunker/fuel adjustment, documentation fees and the demurrage/detention clock. THC, CFS, bunker and documentation amounts are not published — request them as an itemised quote.',
+    a: 'Sea hidden charges are at least four extra lines — OTHC/DTHC, LCL CFS consolidation/deconsolidation, bunker/fuel adjustment and documentation — before the demurrage/detention clock, all unpublished. Request them as an itemised quote.',
   },
   {
     q: 'What hidden charges apply to air freight to the GCC?',
-    a: 'Beyond the per-kg rate, expect fuel surcharge, security charge, terminal handling and customs clearance/brokerage. These amounts are not published — request them as an itemised quote and add them to the landed cost.',
+    a: 'Air hidden charges are at least four add-on lines — fuel surcharge, security charge, terminal handling and customs clearance/brokerage — all unpublished in this snapshot. Request them as an itemised quote and add them to the landed cost.',
   },
   {
     q: 'How much is demurrage and detention on this corridor?',
@@ -533,19 +533,19 @@ const faqs = [
   },
   {
     q: 'What is the best hybrid sea + air plan for the GCC?',
-    a: 'Use sea for the forecasted base volume at the lowest unit cost, and air only for the stockout, seasonal-launch or promotion top-up. This protects the base margin while keeping availability, without paying air rates for the whole volume.',
+    a: 'The hybrid rule is a two-tier split: use sea for the forecasted base at $20–$180/CBM and reserve air for the stockout top-up at $5.45–$13.50/kg. This protects the base margin while keeping availability, without paying air rates for the whole volume.',
   },
   {
     q: 'Why are Saudi sea rates wider than Jebel Ali and other GCC ports?',
-    a: 'Saudi gateways sit on two different lanes: Jeddah on the Red Sea and Dammam on the Arabian Gulf via the Strait of Hormuz. War-risk premiums and fuel costs flex with the news cycle, which is why the Saudi 20ft range runs $1,500–$6,200 while Jebel Ali compresses to $1,500–$3,250. Air bypasses both lanes at a large premium.',
+    a: 'Saudi rates split into two lanes — Jeddah on the Red Sea and Dammam through the Strait of Hormuz — which is why the 20ft range runs $1,500–$6,200 versus Jebel Ali’s $1,500–$3,250. War-risk premiums and fuel costs flex with the news cycle, and air bypasses both lanes at a large premium.',
   },
   {
     q: 'Does ISF apply to the GCC?',
-    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports. Saudi Arabia has its own pre-arrival step through SABER and the FASAH single-window — do not copy US ISF into a China-to-GCC workflow.',
+    a: 'ISF is a 0% relevant step for GCC imports — it is a United States program — while Saudi Arabia uses its own pre-arrival SABER/FASAH single-window. Do not copy US ISF into a China-to-GCC workflow.',
   },
   {
     q: 'How do I get a real sea and air comparison for the GCC?',
-    a: 'Request two itemised quotes on the same basis: origin, commodity, HS code, dimensions, weight and final GCC destination. Ask for freight, OTHC/DTHC or fuel/security/terminal, CFS if LCL, documentation, free time, demurrage/detention, duty, VAT and the inland leg together. The headline rate is never the landed cost.',
+    a: 'A real comparison needs two quotes on one basis: same origin, commodity, HS code, dimensions, weight and final GCC destination, with every line from freight to duty/VAT listed. Ask for freight, OTHC/DTHC or fuel/security/terminal, CFS if LCL, documentation, free time, demurrage/detention, duty, VAT and the inland leg together. The headline rate is never the landed cost.',
   },
 ];
 
@@ -627,6 +627,15 @@ const schema = [
         why air does not remove duty, VAT or SABER. Use sea for the base, air for the exception, and
         compare both on the same landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> For a 2 CBM / 180 kg shipment, air charges on 333.33 kg of chargeable weight (2,000,000 cm³ ÷ 6,000), so the air line is $1,816.65–$2,133.31 on the UAE benchmark versus $40–$220 by sea LCL — air wins only when saving 3–7 days is worth more than that premium. Across the corridor, sea runs $20–$180/CBM and $1,500–$8,100/FCL while air runs $5.45–$13.50/kg, with sea transit at 15–30 days and air at 3–7 days airport-to-airport. The practical breakpoint is the stockout cost of the extra ~15 days of sea transit; if that exceeds the air premium, fly the exception and keep the base volume on sea.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified rules from indicative snapshots. Sea FCL/LCL ranges are
         MEDIUM confidence route data; air per-kg figures are LOW confidence August 2026 snapshots from
