@@ -247,11 +247,11 @@ const entryPointRows = [
 const faqs = [
   {
     q: 'What is Saudi Arabia customs clearance?',
-    a: 'Saudi customs clearance is the process of declaring an import to ZATCA through the FASAH single-window system, paying the assessed duty and VAT, passing any documentary or physical inspection, and obtaining release of the goods for local delivery. For regulated goods, it also depends on a valid SABER conformity certificate being in place before arrival.',
+    a: 'Saudi customs clearance is a four-step flow — declare through FASAH, pay the assessed 5% duty and 15% VAT, pass any documentary or physical inspection, and obtain release for local delivery — with a valid SABER conformity certificate as a pre-condition for regulated goods.',
   },
   {
     q: 'What documents are required for Saudi customs clearance?',
-    a: 'The standard set is the commercial invoice, packing list, bill of lading or air waybill, certificate of origin, and the SABER conformity certificate for regulated goods. Classify the goods with the correct HS code first, because duty, VAT and conformity requirements all flow from it.',
+    a: 'Five documents form the baseline: commercial invoice, packing list, bill of lading or air waybill, certificate of origin and the SABER conformity certificate for regulated goods. Classify the goods with the correct HS code first, because duty, VAT and conformity requirements all flow from it.',
   },
   {
     q: 'What is FASAH?',
@@ -259,7 +259,7 @@ const faqs = [
   },
   {
     q: 'Do I need a customs broker in Saudi Arabia?',
-    a: 'Not in every case, but most first-time importers use one. A broker can file FASAH, coordinate SABER SC timing, manage HS classification risk and handle inspection exceptions. If you are an experienced importer with Saudi registration, staff and systems, self-clearance is possible; otherwise the brokerage fee usually buys meaningful risk reduction.',
+    a: 'A broker is optional, but most first-time importers use one because it outsources four risk-heavy steps — FASAH filing, SABER SC timing, HS classification risk and inspection exceptions. Experienced importers with Saudi registration can self-clear; otherwise the brokerage fee usually buys meaningful risk reduction.',
   },
   {
     q: 'What is SABER and how does it connect to clearance?',
@@ -275,15 +275,15 @@ const faqs = [
   },
   {
     q: 'How long does Saudi customs clearance take?',
-    a: 'The research snapshot does not publish a reliable hour or day figure for the Saudi corridor. The effective lead time depends on SABER SC readiness, HS code accuracy, document consistency, whether inspection is selected, and terminal or airport free time. Complete pre-arrival work first; the clearance itself is usually faster than fixing a missing SC or HS error.',
+    a: 'The snapshot publishes zero reliable hour/day figures, so the effective lead time is driven by three variables — SABER SC readiness, HS accuracy and document consistency — plus inspection and terminal/airport free time. Complete pre-arrival work first; clearance itself is usually faster than fixing a missing SC or HS error.',
   },
   {
     q: 'What are the most common Saudi clearance delays?',
-    a: 'The most common failure modes are an incorrect HS code, invoice or packing-list mismatches, a missing or expired SABER certificate, applying for the SC after arrival, and incomplete certificate-of-origin or legalisation details. These are operational patterns, not a ZATCA policy list — review documents line by line before filing.',
+    a: 'Five failure modes dominate — an incorrect HS code, invoice or packing-list mismatches, a missing or expired SABER certificate, applying for the SC after arrival, and incomplete certificate-of-origin or legalisation details. These are operational patterns, not a ZATCA policy list — review documents line by line before filing.',
   },
   {
     q: 'Does Saudi Arabia require a pre-arrival declaration?',
-    a: 'Yes, in practice the FASAH single-window flow is designed around advance filing so the shipment can be assessed before discharge. File the pre-arrival declaration early, attach the SABER SC, and resolve exceptions before free storage or demurrage time runs out.',
+    a: 'Yes — FASAH is built around advance filing, so file the pre-arrival declaration before discharge to keep demurrage at zero and resolve exceptions inside free time. Attach the SABER SC and resolve exceptions before free storage or demurrage time runs out.',
   },
   {
     q: 'How is Saudi import duty and VAT calculated?',
@@ -373,6 +373,15 @@ const schema = [
         arrival, whether to self-clear or use a broker, and the fees and failure modes that add
         storage, demurrage and delay.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Saudi clearance carries the GCC’s highest statutory stack — 5% duty + 15% VAT = CIF ×1.2075 — so a $10,000 CIF shipment adds $2,075, while the SAR 1,000 duty-only de minimis means a small parcel can skip duty yet still pay 15% VAT. The document set is five core items — commercial invoice, packing list, bill of lading or air waybill, certificate of origin and the SABER SC for regulated goods — and the SC must be obtained before arrival or clearance fails. Because the snapshot publishes zero hour/day clearance and zero per-day demurrage figures, every post-free-time day is an unbounded cost — clearance readiness, not the $2,075 duty+VAT line, drives the practical landed cost.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified tax and duty figures from unquantified operational fees
         and process detail. Treat every LOW-confidence fee, timeline and process note as indicative

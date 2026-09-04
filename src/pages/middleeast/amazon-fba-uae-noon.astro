@@ -359,15 +359,15 @@ const costRows = [
 const faqs = [
   {
     q: 'What is Amazon FBA for amazon.ae?',
-    a: 'Amazon FBA is Amazon’s fulfilment service for sellers on amazon.ae: the seller sends inventory to an Amazon UAE fulfilment centre and Amazon stores, picks, packs and delivers eligible orders. The verified snapshot does not publish FBA fee schedules or warehouse addresses, so confirm current terms, fees and inbound rules in Amazon Seller Central UAE.',
+    a: 'Amazon FBA for amazon.ae is the service where Amazon handles three fulfilment functions — storing, picking, packing and delivering eligible orders — with zero fee schedules or warehouse addresses published in the verified snapshot. Confirm current terms, fees and inbound rules in Amazon Seller Central UAE.',
   },
   {
     q: 'What is noon fulfilment?',
-    a: 'noon fulfilment is the equivalent service for noon.com sellers: inventory is sent to a noon fulfilment centre and noon stores, picks, packs and delivers eligible orders. The verified snapshot does not publish noon fee schedules or fulfilment-centre addresses, so confirm current terms in the noon seller portal.',
+    a: 'noon fulfilment handles the same three functions for noon.com sellers — storing, picking, packing and delivering eligible orders — with zero fee schedules or fulfilment-centre addresses published in the verified snapshot. Confirm current terms in the noon seller portal.',
   },
   {
     q: 'Which UAE port is best for Amazon FBA or noon inventory from China?',
-    a: 'Jebel Ali is usually the default because it has the strongest China–UAE line connectivity and the broadest UAE distribution context. Khalifa Port Abu Dhabi can work for Abu Dhabi fulfilment, and Port Khalid / Sharjah can work for northern-emirate fulfilment. Match the discharge port to the final FC or 3PL location.',
+    a: 'Jebel Ali is the default of a three-port decision — Khalifa for Abu Dhabi fulfilment and Port Khalid/Sharjah for northern-emirate fulfilment are the two alternates — because it has the strongest China–UAE connectivity. Match the discharge port to the final FC or 3PL location.',
   },
   {
     q: 'How long does it take to ship from China to a UAE fulfilment centre?',
@@ -375,7 +375,7 @@ const faqs = [
   },
   {
     q: 'What documents are needed for Amazon FBA or noon inbound freight from China?',
-    a: 'The standard UAE import set is a commercial invoice, bill of lading, packing list and certificate of origin, with the correct HS code. On top of that, the platform will require its own shipment plan, carton labels and possibly barcode or appointment references. Prepare both the customs set and the platform set before shipping.',
+    a: 'Four customs documents — commercial invoice, bill of lading, packing list and certificate of origin — form the baseline UAE import set, with the correct HS code. On top of that, the platform requires its own shipment plan, carton labels and possibly barcode or appointment references. Prepare both sets before shipping.',
   },
   {
     q: 'How are UAE import duty and VAT handled on Amazon FBA or noon shipments?',
@@ -391,7 +391,7 @@ const faqs = [
   },
   {
     q: 'What prep and labelling do Amazon FBA and noon require?',
-    a: 'Each platform has its own carton, barcode, prep and packaging specifications. The verified snapshot does not publish those specifications, so verify the current FBA and noon inbound checklists before packing. UAE product-labelling requirements may also apply separately depending on the goods and regulator.',
+    a: 'Each platform has its own carton, barcode, prep and packaging specifications — at least three compliance layers — and the snapshot publishes zero of them, so verify the current FBA and noon inbound checklists before packing. UAE product-labelling requirements may also apply separately depending on the goods and regulator.',
   },
   {
     q: 'How do I avoid demurrage and detention on FBA/noon inventory?',
@@ -399,7 +399,7 @@ const faqs = [
   },
   {
     q: 'Should I use FCL or LCL for Amazon FBA or noon inventory?',
-    a: 'LCL suits market-testing batches, mixed SKUs and slow restocking because you only pay for chargeable CBM. FCL suits replenishment runs or a 20GP/40GP/40HQ-scale order because it is usually faster, simpler and less exposed to CFS damage or mixing risk. Compare the full landed cost, not the ocean rate alone.',
+    a: 'FCL and LCL split on volume: LCL suits market-testing batches at per-CBM pricing, while FCL wins for 20GP/40GP/40HQ-scale replenishment — three container sizes whose all-in cost, not the ocean rate, decides. FCL is usually faster, simpler and less exposed to CFS damage or mixing risk.',
   },
   {
     q: 'Are Amazon FBA storage and referral fees included in this page?',
@@ -415,7 +415,7 @@ const faqs = [
   },
   {
     q: 'What is the hidden cost stack from a China factory to a UAE fulfilment centre?',
-    a: 'It includes factory pickup and origin trucking, China export clearance, ocean or air freight, destination THC and port charges, UAE customs brokerage, electronic processing, inland trucking to the FC, duty and VAT, demurrage/detention risk, plus Amazon or noon storage/referral fees and prep/labelling. Most operational amounts were not published in the verified snapshot, so request an itemised all-in quote.',
+    a: 'At least 11 cost lines run from factory to FC — pickup/origin trucking, China export clearance, ocean or air freight, destination THC/port charges, UAE brokerage, electronic processing, inland trucking, duty and VAT, demurrage/detention risk, platform storage/referral fees and prep/labelling. Most operational amounts were not published in the verified snapshot, so request an itemised all-in quote.',
   },
 ];
 
@@ -497,6 +497,15 @@ const schema = [
         transit and inventory lead times, FCL vs LCL choice, UAE port routing, the full hidden-cost
         stack from factory to FC, and the 5% duty / 5% VAT compliance position.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> The UAE statutory stack is CIF ×1.1025 (5% duty + 5% VAT), so a $10,000 CIF inbound into an amazon.ae FBA or noon FC adds $1,025 before any platform fee. Sea lead times run a 14–18 day corridor benchmark and Jebel Ali’s typical 21-day (15–30 range), while air express is 2–4 days — making air 5–10.5× faster than the 21-day sea typical. Compliance is the breakpoint: a rejected inbound re-work loop can exceed that $1,025 statutory stack and the freight saving, so carton/label/pallet prep is the real cost lever, not the per-CBM rate.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified statutory facts from indicative corridor benchmarks.
         Platform fees, warehouse addresses and prep specifications are marked LOW because they were

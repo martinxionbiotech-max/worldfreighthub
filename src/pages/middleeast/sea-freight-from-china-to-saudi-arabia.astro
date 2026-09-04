@@ -413,7 +413,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is sea freight from China to Saudi Arabia?',
-    a: 'Sea freight is ocean container transport from a Chinese origin port to a Saudi destination port such as Jeddah or Dammam. It comes in two forms: FCL (Full Container Load), where you book a whole container, and LCL (Less than Container Load), where your cargo shares a container. It is the default choice for high-volume, non-urgent cargo because the unit cost is lowest.',
+    a: 'Sea freight is ocean container transport from a Chinese origin port to Jeddah or Dammam in two unitised forms — FCL (a whole container) and LCL (per-CBM shared space) — and it is the default for cargo that can absorb a 20–45 day window. It wins on unit cost for high-volume, non-urgent cargo.',
   },
   {
     q: 'How long does sea freight take from China to Saudi Arabia?',
@@ -425,7 +425,7 @@ const faqs = [
   },
   {
     q: 'Sea freight or air freight — which should I choose?',
-    a: 'Use a three-way test: unit cost, time sensitivity and cargo type. Sea is usually the lowest-cost option for large, heavy, stable-demand goods that can wait 20–45 days. Air is justified for high-value, perishable, fragile or urgent goods that need 2–10 days. SABER compliance applies to both modes, so air saves time, not paperwork.',
+    a: 'Run the 20–45 day sea window against the 2–10 day air window on three variables — unit cost, time sensitivity and cargo type. Sea is usually the lowest-cost option for large, heavy, stable-demand goods, while air is justified for high-value, perishable, fragile or urgent goods. SABER compliance applies to both modes, so air saves time, not paperwork.',
   },
   {
     q: 'What is the difference between port-to-port and door-to-door sea freight?',
@@ -437,15 +437,15 @@ const faqs = [
   },
   {
     q: 'Which Saudi port should I use — Jeddah or Dammam?',
-    a: 'Jeddah is the principal Red Sea gateway and usually suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and is the natural choice for Riyadh and Eastern Province, with Riyadh Dry Port handling inland distribution. Match the discharge port to your consignee and confirm the inland leg.',
+    a: 'Match the gate to the consignee: Jeddah serves western and central Saudi consignees on a 20–35 day window, while Dammam is the Eastern Province gate and Riyadh Dry Port handles the 30–45 day inland corridor. Confirm the inland leg before choosing the discharge port.',
   },
   {
     q: 'What hidden fees should I expect on a sea freight shipment?',
-    a: 'Beyond the ocean rate, expect surcharges, origin charges, destination THC and port charges, customs clearance, SABER PC/SC conformity fees, and potential demurrage/detention after free time. Import duty is 5% of CIF and VAT is 15% on CIF plus duty. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
+    a: 'Expect the statutory 5% CIF duty and 15% VAT on top of surcharges, origin charges, destination THC and port charges, customs clearance, SABER PC/SC conformity fees and potential demurrage/detention after free time. Specific fee amounts were not published in the verified snapshot — request an itemised schedule.',
   },
   {
     q: 'What are THC, BAF and CAF?',
-    a: 'THC is the terminal handling charge at origin and destination. BAF is a bunker adjustment factor tied to fuel, and CAF is a currency adjustment factor. The research snapshot did not publish specific amounts for the Saudi corridor, so treat these as standard surcharge categories to confirm in writing on every quote.',
+    a: 'Three surcharge categories — THC (terminal handling at origin and destination), BAF (bunker/fuel) and CAF (currency) — apply on every quote, but the snapshot publishes zero Saudi amounts. Treat them as standard lines to confirm in writing on every quote.',
   },
   {
     q: 'How do demurrage and detention work?',
@@ -457,7 +457,7 @@ const faqs = [
   },
   {
     q: 'What documents do I need for a sea freight import into Saudi Arabia?',
-    a: 'The standard set includes a commercial invoice, bill of lading, packing list, certificate of origin, and a SABER conformity certificate for regulated goods. Classify the goods with the correct HS code because duty and conformity requirements depend on it, and submit the pre-arrival declaration through FASAH.',
+    a: 'Five core documents — commercial invoice, bill of lading, packing list, certificate of origin and the SABER conformity certificate for regulated goods — form the baseline set. Classify the goods with the correct HS code because duty and conformity requirements depend on it, and submit the pre-arrival declaration through FASAH.',
   },
 ];
 
@@ -539,6 +539,15 @@ const schema = [
         sea-versus-air trade-off, and separates port-to-port from door-to-door so you can build a
         realistic landed-cost budget.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Saudi Arabia compounds 5% duty and 15% VAT to CIF ×1.2075, so a $10,000 CIF shipment adds $2,075 — more than the $1,752 spread between the $3,333 and $5,085 FCL 20GP market quotes. Indicative August 2026 benchmarks put FCL 40GP at $4,623–$8,085 and LCL at $267–$955 per CBM, a 3.6× per-CBM range that makes shipment volume the unit-cost breakpoint. Transit separates the gates: Jeddah runs 20–35 days and Dammam/Riyadh 30–45 days, so the Dammam routing costs 10 extra days at both the low (30 vs 20) and high (45 vs 35) ends.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and routing note as indicative, verify with carrier before

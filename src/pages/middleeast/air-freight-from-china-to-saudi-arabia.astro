@@ -333,7 +333,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is air freight from China to Saudi Arabia?',
-    a: 'Air freight is airport-to-airport transport of goods on scheduled or chartered aircraft from a Chinese origin airport to a Saudi destination airport such as Jeddah, Riyadh or Dammam. It is billed on chargeable weight — the higher of actual and volumetric weight — and is used when speed, shelf life or value density justify the higher cost.',
+    a: 'Air freight is airport-to-airport transport from a Chinese gateway to Jeddah, Riyadh or Dammam, billed on chargeable weight (the higher of actual or volumetric ÷6000) and used where a 3–7 day window beats sea’s 18–45 days. It is chosen when speed, shelf life or value density justify the higher cost.',
   },
   {
     q: 'How long does air freight take from China to Saudi Arabia?',
@@ -345,7 +345,7 @@ const faqs = [
   },
   {
     q: 'How is air freight charged — actual weight or volumetric weight?',
-    a: 'Air freight is charged on chargeable weight: the higher of actual gross weight and volumetric weight. Volumetric weight is usually L × W × H in centimetres divided by 6,000. A light, bulky carton can therefore be billed at far more than its actual weight, while a dense carton is billed at actual weight.',
+    a: 'Air freight bills on the higher of actual and volumetric weight, where volumetric is L × W × H ÷ 6,000 — so a bulky 120,000 cm³ carton bills at 20 kg even if it weighs 12 kg. A dense carton is billed at actual weight instead.',
   },
   {
     q: 'How do I calculate volumetric weight for air freight?',
@@ -353,7 +353,7 @@ const faqs = [
   },
   {
     q: 'Air freight or sea freight — which should I choose?',
-    a: 'Use a three-way test: time sensitivity, cargo value/density, and total landed cost. Air is justified for urgent, high-value, perishable, fragile or small goods that need roughly 3–7 days. Sea is usually cheaper for large, heavy, stable-demand cargo that can wait 18–45 days. SABER compliance applies to both, so air saves time, not paperwork.',
+    a: 'Run air’s 3–7 day window against sea’s 18–45 day window on three variables — time sensitivity, cargo value/density and total landed cost. Air is justified for urgent, high-value, perishable, fragile or small goods, while sea is usually cheaper for large, heavy, stable-demand cargo. SABER compliance applies to both, so air saves time, not paperwork.',
   },
   {
     q: 'What cargo should go by air freight?',
@@ -365,11 +365,11 @@ const faqs = [
   },
   {
     q: 'Which airports are used for China to Saudi Arabia air freight?',
-    a: 'Common China gateways include Shanghai Pudong (PVG), Hong Kong (HKG), Guangzhou Baiyun (CAN) and Shenzhen Bao’an (SZX). Saudi arrival airports are typically Jeddah (JED), Riyadh (RUH) and Dammam (DMM). Airline and routing specifics were not published in the research snapshot — confirm the airport pair and transit point with the carrier.',
+    a: 'Eight named gateways anchor the corridor — PVG, HKG, CAN and SZX in China, and JED, RUH and DMM in Saudi Arabia — but airline and routing specifics were not published in the research snapshot. Confirm the airport pair and transit point with the carrier.',
   },
   {
     q: 'What documents do I need for air freight to Saudi Arabia?',
-    a: 'The standard set is the air waybill (AWB), commercial invoice, packing list, certificate of origin and, for regulated goods, the SABER conformity certificate. Classify the goods with the correct HS code before quoting, because duty and conformity requirements depend on it.',
+    a: 'Five core documents — the air waybill (AWB), commercial invoice, packing list, certificate of origin and the SABER conformity certificate for regulated goods — form the baseline set. Classify the goods with the correct HS code before quoting, because duty and conformity requirements depend on it.',
   },
   {
     q: 'What hidden fees should I expect on air freight?',
@@ -377,7 +377,7 @@ const faqs = [
   },
   {
     q: 'Is express courier the same as air freight?',
-    a: 'No. Express courier is a door-to-door service with a much higher per-kg price, simpler billing and often a lower weight threshold; the research snapshot records a DHL example around $76.36/kg at 1 kg and 3–6 working days. Air freight is usually airport-to-airport, billed on chargeable weight in larger consignments, and requires separate Saudi clearance.',
+    a: 'No — express courier’s DHL benchmark of $76.36/kg at 1 kg (3–6 working days) is 5.7–8.7× air freight’s $8.80–$13.50/kg general bracket, buying door-to-door service and simpler billing. Air freight is usually airport-to-airport, billed on chargeable weight in larger consignments, and requires separate Saudi clearance.',
   },
 ];
 
@@ -459,6 +459,15 @@ const schema = [
         gives indicative rate and transit windows, the air-versus-sea trade-off, and the airports
         and cost stack that make up a realistic landed-cost budget.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Air freight cuts China–Saudi planning transit from an 18–45 day sea window to 3–7 days airport-to-airport — a 15-day saving at the low end and 38 days at the high end. Chargeable weight, not actual weight, drives the bill: a 60 × 50 × 40 cm carton (120,000 cm³ ÷ 6000) bills at 20 kg versus a 12 kg actual weight, a 67% uplift. The ÷6000 versus ÷5000 divisor is a 20% breakpoint — the same 120,000 cm³ carton becomes 24 kg on a courier’s ÷5000 formula, so the mode decision starts with chargeable-weight math.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence rate, transit and routing note as indicative, verify with carrier before

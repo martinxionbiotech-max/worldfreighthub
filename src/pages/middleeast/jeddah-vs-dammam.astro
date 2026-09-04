@@ -358,15 +358,15 @@ const costRows = [
 const faqs = [
   {
     q: 'Which Saudi port should I use from China?',
-    a: 'Match the port to your consignee and final inland leg. Use Jeddah for western Saudi Arabia, Makkah, Madinah and Red Sea trade; use Dammam for the Eastern Province, and Dammam plus Riyadh Dry Port for Riyadh and central Saudi Arabia. Confirm the inland distance, cost and transit before choosing.',
+    a: 'Match the gate to one of three corridors: Jeddah for western Saudi Arabia, Makkah, Madinah and Red Sea trade; Dammam for the Eastern Province; and Dammam plus Riyadh Dry Port for Riyadh and central Saudi Arabia. Confirm the inland distance, cost and transit before choosing.',
   },
   {
     q: 'Is Jeddah or Dammam closer to Riyadh?',
-    a: 'Geographically Jeddah is on the opposite coast, but the conventional freight corridor to Riyadh runs through Dammam and Riyadh Dry Port. Riyadh cargo is usually routed via Dammam because the eastern rail/road inland transfer is the established flow, even though both ports are hundreds of kilometres from the capital.',
+    a: 'For freight, Dammam is the practical Riyadh gateway via Riyadh Dry Port despite both ports sitting hundreds of kilometres from the capital, because the Dammam rail/road corridor is the established 30–45 day total flow. Geographically Jeddah is on the opposite coast, so the conventional corridor runs east through Dammam.',
   },
   {
     q: 'Which port is better for Makkah and Madinah cargo?',
-    a: 'Jeddah. It is the nearest major container gateway to the two holy cities, so religious, Hajj/Umrah and western-KSA goods naturally route through the Red Sea gateway and keep the final trucking leg short.',
+    a: 'Jeddah is the nearest major container gateway to the two holy cities, keeping the final trucking leg short versus Dammam’s cross-country 30–45 day corridor to central KSA. Religious, Hajj/Umrah and western-KSA goods naturally route through the Red Sea gateway.',
   },
   {
     q: 'Which port should I use for oil and gas equipment?',
@@ -394,15 +394,15 @@ const faqs = [
   },
   {
     q: 'What is Riyadh Dry Port’s role in the Jeddah vs Dammam decision?',
-    a: 'Riyadh Dry Port is the inland extension of the Dammam corridor. When the final consignee is in Riyadh or central Saudi Arabia, the usual flow is Dammam discharge plus rail/road transfer to Riyadh Dry Port for inland clearance and distribution. It is the main reason Dammam is the default answer for Riyadh cargo.',
+    a: 'Riyadh Dry Port is the inland extension of the Dammam corridor, the reason Riyadh cargo runs a 30–45 day total door flow instead of clearing at Jeddah. The usual flow is Dammam discharge plus rail/road transfer to Riyadh Dry Port for inland clearance and distribution.',
   },
   {
     q: 'Which port should I use for LCL shipments?',
-    a: 'It depends on the final consignee, not on the LCL itself. LCL to the west is deconsolidated through a Jeddah CFS; LCL to Riyadh is often deconsolidated through the Dammam flow and a Riyadh Dry Port CFS. Ask for the CFS location and destination charges before quoting.',
+    a: 'LCL follows the same three-corridor split — west through a Jeddah CFS, Riyadh through the Dammam flow and a Riyadh Dry Port CFS — so the CFS location, not LCL itself, sets the cost. Ask for the CFS location and destination charges before quoting.',
   },
   {
     q: 'What are the common mistakes when choosing between Jeddah and Dammam?',
-    a: 'The most common mistakes are picking the cheaper ocean quote while ignoring the inland leg, assuming Jeddah is the natural Riyadh gateway, forgetting the dry-port handover point for Riyadh cargo, and deciding before the final consignee is known. Match the gate to the hinterland, then compare all-in costs.',
+    a: 'Four mistakes dominate: choosing the cheaper ocean quote while ignoring the inland leg, assuming Jeddah is the natural Riyadh gateway, forgetting the dry-port handover point for Riyadh cargo, and deciding before the final consignee is known. Match the gate to the hinterland, then compare all-in costs.',
   },
 ];
 
@@ -514,6 +514,15 @@ const schema = [
         decision framework most forwarders skip: western-KSA cargo vs Eastern Province cargo vs
         Riyadh cargo vs oil &amp; gas project cargo vs religious goods.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> The tax stack is port-neutral: 5% duty + 15% VAT compounds to CIF ×1.2075 at both gates, so a $10,000 CIF shipment adds $2,075 whether it discharges at Jeddah or Dammam. Ocean windows are close — Jeddah’s typical 18 days versus Dammam’s typical 20 days (both 15–30) — a 2-day or 11% typical-time gap that rarely decides the routing. The real breakpoint is inland: Riyadh cargo through Dammam/Riyadh Dry Port runs a 30–45 day total corridor, so the shorter final-mile trucking usually outweighs any Jeddah ocean-rate saving.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market and port snapshots. Treat
         every LOW-confidence transit, facility and fee note as indicative, verify with Mawani or your

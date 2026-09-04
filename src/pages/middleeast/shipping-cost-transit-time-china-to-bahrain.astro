@@ -484,7 +484,7 @@ const factorRows = [
 const faqs = [
   {
     q: 'How much does shipping cost from China to Bahrain?',
-    a: 'Bahrain-specific freight rates were not published in the verified research snapshot, so this page does not invent a dollar, per-CBM or per-kg figure. Request an all-in quote for FCL, LCL, air, express or DDP from a forwarder, itemised by freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+    a: 'Zero verified Bahrain freight benchmarks are published — no dollar, per-CBM or per-kg figure — so every FCL, LCL, air, express and DDP line is a request-for-quote item. Ask a forwarder to itemise freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery, because rates vary by carrier, season, cargo and surcharge.',
   },
   {
     q: 'How long does it take to ship from China to Bahrain?',
@@ -492,11 +492,11 @@ const faqs = [
   },
   {
     q: 'Why does Bahrain have no published rate benchmark in the snapshot?',
-    a: 'Bahrain is a smaller corridor than the UAE or Saudi Arabia and the verified research snapshot did not publish Bahrain FCL, LCL, air, express or DDP rates. Borrowing a Jebel Ali, Dammam or Hamad bracket would be misleading, so every rate line is shown as a request-for-quote marker instead.',
+    a: 'The verified snapshot publishes zero Bahrain FCL, LCL, air, express or DDP rate benchmarks, because Bahrain is a smaller corridor than the UAE or Saudi Arabia. Borrowing a Jebel Ali, Dammam or Hamad bracket would be misleading, so every rate line is shown as a request-for-quote marker instead.',
   },
   {
     q: 'How is the Bahrain landed cost calculated?',
-    a: 'Build the CIF value from cost, insurance and freight. For most goods, add 5% customs duty on CIF, then apply 10% VAT on the duty-inclusive base. The baseline statutory landed cost is CIF × 1.05 × 1.10 = CIF × 1.155. Add destination THC, documentation, clearance, inland trucking and any demurrage/detention on top of that.',
+    a: 'For most goods, the baseline statutory landed cost is CIF × 1.05 × 1.10 = CIF × 1.155 — 5% customs duty on CIF first, then 10% VAT on the duty-inclusive base. Build the CIF value from cost, insurance and freight, then add destination THC, documentation, clearance, inland trucking and any demurrage/detention on top of that statutory figure.',
   },
   {
     q: 'Does Bahrain charge VAT on top of import duty?',
@@ -508,19 +508,19 @@ const faqs = [
   },
   {
     q: 'Does the 5% duty apply to freight and insurance?',
-    a: 'Yes. The duty base is CIF — cost, insurance and freight — so freight and insurance are included in the value used for the 5% calculation. A higher freight rate therefore also raises the customs duty and, because VAT applies to the duty-inclusive base, the VAT line as well.',
+    a: 'Yes — the 5% duty base is CIF, so each additional $1 of freight adds $0.05 duty and, after 10% VAT on the duty-inclusive base, another $0.105, or $0.155 all-in per extra dollar of freight. Freight and insurance are included in the value used for the duty calculation, and a higher freight rate therefore also raises the VAT line.',
   },
   {
     q: 'What hidden fees should I expect on a Bahrain shipment?',
-    a: 'Beyond the freight rate, expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bahrain electronic processing, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) and VAT (10%) are statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+    a: 'Expect nine cost categories beyond the freight rate — origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bahrain electronic processing, inspection, inland transport, cargo insurance and demurrage/detention after free time — before the statutory 5% CIF duty and 10% VAT. Specific fee amounts were not published in the research snapshot, so request an itemised schedule.',
   },
   {
     q: 'What is the cheapest way to ship from China to Bahrain?',
-    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'For cargo that can absorb a 15–30 day window, sea freight is the unit-cost floor — but only after the ×1.155 duty+VAT stack and all destination fees are included in the all-in comparison. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Bahrain?',
-    a: 'LCL suits small-volume shipments and charges per CBM, but it adds consolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. The research snapshot did not quantify Bahrain FCL or LCL, so request both all-in quotes and compare the full landed cost.',
+    a: 'FCL and LCL split on the container-utilisation breakpoint: LCL charges per CBM and adds consolidation minimums and destination handling, while FCL wins as volume approaches a full-container share — but the snapshot publishes zero Bahrain FCL/LCL numbers. Request both all-in quotes and compare the full landed cost.',
   },
   {
     q: 'Which port should be used in the landed-cost quote?',
@@ -536,7 +536,7 @@ const faqs = [
   },
   {
     q: 'Does King Fahd Causeway change the landed-cost calculation?',
-    a: 'King Fahd Causeway is relevant for road/transshipment movements between Saudi Arabia and Bahrain. Its border procedures, commercial timing and fee treatment are not published in the verified snapshot, so treat Causeway-specific clearance and cost claims as LOW/unverified and confirm the current movement with the carrier or broker.',
+    a: 'King Fahd Causeway changes routing, not the ×1.155 Bahrain stack — its border procedures, commercial timing and fee treatment are not published in the verified snapshot. Treat Causeway-specific clearance and cost claims as LOW/unverified and confirm the current movement with the carrier or broker.',
   },
 ];
 
@@ -618,6 +618,15 @@ const schema = [
         plus 10% VAT stack, then shows how the layers compound into a true landed cost — while
         keeping the typical 22-day transit window in view.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Bahrain’s statutory stack is CIF ×1.155 (5% duty + 10% VAT), so a $10,000 CIF shipment adds $1,550 in duty+VAT — $525 more than the UAE/Oman ×1.1025 at $1,025. Khalifa bin Salman (BHKBS) is the only verified Bahrain sea gateway in the snapshot, with a 22-day typical transit and a 15–30 day range — a 15-day planning spread that makes the air leg a request-for-quote item because no Bahrain air transit number is published. Because Bahrain’s ×1.155 sits 5.25 points below Saudi’s ×1.2075 but 5.25 points above the UAE’s ×1.1025, King Fahd Causeway routing into Dammam/Riyadh is a congestion-and-inland-leg play, not a simple VAT win.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified rules from indicative market snapshots. Bahrain freight
         rates were not published in the verified snapshot, so every rate is shown as a
