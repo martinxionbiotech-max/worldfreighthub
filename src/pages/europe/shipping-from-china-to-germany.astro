@@ -481,11 +481,11 @@ const faqs = [
   },
   {
     q: 'Can I ship China-to-Germany by rail?',
-    a: 'Yes — Germany is a primary terminus of the New Silk Road, with trains from Xi\u2019an, Chengdu and Chongqing arriving at Hamburg and other German hubs. Rail runs roughly 18–22 days versus ~30–38 days by sea, but the route data notes it costs roughly two to three times more per container. Price the financing cost of the extra sea days against the rail premium before defaulting to ocean.',
+    a: 'Yes — rail from Xi\u2019an or Chengdu to Hamburg runs roughly 18–22 days, versus the roughly 30–38-day sea window, so it cuts about 8–16 days at roughly two to three times the sea rate. Germany is a primary New Silk Road terminus, with trains from Xi\u2019an, Chengdu and Chongqing arriving at Hamburg and other German hubs, so price the financing cost of the extra sea days against the rail premium before defaulting to ocean.',
   },
   {
     q: 'Do I need an EORI to import into Germany?',
-    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must be registered before your goods arrive. It is the single most common first-import stumbling block for China-to-Germany cargo, so start the registration before the vessel or train departs, not while it is discharging.',
+    a: 'Yes — one EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must exist before your goods arrive; zero German imports clear without it. It is the single most common first-import stumbling block for China-to-Germany cargo, so start the registration before the vessel or train departs, not while it is discharging.',
   },
   {
     q: 'What is the VAT rate in Germany?',
@@ -493,7 +493,7 @@ const faqs = [
   },
   {
     q: 'What is the difference between FCL and LCL for China to Germany?',
-    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ and is usually the fit for large or heavy loads, priced per container. LCL consolidates your cargo with other importers and is priced per cubic metre. A common planning split is around 15 CBM — below that LCL is usually cheaper, above it FCL starts to win — but that is a LOW-confidence rule of thumb, so request quotes on both sides of the split before deciding.',
+    a: 'FCL is priced per container at 20ft $1,200–$4,600 and 40ft $1,600–$6,500 to Hamburg (MEDIUM), while LCL is priced per cubic metre at $60–$150 (MEDIUM); the planning break-even is around 15 CBM, below which LCL is usually cheaper and above which FCL starts to win. That is a LOW-confidence rule of thumb, so request quotes on both sides of the split before deciding.',
   },
   {
     q: 'What is the €150 de-minimis threshold and how does IOSS work?',
@@ -501,11 +501,11 @@ const faqs = [
   },
   {
     q: 'What documents are needed for German customs clearance?',
-    a: 'The standard set is a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC classification, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed German broker.',
+    a: 'The core German clearance set is four documents plus one classification — a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC code, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed German broker.',
   },
   {
     q: 'Do I need SABER or SASO to import into Germany?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems and do not apply to Germany or the EU. Do not copy a Saudi SABER/SASO step into a German quote. Germany uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with German customs or your broker.',
+    a: 'No — SABER and SASO apply to exactly zero German or EU imports: they are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a German quote. Germany uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with German customs or your broker.',
   },
   {
     q: 'What are CE marking and REACH, and do they apply?',
@@ -513,7 +513,7 @@ const faqs = [
   },
   {
     q: 'How do demurrage and detention differ in Germany?',
-    a: 'Demurrage is the charge the terminal applies when import cargo stays in the port beyond the allowed free time after discharge. Detention is the charge the ocean carrier (or rail operator) applies when the container is kept beyond the equipment free time after collection. They are two separate clocks with two separate payees. German free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
+    a: 'Demurrage and detention are two separate clocks with two separate payees: demurrage is the charge for port free-time overstay after discharge, and detention is the charge for container free-time overstay after collection. German free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
   },
 ];
 
@@ -595,6 +595,9 @@ const schema = [
         the roughly 30–38-day sea window via the Cape, the 18–22-day rail alternative, EU common duty
         plus 19% VAT, the EORI gate, and the hidden destination charges that shape the German landed cost.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Rail to Hamburg at 18–22 days compresses the 30–38-day sea window by roughly 8–16 days for inland/Ruhr cargo, at roughly 2–3× the sea rate. Germany's 19% VAT lands on (CIF + duty), so a €10,000 CIF with 5% duty is €1,995 VAT — €95 more than a flat 19% on CIF. Hamburg's ≈7.7m TEU (2023) is roughly 57% of Rotterdam's ≈13.4m TEU, making Hamburg the German-market call and Rotterdam the EU-wide consolidation call.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. Germany\u2019s FCL/LCL
         ranges come from the WorldFreightHub Europe route data (MEDIUM), while rail, air, express and DDP

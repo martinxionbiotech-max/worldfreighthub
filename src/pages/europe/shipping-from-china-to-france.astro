@@ -509,15 +509,15 @@ const faqs = [
   },
   {
     q: 'Should I ship to Le Havre or Rotterdam for France?',
-    a: 'For France-only cargo, Le Havre usually wins — it avoids the inland trucking from Rotterdam and reaches Paris by Seine barge through the HAROPA axis. Rotterdam only makes sense when the same container is consolidating multiple Northwest European destinations. The honest trade-off is schedule: Le Havre\u2019s direct China calls are thinner and some cargo transships via a Mediterranean hub, so confirm the actual routing before relying on the headline transit time.',
+    a: 'Le Havre\u2019s ≈2.6m TEU (2023) is only about 19% of Rotterdam\u2019s ≈13.4m TEU, but for France-only cargo a Le Havre call usually wins on total landed cost — it avoids the inland trucking from Rotterdam and reaches Paris by Seine barge through the HAROPA axis. Rotterdam only makes sense when the same container is consolidating multiple Northwest European destinations. The honest trade-off is schedule: Le Havre\u2019s direct China calls are thinner and some cargo transships via a Mediterranean hub, so confirm the actual routing before relying on the headline transit time.',
   },
   {
     q: 'What is HAROPA?',
-    a: 'HAROPA is the merged port authority of Le Havre, Rouen and Paris, forming one integrated Seine-axis port system. A Le Havre discharge can therefore move inland by barge to Rouen or the Paris region as part of the same network, avoiding road congestion and the northern-range trucking a Rotterdam discharge would require.',
+    a: 'HAROPA is a three-port merged authority — Le Havre, Rouen and Paris — forming one integrated Seine-axis port system. A Le Havre discharge can therefore move inland by barge to Rouen or the Paris region as part of the same network, avoiding road congestion and the northern-range trucking a Rotterdam discharge would require.',
   },
   {
     q: 'Do I need an EORI before the goods arrive in France?',
-    a: 'Yes. The EORI (Economic Operators Registration and Identification) number is required for any import into the EU and must be registered before your goods arrive. It is the single most common first-import stumbling block for China-to-France cargo, so start the registration before the vessel or train departs, not while it is discharging.',
+    a: 'Yes — one EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must exist before your goods arrive; zero French imports clear without it. It is the single most common first-import stumbling block for China-to-France cargo, so start the registration before the vessel or train departs, not while it is discharging.',
   },
   {
     q: 'What is the VAT rate in France?',
@@ -525,11 +525,11 @@ const faqs = [
   },
   {
     q: 'Does France have the same Article 23 VAT deferral as the Netherlands?',
-    a: 'No. Article 23 is a Dutch VAT-deferral licence and should not be copied into a French quote. France applies normal import VAT at 20% on the duty-inclusive value unless a different EU or national mechanism applies to your specific transaction — confirm the correct treatment with French Customs or your broker rather than assuming the Dutch structure transfers.',
+    a: 'No — France has no Dutch-style Article 23 licence; it applies standard 20% import VAT on the duty-inclusive value unless a different EU or national mechanism applies. Confirm the correct treatment with French Customs or your broker rather than assuming the Dutch structure transfers.',
   },
   {
     q: 'What is the difference between FCL and LCL for China to France?',
-    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ and is usually the fit for large or heavy loads, priced per container. LCL consolidates your cargo with other importers and is priced per cubic metre. Illustratively, at a midpoint 20ft rate of $3,000 and LCL of $105/CBM, the break-even is about 29 CBM; below that LCL is usually cheaper, above it FCL starts to win. Request quotes on both sides of the split before deciding.',
+    a: 'At a midpoint 20ft rate of $3,000 and LCL of $105/CBM, the FCL-vs-LCL break-even is about 29 CBM — below that LCL is usually cheaper, above it FCL starts to win. FCL is priced per container for the 20GP, 40GP or 40HQ, while LCL is priced per cubic metre, so request quotes on both sides of the split before deciding.',
   },
   {
     q: 'What is the €150 de-minimis threshold and how does IOSS work?',
@@ -537,11 +537,11 @@ const faqs = [
   },
   {
     q: 'What documents are needed for French customs clearance?',
-    a: 'The standard set is a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC classification, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed French broker.',
+    a: 'The core French clearance set is four documents plus one classification — a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct 10-digit TARIC code, backed by your EORI number. Regulated products also need CE marking evidence, and chemical substances need REACH registration — confirm the exact document set for your product class with a licensed French broker.',
   },
   {
     q: 'Do I need SABER or SASO to import into France?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems and do not apply to France or the EU. Do not copy a Saudi SABER/SASO step into a French quote. France uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with French Customs or your broker.',
+    a: 'No — SABER and SASO apply to exactly zero French or EU imports: they are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a French quote. France uses CE marking for regulated products and REACH for chemical substances instead, and any product-specific approval should be confirmed with French Customs or your broker.',
   },
   {
     q: 'What are CE marking and REACH, and do they apply?',
@@ -549,7 +549,7 @@ const faqs = [
   },
   {
     q: 'How do demurrage and detention differ in France?',
-    a: 'Demurrage is the charge the terminal applies when import cargo stays in the port beyond the allowed free time after discharge. Detention is the charge the ocean carrier (or rail operator) applies when the container is kept beyond the equipment free time after collection. They are two separate clocks with two separate payees. French free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
+    a: 'Demurrage and detention are two separate clocks with two separate payees: demurrage is the charge for port free-time overstay after discharge, and detention is the charge for container free-time overstay after collection. French free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the declaration promptly so neither clock runs.',
   },
 ];
 
@@ -631,6 +631,9 @@ const schema = [
         the roughly 30-day sea window via the Cape, the 18–22-day rail alternative, EU common duty plus
         20% VAT, the EORI gate, and the HAROPA Seine-barge route to Paris.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Le Havre's ≈2.6m TEU (2023) is only about 19% of Rotterdam's ≈13.4m TEU, so France-only cargo should land at Le Havre and avoid the northern-range trucking. At 20% VAT on (CIF + duty), a €10,000 CIF with 5% duty pays €2,100 VAT — €100 more than a flat 20% on CIF. Rail into Europe at 18–22 days beats the 30-day sea window by roughly 8–12 days before the final French leg, at roughly 2–3× the sea rate.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. France\u2019s FCL/LCL
         ranges come from the WorldFreightHub Europe route data (MEDIUM), while rail, air, express and DDP

@@ -491,15 +491,15 @@ const faqs = [
   },
   {
     q: 'Can I ship China-to-UK by rail?',
-    a: 'Yes, but with a Channel crossing. New Silk Road trains from Xi\u2019an, Chengdu and Chongqing reach continental termini in roughly 18–22 days, and the UK leg adds the Channel crossing — a tunnel or ferry handover that pushes UK rail transit to roughly 18–25 days. Rail costs roughly two to three times more per container than sea, so price the financing cost of the extra sea days against the rail premium before defaulting to ocean.',
+    a: 'Yes — continental rail runs roughly 18–22 days, and the Channel crossing pushes the UK rail window to roughly 18–25 days versus the 30–38-day sea window, at roughly two to three times the sea rate. New Silk Road trains from Xi\u2019an, Chengdu and Chongqing reach continental termini before the tunnel or ferry handover, so price the financing cost of the extra sea days against the rail premium before defaulting to ocean.',
   },
   {
     q: 'Do I need a GB EORI to import into the UK?',
-    a: 'Yes. A GB EORI (Economic Operators Registration and Identification) number — starting with "GB" — is required for UK import clearance, and it must be registered before your goods arrive. It is separate from an EU EORI, which does not work for UK imports. It is the single most common post-Brexit stumbling block for China-to-UK importers.',
+    a: 'Yes — one GB EORI (Economic Operators Registration and Identification) number starting with "GB" is required for UK import clearance, and it must exist before your goods arrive; zero UK imports clear without it. It is separate from an EU EORI, which does not work for UK imports, and is the single most common post-Brexit stumbling block for China-to-UK importers.',
   },
   {
     q: 'Is the UK still part of the EU customs union?',
-    a: 'No. Since 2021 the UK has its own customs regime — the UK Global Tariff, a separate GB EORI, and its own declarations. EU procedures no longer apply to UK imports, so you cannot clear a China shipment through an EU member state and treat it as already imported into the UK.',
+    a: 'No — since 2021 the UK runs its own 20% VAT, UK Global Tariff and GB EORI, so a China shipment cleared in the EU still needs a second UK declaration. EU procedures no longer apply to UK imports, so you cannot clear a China shipment through an EU member state and treat it as already imported into the UK.',
   },
   {
     q: 'What is the VAT rate in the UK?',
@@ -507,7 +507,7 @@ const faqs = [
   },
   {
     q: 'What is the difference between FCL and LCL for China to the UK?',
-    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ and is usually the fit for large or heavy loads, priced per container. LCL consolidates your cargo with other importers and is priced per cubic metre. A common planning split is around 15 CBM — below that LCL is usually cheaper, above it FCL starts to win — but that is a LOW-confidence rule of thumb, so request quotes on both sides of the split before deciding.',
+    a: 'FCL is priced per container at 20ft $1,300–$5,000 and 40ft $1,800–$7,000 to Felixstowe (MEDIUM), while LCL is priced per cubic metre at $70–$170 (MEDIUM); the planning break-even is around 15 CBM, below which LCL is usually cheaper and above which FCL starts to win. That is a LOW-confidence rule of thumb, so request quotes on both sides of the split before deciding.',
   },
   {
     q: 'What is the £135 de-minimis threshold and how does it work?',
@@ -515,7 +515,7 @@ const faqs = [
   },
   {
     q: 'What documents are needed for UK customs clearance?',
-    a: 'The standard set is a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct UK-specific HS classification, backed by your GB EORI number. Regulated goods also need UKCA marking evidence (with CE still accepted for many goods during transition) — confirm the exact document set for your product class with a licensed UK broker.',
+    a: 'The core UK clearance set is four documents plus one classification — a commercial invoice, bill of lading (or rail consignment note for rail cargo), packing list and the correct UK-specific HS code, backed by your GB EORI number. Regulated goods also need UKCA marking evidence (with CE still accepted for many goods during transition) — confirm the exact document set for your product class with a licensed UK broker.',
   },
   {
     q: 'Does CE marking still apply in the UK, or do I need UKCA?',
@@ -523,11 +523,11 @@ const faqs = [
   },
   {
     q: 'Do I need SABER or SASO to import into the UK?',
-    a: 'No. SABER and SASO are Saudi-only conformity systems and do not apply to the UK. Do not copy a Saudi SABER/SASO step into a UK quote. The UK uses UKCA marking (with CE accepted for many goods during transition) instead, and any product-specific approval should be confirmed with HMRC or your broker.',
+    a: 'No — SABER and SASO apply to exactly zero UK imports: they are Saudi-only conformity systems. Do not copy a Saudi SABER/SASO step into a UK quote. The UK uses UKCA marking (with CE accepted for many goods during transition) instead, and any product-specific approval should be confirmed with HMRC or your broker.',
   },
   {
     q: 'How do demurrage and detention differ in the UK?',
-    a: 'Demurrage is the charge the terminal applies when import cargo stays in the port beyond the allowed free time after discharge. Detention is the charge the ocean carrier (or rail operator) applies when the container is kept beyond the equipment free time after collection. They are two separate clocks with two separate payees. UK free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the UK declaration promptly so neither clock runs.',
+    a: 'Demurrage and detention are two separate clocks with two separate payees: demurrage is the charge for port free-time overstay after discharge, and detention is the charge for container free-time overstay after collection. UK free-time periods and per-day rates are not published in the verified snapshot — confirm both allowances in writing before booking and file the UK declaration promptly so neither clock runs.',
   },
 ];
 
@@ -610,6 +610,9 @@ const schema = [
         crossing, the UK Global Tariff plus 20% VAT, the GB EORI gate, and the hidden destination
         charges that shape the British landed cost.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> The UK's 20% VAT on (customs value + duty) makes a £10,000 CIF with 5% duty cost £2,100 VAT — £100 more than flat 20% on CIF, and a separate UK claim from the EU's TARIC regime. Felixstowe's ≈3.6m TEU (2023) is roughly 27% of Rotterdam's ≈13.4m TEU, so a direct UK call avoids clearing the EU first and then the UK again. Rail to the UK at 18–25 days shaves roughly 5–20 days off the 30–38-day sea window, at roughly 2–3× the sea rate.</p>
+      </blockquote>
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. The UK\u2019s FCL/LCL
         ranges come from the WorldFreightHub Europe route data (MEDIUM), while rail, air, express and DDP
