@@ -297,43 +297,43 @@ const factorRows = [
 const faqs = [
   {
     q: 'How long does shipping from China to the UAE take?',
-    a: 'Corridor-level research gives roughly 14–18 days by sea (cargofromchina, LOW confidence), while the WorldFreightHub route data records a typical 21 days with a 15–30 day range for Shanghai to Jebel Ali (MEDIUM confidence). Air express is commonly reported around 2–4 days and DDP air around 3–6 days (LOW). All figures are indicative — verify with your carrier before relying on them.',
+    a: 'Sea transit splits between 14–18 days (cargofromchina, LOW) and the 21-day typical with a 15–30 day range for Shanghai–Jebel Ali (MEDIUM), while air express at 2–4 days can cut the slowest sea leg by up to 93%. DDP air adds 3–6 days door-to-door (LOW); verify all figures with your carrier before relying on them.',
   },
   {
     q: 'How much does shipping from China to the UAE cost?',
-    a: 'The research snapshot records LCL ocean around AED 880–980 per CBM to Dubai and air freight around AED 20–23.5 per kg, both LOW-confidence market figures. Verified UAE FCL rates were not published in the snapshot, so request an all-in container quote. These are collected public figures, not carrier quotes — confirm with a forwarder before booking.',
+    a: 'The snapshot prices LCL ocean at AED 880–980/CBM (AED 8,800–9,800 for 10 CBM) and air at AED 20–23.5/kg (AED 2,000–2,350 for 100 kg), both LOW-confidence. Verified UAE FCL rates were not published, so request an all-in container quote; confirm figures with a forwarder before booking.',
   },
   {
     q: 'What is the UAE VAT rate on imports?',
-    a: 'The UAE standard VAT rate is 5%, introduced on 1 January 2018. Import VAT is calculated on the CIF value plus customs duty, not just the product price. Treat the rate as subject to verification with the Federal Tax Authority before you rely on it.',
+    a: 'The UAE standard VAT rate is 5% on the duty-inclusive CIF value, so with the 5% baseline duty the landed-cost multiplier is ×1.1025 — 10.25% above CIF. It was introduced on 1 January 2018, and you should confirm the rate with the Federal Tax Authority before relying on it.',
   },
   {
     q: 'What is the standard UAE import duty?',
-    a: 'The baseline import duty is 5% of the CIF value under the GCC Common External Tariff. Specific goods can attract higher protective or anti-dumping rates, so classify your HS code correctly before quoting.',
+    a: 'The baseline import duty is 5% of CIF — US$500 on a US$10,000 CIF shipment — under the GCC Common External Tariff; specific goods can attract higher protective or anti-dumping rates, so classify your HS code correctly before quoting.',
   },
   {
     q: 'Which UAE port should I use — Jebel Ali, Khalifa or Sharjah?',
-    a: 'Jebel Ali is the Middle East’s largest container port and the default China import gateway and regional transshipment hub. Khalifa Port Abu Dhabi is a semi-automated deep-water option that suits Abu Dhabi consignees and industrial cargo. Port Khalid in Sharjah suits Sharjah and the northern emirates. Match the discharge port to your consignee and confirm the inland delivery leg.',
+    a: 'Jebel Ali is the default China import gateway, with the page’s route data recording a 21-day typical (15–30 day range) for Shanghai–Jebel Ali. Khalifa Port Abu Dhabi is a semi-automated deep-water option for Abu Dhabi consignees, and Port Khalid in Sharjah suits the northern emirates; match the discharge port to your consignee and confirm the inland delivery leg.',
   },
   {
     q: 'Why is Jebel Ali considered the Middle East’s hub?',
-    a: 'Jebel Ali, operated by DP World, is the region’s largest container port and combines deep-water container capacity with a large free zone and strong road/sea connectivity. That makes it a natural consolidation and transshipment point for the GCC, Middle East, Africa and Indian subcontinent rather than only a Dubai gateway.',
+    a: 'Jebel Ali, operated by DP World, is the region’s largest container port, and its 21-day typical Shanghai transit (15–30 day range) plus free-zone duty deferral make it a natural consolidation and transshipment point for the GCC, Middle East, Africa and Indian subcontinent — not just a Dubai gateway.',
   },
   {
     q: 'Is there a de minimis threshold for UAE imports?',
-    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure and should be confirmed with Dubai Customs or the FTA before you rely on it.',
+    a: 'Secondary sources set the duty/tax-free line at AED 1,000 and gifts at AED 3,000 — a 3× gap between the two thresholds. This is a secondary-source figure, so confirm with Dubai Customs or the FTA before you rely on it.',
   },
   {
     q: 'What documents do I need to import into the UAE?',
-    a: 'The standard set includes a commercial invoice, bill of lading, packing list and certificate of origin. Regulated goods may also need conformity documentation such as CE evidence. Classify the goods with the correct HS code before quoting because duty, VAT and any conformity requirements depend on it.',
+    a: 'The minimum import set is four documents — commercial invoice, bill of lading, packing list and certificate of origin — plus correct HS classification; regulated goods may add conformity documentation such as CE evidence, since the 5% duty, 5% VAT and conformity requirements all key off the HS code.',
   },
   {
     q: 'Do I need an ISF filing to ship to the UAE?',
-    a: 'No. ISF (Importer Security Filing) is a United States requirement and does not apply to the UAE. The UAE equivalent step is the pre-arrival customs declaration through Dubai Customs / the FTA, supported by the commercial invoice, packing list and bill of lading.',
+    a: 'No — ISF is a US-only filing, so the UAE import path has zero ISF requirement; instead the 5% duty and 5% VAT are assessed through the pre-arrival declaration via Dubai Customs / the FTA, supported by the commercial invoice, packing list and bill of lading.',
   },
   {
     q: 'How does door-to-door shipping from China to the UAE work?',
-    a: 'The forwarder collects cargo from the supplier, handles China export clearance, moves it by sea/air to Jebel Ali, Khalifa or Sharjah, files the UAE import declaration, settles the 5% duty and 5% VAT, then arranges last-mile trucking to the named address. Under DDP the seller/forwarder carries those costs; under DAP or EXW the buyer handles more of the import side.',
+    a: 'Door-to-door consolidates the 5% duty + 5% VAT into one 10.25% landed-cost layer on CIF (×1.1025), then adds collection, China export clearance, sea/air freight to Jebel Ali/Khalifa/Sharjah, the UAE import declaration and last-mile trucking. Under DDP the seller/forwarder carries those costs; under DAP or EXW the buyer handles more of the import side.',
   },
 ];
 
@@ -420,6 +420,9 @@ const schema = [
         LOW-confidence rate and transit number as an indicative figure to verify with your carrier
         before relying on it.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> The UAE’s 5% duty + 5% VAT multiplies to a CIF × 1.1025 landed-cost multiplier, so imports clear 10.25% above CIF — exactly 10.5 percentage points below Saudi Arabia’s 20.75% stack. On a US$10,000 CIF shipment that is US$1,025 of duty + VAT (US$500 + US$525), landing at US$11,025 versus US$12,075 in Saudi Arabia — a US$1,050 tax saving for the same CIF value. The mode breakpoint is steep: sea’s 15–30 days versus air express’s 2–4 days means air can cut the slowest sea transit by up to 93%, while LCL’s AED 880–980/CBM translates to AED 8,800–9,800 for a 10 CBM shipment.</p>
+      </blockquote>
 
       <div class="fact-grid mt-3">
         <div class="fact">

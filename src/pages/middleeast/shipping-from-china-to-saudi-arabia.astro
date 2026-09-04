@@ -261,43 +261,43 @@ const costRows = [
 const faqs = [
   {
     q: 'How long does sea freight take from China to Saudi Arabia?',
-    a: 'The corridor-level research snapshot gives roughly 20–45 days. Jeddah is commonly reported around 20–35 days, while Dammam/Riyadh Dry Port moves are commonly reported around 30–45 days (Freightos FCL 30–40 days, LCL 32–45 days). These are indicative figures, verify with your carrier before relying on them.',
+    a: 'Sea transit splits by destination: Jeddah at 20–35 days is up to 25 days faster than Dammam/Riyadh Dry Port at 30–45 days (Freightos FCL 30–40 days, LCL 32–45 days), so the Red Sea gate saves the most time at the extremes of each range. These are indicative figures — verify with your carrier before relying on them.',
   },
   {
     q: 'How much does shipping from China to Saudi Arabia cost?',
-    a: 'Indicative August 2026 market snapshots put FCL 20GP around $3,333–$5,085, FCL 40GP around $4,623–$8,085, and LCL roughly $267–$955 per CBM depending on volume. These are collected from public marketplaces on different route/date bases, not carrier quotes — verify with a forwarder before booking.',
+    a: 'The indicative August 2026 snapshot prices a 40GP at $4,623–$8,085 — about 1.4–1.6× the $3,333–$5,085 20GP range — while LCL runs $267–$955 per CBM depending on volume. These are collected from public marketplaces on different route/date bases, not carrier quotes — verify with a forwarder before booking.',
   },
   {
     q: 'What is Saudi Arabia’s VAT rate on imports?',
-    a: 'Saudi import VAT is 15%, effective since 1 July 2020. It is calculated on the CIF value plus customs duty, not just on the product price.',
+    a: 'Saudi import VAT is 15% on the duty-inclusive CIF value, so with the 5% baseline duty the effective multiplier is ×1.2075 — 20.75% above CIF, not just the 15% shown alone. It has applied since 1 July 2020.',
   },
   {
     q: 'What is the standard Saudi import duty?',
-    a: 'The baseline import duty is 5% of the CIF value under the GCC Common External Tariff. Protective or anti-dumping duties can raise this to 15–25% on specific goods, so classify your HS code correctly before quoting.',
+    a: 'The baseline import duty is 5% of CIF — US$500 on a US$10,000 CIF shipment — under the GCC Common External Tariff; protective or anti-dumping duties can raise that to 15–25% (US$1,500–$2,500 on the same base). Classify your HS code correctly before quoting.',
   },
   {
     q: 'What is the difference between SABER PC and SC certificates?',
-    a: 'A PC (Product Conformity Certificate) covers a product, is usually valid for about one year, and involves product testing followed by pre-shipment inspection. An SC (Shipment Conformity Certificate) is issued per shipment and requires the bill of lading to confirm the cargo is in transit.',
+    a: 'The PC and SC split at the one-year / one-shipment line: a PC covers a product for about 12 months after product testing and pre-shipment inspection, while an SC is issued once per shipment and requires the bill of lading to confirm the cargo is in transit.',
   },
   {
     q: 'Do I need the SABER SC certificate before my cargo arrives?',
-    a: 'Yes. Since 1 January 2025, regulated goods must have the batch SC certificate obtained before cargo arrival. An SC applied after arrival is treated as void and clearance fails, so start the SC process as soon as the bill of lading is available.',
+    a: 'Yes — since 1 January 2025 there is zero grace period after arrival: an SC applied after arrival is void and clearance fails. Start the SC process as soon as the bill of lading is available.',
   },
   {
     q: 'Which Saudi port should I use — Jeddah or Dammam?',
-    a: 'Jeddah is the principal Red Sea gateway and usually suits western and central Saudi consignees. Dammam is the main Arabian Gulf port and is the natural choice for Riyadh and Eastern Province, with Riyadh Dry Port handling inland distribution by rail/road. Match the port to your consignee’s region.',
+    a: 'Jeddah’s 20–35 day sea window suits western and central Saudi consignees, while Dammam’s 30–45 day window serves Riyadh and the Eastern Province — the port choice alone can move your transit by up to 25 days. Riyadh Dry Port handles the inland rail/road extension from Dammam.',
   },
   {
     q: 'What are demurrage and detention, and how do I avoid them?',
-    a: 'Demurrage is charged by the terminal when a container stays inside the port beyond free time; detention is charged by the carrier when the container stays outside the port beyond free time. Avoid them by filing the FASAH pre-arrival declaration, completing the SC before arrival, having documents ready, and booking inland trucking before discharge.',
+    a: 'Demurrage and detention are two separate per-day clocks that start when free time ends — demurrage inside the port (terminal) and detention outside it (carrier) — so each late clearance day adds a per-day charge on top of the fixed 20.75% duty/VAT stack. File the FASAH pre-arrival declaration, complete the SC before arrival, and book trucking before discharge to stop those clocks.',
   },
   {
     q: 'What documents do I need to import into Saudi Arabia?',
-    a: 'The standard set includes a commercial invoice, bill of lading, packing list, certificate of origin, and a SABER conformity certificate for regulated goods. Saudi Customs operates the FASAH single-window, which is used for pre-arrival declarations.',
+    a: 'For regulated goods the minimum import set is five documents — commercial invoice, bill of lading, packing list, certificate of origin and SABER conformity certificate — filed through the FASAH single-window for pre-arrival declaration.',
   },
   {
     q: 'Do I need an HS code and an ISF filing?',
-    a: 'You need the correct HS code because duty and conformity requirements depend on the classification. ISF (Importer Security Filing) is a United States requirement and does not apply to Saudi Arabia; Saudi’s equivalent advance-filing step is the pre-arrival customs declaration through FASAH.',
+    a: 'You need the correct HS code because it sets two different cost outcomes — the 5% base duty or a 15–25% protective rate — and determines SABER conformity; ISF is a United States requirement and does not apply to Saudi Arabia. Saudi’s equivalent advance-filing step is the FASAH pre-arrival declaration.',
   },
 ];
 
@@ -383,6 +383,9 @@ const schema = [
         LOW-confidence rate and transit number as an indicative figure to verify with your carrier
         before relying on it.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Saudi Arabia’s 5% duty and 15% VAT multiply — not add — to a CIF × 1.2075 landed-cost multiplier, so any shipment clears 20.75% above CIF before SABER, THC and clearance fees. On a US$10,000 CIF shipment that is US$2,075 of duty + VAT (US$500 duty plus US$1,575 VAT on the duty-inclusive value), landing at US$12,075 before the freight-adjacent fees. The LCL benchmark shows the volume breakpoint: 1 CBM costs US$716–$955/CBM while 10 CBM falls to US$267–$356/CBM — roughly a 2.7× lower per-CBM cost at 10 CBM.</p>
+      </blockquote>
 
       <div class="fact-grid mt-3">
         <div class="fact">

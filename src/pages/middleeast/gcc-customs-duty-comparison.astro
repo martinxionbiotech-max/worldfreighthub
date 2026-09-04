@@ -220,7 +220,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is the import duty from China to the GCC?',
-    a: 'The GCC unified baseline import duty is 5% of the CIF value (cost + insurance + freight) for most goods across Saudi Arabia, the UAE, Qatar, Kuwait, Oman and Bahrain. Higher or protective rates apply to specific categories such as alcohol, tobacco and some agricultural lines, so confirm the exact HS-code rate before quoting.',
+    a: 'The GCC unified baseline import duty is 5% of CIF — US$500 on a US$10,000 CIF shipment — across all six states (Saudi Arabia, the UAE, Qatar, Kuwait, Oman and Bahrain). Higher or protective rates apply to specific categories such as alcohol, tobacco and some agricultural lines, so confirm the exact HS-code rate before quoting.',
   },
   {
     q: 'Which GCC country has the highest import tax?',
@@ -236,39 +236,39 @@ const faqs = [
   },
   {
     q: 'Is duty charged on the invoice value or the CIF value?',
-    a: 'On the CIF value — cost plus insurance plus freight — not the bare invoice value. If your freight and insurance are not on the invoice, the customs authority still includes them in the assessable value, which is why the landed-cost calculation starts from CIF.',
+    a: 'On the CIF value, not the bare invoice value: a US$10,000 invoice can be assessed at US$10,000 + freight + insurance before the 5% duty and VAT apply. Customs authorities add back freight and insurance when they are not on the invoice, which is why the landed-cost calculation starts from CIF.',
   },
   {
     q: 'Does the GCC have a de minimis threshold for commercial cargo?',
-    a: 'No confirmed commercial de minimis is published for Qatar, Kuwait, Oman or Bahrain. Saudi Arabia and the UAE publish SAR 1,000 and AED 1,000 thresholds for personal/courier parcels only. Commercial cargo should assume duty applies regardless of parcel thresholds.',
+    a: 'No confirmed commercial de minimis is published for 4 of the 6 states (Qatar, Kuwait, Oman and Bahrain). The SAR 1,000 and AED 1,000 thresholds in Saudi Arabia and the UAE cover personal/courier parcels only, so commercial cargo should assume duty applies regardless of parcel thresholds.',
   },
   {
     q: 'Do I need SABER for every GCC country?',
-    a: 'No. SABER/SASO conformity applies to Saudi Arabia only. For regulated Saudi goods, the shipment conformity certificate (SC) must be obtained before arrival — effective 1 January 2025. The UAE, Qatar, Kuwait, Oman and Bahrain use their own certification rules and do not use SABER.',
+    a: 'No — SABER applies to 1 of the 6 GCC states (Saudi Arabia only), and its shipment conformity certificate (SC) must be obtained before arrival as of 1 January 2025. The UAE, Qatar, Kuwait, Oman and Bahrain use their own certification rules and do not use SABER.',
   },
   {
     q: 'Does ISF apply to GCC imports?',
-    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival declaration; the other GCC states use their own single-window declarations.',
+    a: 'No — ISF applies to 0 of the 6 GCC states, because it is a United States program. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival declaration; the other GCC states use their own single-window declarations.',
   },
   {
     q: 'Which GCC market should I enter first?',
-    a: 'Most first-time importers start in the UAE because Jebel Ali offers the most carrier competition, a 5% VAT, free-zone duty deferral and a large re-export market. Choose Saudi Arabia for scale and the largest consumer market despite the higher tax and SABER gate; choose Qatar or Kuwait for the lowest current tax if clearance complexity is manageable.',
+    a: 'The first-entry breakpoint is tax: the UAE clears 10.25% above CIF (×1.1025) versus Saudi Arabia’s 20.75% (×1.2075), so the UAE wins for lower tax plus Jebel Ali competition, while Saudi Arabia wins on scale despite the higher tax and SABER gate. Qatar or Kuwait wins on the lowest current tax if clearance complexity is manageable.',
   },
   {
     q: 'Is Bahrain a cheaper way to reach Saudi Arabia?',
-    a: 'Not on tax — Bahrain’s 10% VAT is lower than Saudi’s 15%, but the real point is geography. Bahrain routes into eastern Saudi over the King Fahd Causeway, so it can be an operational alternate for Dammam/Riyadh cargo when Jeddah is congested or direct Saudi routing is expensive. Compare the full landed cost, including the causeway leg, before choosing.',
+    a: 'Not on tax — Bahrain’s 10% VAT clears at ×1.155 (15.5% above CIF) versus Saudi Arabia’s ×1.2075 (20.75%), a 5.25-point saving. The real point is geography: Bahrain routes into eastern Saudi over the King Fahd Causeway, so compare the full landed cost including the causeway leg before choosing.',
   },
   {
     q: 'What documents do I need for GCC customs clearance?',
-    a: 'The standard set is the commercial invoice, packing list, bill of lading, certificate of origin and the correct HS classification, plus the SABER certificate for regulated Saudi goods. Kuwait adds PAI certification for certain products. Confirm the current document list with a licensed broker for your specific HS code.',
+    a: 'The minimum set is five items — commercial invoice, packing list, bill of lading, certificate of origin and correct HS classification — plus SABER for regulated Saudi goods. Kuwait adds PAI certification for certain products; confirm the current document list with a licensed broker for your specific HS code.',
   },
   {
     q: 'Are free zones tax-free in the UAE?',
-    a: 'Goods held in a UAE free zone are not subject to import duty until they enter the UAE mainland or another GCC market, and re-export from the free zone is duty-free. VAT still follows the normal rules, and duty deferral is the working-capital advantage most importers should price explicitly.',
+    a: 'Free zones defer the 5% duty to 0% while goods stay in the zone, and re-export from the zone stays duty-free; the 5% VAT still applies under normal rules, so the deferral is a working-capital benefit rather than a permanent tax elimination. Importers should price the deferral explicitly.',
   },
   {
     q: 'How long does GCC customs clearance take?',
-    a: 'Clearance timing is not published in the verified snapshot and varies by shipment, HS code, documentation readiness and the destination authority. SABER holds in Saudi Arabia are the most common avoidable delay, so complete the SC before arrival rather than relying on a specific clearance day-count.',
+    a: 'No verified clearance day-count is published for any of the 6 states, so treat any specific-day claim as unverified; the most common avoidable delay is the Saudi SABER hold, which is eliminated by completing the SC before arrival.',
   },
   {
     q: 'Where can I get an exact duty and VAT assessment?',
@@ -360,6 +360,9 @@ const schema = [
         are not published in the verified snapshot. Treat every LOW-confidence figure as indicative and
         confirm with a licensed broker before relying on it.
       </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> All six GCC states share the 5% CIF duty, so the entire landed-cost spread comes from VAT: the multiplier spans ×1.05 (Qatar/Kuwait 0% VAT) to ×1.2075 (Saudi 15% VAT), a 15.75-percentage-point gap. On a US$10,000 CIF shipment, Saudi Arabia adds US$2,075 and clears at US$12,075, while Qatar/Kuwait add US$500 and clear at US$10,500 — the same goods cost US$1,575 more to clear at the top of the tax band. VAT order is the breakpoint, not duty: Saudi 15% &gt; Bahrain 10% &gt; UAE/Oman 5% &gt; Qatar/Kuwait 0%, and Bahrain’s ×1.155 lands 5.25 points above the UAE/Oman band but 5.25 points below Saudi.</p>
+      </blockquote>
 
       <div class="fact-grid mt-3">
         <div class="fact">

@@ -18,27 +18,27 @@ const stats = [
 const faqs = [
   {
     q: 'What is WorldFreightHub?',
-    a: 'WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor — a structured, source-backed guide to shipping routes, destination countries, ports, freight methods, costs and a verification-first directory of freight forwarders. It is an information resource, not a freight forwarder itself.',
+    a: 'WorldFreightHub is a freight intelligence reference covering 6 GCC countries, 21 China→GCC routes, 19 port profiles, 103 directory providers and 46 corridor guides — a structured, source-backed guide to shipping routes, destination countries, ports, freight methods and costs. It is an information resource, not a freight forwarder itself.',
   },
   {
     q: 'Are the freight rates on this site real quotes?',
-    a: 'No. Every rate, transit time and cost figure is an indicative estimate clearly labelled with a confidence level (HIGH / MEDIUM / LOW), never a live quote. Rates move constantly with fuel, season and geopolitical risk, so always confirm figures with a licensed carrier or forwarder before booking.',
+    a: 'No — the 21 route rates are reference ranges, not live quotes; every rate, transit time and cost figure is an indicative estimate clearly labelled HIGH / MEDIUM / LOW confidence. Rates move constantly with fuel, season and geopolitical risk, so always confirm figures with a licensed carrier or forwarder before booking.',
   },
   {
     q: 'How do I ship from China to Saudi Arabia or the UAE?',
-    a: 'Start with the destination country profile to understand duty and VAT, then choose a method (FCL, LCL, air, rail, DDP or express) and a route from a China origin port to a GCC destination port. If you need a firm price, submit a quote request and a provider on the corridor will respond.',
+    a: 'The first cost breakpoint is the destination, not the carrier: Saudi Arabia’s 5% duty + 15% VAT clears 20.75% above CIF while the UAE’s 5% + 5% clears 10.25% above CIF — a 10.5-percentage-point gap on the same goods. Then choose a method (FCL, LCL, air, rail, DDP or express) and a route from a China origin port to a GCC destination port; if you need a firm price, submit a quote request and a provider on the corridor will respond.',
   },
   {
     q: 'How is the data on this site verified?',
-    a: 'Every data point is tied to a primary source — a port authority, customs authority, carrier or official registry — and carries a confidence level. Figures that cannot be verified against a source are explicitly marked LOW confidence and flagged "verify before relying". Nothing is fabricated to fill a gap.',
+    a: 'Across 6 GCC countries, 19 port profiles and 103 directory providers, every data point is tied to a primary source — a port authority, customs authority, carrier or official registry — and carries a HIGH / MEDIUM / LOW confidence level. Figures that cannot be verified against a source are explicitly marked LOW confidence and flagged "verify before relying". Nothing is fabricated to fill a gap.',
   },
   {
     q: 'Which countries does WorldFreightHub cover?',
-    a: 'All six Gulf Cooperation Council member states: Saudi Arabia, the United Arab Emirates, Qatar, Kuwait, Oman and Bahrain. Coverage includes duty, VAT, de minimis thresholds, compliance requirements, entry ports and China-origin shipping routes to each.',
+    a: 'All 6 GCC member states — Saudi Arabia (15% VAT), Bahrain (10%), the UAE and Oman (5%), and Qatar and Kuwait (0%) — each under the shared 5% CIF duty baseline. Coverage includes duty, VAT, de minimis thresholds, compliance requirements, entry ports and China-origin shipping routes to each.',
   },
   {
     q: 'Can I get a freight quote through this site?',
-    a: 'Yes. The get-quote form routes your request to a provider operating on the China-to-GCC corridor. There is no obligation and no fee — the request is simply passed to a provider who can quote your specific shipment.',
+    a: 'Yes — the get-quote form routes your request to one of the 103 providers operating on the 21 China-to-GCC routes. There is no obligation and no fee — the request is simply passed to a provider who can quote your specific shipment.',
   },
 ];
 
@@ -103,6 +103,12 @@ const schema = [
         <a class="btn btn-secondary" href="/get-quote/">Get a quote</a>
       </div>
     </div>
+  </section>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p><strong>TL;DR:</strong> Across 21 China→GCC routes, the 6 destination countries split into three landed-cost tax bands: Saudi Arabia (5% duty + 15% VAT) clears 20.75% above CIF, the UAE and Oman clear 10.25% above CIF, and Qatar and Kuwait clear just 5% above CIF — a 15.75-percentage-point gap between the cheapest and costliest clearance. On a US$10,000 CIF shipment that gap is worth US$1,575: about US$12,075 landed in Saudi Arabia versus US$10,500 in Qatar, before freight-adjacent fees. The 19 port profiles and 46 corridor guides average 2.4 guides per port, and 103 directory providers across 21 routes average 4.9 providers per route — every figure is a confidence-labelled reference range, not a live quote.</p>
+    </blockquote>
   </section>
 
   <section class="section container">
