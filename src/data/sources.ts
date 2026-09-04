@@ -15,6 +15,7 @@ export const countrySourceIds: Record<string, string[]> = {
   italy: ['eu-taric', 'italian-customs'],
   poland: ['eu-taric', 'polish-customs', 'port-gdansk'],
   belgium: ['eu-taric', 'belgian-customs', 'port-antwerp'],
+  austria: ['eu-taric', 'austrian-customs'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -273,5 +274,29 @@ export const sources: Source[] = [
     name: 'Terminal Handling Charges guide',
     url: 'https://www.xeneta.com/blog/terminal-handling-charges',
     type: 'industry',
+  },
+  {
+    id: 'austrian-customs',
+    name: 'Austrian Federal Ministry of Finance (BMF) — Customs & VAT',
+    url: 'https://www.bmf.gv.at',
+    type: 'government',
+  },
+  {
+    id: 'port-koper',
+    name: 'Port of Koper (Luka Koper)',
+    url: 'https://www.luka-kp.si',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-trieste',
+    name: 'Port of Trieste (Autorità di Sistema Portuale del Mare Adriatico Orientale)',
+    url: 'https://www.porto.trieste.it',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-constanta',
+    name: 'Port of Constanța',
+    url: 'https://www.portofconstantza.com',
+    type: 'port-authority',
   },
 ];

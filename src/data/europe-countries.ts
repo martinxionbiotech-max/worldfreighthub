@@ -401,4 +401,94 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: 'austria',
+    name: 'Austria',
+    iso2: 'AT',
+    capital: 'Vienna',
+    currency: 'EUR',
+    vatRate: 20,
+    vatNote: '20% standard (10% and 13% reduced).',
+    ports: ['hamburg'],
+    tldr:
+      'Austria is a landlocked EU market reached through a transit gateway — Hamburg on the northern range or Koper/Trieste on the Adriatic — with 20% VAT on EU common duty, and Vienna as both a New Silk Road rail terminus and an inland Danube terminal (ATVIE).',
+    dutyRate: 'EU Common Customs Tariff (MFN, varies by HS code)',
+    dutyNote:
+      'Austria applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.',
+    deMinimis: '€150 (VAT threshold)',
+    deMinimisNote:
+      'The EU abolished the €22 duty-free threshold in 2021; import VAT now applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Austrian customs.',
+    compliance: [
+      'EORI number — required for any import into the EU.',
+      'CE marking for regulated products.',
+      'REACH registration for chemical substances.',
+      'Correct 10-digit TARIC classification for duty.',
+    ],
+    clearanceProcess: [
+      'Register for an EORI number before shipping.',
+      'Classify goods under the correct TARIC code.',
+      'Choose a transit gateway (Hamburg, Koper, Trieste or Constanța) or move under EU customs transit to clear inland.',
+      'File the import declaration and pay EU duty plus 20% VAT.',
+      'Release and deliver by rail or truck to the Austrian site.',
+    ],
+    insight:
+      'Austria is the landlocked test of the "port is not the destination" rule. Every China shipment must land at someone else\'s port and then travel inland — Hamburg is ~1,000 km from Vienna, while the Adriatic\'s Koper is only ~480 km, roughly half the distance. That distance gap is why Koper and Trieste quietly compete for Austrian cargo despite the longer sea leg down the Med: the inland haul is where the Austrian landed cost is actually decided. Vienna is also a New Silk Road terminus, so rail can bypass the port problem entirely, landing in ~18–22 days instead of the ~32–43 a sea-plus-inland routing needs.',
+    keyTakeaways: [
+      'Austria is landlocked — every shipment clears via a transit port (Hamburg ~1,000 km, or Koper ~480 km away).',
+      '20% VAT on EU common duty; 5% duty + 20% VAT compounds to ×1.26, not 25%.',
+      'Vienna is a New Silk Road rail terminus — ~18–22 days versus ~32–43 by sea-plus-inland.',
+      'EU customs transit (T1/T2) lets you clear inland at Vienna, Linz or Graz instead of the port.',
+      'The gateway-to-Vienna inland leg is the cost most ocean quotes silently omit.',
+    ],
+    faqs: [
+      {
+        q: 'How long does shipping from China to Austria take?',
+        a: 'Allow roughly 32–43 days door-to-door by sea — 30–38 days port-to-port to a transit gateway (Hamburg or Koper) plus about 2–5 days of inland rail/truck to Vienna (MEDIUM confidence, planning estimates). Direct China rail to Vienna runs roughly 18–22 days, and no verified Austrian air transit is published in the snapshot, so request that from your carrier.',
+      },
+      {
+        q: 'Which port should I use when shipping from China to Austria?',
+        a: 'Austria has no seaport, so the decision is the transit gateway. Hamburg (UN/LOCODE DEHAM, ≈7.7m TEU 2023) sits ~1,000 km from Vienna, while Koper (SIKOP, ≈1.0m TEU) is ~480 km away — roughly half the inland distance — which is why the Adriatic route is Austria\'s quiet second option, and Trieste (ITTRS) and Constanța (ROCND) are the further alternatives.',
+      },
+      {
+        q: 'What is the VAT rate in Austria?',
+        a: 'Austria applies a 20% standard VAT rate, with reduced rates of 10% (food, books, accommodation) and 13% (some cultural and agricultural goods). Import VAT is charged on the duty-inclusive value, so 5% duty plus 20% VAT compounds to ×1.26, not 25% — a $10,000 CIF shipment at 5% duty lands at $12,600 before destination fees.',
+      },
+      {
+        q: 'Can I ship China-to-Austria by rail?',
+        a: 'Yes — Vienna is a New Silk Road terminus, so rail from Xi\'an or Chengdu lands in roughly 18–22 days versus ~32–43 by sea-plus-inland, cutting about 14–20 days at roughly 2–3× the sea rate. That premium is justified by stockout avoidance and market timing on high-value or seasonal cargo, not by financing cost alone.',
+      },
+      {
+        q: 'Can I clear customs inland in Austria instead of at the port?',
+        a: 'Yes — under EU customs transit (T1/T2, NCTS) you can move goods from Hamburg or Koper to an inland Austrian customs office in Vienna, Linz or Graz and clear there, paying the 20% Austrian import VAT at the inland point rather than at the gateway.',
+      },
+      {
+        q: 'How does Austria\'s landed cost compare with Germany\'s?',
+        a: 'On a $10,000 CIF at 5% duty, Austria\'s 20% VAT lands at $12,600 versus Germany\'s 19% at $12,495 — a $105 gap, roughly 1% on the duty-inclusive base — before adding the extra inland leg Austria needs because it has no seaport of its own.',
+      },
+      {
+        q: 'Do I need an EORI to import into Austria?',
+        a: 'Yes — one EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must exist before the goods arrive; zero Austrian imports clear without it.',
+      },
+      {
+        q: 'What is the difference between FCL and LCL for China to Austria?',
+        a: 'FCL is priced per container at 20ft $1,200–$4,600 and 40ft $1,600–$6,500 to the Hamburg gateway (MEDIUM), while LCL is priced per cubic metre at $60–$150/CBM (MEDIUM), with the planning break-even near 15 CBM — below that LCL is usually cheaper, above it FCL starts to win.',
+      },
+      {
+        q: 'What documents are needed for Austrian customs clearance?',
+        a: 'The core set is four documents plus one classification — commercial invoice, bill of lading (or rail/CMR consignment note for rail cargo), packing list and the correct 10-digit TARIC code, backed by your EORI number. Regulated products add CE marking evidence and chemicals add REACH registration.',
+      },
+      {
+        q: 'Can I defer VAT when importing into Austria?',
+        a: 'Austria, like other EU states, allows EU customs warehousing (procedures 42/63) to defer import VAT until goods are released for free circulation — a working-capital lever for importers who hold inventory or re-export within the EU.',
+      },
+      {
+        q: 'What are CE marking and REACH, and do they apply in Austria?',
+        a: 'CE marking is the EU conformity mark required for regulated products — electronics, toys, machinery and medical devices — and REACH is the EU chemical regulation requiring registration for chemical substances. Both apply in Austria exactly as in every member state.',
+      },
+      {
+        q: 'Do SABER or SASO apply to Austria?',
+        a: 'No — SABER and SASO are Saudi-only conformity systems and apply to zero Austrian or EU imports. Austria uses CE marking and REACH instead, so do not copy a Saudi SABER/SASO step into an Austrian quote.',
+      },
+    ],
+  },
 ];

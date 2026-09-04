@@ -1,0 +1,1020 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import { europeCountries } from '../../data/europe-countries';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/europe/shipping-from-china-to-austria/`;
+
+const hamburgPort = europePorts.find((item) => item.slug === 'hamburg');
+const hamburgUnlocode = hamburgPort?.unlocode ?? '—';
+const austria = europeCountries.find((item) => item.slug === 'austria');
+
+const wfhRouteData: Source = {
+  id: 'wfh-austria-route-data',
+  name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to the Hamburg/Koper corridor (sea via the Cape 30–38 days plus ~2–5 days inland to Vienna, rail 18–22 days; LOW/MEDIUM confidence estimate)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+const wfhMethodology: Source = {
+  id: 'wfh-austria-methodology',
+  name: 'WorldFreightHub methodology — China→Europe research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
+
+const austriaCustomsSources = sourcesByIds(['austrian-customs', 'eu-taric']);
+const hamburgPortSources = sourcesByIds(['port-hamburg']);
+const koperPortSources = sourcesByIds(['port-koper']);
+const triestePortSources = sourcesByIds(['port-trieste']);
+const constantaPortSources = sourcesByIds(['port-constanta']);
+const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group', 'world-bank']);
+const rateSources: Source[] = [...hamburgPortSources, wfhRouteData, wfhMethodology];
+const transitSources: Source[] = [wfhRouteData, wfhMethodology];
+const modeSources: Source[] = [wfhRouteData, wfhMethodology];
+const gatewaySources: Source[] = [...hamburgPortSources, ...koperPortSources, ...triestePortSources, ...constantaPortSources, wfhMethodology];
+const costSources: Source[] = [...austriaCustomsSources, wfhMethodology];
+const complianceSources: Source[] = [...austriaCustomsSources, wfhMethodology];
+const marketSources: Source[] = [...austriaCustomsSources, ...hamburgPortSources, ...koperPortSources, ...triestePortSources, ...constantaPortSources, wfhMethodology];
+
+const rateRows = [
+  {
+    service: 'FCL ocean — 20GP to Hamburg (DEHAM) gateway for Austria',
+    benchmark: '$1,200 – $4,600 per 20ft',
+    basis: 'WorldFreightHub Europe route data, Hamburg corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'FCL ocean — 40GP / 40HQ to Hamburg (DEHAM) gateway for Austria',
+    benchmark: '$1,600 – $6,500 per 40ft',
+    basis: 'WorldFreightHub Europe route data, Hamburg corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'LCL ocean — China to Hamburg (per CBM)',
+    benchmark: '$60 – $150 per CBM',
+    basis: 'WorldFreightHub Europe route data, Hamburg corridor (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    service: 'Rail — Xi\u2019an / Chengdu to Vienna',
+    benchmark: 'Not published in verified snapshot — request a per-container $ range',
+    basis: 'Route data notes rail costs roughly 2–3× sea per container; no published rail $ figure',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Air freight — China to Austria air gateway',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'No verified Austria air freight rate appears in the research snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'Express courier — China to Austria',
+    benchmark: 'Not published in verified snapshot — request a per-kg $ range',
+    basis: 'Courier pricing is weight/zone dependent; not stated in snapshot',
+    confidence: 'LOW',
+  },
+  {
+    service: 'DDP door-to-door — China to Austria',
+    benchmark: 'Not published in verified snapshot — request an all-in quote',
+    basis: 'DDP embeds freight, clearance, EU duty, 20% VAT and delivery',
+    confidence: 'LOW',
+  },
+];
+
+const transitRows = [
+  {
+    origin: 'Shanghai (CNSHA)',
+    mode: 'Sea — via Cape to gateway + inland',
+    transit: 'Roughly 30–38 days sea + ~2–5 days inland to Vienna',
+    basis: 'WorldFreightHub Europe route data; Red Sea reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Ningbo-Zhoushan (CNNGB)',
+    mode: 'Sea — via Cape to gateway + inland',
+    transit: 'Roughly 30–38 days sea + ~2–5 days inland to Vienna',
+    basis: 'WorldFreightHub Europe route data; Red Sea reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Shenzhen Yantian / Shekou (CNSZX)',
+    mode: 'Sea — via Cape to gateway + inland',
+    transit: 'Roughly 30–38 days sea + ~2–5 days inland to Vienna',
+    basis: 'WorldFreightHub Europe route data; Red Sea reroute adds ~+10–14 days vs pre-crisis Suez',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'Xi\u2019an / Chengdu (rail origin)',
+    mode: 'Rail — New Silk Road to Vienna',
+    transit: 'Roughly 18–22 days',
+    basis: 'WorldFreightHub Europe route data; Vienna is a New Silk Road terminus',
+    confidence: 'MEDIUM',
+  },
+  {
+    origin: 'China air gateway',
+    mode: 'Air freight',
+    transit: 'Not published in verified snapshot — request a routing quote',
+    basis: 'No verified Austria air transit appears in the snapshot',
+    confidence: 'LOW',
+  },
+  {
+    origin: 'China door-to-door',
+    mode: 'Sea or rail + clearance + inland rail/truck',
+    transit: 'Not published in verified snapshot — request a door quote',
+    basis: 'Adds gateway discharge, inland transit, Austrian clearance, EU duty, 20% VAT and last-mile delivery',
+    confidence: 'LOW',
+  },
+];
+
+const modeRows = [
+  {
+    mode: 'Sea FCL',
+    bestFor: 'Large, heavy, palletised or containerised cargo that can absorb the ~32–43-day door-to-door window',
+    indicativeTime: '30–38 days to the gateway + ~2–5 days inland to Vienna (MEDIUM)',
+    indicativeCost: '20ft $1,200–$4,600; 40ft $1,600–$6,500 to Hamburg gateway (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Sea LCL',
+    bestFor: 'Smaller consignments that do not fill a container but are not urgent',
+    indicativeTime: '30–38 days to the gateway + CFS breakbulk + ~2–5 days inland (MEDIUM)',
+    indicativeCost: '$60–$150 per CBM to Hamburg gateway (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    mode: 'Rail (New Silk Road)',
+    bestFor: 'Time-sensitive or high-value cargo that needs ~18–22 days instead of ~32–43 door-to-door',
+    indicativeTime: 'Xi\u2019an / Chengdu to Vienna roughly 18–22 days (MEDIUM)',
+    indicativeCost: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Air freight',
+    bestFor: 'Time-critical, light or high-value cargo into the Austrian air gateway',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'Not published — request a per-kg quote',
+    confidence: 'LOW',
+  },
+  {
+    mode: 'Express courier',
+    bestFor: 'Small urgent parcels, samples and documents',
+    indicativeTime: 'Not published in verified snapshot — request a quote',
+    indicativeCost: 'By quote, weight/zone dependent (LOW)',
+    confidence: 'LOW',
+  },
+];
+
+const chinaPortRows = [
+  {
+    port: 'Shanghai (CNSHA)',
+    throughput: '55.06M TEU (2025)',
+    note: 'World #1 container port, 16th consecutive year',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Ningbo-Zhoushan (CNNGB)',
+    throughput: '43M TEU (2025)',
+    note: '#3 container port; first port above 1.4bn tonnes cargo',
+    confidence: 'HIGH',
+  },
+  {
+    port: 'Shenzhen Yantian / Shekou (CNSZX)',
+    throughput: 'Not published in snapshot',
+    note: 'South China gateway',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Guangzhou (CNCAN)',
+    throughput: 'Not published in snapshot',
+    note: 'South China origin named across China→Europe freight guides',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Qingdao (CNTAO)',
+    throughput: 'Not published in snapshot',
+    note: 'North China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Tianjin (CNTSN)',
+    throughput: 'Not published in snapshot',
+    note: 'North China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+  {
+    port: 'Xiamen (CNXMN)',
+    throughput: 'Not published in snapshot',
+    note: 'Southeast China origin named in WorldFreightHub port data',
+    confidence: 'LOW',
+  },
+];
+
+const gatewayRows = [
+  {
+    gateway: 'Hamburg',
+    unlocode: 'DEHAM',
+    role: 'North Range seaport — default deep-sea transit gateway for Austria',
+    throughput: '≈ 7.7m TEU (2023)',
+    distance: '≈ 1,000 km to Vienna',
+    confidence: 'MEDIUM',
+  },
+  {
+    gateway: 'Koper',
+    unlocode: 'SIKOP',
+    role: "Adriatic seaport — Austria's closest Adriatic gateway",
+    throughput: '≈ 1.0m TEU (approximate)',
+    distance: '≈ 480 km to Vienna',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Trieste',
+    unlocode: 'ITTRS',
+    role: 'Adriatic seaport — alternative southern gateway',
+    throughput: '≈ 0.8m TEU (approximate)',
+    distance: '≈ 500 km to Vienna',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Constanța',
+    unlocode: 'ROCND',
+    role: 'Black Sea seaport — furthest alternative via river/rail',
+    throughput: '≈ 0.7m TEU (approximate)',
+    distance: '≈ 1,600 km to Vienna via river/rail',
+    confidence: 'LOW',
+  },
+  {
+    gateway: 'Vienna',
+    unlocode: 'ATVIE',
+    role: 'Inland Danube terminal / rail hub — not a seaport',
+    throughput: 'Not published in snapshot',
+    distance: '—',
+    confidence: 'HIGH',
+  },
+];
+
+const processRows = [
+  {
+    step: 'Confirm the product, HS code and 10-digit TARIC classification',
+    who: 'Shipper / forwarder',
+    note: 'The TARIC code drives EU duty, VAT treatment, permits and restricted screening',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Register for an EORI number before the goods arrive',
+    who: 'Importer',
+    note: 'Mandatory for any EU import; the number must exist before arrival, not after',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Book origin collection and China export clearance',
+    who: 'Forwarder / supplier',
+    note: 'From Shanghai, Ningbo-Zhoushan, Shenzhen or the named China origin',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Move cargo to the load port or rail terminal and issue export documents',
+    who: 'Forwarder / carrier',
+    note: 'Commercial invoice, packing list and bill of lading or rail/CMR note are the core set',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Choose a transit gateway or move under EU customs transit to clear inland',
+    who: 'Forwarder / importer',
+    note: 'Hamburg, Koper, Trieste or Constanța — or T1/T2 NCTS to Vienna, Linz or Graz',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Run the ocean or rail main carriage',
+    who: 'Carrier / rail operator',
+    note: 'Sea roughly 30–38 days via the Cape plus ~2–5 days inland; rail roughly 18–22 days to Vienna',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Discharge at the gateway or transship inland under transit',
+    who: 'Terminal / handler',
+    note: 'Austria has no seaport, so every ocean box changes mode before reaching the Austrian border',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Move inland to Vienna, Linz or Graz and file the Austrian import declaration',
+    who: 'Importer / customs broker',
+    note: 'Attach invoice, packing list, B/L or rail/CMR note and the TARIC code',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Pay EU common duty and 20% VAT on the duty-inclusive base',
+    who: 'Importer / broker',
+    note: 'Statutory stack is (CIF + duty) × 1.20; duty varies by HS code',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Pass CE / REACH checks and clear any regulated goods',
+    who: 'Austrian Customs / agencies',
+    note: 'CE marking for regulated products; REACH for chemical substances',
+    confidence: 'MEDIUM',
+  },
+  {
+    step: 'Collect the container or deconsolidate LCL at the inland point',
+    who: 'Importer / haulier',
+    note: 'Keep gateway and inland demurrage/detention free time in view',
+    confidence: 'LOW',
+  },
+  {
+    step: 'Deliver the last mile to the named Austrian site',
+    who: 'Local rail/truck provider',
+    note: 'Confirm the delivery address, equipment and any site access restrictions',
+    confidence: 'LOW',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Ocean freight',
+    who: 'Carrier / forwarder',
+    magnitude: '20ft $1,200–$4,600; 40ft $1,600–$6,500 to Hamburg gateway (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'LCL freight',
+    who: 'Forwarder',
+    magnitude: '$60–$150 per CBM to Hamburg gateway (MEDIUM)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Rail freight',
+    who: 'Rail operator / forwarder',
+    magnitude: 'Not published as a $ figure — roughly 2–3× sea per container (LOW)',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Air freight',
+    who: 'Carrier / forwarder',
+    magnitude: 'Not published in verified snapshot — request an all-in quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin charges (China)',
+    who: 'Forwarder / terminals',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland gateway-to-Vienna rail/truck leg',
+    who: 'Rail operator / trucker',
+    magnitude: 'Not published in verified snapshot — request rate; NOT included in the ocean freight quote',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Destination terminal handling charge (THC)',
+    who: 'Gateway terminal / line',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Documentation fee',
+    who: 'Carrier / forwarder / broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Austrian Customs clearance and brokerage',
+    who: 'Austrian Customs (BMF) / licensed broker',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Customs inspection fee',
+    who: 'Austrian Customs / appointed inspector',
+    magnitude: 'Not published in verified snapshot — request fee schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Port / terminal storage',
+    who: 'Gateway port / CFS',
+    magnitude: 'Not published in verified snapshot — request free-time and per-day schedule',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Import duty',
+    who: 'Austrian Customs',
+    magnitude: 'EU Common Customs Tariff — typically 0–12% by HS code (varies)',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'VAT',
+    who: 'Austrian tax authority',
+    magnitude: '20% standard (10% and 13% reduced); charged on the duty-inclusive value',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Demurrage',
+    who: 'Gateway terminal (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Detention',
+    who: 'Ocean carrier / rail operator (after free time)',
+    magnitude: 'Per-day charge; free time and day rate are not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Cargo insurance (optional)',
+    who: 'Insurer / forwarder',
+    magnitude: 'Optional; priced by value, commodity and cover — not published in snapshot',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How long does shipping from China to Austria take?',
+    a: 'Allow roughly 32–43 days door-to-door by sea — 30–38 days port-to-port to a transit gateway (Hamburg or Koper) plus about 2–5 days of inland rail/truck to Vienna (MEDIUM confidence, planning estimates). Direct China rail to Vienna runs roughly 18–22 days, and no verified Austrian air transit is published in the snapshot, so request that from your carrier.',
+  },
+  {
+    q: 'Which port should I use when shipping from China to Austria?',
+    a: "Austria has no seaport, so the decision is the transit gateway. Hamburg (UN/LOCODE DEHAM, ≈7.7m TEU 2023) sits ~1,000 km from Vienna, while Koper (SIKOP, ≈1.0m TEU) is ~480 km away — roughly half the inland distance — which is why the Adriatic route is Austria's quiet second option, and Trieste (ITTRS) and Constanța (ROCND) are the further alternatives.",
+  },
+  {
+    q: 'What is the VAT rate in Austria?',
+    a: 'Austria applies a 20% standard VAT rate, with reduced rates of 10% (food, books, accommodation) and 13% (some cultural and agricultural goods). Import VAT is charged on the duty-inclusive value, so 5% duty plus 20% VAT compounds to ×1.26, not 25% — a $10,000 CIF shipment at 5% duty lands at $12,600 before destination fees.',
+  },
+  {
+    q: 'Can I ship China-to-Austria by rail?',
+    a: "Yes — Vienna is a New Silk Road terminus, so rail from Xi'an or Chengdu lands in roughly 18–22 days versus ~32–43 by sea-plus-inland, cutting about 14–20 days at roughly 2–3× the sea rate. That premium is justified by stockout avoidance and market timing on high-value or seasonal cargo, not by financing cost alone.",
+  },
+  {
+    q: 'Can I clear customs inland in Austria instead of at the port?',
+    a: 'Yes — under EU customs transit (T1/T2, NCTS) you can move goods from Hamburg or Koper to an inland Austrian customs office in Vienna, Linz or Graz and clear there, paying the 20% Austrian import VAT at the inland point rather than at the gateway.',
+  },
+  {
+    q: "How does Austria's landed cost compare with Germany's?",
+    a: "On a $10,000 CIF at 5% duty, Austria's 20% VAT lands at $12,600 versus Germany's 19% at $12,495 — a $105 gap, roughly 1% on the duty-inclusive base — before adding the extra inland leg Austria needs because it has no seaport of its own.",
+  },
+  {
+    q: 'Do I need an EORI to import into Austria?',
+    a: 'Yes — one EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must exist before the goods arrive; zero Austrian imports clear without it.',
+  },
+  {
+    q: 'What is the difference between FCL and LCL for China to Austria?',
+    a: 'FCL is priced per container at 20ft $1,200–$4,600 and 40ft $1,600–$6,500 to the Hamburg gateway (MEDIUM), while LCL is priced per cubic metre at $60–$150/CBM (MEDIUM), with the planning break-even near 15 CBM — below that LCL is usually cheaper, above it FCL starts to win.',
+  },
+  {
+    q: 'What documents are needed for Austrian customs clearance?',
+    a: 'The core set is four documents plus one classification — commercial invoice, bill of lading (or rail/CMR consignment note for rail cargo), packing list and the correct 10-digit TARIC code, backed by your EORI number. Regulated products add CE marking evidence and chemicals add REACH registration.',
+  },
+  {
+    q: 'Can I defer VAT when importing into Austria?',
+    a: 'Austria, like other EU states, allows EU customs warehousing (procedures 42/63) to defer import VAT until goods are released for free circulation — a working-capital lever for importers who hold inventory or re-export within the EU.',
+  },
+  {
+    q: 'What are CE marking and REACH, and do they apply in Austria?',
+    a: 'CE marking is the EU conformity mark required for regulated products — electronics, toys, machinery and medical devices — and REACH is the EU chemical regulation requiring registration for chemical substances. Both apply in Austria exactly as in every member state.',
+  },
+  {
+    q: 'Do SABER or SASO apply to Austria?',
+    a: 'No — SABER and SASO are Saudi-only conformity systems and apply to zero Austrian or EU imports. Austria uses CE marking and REACH instead, so do not copy a Saudi SABER/SASO step into an Austrian quote.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shipping from China to Austria: Landlocked Routing via Hamburg & Koper, 20% VAT, Vienna Rail Terminus (September 2026)',
+      description:
+        'China to Austria freight guide: landlocked routing through the Hamburg, Koper, Trieste or Constanța transit gateways to Vienna, roughly 30–38-day sea plus ~2–5-day inland transit versus 18–22-day rail, EU common duty, 20% VAT, EORI and inland customs clearance.',
+      datePublished: '2026-09-04',
+      dateModified: '2026-09-04',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping from China to Austria: Landlocked Routing via Hamburg &amp; Koper, 20% VAT, Vienna Rail Terminus (September 2026)"
+  description="China to Austria freight guide: landlocked routing through the Hamburg, Koper, Trieste or Constanța transit gateways to Vienna, roughly 30–38-day sea plus ~2–5-day inland transit versus 18–22-day rail, EU common duty, 20% VAT, EORI and inland customs clearance."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Shipping from China to Austria' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping from China to Austria: Landlocked routing via Hamburg &amp; Koper, 20% VAT, Vienna rail terminus</h1>
+      <p class="lead">
+        A one-page freight brief for importers moving cargo from Shanghai, Ningbo-Zhoushan, Shenzhen
+        and the wider China origin set to Vienna and the Austrian market — with no Austrian seaport,
+        the transit-gateway decision (Hamburg versus Koper), the ~32–43-day sea-plus-inland window,
+        the 18–22-day rail alternative, EU common duty plus 20% VAT, the EORI gate, and the inland
+        charges ocean quotes silently omit.
+      </p>
+      <blockquote class="tldr">
+        <p><strong>TL;DR:</strong> Austria has no seaport, so every China shipment lands at a transit gateway — Hamburg ≈1,000 km or Koper ≈480 km from Vienna — then moves inland by rail or truck. The landed-cost math compounds: 5% duty + 20% VAT = 1.05 × 1.20 = <strong>×1.26</strong>, so a $10,000 CIF becomes <strong>$12,600</strong> before inland and destination fees. Rail to Vienna lands in <strong>18–22 days</strong> versus <strong>~32–43 days</strong> door-to-door by sea-plus-inland, buying back ~14–20 days at roughly 2–3× the sea rate.</p>
+      </blockquote>
+      <p class="small muted">
+        Confidence badges separate verified figures from indicative planning notes. Austria's FCL/LCL
+        ranges come from the WorldFreightHub Europe route data Hamburg corridor (MEDIUM), while rail,
+        air, express and DDP dollar figures were not published in the snapshot and are shown as
+        request-for-quote markers. Treat every LOW-confidence figure as an indicative planning input and
+        verify with your carrier before relying on it.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Austria import duty</span>
+          <span class="fact-value">EU common duty 0–12% <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">20% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Currency</span>
+          <span class="fact-value">EUR <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Geography</span>
+          <span class="fact-value">Landlocked — no seaport <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">30–38 days + inland <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Rail transit</span>
+          <span class="fact-value">18–22 days <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EORI</span>
+          <span class="fact-value">Required before arrival <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">De-minimis</span>
+          <span class="fact-value">€150 VAT threshold <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why Austria deserves its own China routing lens</h2>
+    <p>
+      Austria is the landlocked test of the "port is not the destination" rule. The country data shows
+      <strong>Vienna</strong> as the capital, the currency as <strong>EUR</strong>, and a
+      <strong>20% standard VAT</strong> layered on top of the <strong>EU Common Customs Tariff</strong> —
+      a duty line that is uniform across every member state and varies only by HS code, typically
+      <strong>0–12% for consumer goods</strong> with no China–EU free-trade agreement in force.
+    </p>
+    <p>
+      The structural difference from Germany, the Netherlands or Italy is that Austria has
+      <strong>no seaport of its own</strong>. Every China ocean shipment must land at someone else's port
+      and then travel inland: <strong>Hamburg (DEHAM)</strong> is roughly <strong>1,000 km</strong> from
+      Vienna, while the Adriatic's <strong>Koper (SIKOP)</strong> is only <strong>~480 km</strong> away —
+      roughly half the inland distance. That distance gap is why Koper and Trieste quietly compete for
+      Austrian cargo despite the longer sea leg down the Mediterranean: the inland haul is where the
+      Austrian landed cost is actually decided.
+    </p>
+    <p>
+      Vienna changes the equation a second way. It is both an <strong>inland Danube terminal (ATVIE)</strong>
+      and a <strong>New Silk Road rail terminus</strong>, so rail can bypass the port problem entirely and
+      land in roughly <strong>18–22 days</strong> instead of the ~32–43 a sea-plus-inland routing needs.
+      On the commercial side, the honest position is that <strong>FCL and LCL ranges are published</strong>
+      for the Hamburg corridor (MEDIUM confidence), while rail, air, express and DDP dollar figures are not —
+      so those lines stay explicit request-for-quote markers instead of borrowed numbers.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Indicative freight rates from China to Austria</h2>
+      <p>
+        Austria inherits the published Hamburg-corridor benchmark depth from the WorldFreightHub Europe
+        route data: <strong>$1,200–$4,600 for a 20ft</strong>, <strong>$1,600–$6,500 for a 40ft</strong>
+        and <strong>$60–$150 per CBM for LCL</strong>, all MEDIUM confidence. Rail to Vienna is described
+        in relative terms — roughly two to three times sea per container — but has no published dollar
+        figure, and air, express and DDP were not published in the snapshot, so those stay LOW with a
+        request-for-quote marker.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'service', label: 'Service' },
+          { key: 'benchmark', label: 'Indicative benchmark' },
+          { key: 'basis', label: 'Basis' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateRows}
+        caption="Hamburg FCL/LCL ranges are MEDIUM confidence from the Europe route data; rail, air, express and DDP dollar figures were not published and remain request-for-quote."
+      />
+      <SourceList sources={rateSources} title="Sources — Austria rates" />
+
+      <div class="note mt-2">
+        <strong>Why the published lines stop at FCL/LCL:</strong> the research snapshot published Hamburg
+        20ft, 40ft and per-CBM ranges, but no rail, air, express or DDP dollar figure. On the FCL/LCL
+        split, the planning break-even sits near <strong>15 CBM</strong> — below that LCL is usually
+        cheaper, above it FCL starts to win (LOW-confidence rule of thumb). Ask the forwarder to itemise
+        freight, surcharges, THC, documentation, inspection, clearance, EU duty, 20% VAT, the inland
+        gateway-to-Vienna leg and delivery on the same quote so the price is comparable across modes.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Transit times by origin port and mode</h2>
+    <p>
+      The China-to-Austria clock has two beats for ocean cargo: the <strong>sea leg to a transit
+      gateway</strong>, then the <strong>inland leg to Vienna</strong>. The WorldFreightHub Europe route
+      data puts sea transit at roughly <strong>30–38 days via the Cape of Good Hope</strong>, with the
+      Red Sea reroute adding about <strong>+10–14 days</strong> versus the pre-crisis Suez routing, then
+      roughly <strong>~2–5 days</strong> of inland rail/truck — a door-to-door planning window of roughly
+      <strong>32–43 days</strong>. Rail from Xi'an or Chengdu to Vienna runs roughly <strong>18–22 days</strong>.
+      Austrian air transit is not published, so that line stays explicit instead of borrowing a
+      neighbouring airport figure.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'origin', label: 'Origin' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Austria transit times" />
+
+    <div class="note mt-2">
+      <strong>Sea planning default:</strong> Shanghai, Ningbo-Zhoushan and Shenzhen to a transit gateway
+      are recorded at roughly 30–38 days on the current Cape routing, then ~2–5 days inland to Vienna for
+      a ~32–43-day door-to-door window. Rail is roughly 18–22 days to Vienna. Both are planning estimates,
+      not carrier promises — for air, express or a specific door-to-door move, request a routing quote
+      before committing to a date.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Sea vs rail vs air: Austria's true door-to-door decision</h2>
+      <p>
+        In a port country you can compare a port-to-port sea quote with a rail quote. In landlocked
+        Austria you cannot — <strong>"sea" always means "sea plus inland"</strong>, because the container
+        must leave the transit gateway and travel roughly 480–1,000 km to Vienna before clearance and
+        delivery. The honest comparison is therefore door-to-door, not port-to-port: roughly
+        <strong>32–43 days</strong> for sea-plus-inland against <strong>18–22 days</strong> for rail.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'mode', label: 'Mode' },
+          { key: 'bestFor', label: 'Best for' },
+          { key: 'indicativeTime', label: 'Indicative time' },
+          { key: 'indicativeCost', label: 'Indicative cost' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={modeRows}
+        caption="Decision support for the landlocked route. Sea FCL/LCL and rail transit are MEDIUM confidence; rail, air and express dollar figures are LOW confidence or request-for-quote."
+      />
+      <SourceList sources={modeSources} title="Sources — sea vs rail vs air decision" />
+
+      <div class="note mt-2">
+        <strong>Critical point — the rail premium does not pay for itself on financing alone:</strong>
+        rail saves roughly 14–20 days (18–22 versus ~32–43 door-to-door) at roughly 2–3× the sea rate. At
+        an 8% cost of capital a $50,000 container costs ≈ $11/day in transit, so ~14 days is only about
+        <strong>$154 of financing saved</strong> — which alone does not pay the rail premium. Rail is
+        justified instead by <strong>stockout avoidance and market timing</strong> on high-value or
+        seasonal cargo. Air is the extreme-time option, with no verified Austrian rate or transit
+        published, so request that as an itemised quote rather than assuming a neighbouring airport figure.
+      </div>
+
+      <div class="grid grid--3 mt-2">
+        <Card title="Choose sea when...">
+          <ul>
+            <li>Cost per kg matters more than the ~32–43-day door-to-door window.</li>
+            <li>The cargo is heavy, palletised or container-sized and can plan ahead.</li>
+            <li>You can accept the gateway-to-Vienna inland leg and its extra fee.</li>
+          </ul>
+        </Card>
+        <Card title="Choose rail when...">
+          <ul>
+            <li>Vienna is the destination and stockouts or seasonal windows are the risk.</li>
+            <li>You need roughly 18–22 days instead of ~32–43.</li>
+            <li>You accept roughly 2–3× sea cost for ~14–20 days of time saved.</li>
+          </ul>
+        </Card>
+        <Card title="Choose air when...">
+          <ul>
+            <li>The cargo is time-critical, light or high-value.</li>
+            <li>The value of a missed sale exceeds the air premium.</li>
+            <li>You have a per-kg quote that beats the cost of delay.</li>
+          </ul>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Ports: China origin ports and Austria's transit gateways</h2>
+    <p>
+      The origin side is the familiar China port hierarchy: Shanghai and Ningbo-Zhoushan anchor the
+      East China ocean services, while Shenzhen and Guangzhou cover South China and Qingdao, Tianjin
+      and Xiamen provide northern/southeast alternatives. The destination side is different from every
+      other European country page: Austria has <strong>no seaport</strong>, so the "destination port"
+      decision is really a <strong>transit-gateway decision</strong>, with Vienna (ATVIE) as the inland
+      Danube terminal and rail hub where the cargo finally clears and delivers.
+    </p>
+
+    <h3>China origin ports</h3>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={chinaPortRows}
+      caption="China origin port context. Shanghai and Ningbo-Zhoushan throughput figures are HIGH confidence; other China throughputs are not stated in the snapshot."
+    />
+    <SourceList sources={chinaPortSources} title="Sources — China origin ports" />
+
+    <h3 class="mt-3">Austria transit gateways</h3>
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'role', label: 'Role' },
+        { key: 'throughput', label: 'Throughput' },
+        { key: 'distance', label: 'Distance to Vienna' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={gatewayRows}
+      caption="UN/LOCODEs are HIGH confidence; throughput and distance figures for the transit gateways are approximate and carry MEDIUM/LOW confidence. Vienna is an inland terminal, not a seaport."
+    />
+    <SourceList sources={gatewaySources} title="Sources — Austria transit gateways" />
+
+    <div class="note mt-2">
+      <strong>The gateway decision in one line:</strong> Hamburg (DEHAM) is the high-capacity default but
+      sits ~1,000 km from Vienna, while Koper (SIKOP) is roughly half that distance at ~480 km — which is
+      why the Adriatic route is Austria's quiet second option. Hamburg's throughput is ≈7.7m TEU (2023)
+      with draft ~15.2 m and terminals HHLA CTA, Eurogate and Altenwerder; Koper, Trieste and Constanța
+      throughput figures are approximate and should be confirmed with the port authority.
+    </div>
+
+    <h3 class="mt-3">Door-to-door process from China to Austria</h3>
+    <DataTable
+      columns={[
+        { key: 'step', label: 'Step' },
+        { key: 'who', label: 'Who owns it' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={processRows}
+      caption="The operational chain is directional; the EORI, EU duty + 20% VAT and CE/REACH steps are MEDIUM confidence and operational fee/timing steps are LOW confidence."
+    />
+    <SourceList sources={[...costSources, ...marketSources]} title="Sources — Austria door-to-door chain" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost composition and the hidden charges that competitors miss</h2>
+      <p>
+        Austria's statutory stack is only the visible top layer: <strong>EU common duty on CIF</strong>
+        (typically 0–12% by HS code), then <strong>20% VAT on the duty-inclusive base</strong>. Below
+        that line sits the charge that is unique to a landlocked market — the
+        <strong>inland gateway-to-Vienna leg</strong> — plus the operational charges the verified snapshot
+        does not quantify: THC, documentation, inspection, port storage, demurrage and detention. This is
+        where a cheap freight quote becomes an expensive clearance.
+      </p>
+
+      <div class="note">
+        <strong>Baseline statutory landed cost = (CIF + duty) × 1.20.</strong><br />
+        Duty varies by HS code, so there is no single multiplier like the Gulf's 5%. For an illustrative
+        USD 10,000 CIF shipment at an assumed 5% duty: USD 500 duty gives a USD 10,500 duty-inclusive
+        base, then 20% VAT of USD 2,100, giving USD 12,600 before inland and destination fees. The
+        compound is <strong>1.05 × 1.20 = ×1.26</strong>, not the 25% you would get by simply adding the
+        two headline rates. Rates and duty lines are subject to change — verify the current duty line and
+        VAT treatment with Austrian Customs before relying on this example.
+      </div>
+
+      <h3 class="mt-3">Full cost stack</h3>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'who', label: 'Who charges it' },
+          { key: 'magnitude', label: 'Indicative magnitude' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="The FCL/LCL ranges, EU duty and 20% VAT are MEDIUM confidence from route/customs sources. Unquantified Austrian and gateway fees are LOW confidence because the snapshot did not publish amounts."
+      />
+      <SourceList sources={costSources} title="Sources — landed cost & customs" />
+
+      <h3 class="mt-3">What most guides skip</h3>
+      <p>
+        Five lines change the Austrian landed cost and rarely appear on a standard ocean quote:
+      </p>
+      <ul>
+        <li><strong>The inland gateway-to-Vienna leg is not in the ocean quote.</strong> A Hamburg freight
+          figure ends at the port; the ~1,000 km to Vienna (or ~480 km from Koper) is a separate rail/truck
+          charge that must be added before the quote is usable.</li>
+        <li><strong>Koper is Austria's quiet Adriatic gateway.</strong> At roughly half Hamburg's inland
+          distance, Koper can win on total landed cost even when its sea leg is longer down the Med.</li>
+        <li><strong>You can clear inland instead of at the port.</strong> Under EU customs transit (T1/T2,
+          NCTS) cargo moves to an inland Austrian customs office in Vienna, Linz or Graz, where the 20%
+          VAT is paid at the inland point.</li>
+        <li><strong>VAT deferral is available.</strong> EU customs warehousing (procedures 42/63) defers
+          import VAT until goods are released for free circulation — useful for inventory holders and
+          re-exporters.</li>
+        <li><strong>Rail regauges at the EU border.</strong> China–Europe rail runs 1435 mm standard gauge
+          → 1520 mm broad gauge → back to 1435 mm at the EU border, with transshipment/regauge at points
+          such as Małaszewicze (Poland) before the Poland/Germany corridor reaches Austria.</li>
+      </ul>
+
+      <h3 class="mt-3">Demurrage vs detention: two clocks, two payees</h3>
+      <p>
+        <strong>Demurrage</strong> is the charge the <strong>gateway terminal</strong> applies when import
+        cargo stays beyond the allowed free time after discharge. <strong>Detention</strong> is the charge
+        the <strong>ocean carrier</strong> (or rail operator) applies when the importer keeps the container
+        beyond the equipment free time after collection. For Austria, the inland leg adds a second
+        exposure point: a container can clear the gateway free time but still be late at the inland
+        terminal, so confirm both the gateway and the inland free-time allowance in writing.
+      </p>
+      <p>
+        Austrian and gateway free-time periods and per-day amounts are not published in the verified
+        snapshot, so do not assume a Rotterdam or Antwerp schedule applies. Before booking, ask the carrier
+        and the forwarder to put the gateway free time, inland free time, demurrage rate and detention rate
+        in writing. The most reliable avoidance tactic is documentary readiness: register the EORI early,
+        lock the TARIC code, prepare the invoice/packing list/B-L and file the Austrian declaration promptly.
+      </p>
+
+      <h3 class="mt-3">Hidden charges to ask for on the quote</h3>
+      <p>
+        Request an itemised schedule that separates each destination line. A quote that only says "freight
+        + customs" can hide <strong>THC</strong> at the gateway, a <strong>documentation fee</strong>, a
+        possible <strong>customs inspection fee</strong>, <strong>port storage</strong>, the
+        <strong>inland rail/truck leg</strong>, and the <strong>demurrage/detention</strong> exposure if
+        release is delayed. Without those lines, a dollar-level freight quote cannot be compared or used
+        for landed-cost budgeting.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Compliance: Austria duty, 20% VAT, EORI &amp; conformity</h2>
+
+    <h3>Tax and duty</h3>
+    <p>
+      Austria applies the <strong>EU Common Customs Tariff</strong>, so duty is identical across member
+      states and depends on the HS code — typically <strong>0–12% for consumer goods</strong>, with no
+      China–EU free-trade agreement in force. Import <strong>20% VAT</strong> (10% and 13% reduced on
+      some goods) is then charged on the <strong>duty-inclusive value</strong>, so the baseline statutory
+      calculation is <code>(CIF + duty) × 1.20</code>. Specific goods can still carry different duty lines
+      or VAT treatment, so the HS code remains the first compliance decision.
+    </p>
+
+    <h3>EORI — register before arrival</h3>
+    <p>
+      The <strong>EORI number</strong> is mandatory for any import into the EU and must be registered
+      <em>before</em> the goods arrive. It is the single most common first-import stumbling block for
+      China-to-Austria cargo, so start the registration before the vessel or train departs, not while it
+      is discharging at the gateway.
+    </p>
+
+    <h3>TARIC classification and documents</h3>
+    <p>
+      Austria classifies goods under the <strong>10-digit TARIC code</strong>, which drives the duty
+      line, VAT treatment, permits and restricted screening. The standard document set is a commercial
+      invoice, bill of lading (or rail/CMR consignment note for rail cargo), packing list and the correct
+      TARIC classification, backed by your EORI number. Confirm the current declaration workflow with a
+      licensed Austrian broker.
+    </p>
+
+    <h3>CE marking and REACH</h3>
+    <p>
+      <strong>CE marking</strong> is the EU conformity mark required for a wide range of regulated
+      products — electronics, toys, machinery and medical devices, among others. <strong>REACH</strong> is
+      the EU chemical regulation requiring registration for chemical substances. Both apply in Austria
+      exactly as in every member state, so confirm the applicability and the required technical file
+      before shipment.
+    </p>
+
+    <h3>VAT deferral and inland customs transit</h3>
+    <p>
+      Austria, like other EU states, allows <strong>EU customs warehousing (procedures 42/63)</strong> to
+      defer import VAT until goods are released for free circulation — a working-capital lever for
+      importers who hold inventory or re-export within the EU. For cargo moving from Hamburg or Koper,
+      <strong>EU customs transit (T1/T2, NCTS)</strong> lets goods travel to an inland Austrian customs
+      office in Vienna, Linz or Graz and clear there, paying the 20% Austrian import VAT at the inland
+      point rather than at the gateway.
+    </p>
+
+    <h3>SABER/SASO is Saudi-only</h3>
+    <p>
+      SABER and SASO are <strong>Saudi-only</strong> conformity systems and do not apply to Austria or the
+      EU. Do not copy a Saudi SABER/SASO step into an Austrian quote. Austria uses CE marking and REACH
+      instead, and any product-specific approval should be confirmed with Austrian customs or your broker.
+    </p>
+
+    <h3>De-minimis and IOSS</h3>
+    <p>
+      The EU abolished the €22 duty-free threshold in 2021, so import VAT now applies from the first euro
+      on most consignments. The <strong>€150</strong> figure is the VAT-related threshold, and the
+      <strong>IOSS</strong> scheme simplifies VAT on sub-€150 consignments sold to EU buyers. Confirm the
+      current thresholds and whether IOSS applies to your channel with Austrian customs before relying on
+      these figures.
+    </p>
+
+    <SourceList sources={complianceSources} title="Sources — Austria customs, duty, VAT & conformity" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness &amp; monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The statutory
+      lines (EU common duty and 20% VAT) are re-checked against Austrian Customs (BMF) and the European
+      Commission TARIC database; the Hamburg, Koper, Trieste and Constanța throughput and UN/LOCODE
+      figures are re-checked against the port authorities; and the sea/rail transit windows are re-checked
+      against the WorldFreightHub Europe route data each month.
+    </p>
+    <p>
+      If an Austrian rail, air, express or DDP dollar rate, a gateway terminal fee, an inland rail/truck
+      rate, a demurrage/detention schedule or a conformity requirement becomes available from Austrian
+      Customs, a port operator or a carrier, the table is updated, the confidence badge is raised, and the
+      modified date in the page metadata is changed. Until then, unquantified Austrian fees and rates stay
+      LOW confidence with a "not published — verify" note rather than being filled with estimates.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in China to Austria quote"
+      text="Tell us your origin, commodity, container or CBM, TARIC/HS code and final Austrian destination, and we will connect you with providers who can quote ocean/rail/air freight, EU duty, 20% VAT, Austrian clearance and the gateway-to-Vienna inland leg together."
+    />
+  </section>
+</BaseLayout>
