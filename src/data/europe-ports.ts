@@ -309,4 +309,42 @@ export const europePorts: Port[] = [
     ],
     updated: '2026-09-01',
   },
+  {
+    slug: 'gothenburg',
+    name: 'Gothenburg',
+    country: 'Sweden',
+    countrySlug: 'sweden',
+    type: 'seaport',
+    unlocode: 'SEGOT',
+    tldr:
+      "Scandinavia's largest container port and Sweden's default China gateway — a Kattegat west-coast port that feeds the Swedish market and Norway, with the east-coast Stockholm/Norvik alternative behind it.",
+    operator: 'Gothenburg Port Authority (Göteborgs Hamn AB)',
+    specs: [
+      { label: 'Container throughput', value: '≈ 0.9m TEU (2023)' },
+      { label: 'Max draft', value: '≈ 13.5 m' },
+      { label: 'Key terminals', value: 'APM Terminals Gothenburg (Skandiahamnen)' },
+      { label: 'UN/LOCODE', value: 'SEGOT' },
+    ],
+    hinterland:
+      'Sweden and the Nordic region — Gothenburg serves western Sweden and Norway, with rail to Stockholm (~470 km) covering the eastern market.',
+    insight:
+      "Gothenburg is the gate you cannot fully replace for Sweden: it handles roughly a third of the country's foreign trade and is the only Swedish port deep enough for the mainline container services that China cargo needs. The trade-off is that Sweden's largest consumer market is Stockholm, ~470 km to the east — so the port is not the destination, and the inland rail leg decides the true landed cost, just as it does for landlocked neighbours. China mainline calls are thinner than at Rotterdam or Hamburg, so much cargo transships via a northern-range hub before the feeder north; price that extra move explicitly.",
+    keyTakeaways: [
+      "Scandinavia's largest container port; handles roughly a third of Sweden's foreign trade.",
+      'The only Swedish port with mainline deep-sea container capacity.',
+      'Stockholm, the biggest market, sits ~470 km east — budget the inland rail.',
+      'Direct China calls are thinner than the northern range; transshipment is common.',
+    ],
+    faqs: [
+      {
+        q: 'Is Gothenburg the only Swedish port for China cargo?',
+        a: 'It is the main one — Gothenburg is the only Swedish port with the draft and terminals for mainline container services. Stockholm is served by the newer Norvik Port (SENRK) for east-coast cargo, and both typically transship via a northern-range hub such as Rotterdam or Hamburg.',
+      },
+      {
+        q: 'How far is Gothenburg from Stockholm?',
+        a: 'Roughly 470 km by road/rail across Sweden. That inland leg is the difference between the port-to-port and the true door-to-door cost for the Stockholm market, so it must be priced in rather than assumed away.',
+      },
+    ],
+    updated: '2026-09-04',
+  },
 ];

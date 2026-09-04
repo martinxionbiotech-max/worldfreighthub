@@ -16,6 +16,7 @@ export const countrySourceIds: Record<string, string[]> = {
   poland: ['eu-taric', 'polish-customs', 'port-gdansk'],
   belgium: ['eu-taric', 'belgian-customs', 'port-antwerp'],
   austria: ['eu-taric', 'austrian-customs'],
+  sweden: ['eu-taric', 'swedish-customs', 'swedish-tax'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -46,6 +47,7 @@ export const portSourceIds: Record<string, string[]> = {
   valencia: ['port-valencia'],
   genoa: ['port-genoa'],
   gdansk: ['port-gdansk'],
+  gothenburg: ['port-gothenburg'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -297,6 +299,24 @@ export const sources: Source[] = [
     id: 'port-constanta',
     name: 'Port of Constanța',
     url: 'https://www.portofconstantza.com',
+    type: 'port-authority',
+  },
+  {
+    id: 'swedish-customs',
+    name: 'Swedish Customs (Tullverket)',
+    url: 'https://www.tullverket.se',
+    type: 'government',
+  },
+  {
+    id: 'swedish-tax',
+    name: 'Swedish Tax Agency (Skatteverket) — VAT',
+    url: 'https://www.skatteverket.se',
+    type: 'government',
+  },
+  {
+    id: 'port-gothenburg',
+    name: 'Port of Gothenburg (Göteborgs Hamn AB)',
+    url: 'https://www.portgot.se',
     type: 'port-authority',
   },
 ];

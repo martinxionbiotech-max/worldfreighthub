@@ -491,4 +491,93 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: 'sweden',
+    name: 'Sweden',
+    iso2: 'SE',
+    capital: 'Stockholm',
+    currency: 'SEK',
+    vatRate: 25,
+    vatNote: '25% standard (12% and 6% reduced).',
+    ports: ['gothenburg'],
+    tldr:
+      'Sweden is a Nordic EU market entered through Gothenburg (SEGOT) on the west coast — 25% VAT on EU common duty, a SEK currency not the euro, and a ~470 km inland leg to the Stockholm market on the east coast.',
+    dutyRate: 'EU Common Customs Tariff (MFN, varies by HS code)',
+    dutyNote:
+      'Sweden applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.',
+    deMinimis: '€150 (VAT threshold)',
+    deMinimisNote:
+      'The EU abolished the €22 duty-free threshold in 2021; import VAT now applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Swedish customs.',
+    compliance: [
+      'EORI number — required for any import into the EU.',
+      'CE marking for regulated products.',
+      'REACH registration for chemical substances.',
+      'Correct 10-digit TARIC classification for duty.',
+    ],
+    clearanceProcess: [
+      'Register for an EORI number before shipping.',
+      'Classify goods under the correct TARIC code.',
+      'File the import declaration and pay EU duty plus 25% VAT.',
+      'Clear through Gothenburg (or Norvik for east-coast cargo).',
+      'Release and deliver by rail or truck across Sweden.',
+    ],
+    insight:
+      'Sweden carries the EU\'s highest standard VAT tier at 25%, and it is one of the few EU states outside the euro — so an importer pays ocean freight in USD, import VAT in SEK, and carries currency risk on both. That 25% rate is 6 points above Germany\'s 19%, which on a $10,000 CIF shipment at 5% duty means $630 more in landed tax before any logistics. The second Sweden-specific variable is geography: Gothenburg, the only mainline-capable port, sits on the west coast while the biggest consumer market is Stockholm, ~470 km east — so the inland leg, not the ocean quote, is where the real landed cost is decided.',
+    keyTakeaways: [
+      '25% VAT is the EU\'s highest standard tier (with Denmark and Croatia); only Hungary\'s 27% is higher.',
+      'SEK, not EUR — freight in USD plus VAT in SEK means double currency exposure.',
+      'Gothenburg (SEGOT) is the gateway; Stockholm is ~470 km east, so the inland leg decides landed cost.',
+      '5% duty + 25% VAT compounds to ×1.3125, not 30%.',
+    ],
+    faqs: [
+      {
+        q: 'How long does shipping from China to Sweden take?',
+        a: 'Allow roughly 32–40 days port-to-port by sea from Shanghai or Ningbo-Zhoushan to Gothenburg via the Cape (MEDIUM confidence, planning estimate), plus about 1–2 days inland rail to Stockholm — versus roughly 20–25 days by China-Europe rail via Hamburg or Duisburg. No verified Swedish air transit is published, so request that from your carrier.',
+      },
+      {
+        q: 'Which port should I use when shipping from China to Sweden?',
+        a: 'Gothenburg (UN/LOCODE SEGOT, ≈0.9m TEU 2023) is the only Swedish port with mainline container capacity, so it is the default; the newer Norvik Port (SENRK) serves the Stockholm east coast. Direct China calls are thinner than the northern range, so transshipment via Rotterdam or Hamburg is common.',
+      },
+      {
+        q: 'What is the VAT rate in Sweden?',
+        a: 'Sweden applies a 25% standard VAT rate, with reduced rates of 12% (food, restaurants, hotels) and 6% (books, newspapers, passenger transport). Import VAT is charged on the duty-inclusive value, so 5% duty plus 25% VAT compounds to ×1.3125, not 30% — a $10,000 CIF shipment at 5% duty lands at $13,125 before destination fees.',
+      },
+      {
+        q: 'Why is Sweden\'s currency (SEK) a landed-cost risk?',
+        a: 'Sweden is in the EU but not the eurozone, so you pay ocean freight in USD and import VAT in SEK. A krona move between quoting and clearing changes your landed cost by the full SEK exposure on the duty-inclusive value — a risk a euro-denominated market like Germany does not carry.',
+      },
+      {
+        q: 'How does Sweden\'s landed cost compare with Germany\'s?',
+        a: 'On a $10,000 CIF at 5% duty, Sweden\'s 25% VAT lands at $13,125 versus Germany\'s 19% at $12,495 — a $630 gap, roughly 6% on the duty-inclusive base — before the ~470 km Gothenburg-to-Stockholm inland leg is added.',
+      },
+      {
+        q: 'Can I ship China-to-Sweden by rail?',
+        a: 'Yes — China-Europe rail runs to Hamburg or Duisburg in roughly 18–22 days, then continues to Sweden by rail across the Øresund region in roughly 20–25 days total, versus ~32–40 days by sea plus inland. That is roughly 2–3× the sea rate, so it is a time-versus-cost call for Stockholm-bound cargo.',
+      },
+      {
+        q: 'Do I need an EORI to import into Sweden?',
+        a: 'Yes — one EORI (Economic Operators Registration and Identification) number is required for any import into the EU, and it must exist before the goods arrive; zero Swedish imports clear without it.',
+      },
+      {
+        q: 'What is the difference between FCL and LCL for China to Sweden?',
+        a: 'FCL is priced per container (northern-range benchmark 20ft $1,200–$4,800, 40ft $1,600–$6,800; Gothenburg-specific figures are not published and must be requested) and LCL per cubic metre ($60–$160/CBM), with the planning break-even near 15 CBM — below that LCL is usually cheaper, above it FCL starts to win.',
+      },
+      {
+        q: 'What documents are needed for Swedish customs clearance?',
+        a: 'The core set is four documents plus one classification — commercial invoice, bill of lading (or rail/CMR consignment note for rail cargo), packing list and the correct 10-digit TARIC code, backed by your EORI number. Regulated products add CE marking evidence and chemicals add REACH registration.',
+      },
+      {
+        q: 'Can I defer VAT when importing into Sweden?',
+        a: 'Sweden, like other EU states, allows EU customs warehousing (procedures 42/63) to defer import VAT until goods are released for free circulation — a working-capital lever for importers who hold inventory or re-export within the EU.',
+      },
+      {
+        q: 'What are CE marking and REACH, and do they apply in Sweden?',
+        a: 'CE marking is the EU conformity mark required for regulated products — electronics, toys, machinery and medical devices — and REACH is the EU chemical regulation requiring registration for chemical substances. Both apply in Sweden exactly as in every member state.',
+      },
+      {
+        q: 'Do SABER or SASO apply to Sweden?',
+        a: 'No — SABER and SASO are Saudi-only conformity systems and apply to zero Swedish or EU imports. Sweden uses CE marking and REACH instead, so do not copy a Saudi SABER/SASO step into a Swedish quote.',
+      },
+    ],
+  },
 ];
