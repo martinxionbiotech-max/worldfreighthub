@@ -349,19 +349,19 @@ const faqs = [
   },
   {
     q: 'Is VAT charged on the customs duty as well as the CIF value?',
-    a: 'Yes. The VAT base is CIF value plus customs duty, so VAT is calculated on the duty-inclusive amount. This is the detail that makes the effective tax slightly higher than a naive 5% + 5% total.',
+    a: 'Yes — VAT is charged on CIF + duty, which makes VAT equal to 5.25% of CIF (5% × 1.05), not a flat 5%. This is the detail that makes the effective tax slightly higher than a naive 5% + 5% total.',
   },
   {
     q: 'What is the UAE import VAT reverse-charge mechanism?',
-    a: 'In practice, a VAT-registered importer may account for import VAT through its periodic VAT return — reporting the import VAT as both output and input where the goods are used for taxable supplies — instead of bearing it as a permanent cash cost at the border. The research snapshot does not document the full procedure, so treat the mechanics as LOW confidence and confirm the conditions, documentation and timing with the FTA or your tax advisor.',
+    a: 'A VAT-registered importer can report import VAT as both output and input on its return — so the cash-flow impact drops from the border 5% to a 0% permanent cost where the goods fund taxable supplies. The research snapshot does not document the full procedure, so treat the mechanics as LOW confidence and confirm the conditions, documentation and timing with the FTA or your tax advisor.',
   },
   {
     q: 'Do free zone imports avoid UAE VAT?',
-    a: 'Not automatically. Goods can be held under duty/VAT suspension within a designated free zone, but duty and VAT generally apply when goods leave the zone for the mainland market. Tell your forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
+    a: 'Only while goods stay in-zone — a free-zone entry defers the ×1.1025 stack, but exit to the mainland generally triggers the full 5% duty + 5% VAT. Tell your forwarder whether the final consignee is a free zone or mainland address and confirm the exit treatment in writing.',
   },
   {
     q: 'How does the HS code affect UAE import duty and VAT?',
-    a: 'The HS code decides the duty line — baseline, higher, reduced or zero — and can drive permits and excise exposure. VAT is generally 5% on the duty-inclusive CIF base, but the duty component changes with the code. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
+    a: 'The HS code switches the duty line between 0%, the 5% baseline and higher rates, and VAT then applies at 5% on the duty-inclusive CIF base. Classify before quoting, because a reclassification at the border changes the duty and any all-in price based on it.',
   },
   {
     q: 'Are there any UAE import duty or VAT exemptions?',
@@ -373,15 +373,15 @@ const faqs = [
   },
   {
     q: 'What is the difference between DDP and paying UAE duty and VAT myself?',
-    a: 'Self-payment keeps the importer as the taxpayer with full Mirsal 2 line-item visibility and, for a VAT-registered importer, the possibility of reverse-charge accounting. DDP moves the payment to the seller or forwarder and packages it into one all-in price. The underlying duty and VAT rates do not change — only who pays, how visible the tax is, and how the cash flow is structured.',
+    a: 'The 5% + 5% stack is identical either way — the only differences are who pays and whether the ×1.1025 line is visible. Self-payment keeps the importer as the taxpayer with full Mirsal 2 line-item visibility; DDP moves the payment to the seller or forwarder and packages it into one all-in price.',
   },
   {
     q: 'Does the UAE charge excise tax on imported goods?',
-    a: 'The UAE applies excise tax on specific goods in addition to the ordinary duty and VAT stack, but the verified research snapshot does not publish the UAE excise rates. Treat excise treatment as LOW confidence and confirm the current rates for your HS codes with the FTA before finalising a landed-cost quote.',
+    a: 'Excise stacks on top of the ×1.1025 duty+VAT line for specific goods, but the verified snapshot publishes 0 UAE excise rate figures — treat it as “not published — request a rate”. Confirm the current rates for your HS codes with the FTA before finalising a landed-cost quote.',
   },
   {
     q: 'Where should I verify current UAE import duty and VAT rates?',
-    a: 'Verify against the UAE Federal Tax Authority (FTA) and the current Dubai Customs tariff lookup for your HS code. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
+    a: 'Confirm the two 5% lines (duty and VAT) against the UAE Federal Tax Authority (FTA) and the current Dubai Customs tariff lookup for your HS code. The figures on this page are from a dated research snapshot; rates, exemptions and excise treatment are subject to change and should be rechecked before you build a final landed-cost quote.',
   },
 ];
 
@@ -464,6 +464,19 @@ const schema = [
         shows the formula, a worked example, the import-VAT reverse-charge mechanism, the free-zone
         rule and the DDP-versus-self-paid decision.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> The UAE baseline stack is CIF ×1.1025, not 10%: 5% duty on CIF then
+            5% VAT on CIF+duty turns a $1,000 CIF shipment into $1,102.50 (a $102.50 add). That ×1.1025 is
+            the GCC mid-tier — on $10,000 CIF it adds $1,025 versus Saudi Arabia's ×1.2075 at $2,075 and
+            Qatar/Kuwait's ×1.05 at $500. Free-zone entry defers both charges until mainland exit, so a
+            shipment held 100% in-zone pays $0 in UAE duty+VAT today and only pays the $1,025 if it exits.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate the verified 5% VAT and 5% CIF duty baseline from unquantified
         operational fees and secondary-source exemptions. Rates are subject to change — verify with

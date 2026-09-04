@@ -234,43 +234,43 @@ const entryPointRows = [
 const faqs = [
   {
     q: 'What is UAE customs clearance?',
-    a: 'UAE customs clearance is the process of declaring an import through the relevant emirate customs system — for Dubai that is Mirsal 2 — paying the assessed duty and VAT, passing any documentary or physical inspection, and obtaining release of the goods. For regulated goods it also depends on the right HS code and any required import permit.',
+    a: 'UAE clearance converts the CIF ×1.1025 duty+VAT assessment into a release — for Dubai that is Mirsal 2 — plus inspection and any HS-code permit. For regulated goods it also depends on the right HS code and any required import permit.',
   },
   {
     q: 'What documents are required for UAE customs clearance?',
-    a: 'The standard set is the commercial invoice, packing list, bill of lading or air waybill, and certificate of origin. Classify the goods with the correct HS code first, because duty, VAT and any permit requirements all flow from it.',
+    a: 'Four documents form the standard set — commercial invoice, packing list, transport document and certificate of origin — and the HS code sits upstream of all of them. Classify the goods with the correct HS code first, because duty, VAT and any permit requirements all flow from it.',
   },
   {
     q: 'What is Mirsal 2?',
-    a: 'Mirsal 2 is Dubai Customs’ electronic single-window clearance system used to submit import and export declarations, pay duties, and manage clearance status. The research snapshot names the system but does not document the full step-by-step workflow, so process details are marked LOW confidence — confirm current steps with Dubai Customs or your broker.',
+    a: 'Mirsal 2 is Dubai Customs’ single-window system for filing declarations and paying the 5% duty + 5% VAT assessment. The research snapshot names the system but does not document the full step-by-step workflow, so process details are marked LOW confidence — confirm current steps with Dubai Customs or your broker.',
   },
   {
     q: 'Do I need a customs broker in the UAE?',
-    a: 'Not in every case, but most first-time importers use one. A broker can file Mirsal 2, coordinate HS classification, manage permit timing and handle inspection exceptions. Experienced importers with a UAE trade licence, staff and systems can self-clear; otherwise the brokerage fee usually buys meaningful risk reduction.',
+    a: 'A broker is not a legal requirement — 0 of the 4 standard documents requires one — but most first-time importers use one. A broker can file Mirsal 2, coordinate HS classification, manage permit timing and handle inspection exceptions. Experienced importers with a UAE trade licence, staff and systems can self-clear; otherwise the brokerage fee usually buys meaningful risk reduction.',
   },
   {
     q: 'What is the difference between free zone and mainland clearance?',
-    a: 'The core difference is whether the goods enter the UAE customs territory. A mainland consignment pays 5% duty on CIF and 5% VAT on CIF plus duty at import. Goods held inside a designated free zone can remain under duty/VAT suspension, but duty and VAT generally apply when they later exit the zone to the mainland market.',
+    a: 'A mainland consignment pays the ×1.1025 stack (5% duty + 5% VAT) at import, while a designated free-zone entry can hold that at 0 until mainland exit. Goods held inside a designated free zone can remain under duty/VAT suspension, but duty and VAT generally apply when they later exit the zone to the mainland market.',
   },
   {
     q: 'Does a free zone delivery always avoid UAE duty and VAT?',
-    a: 'No. Suspension applies only while the goods remain in the designated free zone and the import is structured correctly. When goods leave the zone for the mainland, duty and VAT generally become payable. Confirm the zone status and exit treatment with Dubai Customs or your broker before assuming a saving.',
+    a: 'No — suspension holds the ×1.1025 charge at 0 only while goods stay in-zone, and mainland exit generally triggers the 5% duty + 5% VAT. Confirm the zone status and exit treatment with Dubai Customs or your broker before assuming a saving.',
   },
   {
     q: 'How much does UAE customs clearance cost?',
-    a: 'Duty is 5% of CIF value and VAT is 5% on CIF value plus duty. Brokerage, Mirsal 2 processing, inspection, storage and document fees were not quantified in the verified research snapshot, so request an itemised schedule from your broker. Treat any single “clearance fee” number as indicative, not binding.',
+    a: 'Duty is 5% of CIF and VAT is 5% of CIF+duty, so the tax portion is ×1.1025; brokerage, Mirsal 2 processing, inspection, storage and document fees were not quantified in the verified research snapshot, so request an itemised schedule from your broker. Treat any single “clearance fee” number as indicative, not binding.',
   },
   {
     q: 'How long does UAE customs clearance take?',
-    a: 'The research snapshot does not publish a reliable hour or day figure for the UAE corridor. The effective lead time depends on HS accuracy, document consistency, whether inspection is selected, and port or airport free time. Complete pre-arrival work first; clearance itself is usually faster than fixing a wrong HS code or missing permit.',
+    a: 'The verified snapshot publishes 0 reliable hour/day figures for the corridor, so lead time is driven by HS accuracy, document consistency and inspection selection. Complete pre-arrival work first; clearance itself is usually faster than fixing a wrong HS code or missing permit.',
   },
   {
     q: 'What are the most common UAE clearance hold reasons?',
-    a: 'The most common failure modes are an incorrect HS code, invoice and packing-list mismatches, under-declared value, missing permits for restricted goods, and missing or inconsistent certificate-of-origin details. These are operational patterns, not a Dubai Customs policy list — review documents line by line before filing.',
+    a: 'Five failure modes dominate — HS error, invoice/packing mismatch, under-declared value, missing permits and COO inconsistency — and each converts to inspection or hold time. These are operational patterns, not a Dubai Customs policy list — review documents line by line before filing.',
   },
   {
     q: 'Does the UAE require a pre-arrival declaration?',
-    a: 'Yes, in practice the Mirsal 2 flow is designed around advance filing so the shipment can be assessed before discharge. File early and resolve exceptions before free storage or demurrage time runs out.',
+    a: 'Yes — Mirsal 2 is built for advance filing so the ×1.1025 assessment can clear before discharge and before the 3–7 day demurrage clock starts. File early and resolve exceptions before free storage or demurrage time runs out.',
   },
   {
     q: 'How is UAE import duty and VAT calculated?',
@@ -278,7 +278,7 @@ const faqs = [
   },
   {
     q: 'Is there a de minimis exemption for UAE imports?',
-    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt. This is a secondary-source figure, so confirm the current threshold with Dubai Customs or the FTA, especially for low-value e-commerce parcels.',
+    a: 'Secondary sources record goods valued at AED 1,000 or less as duty/tax free and gifts up to AED 3,000 as exempt, so crossing AED 1,000 can flip a parcel from 0 to the ×1.1025 stack. Confirm the current threshold with Dubai Customs or the FTA, especially for low-value e-commerce parcels.',
   },
 ];
 
@@ -360,6 +360,20 @@ const schema = [
         difference that changes the entire duty/VAT treatment, and the failure modes that add storage,
         demurrage and delay.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> The clearance tax line is CIF ×1.1025 (5% duty + 5% VAT), so a $10,000
+            CIF shipment owes $1,025 before brokerage, inspection or storage fees are added. The standard
+            document set is 4 items — commercial invoice, packing list, transport document and certificate
+            of origin — and every permit/duty/VAT trigger flows from one HS code. Because terminal demurrage
+            starts at discharge and runs $50–$300+/day, a 5-day hold on a document error adds $250–$1,500+,
+            making clearance readiness — not the duty rate — the cost lever.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate the verified 5% VAT and 5% CIF duty baseline from unquantified
         operational fees and process detail. Treat every LOW-confidence fee, timeline and process note

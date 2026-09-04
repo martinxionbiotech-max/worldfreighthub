@@ -359,7 +359,7 @@ const costRows = [
 const faqs = [
   {
     q: 'What is the difference between FCL and LCL?',
-    a: 'FCL (Full Container Load) gives you exclusive use of a 20GP, 40GP or 40HQ and is priced per container. LCL (Less-than-Container Load) consolidates your cargo with other importers in a shared container and is priced per cubic metre, usually with a 1 CBM minimum. On the China-to-GCC corridor, FCL fits large, heavy or palletised cargo, while LCL suits trial orders, mixed SKUs and sub-container volumes.',
+    a: 'FCL is priced per container — a 20GP holds ~33 CBM and a 40GP/40HQ ~67 CBM — while LCL is priced per cubic metre with a 1 CBM minimum and consolidates your cargo with other importers. On the China-to-GCC corridor, FCL fits large, heavy or palletised cargo, while LCL suits trial orders, mixed SKUs and sub-container volumes.',
   },
   {
     q: 'At what volume should I switch from LCL to FCL in the GCC?',
@@ -375,11 +375,11 @@ const faqs = [
   },
   {
     q: 'Is LCL always cheaper for small shipments?',
-    a: 'Usually, but not automatically. LCL wins below the ~15 CBM planning crossover because you only pay for the cube you use. Above that, FCL can become cheaper per cubic metre and avoids paying for a shared container with added CFS handling. Include the LCL minimum charge, destination deconsolidation fee and any demurrage risk in the comparison.',
+    a: 'Below ~15 CBM LCL is usually cheaper because you only pay for the cube you use, while above ~15 CBM a 20ft’s flat $1,500–$6,200 can beat per-CBM rates. FCL also avoids shared-container CFS handling. Include the LCL minimum charge, destination deconsolidation fee and any demurrage risk in the comparison.',
   },
   {
     q: 'Why are Saudi FCL ranges so much wider than Jebel Ali’s?',
-    a: 'Saudi gateways sit on two different geopolitical lanes: Jeddah on the Red Sea and Dammam on the Arabian Gulf via the Strait of Hormuz. The route data notes that war-risk premiums and fuel costs flex with the news cycle, which is why the Saudi 20ft range runs $1,500–$6,200 while Jebel Ali’s more competitive carrier market compresses its range to $1,500–$3,250.',
+    a: 'Saudi’s 20ft range is $1,500–$6,200 — a 4.1× spread — versus Jebel Ali’s $1,500–$3,250 (2.2×), because Jeddah and Dammam sit on two risk-priced lanes. Jeddah faces the Red Sea and Dammam the Arabian Gulf via the Strait of Hormuz, so war-risk premiums and fuel costs flex with the news cycle.',
   },
   {
     q: 'How much slower is LCL than FCL?',
@@ -387,31 +387,31 @@ const faqs = [
   },
   {
     q: 'What is the biggest hidden cost in FCL to the GCC?',
-    a: 'Demurrage and detention. Free time at GCC terminals runs only 3–7 days, and daily charges run $75–$300 once that clock expires. A customs or SABER hold can add hundreds of dollars to a single container and quietly erase the per-unit savings that made FCL attractive. Plan clearance and trucking before the vessel arrives.',
+    a: 'Free time is only 3–7 days and daily charges run $75–$300, so a 5-day overstay adds $375–$1,500 to a single container. A customs or SABER hold can quietly erase the per-unit savings that made FCL attractive. Plan clearance and trucking before the vessel arrives.',
   },
   {
     q: 'Does the FCL vs LCL decision change my GCC duty and VAT?',
-    a: 'No. The mode does not change the tax treatment. The GCC unified baseline import duty is 5% of CIF value, and VAT is charged on the duty-inclusive value at the destination country rate: Saudi 15%, UAE 5%, Qatar 0%, Kuwait 0%, Oman 5% and Bahrain 10%. Classify the correct HS code first, because duty and VAT compound the same way for both modes.',
+    a: 'No — duty and VAT compound identically for FCL and LCL: 5% duty on CIF, then VAT at 15% (Saudi), 5% (UAE/Oman), 10% (Bahrain) or 0% (Qatar/Kuwait) on the duty-inclusive value. Classify the correct HS code first, because the mode does not change the tax treatment.',
   },
   {
     q: 'Do I need SABER or SASO for an LCL shipment?',
-    a: 'Yes, if the goods are regulated and Saudi Arabia is the destination. SABER/SASO conformity applies to Saudi Arabia only, not the rest of the GCC, and the SABER SC certificate must be obtained before arrival — effective 1 January 2025. The shipment mode (FCL or LCL) does not remove the requirement.',
+    a: 'Yes — SABER/SASO applies only to Saudi Arabia, and the SC must be obtained before arrival since 1 January 2025, regardless of FCL or LCL. If the goods are regulated, the shipment mode does not remove the requirement.',
   },
   {
     q: 'Does ISF apply to the GCC?',
-    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports. Saudi Arabia has its own pre-arrival requirement through SABER/FASAH, but you should not copy a US ISF step into a China-to-GCC FCL or LCL workflow.',
+    a: 'ISF is a US-only filing — 0 of the 6 GCC states require it — while Saudi Arabia uses its own SABER/FASAH pre-arrival step. Do not copy a US ISF step into a China-to-GCC FCL or LCL workflow.',
   },
   {
     q: 'How do I choose between a 20ft and a 40ft for GCC FCL?',
-    a: 'Start with cube and weight, not nominal capacity. A 20ft holds roughly 33 CBM and a 40ft roughly 67 CBM. Because a 40ft costs only ~30–50% more than a 20ft but holds about double the volume, a 40ft is usually better value once you are approaching a full 20ft — verify the weight limit and the live rate on both before choosing.',
+    a: 'A 20ft holds ~33 CBM and a 40ft ~67 CBM, so the switch point is whether your load passes ~33 CBM. Because a 40ft costs only ~30–50% more than a 20ft but holds about double the volume, a 40ft is usually better value once you are approaching a full 20ft — verify the weight limit and the live rate on both before choosing.',
   },
   {
     q: 'Which GCC port should I use for the FCL vs LCL decision?',
-    a: 'Match the port to the final consignee, not just the rate. Use Jeddah for western Saudi Arabia, Dammam for the Eastern Province and Riyadh, Jebel Ali for UAE re-export and free-zone entry, Hamad for Qatar, Shuwaikh for Kuwait, Sohar for northern Oman, and Khalifa bin Salman for Bahrain or as an alternate into eastern Saudi Arabia. Then compare FCL and LCL on that single gate.',
+    a: 'Six countries have seven main gateways — Jeddah, Dammam, Jebel Ali, Hamad, Shuwaikh, Sohar and Khalifa bin Salman — so match the discharge port to the final consignee, not just the rate. Use Jeddah for western Saudi Arabia, Dammam for the Eastern Province and Riyadh, Jebel Ali for UAE re-export and free-zone entry, Hamad for Qatar, Shuwaikh for Kuwait, Sohar for northern Oman, and Khalifa bin Salman for Bahrain. Then compare FCL and LCL on that single gate.',
   },
   {
     q: 'Where can I get a real FCL and LCL comparison?',
-    a: 'Request an itemised quote with the same origin, commodity, HS code, cube, weight and final GCC destination. Ask the provider to show ocean freight, OTHC/DTHC, CFS fees for LCL, bunker, documentation, demurrage/detention free time, duty, VAT and the inland leg together — the headline line is never the landed cost.',
+    a: 'Ask one forwarder for two quotes on identical origin, commodity, HS code, cube, weight and final GCC destination — the 2-mode comparison is only valid on a single basis. Show ocean freight, OTHC/DTHC, CFS fees for LCL, bunker, documentation, demurrage/detention free time, duty, VAT and the inland leg together; the headline line is never the landed cost.',
   },
 ];
 
@@ -493,6 +493,19 @@ const schema = [
         published 20ft/40ft and per-CBM ranges, the ~15 CBM planning crossover, the demurrage trap that
         erodes FCL savings, and the SABER/SASO gate that only Saudi Arabia imposes.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> FCL and LCL cross over around 15 CBM — below that, LCL's $20–$180/CBM
+            usually beats a 20ft's $1,500–$6,200; above it the container's flat cost wins. A 40ft costs only
+            ~30–50% more than a 20ft but holds ~67 CBM versus ~33 CBM, so its per-CBM cost roughly halves
+            once you pass ~33 CBM. LCL's penalty is a 5–10 day slowdown (15–35 vs 14–30 days), so a shipment
+            already near 15 CBM can lose the per-CBM saving in extra consolidation and demurrage time.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. The 20ft/40ft and LCL
         per-CBM ranges come from the WorldFreightHub GCC route data (MEDIUM), and capacity, demurrage and

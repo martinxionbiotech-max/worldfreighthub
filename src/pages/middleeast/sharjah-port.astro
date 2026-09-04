@@ -391,7 +391,7 @@ const costRows = [
 const faqs = [
   {
     q: 'Where is Port Khalid / Sharjah Port?',
-    a: 'Port Khalid is the Sharjah port in the United Arab Emirates. It is listed among the six UAE ports — Jebel Ali, Khalifa, Zayed, Fujairah, Rashid and Sharjah — named in the China DocShipper freight guide, and is the natural port enquiry for Sharjah-bound freight.',
+    a: 'Port Khalid is 1 of 6 UAE ports — Jebel Ali, Khalifa, Zayed, Fujairah, Rashid and Sharjah — and is the natural gate for Sharjah-bound freight.',
   },
   {
     q: 'What is the UN/LOCODE for Port Khalid?',
@@ -399,23 +399,23 @@ const faqs = [
   },
   {
     q: 'Who operates Port Khalid?',
-    a: 'The verified snapshot does not publish the current port authority or terminal operator for Port Khalid. Confirm the operator, berth allocation and fee schedule directly with the Sharjah port authority or your forwarder before relying on any terminal-specific detail.',
+    a: 'The verified snapshot publishes 0 current operator/authority details, so confirm the operator, berth allocation and fee schedule directly with the Sharjah port authority or your forwarder before relying on any terminal-specific detail.',
   },
   {
     q: 'How long does sea freight take from China to Sharjah?',
-    a: 'The verified snapshot does not publish a direct China–Sharjah transit figure. As corridor context, the China→UAE sea guide is 14–18 days, and the WorldFreightHub Jebel Ali route data is a typical 21 days with a 15–30 day range. If the cargo relays through Jebel Ali, add the relay and final trucking leg; always request the actual vessel schedule.',
+    a: 'No direct China–Sharjah figure is published, but corridor context is 14–18 days (China→UAE) and Jebel Ali’s 21-day typical with a 15–30 range. If the cargo relays through Jebel Ali, add the relay and final trucking leg; always request the actual vessel schedule.',
   },
   {
     q: 'How does China freight actually reach Port Khalid?',
-    a: 'Some services call Port Khalid directly, while others discharge at Jebel Ali and relay or truck the container to Sharjah. The verified snapshot does not specify the current sailing pattern, so ask the forwarder whether the quote is a direct Sharjah call or a Jebel Ali relay plus final leg.',
+    a: 'Two routing options exist — a direct Port Khalid call or a Jebel Ali relay-plus-truck leg — and the verified snapshot does not specify which applies. Ask the forwarder whether the quote is a direct Sharjah call or a Jebel Ali relay plus final leg.',
   },
   {
     q: 'Should I route Sharjah cargo through Port Khalid, Jebel Ali or Khalifa?',
-    a: 'Match the discharge port to the consignee and final inland leg. Port Khalid is usually the better fit for Sharjah and northern-emirate consignees; Jebel Ali is the default for Dubai, re-export and transhipment; Khalifa Port Abu Dhabi suits Abu Dhabi and KIZAD. Confirm inland distance, cost and transit before choosing.',
+    a: 'Choose among 3 gates — Port Khalid for Sharjah/northern emirates, Jebel Ali for Dubai/re-export, Khalifa for Abu Dhabi/KIZAD — by final inland distance and cost. Confirm inland distance, cost and transit before choosing.',
   },
   {
     q: 'What free zones are associated with Sharjah freight?',
-    a: 'Sharjah has industrial and free-zone clusters, commonly cited examples including Hamriyah Free Zone. The verified snapshot does not publish zone boundaries, licensing terms or incentives, so treat that as directional and verify the specific zone with the relevant Sharjah authority before assuming any duty or VAT benefit.',
+    a: 'Hamriyah Free Zone is the commonly cited cluster, but the verified snapshot publishes 0 zone boundaries, licensing terms or incentives. Treat that as directional and verify the specific zone with the relevant Sharjah authority before assuming any duty or VAT benefit.',
   },
   {
     q: 'What import taxes apply at Sharjah?',
@@ -427,19 +427,19 @@ const faqs = [
   },
   {
     q: 'What documents are needed for clearance at Sharjah?',
-    a: 'The standard set is a commercial invoice, bill of lading, packing list and certificate of origin. Classify the goods with the correct HS code before booking, because both duty and any permit requirements depend on it.',
+    a: 'Four documents — commercial invoice, bill of lading, packing list and certificate of origin — form the standard set, with the HS code upstream of both duty and permits. Classify the goods with the correct HS code before booking.',
   },
   {
     q: 'How do demurrage and detention work at Port Khalid?',
-    a: 'Demurrage is charged by the terminal when an imported container stays inside the port beyond free time after discharge. Detention is charged by the ocean carrier when the container stays outside the port beyond free time. Finish clearance and book trucking before discharge to avoid both.',
+    a: 'Demurrage starts after the 3–7 day terminal free time expires in-port; detention starts after the 5–10 day carrier window expires outside. Finish clearance and book trucking before discharge to avoid both.',
   },
   {
     q: 'Is ISF required for a China to Sharjah shipment?',
-    a: 'No. ISF is a United States import filing requirement and does not apply to UAE imports. Do not treat US customs requirements as UAE requirements.',
+    a: 'No — ISF applies to 0 UAE imports; it is a US-only filing. Do not treat US customs requirements as UAE requirements.',
   },
   {
     q: 'Does Sharjah freight require SABER or SASO certification?',
-    a: 'No. SABER and SASO are Saudi Arabian conformity systems. They do not apply to UAE imports. For UAE goods, confirm the UAE-specific regulatory and permit position from Dubai/Federal Customs or the relevant authority.',
+    a: 'No — SABER/SASO is Saudi-only, a 0-requirement for the UAE, whose own regulatory position must be confirmed with UAE customs. For UAE goods, confirm the UAE-specific regulatory and permit position from Dubai/Federal Customs or the relevant authority.',
   },
   {
     q: 'Are Port Khalid berth, depth and throughput figures verified?',
@@ -540,6 +540,20 @@ const schema = [
         Jebel Ali and Khalifa, what the rate and transit picture looks like, and the 5% duty / 5% VAT
         clearance rules that apply at the gate.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Sharjah/Port Khalid carries the same UAE stack as Jebel Ali — CIF
+            ×1.1025 (5% duty + 5% VAT) — so a $10,000 CIF shipment owes $1,025 whichever UAE gate discharges
+            it. The port-choice math is transit plus final-mile: a 14–18 day China→UAE sea bracket versus
+            Jebel Ali's 21-day typical (15–30 range) means a direct or relay decision swings 3–7 days. On de
+            minimis, AED 1,000 goods and AED 3,000 gifts clear duty/tax free, so crossing the AED 1,000 line
+            flips a parcel from 0 to the ×1.1025 stack on its CIF value.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified statutory facts from indicative corridor benchmarks.
         Treat every LOW-confidence transit, facility and fee note as indicative, and verify with the

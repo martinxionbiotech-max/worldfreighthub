@@ -302,11 +302,11 @@ const complianceRows = [
 const faqs = [
   {
     q: 'What is the difference between demurrage and detention?',
-    a: 'Demurrage is charged by the terminal while the imported container is still inside the port past the free time after discharge. Detention is charged by the ocean carrier while the container is outside the port past the free days after pickup. The trigger is the same — free time has expired — but the party charging you and the location are different.',
+    a: 'Demurrage starts once the 3–7 day terminal free time expires with the container still inside the port; detention starts once the 5–10 day carrier free days expire outside the port. The trigger is the same — free time has expired — but the party charging you and the location are different.',
   },
   {
     q: 'Can demurrage and detention run at the same time?',
-    a: 'Yes. A container can miss terminal free time first and then also miss carrier free days after it is eventually picked up, which means the two charges run sequentially and can overlap in your total cost exposure. The practical way to prevent this is to plan against the combined free-time clock, not just one of the two limits.',
+    a: 'Yes — a container can burn 3–7 terminal days and then 5–10 carrier days, so the two charges run sequentially and can overlap your total exposure. The practical way to prevent this is to plan against the combined free-time clock, not just one of the two limits.',
   },
   {
     q: 'How much free time do GCC terminals give?',
@@ -318,7 +318,7 @@ const faqs = [
   },
   {
     q: 'Is demurrage covered by marine insurance?',
-    a: 'No. Standard marine cargo insurance covers physical loss or damage to the goods, not time-based container charges from the terminal or carrier. Demurrage and detention are your operational liabilities unless a specific extension or service agreement says otherwise.',
+    a: 'No — standard marine cargo insurance covers 100% of physical loss/damage risk but 0% of time-based demurrage/detention unless a specific extension or service agreement says otherwise. Demurrage and detention are your operational liabilities.',
   },
   {
     q: 'Why is missing SABER such a common demurrage cause?',
@@ -326,19 +326,19 @@ const faqs = [
   },
   {
     q: 'How do Ramadan, Eid and weekends affect my free time?',
-    a: 'GCC working days and customs staffing shift around Ramadan, Eid and weekend schedules, and the days are not automatically excluded from terminal free time unless the tariff says so. The safest planning assumption is to treat calendar days as the clock and finish clearance as early as possible rather than assume holidays pause the meter.',
+    a: 'Calendar days — not working days — are the default meter, so a 7-day terminal window that spans Eid does not automatically gain holiday exclusions. The safest planning assumption is to treat calendar days as the clock and finish clearance as early as possible rather than assume holidays pause the meter.',
   },
   {
     q: 'What is “combined free time”?',
-    a: 'Combined free time is the practical total: terminal free days after discharge plus carrier free days after pickup. Your total planning clock is the sum of both windows. If you exhaust seven terminal days and then take ten carrier days, you have used the combined allowance — miss either and the corresponding charge starts.',
+    a: 'Combined free time is the sum of the two windows — 3–7 terminal days plus 5–10 carrier days = 8–17 days total. Your total planning clock is the sum of both windows. If you exhaust seven terminal days and then take ten carrier days, you have used the combined allowance — miss either and the corresponding charge starts.',
   },
   {
     q: 'How can I avoid demurrage and detention?',
-    a: 'Pre-clear before arrival, obtain SABER before sailing, file the FASAH (Saudi) or Mirsal (UAE) pre-arrival declaration early, book trucking before discharge, negotiate free-time extension up front, return empties on time and use a broker who flags compliance issues early. The cheapest demurrage day is the one that never starts.',
+    a: 'Clear before the 3–7 day terminal window and the 5–10 day carrier window expire: pre-clear before arrival, obtain SABER before sailing, file the FASAH (Saudi) or Mirsal (UAE) pre-arrival declaration early, book trucking before discharge, negotiate free-time extension up front, and use a broker who flags compliance issues early. The cheapest demurrage day is the one that never starts.',
   },
   {
     q: 'Is demurrage the same as storage?',
-    a: 'Not exactly. Demurrage is the time-based charge for the container remaining in the terminal after free time; storage is usually a separate cargo/warehouse charge once goods are held beyond a given period, often at a CFS or inland depot. Ask the forwarder to separate the two on the destination schedule.',
+    a: 'No — demurrage is the container charge after the 3–7 day terminal window, while storage is a separate cargo/warehouse charge after a different period, often at a CFS or inland depot. Ask the forwarder to separate the two on the destination schedule.',
   },
 ];
 
@@ -419,6 +419,20 @@ const schema = [
         negotiated on ocean freight. This page separates the two by trigger, location and who bills
         them, then shows how a single Saudi hold can turn into a multi-day, per-container charge.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Terminal free time is only 3–7 days and the charge after it runs
+            $50–$300+/day, so a 5-day overstay adds $250–$1,500+ (5 × $50–$300) on top of the freight line.
+            Combined free time is the sum of the two windows — up to 7 terminal + 10 carrier = 17 days —
+            and missing either starts its own meter. At the 2025 market average of $150–$300/day, a Saudi
+            SABER hold that blocks release for 5 days costs $750–$1,500 on one container before detention
+            even begins.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified definitions and tax rules from indicative market ranges.
         Per-day amounts are market estimates, not tariffs — request your terminal and carrier schedule.

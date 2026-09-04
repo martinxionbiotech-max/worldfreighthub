@@ -423,7 +423,7 @@ const costRows = [
 const faqs = [
   {
     q: 'How is air freight from China to the GCC priced?',
-    a: 'On chargeable weight — the greater of gross weight and volumetric weight. Volumetric weight is length × width × height in centimetres divided by 6000 for air freight (5000 for most couriers). A light but bulky box is charged on its volume, not its scale weight.',
+    a: 'On chargeable weight — the greater of gross weight and volumetric weight (cm³ ÷6000 for air, ÷5000 for most couriers). A light but bulky box is charged on its volume, not its scale weight.',
   },
   {
     q: 'What are typical air freight rates from China to the GCC?',
@@ -431,7 +431,7 @@ const faqs = [
   },
   {
     q: 'Why are Qatar, Kuwait, Oman and Bahrain air rates not shown?',
-    a: 'Because the verified data does not publish per-kg air benchmarks for those four lanes. We do not invent plausible-looking numbers: those lanes are marked “not published — request a per-kg quote for your lane”.',
+    a: 'The verified data publishes 0 per-kg benchmarks for those 4 lanes, so the honest answer is “not published — request a per-kg quote for your lane”. We do not invent plausible-looking numbers.',
   },
   {
     q: 'How fast is air freight versus express from China to the GCC?',
@@ -439,27 +439,27 @@ const faqs = [
   },
   {
     q: 'Does air freight save me duty, VAT or SABER?',
-    a: 'No. Air freight shortens transit but does not waive import duty (5% CIF baseline), VAT, or SABER/SASO conformity for regulated Saudi goods. The shipment conformity certificate (SC) must still be obtained before cargo arrival.',
+    a: 'No — air shortens transit to 3–7 days but waives 0% of the 5% CIF duty, VAT or SABER/SASO conformity for regulated Saudi goods. The shipment conformity certificate (SC) must still be obtained before cargo arrival.',
   },
   {
     q: 'How do I calculate chargeable weight?',
-    a: 'Take the greater of gross weight and volumetric weight. A worked example: an 80 × 50 × 40 cm box weighing 20 kg is 26.7 kg by air freight (÷6000) and 32 kg by courier (÷5000). The chargeable weight is the larger number in each case.',
+    a: 'Take the greater of gross weight and volumetric weight — an 80×50×40 cm box weighing 20 kg is 26.7 kg by air (÷6000) and 32 kg by courier (÷5000). The chargeable weight is the larger number in each case.',
   },
   {
     q: 'When should I choose air freight instead of express?',
-    a: 'Use air freight for heavier commercial consignments where you arrange pickup and delivery yourself and the ÷6000 divisor plus lower per-kg rate helps. Use express for small parcels under roughly 30 kg where one door-to-door booking and tracking are worth the premium.',
+    a: 'Use air freight above roughly 30 kg for heavier consignments, where the ÷6000 divisor (versus express ÷5000) plus a lower per-kg rate compounds the saving. Use express for small parcels under roughly 30 kg where one door-to-door booking and tracking are worth the premium.',
   },
   {
     q: 'When does air freight beat sea freight on total cost?',
-    a: 'When holding, insurance, perishability or lost-sale costs exceed the air premium. Typical candidates are stockout-critical replenishment, perishables, fragile high-value goods and small shipments where sea minimums are wasteful.',
+    a: 'Air beats sea when the 7–27 day faster transit (3–7 vs 14–30 days) saves more in holding/stockout costs than the $4.3–$11.0/kg premium. Typical candidates are stockout-critical replenishment, perishables, fragile high-value goods and small shipments where sea minimums are wasteful.',
   },
   {
     q: 'Which airports are used for China to GCC air freight?',
-    a: 'Common China gateways are Shanghai Pudong (PVG), Shenzhen Bao’an (SZX), Guangzhou Baiyun (CAN) and Hong Kong (HKG). GCC arrival airports include Jeddah, Riyadh and Dammam in Saudi Arabia, Dubai (DXB/DWC), Doha, Kuwait, Muscat and Bahrain. Airport roles are operational routing context, not verified in the snapshot — confirm the airport pair and transit point with your carrier.',
+    a: 'Four China gateways — PVG, SZX, CAN and HKG — feed 8 GCC arrival airports: Jeddah, Riyadh, Dammam, Dubai (DXB/DWC), Doha, Kuwait, Muscat and Bahrain. Airport roles are operational routing context, not verified in the snapshot — confirm the airport pair and transit point with your carrier.',
   },
   {
     q: 'What hidden fees should I expect on air freight?',
-    a: 'Beyond the per-kg rate: fuel and security surcharges, terminal handling, airport storage after free time, customs clearance and brokerage, SABER PC/SC fees for Saudi Arabia, import duty of 5% CIF and destination VAT. Specific surcharge amounts were not published in the verified snapshot, so request an itemised schedule.',
+    a: 'Beyond the per-kg rate, expect 7 extra lines — fuel/security, terminal handling, airport storage, clearance/brokerage, SABER PC/SC, 5% CIF duty and destination VAT. Specific surcharge amounts were not published in the verified snapshot, so request an itemised schedule.',
   },
   {
     q: 'Is there a de minimis or duty-free threshold for air freight to the GCC?',
@@ -467,7 +467,7 @@ const faqs = [
   },
   {
     q: 'Does ISF apply to air freight from China to the GCC?',
-    a: 'No. ISF (Importer Security Filing) is a United States program and does not apply to GCC imports by air or sea. Saudi Arabia’s advance-filing equivalent is the SABER SC plus the FASAH pre-arrival declaration.',
+    a: 'ISF is a US-only filing — 0 of the 6 GCC states require it — while Saudi Arabia’s advance-filing equivalents are the SABER SC plus the FASAH pre-arrival declaration.',
   },
 ];
 
@@ -549,6 +549,21 @@ const schema = [
         and shows why air does not exempt you from duty, VAT or SABER — all without inventing
         figures for lanes that have no verified data.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Air runs $4.3–$11.0/kg with a 3–7 day transit window, while sea runs
+            14–30 days — a 7–27 day faster spread that is the actual product you are paying for. Chargeable
+            weight is the greater of gross and volumetric weight: an 80×50×40 cm box weighing 20 kg bills at
+            26.7 kg by air (÷6000) and 32 kg by courier (÷5000), a 6.7 kg and 12 kg volume penalty
+            respectively. Air does not waive the tax stack — the same Saudi ×1.2075 or UAE ×1.1025 applies,
+            so a $10,000 CIF air shipment still owes $2,075 to Saudi Arabia or $1,025 to the UAE before the
+            per-kg premium is added.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate the generic verified bands from competitor market snapshots.
         Treat every LOW-confidence rate and routing note as indicative, and request a quote for

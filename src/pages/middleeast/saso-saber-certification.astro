@@ -310,19 +310,19 @@ const certCostRows = [
 const faqs = [
   {
     q: 'What is the difference between SASO and SABER?',
-    a: 'SASO is the Saudi Standards, Metrology and Quality Organization — the standards and conformity body. SABER is the online conformity platform used to register products and issue the certificates. In practical terms, SASO sets the technical requirements and SABER is the system you work through to prove the product meets them.',
+    a: 'SASO sets the standards and SABER is the platform — a 2-part split where SASO is the rulemaker and SABER is the system you file through. In practical terms, SASO sets the technical requirements and SABER is the system you work through to prove the product meets them.',
   },
   {
     q: 'What is a SABER PC certificate?',
-    a: 'PC stands for Product Conformity Certificate. It is issued once per product model after testing and, where required, pre-shipment inspection, and is valid for about one year. It proves the product itself conforms to the applicable SASO standard.',
+    a: 'PC is Product Conformity — one certificate per product model, valid about one year. It is issued once per product model after testing and, where required, pre-shipment inspection, and proves the product itself conforms to the applicable SASO standard.',
   },
   {
     q: 'What is a SABER SC certificate?',
-    a: 'SC stands for Shipment Conformity Certificate. It is issued per shipment or per consignment and ties a specific bill of lading or air waybill to a valid PC. Each new shipment needs its own SC.',
+    a: 'SC is Shipment Conformity — one certificate per shipment, tied to a specific bill of lading or air waybill and a valid PC. Each new shipment needs its own SC.',
   },
   {
     q: 'Do I need both a PC and an SC?',
-    a: 'For regulated products, yes. The PC covers the product and is reusable while valid; the SC covers each shipment and is not reusable. You normally need the PC in place before shipment and the SC before the cargo arrives.',
+    a: 'For regulated products, yes — the ratio is 1 reusable PC per product plus 1 non-reusable SC per shipment. You normally need the PC in place before shipment and the SC before the cargo arrives.',
   },
   {
     q: 'What changed on 1 January 2025 for SABER?',
@@ -330,7 +330,7 @@ const faqs = [
   },
   {
     q: 'When should I apply for the SABER SC?',
-    a: 'Apply as soon as the bill of lading or air waybill is issued, because the SC is shipment-specific and the transport document is needed to confirm in-transit status. Finish the PC product work before shipment, then apply for the SC immediately after the transport document exists and receive it before arrival.',
+    a: 'Apply in the 2-step sequence: finish the PC product work before shipment, then file the SC as soon as the B/L or AWB exists and receive it before arrival. Because the SC is shipment-specific and the transport document is needed to confirm in-transit status.',
   },
   {
     q: 'What happens if the SC is not obtained before arrival?',
@@ -338,7 +338,7 @@ const faqs = [
   },
   {
     q: 'Which products require SABER certification?',
-    a: 'The verified research snapshot does not contain an authoritative, complete product list, so this page gives illustrative product families only and marks them LOW confidence: electrical and electronic products, toys, textiles, cosmetics, food-contact materials, building materials, household appliances and certain safety components. Confirm your exact product against the official SABER scope before ordering.',
+    a: 'The verified snapshot contains 0 authoritative complete product list, so the illustrative families are LOW confidence: electrical and electronic products, toys, textiles, cosmetics, food-contact materials, building materials, household appliances and certain safety components. Confirm your exact product against the official SABER scope before ordering.',
   },
   {
     q: 'How long is a SABER PC valid?',
@@ -346,19 +346,19 @@ const faqs = [
   },
   {
     q: 'How much does SASO/SABER certification cost?',
-    a: 'The verified research snapshot does not publish specific amounts for registration, testing, PC, SC or inspection, so this page refuses to invent a single “SABER fee” number. Treat the cost structure as LOW confidence and request an itemised written quote from your SABER/SASO provider for your product and shipment volume.',
+    a: 'The verified snapshot publishes 0 specific registration/testing/PC/SC amounts, so the honest figure is “not published — request an itemised quote” for your product and shipment volume. Treat the cost structure as LOW confidence.',
   },
   {
     q: 'Can a freight forwarder handle SABER for me?',
-    a: 'In practice many forwarders coordinate PC and SC work through local partners, but the arrangement must be explicit. Confirm in writing who is responsible for product registration, testing, PC validity and the pre-arrival SC filing — especially because a missed SC after 1 January 2025 blocks clearance.',
+    a: 'Many forwarders coordinate both PC and SC — 2 certificates — through local partners, but the responsibility split must be written down. Confirm who is responsible for product registration, testing, PC validity and the pre-arrival SC filing, especially because a missed SC after 1 January 2025 blocks clearance.',
   },
   {
     q: 'What are the most common SABER rejection or failure reasons?',
-    a: 'The most common operational failure patterns are a missing or expired PC, an SC applied after arrival, a test report from a non-accredited laboratory or one that does not match the applicable standard, a model or SKU mismatch between the PC and the shipment invoice, a wrong HS code, and missing or mismatched B/L and consignee details. These are practical patterns from the research snapshot, not an official SASO/SABER rejection list — confirm the current submission requirements with SABER.',
+    a: 'Six failure patterns dominate — missing/expired PC, post-arrival SC, non-accredited or mismatched test report, model/SKU mismatch, wrong HS code, and B/L-consignee mismatch. These are practical patterns from the research snapshot, not an official SASO/SABER rejection list — confirm the current submission requirements with SABER.',
   },
   {
     q: 'Is SASO the same as the GCC G-Mark?',
-    a: 'No, they are separate conformity marks. The research snapshot covers SASO/SABER for Saudi Arabia and does not document the GCC G-Mark requirements, so treat any G-Mark comparison as outside this page’s verified scope and confirm the specific mark required for your product with the relevant authority.',
+    a: 'No — SASO/SABER and G-Mark are 2 separate conformity marks, and the snapshot covers 0 of the G-Mark requirements. Confirm the specific mark required for your product with the relevant authority.',
   },
 ];
 
@@ -441,6 +441,21 @@ const schema = [
         and since 1 January 2025, the SC must be obtained <strong>before cargo arrival</strong> or
         clearance fails.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> SABER/SASO applies only to Saudi Arabia, whose ×1.2075 stack (15% VAT +
+            5% duty) is the GCC's highest — applying SABER logic to the UAE (×1.1025), Oman (×1.1025) or
+            Bahrain (×1.155) adds a 0-requirement step. Since 1 January 2025 the SC must be obtained before
+            arrival, and a missed SC turns directly into demurrage: a 5-day blocked container at $50–$300+/day
+            costs $250–$1,500+ on top of freight. One PC covers one product for about one year, so a repeat
+            order needs a fresh PC after ~12 months plus a new SC per shipment — a 1-PC-per-12-months +
+            1-SC-per-shipment ratio.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         The SC-before-arrival rule is MEDIUM confidence in the verified research snapshot. Certification
         fees, the exact product scope and processing-day details were not quantified, so they are marked
