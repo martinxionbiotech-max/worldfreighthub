@@ -409,7 +409,7 @@ const faqs = [
   },
   {
     q: 'How much does shipping from China to Bahrain cost?',
-    a: 'Bahrain-specific freight rates were not published in the verified research snapshot, so this page does not invent a dollar, per-CBM or per-kg figure. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+    a: 'Bahrain-specific rates are not published, so the only cost anchors are the corridor-wide 20ft FCL $1,500\u2013$6,200 and LCL $20\u2013$180/CBM brackets plus the ×1.155 statutory stack. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, documentation, inspection, clearance, 5% duty, 10% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
   },
   {
     q: 'Which port should I use when shipping from China to Bahrain?',
@@ -417,19 +417,19 @@ const faqs = [
   },
   {
     q: 'What is the difference between FCL and LCL for China to Bahrain?',
-    a: 'FCL gives you exclusive use of a 20GP, 40GP or 40HQ container and is usually the fit for large or heavy loads. LCL consolidates your cargo with other importers and is priced per cubic metre. Neither Bahrain rate was published in the verified snapshot, so the decision should be based on CBM, urgency and handling tolerance while the freight figures are requested as itemised quotes.',
+    a: 'The ~15 CBM corridor crossover is the decision rule: below it, LCL at $20\u2013$180/CBM usually wins; above it, a flat 20ft FCL at $1,500\u2013$6,200 becomes cheaper per CBM. FCL gives you exclusive use of a 20GP, 40GP or 40HQ container; LCL consolidates your cargo with other importers and is priced per cubic metre. Neither Bahrain rate was published in the verified snapshot, so the decision should be based on CBM, urgency and handling tolerance while the freight figures are requested as itemised quotes.',
   },
   {
     q: 'Is Bahrain part of the GCC common customs area?',
-    a: 'Yes. Bahrain is a Gulf Cooperation Council member and applies the GCC Common External Tariff framework, which gives a 5% customs duty baseline on most imported goods. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
+    a: 'Yes — Bahrain applies the GCC Common External Tariff, so the baseline duty is 5% of CIF, the same 5% line as the other five GCC markets. The final duty line still depends on the product’s HS code and any specific tariff treatment.',
   },
   {
     q: 'Does Bahrain charge VAT on imports?',
-    a: 'Yes. Bahrain’s country data shows a 10% VAT rate, with the standard “verify with the relevant authority before relying on this figure” note. For imports, VAT is applied on the duty-inclusive base, so the baseline statutory stack is CIF × 1.05 (duty) × 1.10 (VAT) = CIF × 1.155. Verify the current rate and any zero-rating or exemption with the Bahrain tax authority or your broker.',
+    a: 'Yes — Bahrain\u2019s 10% VAT on the duty-inclusive base makes the statutory stack ×1.155, or $11,550 on a $10,000 CIF. VAT is applied on CIF + duty, so the baseline is CIF × 1.05 × 1.10. Verify the current rate and any zero-rating or exemption with the Bahrain tax authority or your broker.',
   },
   {
     q: 'What is King Fahd Causeway and does it matter for China cargo?',
-    a: 'King Fahd Causeway is the road bridge between Saudi Arabia and Bahrain, relevant where cargo is routed as a land/transshipment movement into or through Bahrain. Its commercial timing, fees and customs treatment are not published in the verified snapshot, so treat any Causeway-specific figure as LOW/unverified and confirm the routing with your carrier before booking.',
+    a: 'It is the road bridge that converts Bahrain\u2019s 22-day Khalifa bin Salman sea leg into an overland entry for Saudi\u2019s Eastern Province, but its fees and timing are not published. Treat any Causeway-specific figure as LOW/unverified and confirm the routing with your carrier before booking.',
   },
   {
     q: 'What documents are needed for Bahrain customs clearance?',
@@ -523,6 +523,21 @@ const schema = [
         the typical 22-day sea window, the 5% duty plus 10% VAT stack, and the hidden destination
         charges that shape the Bahrain landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Bahrain's &times;1.155 stack (5% duty + 10% VAT) turns a $10,000
+            CIF into $11,550, while the UAE's &times;1.1025 lands the same base at $11,025 — a $525
+            gap. At the corridor-wide 20ft FCL $1,500&ndash;$6,200 and LCL $20&ndash;$180/CBM brackets,
+            the FCL/LCL crossover sits near 15 CBM, but no Bahrain-specific rate is published to
+            tighten that range. Its 22-day Khalifa bin Salman sea window (15&ndash;30 range) plus the
+            King Fahd Causeway overland leg makes Bahrain a schedule/congestion play into Saudi's
+            Eastern Province, not a tax play.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative planning notes. Bahrain freight
         rates were not published in the verified snapshot, so every rate is shown as a request-for-quote

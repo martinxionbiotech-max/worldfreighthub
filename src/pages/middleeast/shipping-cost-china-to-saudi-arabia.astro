@@ -454,11 +454,11 @@ const faqs = [
   },
   {
     q: 'What is the real landed cost formula for a Saudi import?',
-    a: 'Build CIF first: goods value + freight + insurance. Then apply duty at 5% of CIF, add it to the CIF, and apply VAT at 15% to that duty-inclusive base. At baseline rates the statutory stack is CIF × 1.05 × 1.15, or 1.2075 × CIF. Destination fees (THC, documents, clearance, SABER, inland and any demurrage/detention) sit on top of that statutory subtotal.',
+    a: 'At baseline rates the statutory stack is ×1.2075, so a $10,000 CIF becomes $12,075 before destination fees — 5% duty ($500) then 15% VAT on the duty-inclusive base ($1,575). Destination fees (THC, documents, clearance, SABER, inland and any demurrage/detention) sit on top of that statutory subtotal.',
   },
   {
     q: 'Why do I keep underestimating the total import cost?',
-    a: 'Because the ocean rate is only one line. Importers often forget the compound VAT-on-duty effect, SABER PC/SC fees, destination THC, documentation, brokerage, inland trucking and demurrage/detention. Request an all-in itemised quote that separates the statutory stack from the destination fee stack.',
+    a: 'A $10,000 CIF carries a $2,075 statutory add (duty $500 + VAT $1,575), so the freight line is only the entry price. Importers often forget the compound VAT-on-duty effect, SABER PC/SC fees, destination THC, documentation, brokerage, inland trucking and demurrage/detention. Request an all-in itemised quote that separates the statutory stack from the destination fee stack.',
   },
   {
     q: 'How do Saudi duty and VAT stack?',
@@ -466,27 +466,27 @@ const faqs = [
   },
   {
     q: 'Is FCL or LCL cheaper from China to Saudi Arabia?',
-    a: 'There is no single answer. LCL is usually cheaper for small volumes because you pay only for the space used, but it adds CFS deconsolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. Run both all-in quotes because the crossover changes by route and destination fees.',
+    a: 'The break-even is roughly 9.4\u201312.5 CBM at the published Shanghai\u2013Riyadh LCL ($267\u2013$356/CBM) versus the 20GP FCL floor ($3,333), so volume — not the headline rate — decides. LCL is usually cheaper for small volumes but adds CFS deconsolidation, minimum charges and more destination handling. Run both all-in quotes because the crossover changes by route and destination fees.',
   },
   {
     q: 'What hidden fees should I expect on a Saudi shipment?',
-    a: 'Beyond the freight rate, expect origin charges, destination THC and port charges, documentation fees, customs brokerage, SABER PC/SC conformity fees, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) and VAT (15% on CIF plus duty) are statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+    a: 'Duty (5% CIF) and VAT (15% on CIF plus duty) are the quantified lines at ×1.2075 — SABER and every other fee amount was not published, so budget them separately. Expect origin charges, destination THC and port charges, documentation fees, customs brokerage, SABER PC/SC conformity fees, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
   },
   {
     q: 'How much is SABER certification?',
-    a: 'SABER has two costs: the PC (Product Conformity Certificate) is once per product and involves testing and, where applicable, inspection; the SC (Shipment Conformity Certificate) is per shipment. The research snapshot did not publish specific fee amounts, so request a SABER quote for your HS code and shipment value.',
+    a: 'The snapshot publishes no SABER fee amount, so treat it as an unquantified add-on to the ×1.2075 statutory stack rather than assuming a figure. SABER has two costs: the PC (Product Conformity Certificate) is once per product and involves testing and, where applicable, inspection; the SC (Shipment Conformity Certificate) is per shipment. Request a SABER quote for your HS code and shipment value.',
   },
   {
     q: 'Does the 15% VAT apply to the freight as well?',
-    a: 'Yes, in the standard structure. VAT is calculated on CIF plus customs duty, and CIF includes freight and insurance. That means a higher freight cost also raises the VAT base. Treat the rate as subject to change and confirm treatment with ZATCA for the goods in question.',
+    a: 'Yes — because VAT is 15% on CIF plus duty, every $1 of freight adds 20.75 cents of statutory cost (5 cents duty plus 15.75 cents VAT). CIF includes freight and insurance, so a higher freight cost also raises the VAT base. Treat the rate as subject to change and confirm treatment with ZATCA for the goods in question.',
   },
   {
     q: 'What is the cheapest way to ship from China to Saudi Arabia?',
-    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'Sea FCL at $3,333\u2013$6,215 per box beats air at $880\u2013$1,350 per 100 kg for high-volume non-urgent cargo, but the cheapest call depends on the ~9.4\u201312.5 CBM LCL/FCL break-even. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
   },
   {
     q: 'How can I reduce the landed cost on this route?',
-    a: 'Consolidate into fewer, fuller containers; compare FCL and LCL all-in quotes; classify the HS code correctly before booking; obtain the SABER SC before arrival; file the FASAH pre-arrival declaration early; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    a: 'The highest-leverage lever is consolidating past the ~9.4\u201312.5 CBM FCL break-even and getting the SABER SC before arrival, because the ×1.2075 stack is fixed regardless of freight. Also compare FCL and LCL all-in quotes; classify the HS code correctly before booking; file the FASAH pre-arrival declaration early; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
   },
 ];
 
@@ -567,6 +567,20 @@ const schema = [
         from THC, documentation, clearance, SABER fees, inland transport and the Saudi duty/VAT
         stack, then shows how the layers compound into a true landed cost.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Saudi Arabia's &times;1.2075 statutory stack turns a $10,000 CIF
+            into $12,075 — a $2,075 add before any destination fee. At the published
+            Shanghai&ndash;Riyadh LCL of $267&ndash;$356/CBM, the 20GP FCL floor of $3,333 is reached
+            at roughly 9.4&ndash;12.5 CBM, so full-container pricing wins earlier than the generic
+            15-CBM rule. The 15% VAT is the ranking variable: it adds $1,575 on $10,000 CIF — three
+            times the UAE's $525 VAT on the same base.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified rules from indicative market snapshots. Treat every
         LOW-confidence rate and fee note as indicative, verify with carrier before relying on it.

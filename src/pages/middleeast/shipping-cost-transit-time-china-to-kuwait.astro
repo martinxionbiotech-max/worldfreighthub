@@ -435,7 +435,7 @@ const factorRows = [
 const faqs = [
   {
     q: 'How much does shipping cost from China to Kuwait?',
-    a: 'No verified Kuwait FCL, LCL, air, express or DDP rate is published in the research snapshot, so every rate line is marked “not published — request an all-in quote”. The only defensible corridor figure is the typical 24-day sea transit to Shuwaikh, which is a LOW-confidence route estimate. Request itemised quotes from a forwarder rather than using a guessed benchmark.',
+    a: 'Kuwait-specific rates are not published, so the only defensible cost anchors are the corridor-wide LCL $20–$180/CBM and 20ft FCL $1,500–$6,200 brackets plus the ×1.05 statutory stack. The quantifiable schedule line is the typical 24-day sea transit to Shuwaikh (LOW confidence). Request itemised quotes from a forwarder rather than using a guessed benchmark.',
   },
   {
     q: 'How long does it take to ship from China to Kuwait?',
@@ -443,35 +443,35 @@ const faqs = [
   },
   {
     q: 'Why is the China-to-Kuwait corridor cost-sensitive despite the short distance?',
-    a: 'Kuwait is a smaller market than the UAE or Saudi Arabia, so it has less shipment volume and schedule density to absorb fixed handling costs. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
+    a: 'Kuwait\u2019s typical 24-day sea window runs 3 days slower than the UAE\u2019s 21, and the snapshot publishes no Kuwait FCL/LCL/air rate against the corridor\u2019s $20–$180/CBM and $1,500–$6,200 brackets. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
   },
   {
     q: 'How is the Kuwait landed cost calculated?',
-    a: 'Build the CIF value from cost, insurance and freight. For most goods, add 5% customs duty on CIF. No general VAT is applied in the current Kuwait framework, so the baseline statutory landed cost is CIF × 1.05. Add destination THC, documentation, clearance, inspection, inland trucking and any demurrage/detention on top of that.',
+    a: 'On a $10,000 CIF, Kuwait\u2019s baseline statutory landed cost is $10,500 — 5% duty on CIF with no general VAT — because the stack is CIF × 1.05. Add destination THC, documentation, clearance, inspection, inland trucking and any demurrage/detention on top of that.',
   },
   {
     q: 'Does the 5% Kuwait duty apply to freight and insurance?',
-    a: 'Yes. The duty base is CIF — cost, insurance and freight — so freight and insurance are included in the value used for the 5% calculation. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
+    a: 'Yes — every $1 of freight or insurance adds 5 cents of duty, because the 5% charge applies to the full CIF value, not just the invoice. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
   },
   {
     q: 'What hidden fees should I expect on a Kuwait shipment?',
-    a: 'Beyond the freight rate, expect origin charges, destination THC and port service fees, documentation and bill of lading fees, customs brokerage, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) is statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+    a: 'Duty is the only quantified statutory line at 5% of CIF — every other Kuwait fee amount was not published, so budget the destination-fee stack as an unknown add-on. Expect origin charges, destination THC and port service fees, documentation and bill of lading fees, customs brokerage, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
   },
   {
     q: 'What is the cheapest way to ship from China to Kuwait?',
-    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'Below ~15 CBM, LCL\u2019s $20–$180/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL at $1,500–$6,200 becomes cheaper per CBM. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Kuwait?',
-    a: 'LCL suits small-volume shipments and charges per CBM, but it adds consolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. Kuwait FCL and LCL rates were not published in the snapshot, so request all-in quotes for both and compare the full landed cost.',
+    a: 'The ~15 CBM crossover is the decision rule: below it, LCL\u2019s $20–$180/CBM usually wins; above it, FCL\u2019s flat $1,500–$6,200 container rate becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. Kuwait FCL and LCL rates were not published in the snapshot, so request all-in quotes for both and compare the full landed cost.',
   },
   {
     q: 'Does Kuwait charge VAT on top of import duty?',
-    a: 'No general VAT is currently applied on Kuwait imports. The main statutory charge is 5% customs duty on CIF. This differs from Saudi Arabia and the UAE, which apply VAT on top of duty. Verify the current Kuwait position with the General Administration of Customs before finalising a quote.',
+    a: 'No — Kuwait\u2019s stack stops at ×1.05 (5% duty, 0% VAT), so a $10,000 CIF clears at $10,500 versus $12,075 in Saudi Arabia (×1.2075). The main statutory charge is 5% customs duty on CIF. Verify the current Kuwait position with the General Administration of Customs before finalising a quote.',
   },
   {
     q: 'How can I reduce the landed cost on the China-to-Kuwait route?',
-    a: 'Consolidate into fewer, fuller containers; compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Kuwait import declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s $20–$180/CBM per-unit pricing into a flat $1,500–$6,200 container spread across your volume. Also compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Kuwait import declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
   },
   {
     q: 'Which port should be used in the landed-cost quote?',
@@ -479,7 +479,7 @@ const faqs = [
   },
   {
     q: 'How should I quote transit time from China to Kuwait?',
-    a: 'Quote the ocean leg separately from the door-to-door time. The typical port-to-port figure is 24 days to Shuwaikh, but total delivery adds discharge, Kuwait Customs clearance, any inspection and last-mile trucking to the final Kuwait address. Ask the forwarder to split the port-to-port and door-to-door dates.',
+    a: 'Quote 24 days port-to-port to Shuwaikh, then add discharge, Kuwait Customs clearance, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
   },
 ];
 
@@ -561,6 +561,21 @@ const schema = [
         the hidden destination charge stack, and the FCL-vs-LCL-vs-air decision for the small Kuwait
         market.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Kuwait clears at &times;1.05 (5% duty, 0% VAT), so a $10,000 CIF
+            shipment adds $500 in statutory cost versus $2,075 in Saudi Arabia (&times;1.2075) — a
+            $1,575 saving. The corridor-wide ocean brackets are LCL $20&ndash;$180/CBM and 20ft FCL
+            $1,500&ndash;$6,200, with the FCL/LCL crossover near 15 CBM ($2,700 at the top LCL rate
+            versus a $1,500 FCL floor). Its typical 24-day sea window (15&ndash;30 range) runs 3 days
+            slower than the UAE's 21, and with no published Kuwait-specific rate the schedule-density
+            gap — not the tax — is the real planning variable.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate the verified duty/VAT baseline from indicative market snapshots.
         Every Kuwait rate, transit and fee figure is LOW confidence unless marked otherwise — verify

@@ -316,27 +316,27 @@ const faqs = [
   },
   {
     q: 'Is FCL faster than LCL from China to Saudi Arabia?',
-    a: 'Yes, in most cases FCL is faster because the sealed container moves as one consignment. Freightos shows FCL Shanghai–Riyadh at 30–40 days versus LCL at 32–45 days. LCL adds consolidation and deconsolidation handling, which can also add scheduling risk.',
+    a: 'Yes — Freightos puts FCL Shanghai\u2013Riyadh at 30\u201340 days versus 32\u201345 for LCL, a 2\u20135 day FCL edge. The sealed container moves as one consignment; LCL adds consolidation and deconsolidation handling, which can also add scheduling risk.',
   },
   {
     q: 'Why is there a gap between vessel arrival and cargo release?',
-    a: 'Arrival is not release. After discharge the container must be made available, then the FASAH pre-arrival declaration and SABER SC must be accepted, duty/VAT settled, and any inspection completed before release. A late SABER SC, HS-code issue or missing document turns a day gap into a multi-day hold.',
+    a: 'The gap is the difference between the 20\u201345-day sailing clock and the release clock, which adds FASAH processing, SABER SC verification and duty/VAT settlement before cargo is free. A late SABER SC, HS-code issue or missing document turns a day gap into a multi-day hold.',
   },
   {
     q: 'What most often delays a China to Saudi shipment?',
-    a: 'The common causes are transhipment waits, peak-season congestion, Red Sea routing changes, port congestion at Jeddah or Dammam, and clearance holds from a late SABER SC or incorrect documents. Planning the compliance work before arrival removes the controllable part of the delay.',
+    a: 'The published windows already embed a 10-day port gap (Jeddah 20\u201335 vs Dammam/Riyadh 30\u201345) plus 15 days of spread within each window, and transhipment, congestion and clearance holds sit on top of that. Planning the compliance work before arrival removes the controllable part of the delay.',
   },
   {
     q: 'How can I shorten transit time from China to Saudi Arabia?',
-    a: 'Choose a direct service over transhipment, obtain the SABER SC before arrival, file the FASAH pre-arrival declaration early, classify the HS code correctly, book trucking before discharge, and use air freight only when the time saving is worth the premium.',
+    a: 'Choose a direct service to cut the transhipment wait, obtain the SABER SC before arrival and file FASAH early to protect the 20\u201335-day Jeddah window from clearance holds. Also classify the HS code correctly, book trucking before discharge, and use air freight only when the time saving is worth the premium.',
   },
   {
     q: 'What is the difference between port-to-port and door-to-door transit time?',
-    a: 'Port-to-port stops at the Saudi terminal and leaves pre-carriage, Saudi clearance and delivery to you, so the quoted time is shorter but incomplete. Door-to-door includes the whole chain to the final address and is the only timing that matters for when your buyer actually receives the goods.',
+    a: 'Port-to-port shows only the 20\u201345-day sea leg, while door-to-door adds pre-carriage, clearance and delivery that can stretch the total beyond the sailing window. Door-to-door is the only timing that matters for when your buyer actually receives the goods.',
   },
   {
     q: 'Does SABER slow down my shipment?',
-    a: 'Only if it is handled late. The Shipment Conformity Certificate (SC) must be obtained before cargo arrival — since 1 January 2025 an SC applied after arrival is void. If the PC and SC are done correctly before arrival, SABER is part of the clearance flow rather than a delay.',
+    a: 'Only if it is late — an SC applied after arrival is void (since 1 January 2025), which can turn a 20\u201335-day Jeddah sailing into a multi-day hold. If the PC and SC are done correctly before arrival, SABER is part of the clearance flow rather than a delay.',
   },
 ];
 
@@ -417,6 +417,21 @@ const schema = [
         arrival, and the customs release that lets your buyer take delivery. This page separates
         Jeddah from Dammam, FCL from LCL, and port-to-port from door-to-door.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Sea transit to Saudi splits by port — Jeddah runs ~20&ndash;35 days
+            versus Dammam/Riyadh at ~30&ndash;45 days, so gateway choice moves the clock by about 10
+            days. Air shrinks the same lane to 2&ndash;10 days (3&ndash;7 days airport-to-airport),
+            a speed gain of roughly 3&ndash;12× over the 20&ndash;35-day Jeddah sea window. FCL beats
+            LCL by 2&ndash;5 days (30&ndash;40 vs 32&ndash;45 days Shanghai&ndash;Riyadh), but the SABER
+            SC must be filed before arrival or it voids — so compliance timing, not sailing time, is
+            the biggest controllable risk.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence transit window as indicative, verify with carrier before relying on it.

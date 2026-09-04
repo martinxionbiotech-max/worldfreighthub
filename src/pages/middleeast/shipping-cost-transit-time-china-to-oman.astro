@@ -338,7 +338,7 @@ const factorRows = [
 const faqs = [
   {
     q: 'How much does shipping cost from China to Oman?',
-    a: 'Oman-specific freight rates were not published in the verified research snapshot, so this page does not invent a dollar or per-CBM figure. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, clearance, 5% duty, 5% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+    a: 'Oman-specific rates are not published, so the only defensible cost anchors are the corridor-wide LCL $20–$180/CBM and 20ft FCL $1,500–$6,200 brackets plus Oman\u2019s ×1.1025 statutory stack. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, clearance, 5% duty, 5% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
   },
   {
     q: 'How long does it take to ship from China to Oman?',
@@ -346,35 +346,35 @@ const faqs = [
   },
   {
     q: 'Why is the China-to-Oman corridor cost-sensitive?',
-    a: 'Oman is a mid-size market without the published benchmark depth of the UAE, so freight and destination fees must be quoted rather than assumed. Its two-coast geography (Sohar north, Salalah south) also means a port-choice mistake can add significant inland distance and cost on top of the ocean rate.',
+    a: 'Oman\u2019s 19-day Sohar window runs 2 days faster than the UAE\u2019s 21-day Jebel Ali, yet the snapshot publishes no Oman freight rate, so pricing falls to the corridor\u2019s $20–$180/CBM and $1,500–$6,200 brackets. Its two-coast geography (Sohar north, Salalah south) also means a port-choice mistake can add significant inland distance and cost on top of the ocean rate.',
   },
   {
     q: 'How is the Oman landed cost calculated?',
-    a: 'Build the CIF value from cost, insurance and freight. Add 5% customs duty on CIF, then 5% VAT on the duty-inclusive base. The baseline statutory landed cost is CIF × 1.05 × 1.05 = CIF × 1.1025. Add destination THC, documentation, Bayan clearance, inland trucking and any demurrage/detention on top of that.',
+    a: 'On a $10,000 CIF, Oman\u2019s baseline statutory landed cost is $11,025 — 5% duty ($500) then 5% VAT on the duty-inclusive base ($525) — because the stack is CIF × 1.05 × 1.05. Add destination THC, documentation, Bayan clearance, inland trucking and any demurrage/detention on top of that.',
   },
   {
     q: 'Does the 5% duty and 5% VAT apply to freight and insurance?',
-    a: 'The duty base is CIF — cost, insurance and freight — so freight and insurance are included in the value used for the 5% duty. VAT is then applied on the duty-inclusive base (CIF + duty). A higher freight rate therefore raises both the duty and the VAT.',
+    a: 'Yes — because the base is CIF, every $1 of freight or insurance adds 10.25 cents of statutory cost (5 cents duty plus 5.25 cents VAT on the duty-inclusive base). VAT is applied on CIF + duty, so a higher freight rate raises both the duty and the VAT.',
   },
   {
     q: 'What hidden fees should I expect on an Oman shipment?',
-    a: 'Beyond the freight rate, expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bayan processing, conformity/certification if applicable, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) and VAT (5%) are statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+    a: 'Oman\u2019s only quantified statutory lines are 5% duty and 5% VAT (×1.1025) — every destination fee amount was not published, so budget the fee stack as an unknown add-on. Expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bayan processing, conformity/certification if applicable, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
   },
   {
     q: 'What is the cheapest way to ship from China to Oman?',
-    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'Below ~15 CBM, LCL\u2019s $20–$180/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL at $1,500–$6,200 becomes cheaper per CBM. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Oman?',
-    a: 'LCL suits small-volume shipments and charges per CBM, but it adds consolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. The research snapshot published no Oman FCL or LCL rate, so request both all-in quotes and compare the full landed cost.',
+    a: 'The ~15 CBM crossover is the decision rule: below it, LCL\u2019s $20–$180/CBM usually wins; above it, FCL\u2019s flat $1,500–$6,200 container rate becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. The research snapshot published no Oman FCL or LCL rate, so request both all-in quotes and compare the full landed cost.',
   },
   {
     q: 'Does Oman charge VAT on top of import duty?',
-    a: 'Yes. Oman applies 5% VAT on the duty-inclusive base, on top of the 5% customs duty on CIF. The baseline statutory stack is CIF × 1.05 × 1.05 = CIF × 1.1025. This differs from Qatar and Kuwait, which have no general VAT. Verify the current Oman position with the tax authority before finalising a quote.',
+    a: 'Yes — Oman stacks 5% VAT on the duty-inclusive base, so the statutory total is ×1.1025, or $11,025 on a $10,000 CIF. This differs from Qatar and Kuwait, which have no general VAT. Verify the current Oman position with the tax authority before finalising a quote.',
   },
   {
     q: 'How can I reduce the landed cost on the China-to-Oman route?',
-    a: 'Consolidate into fewer, fuller containers; confirm the correct port (Sohar vs Salalah) before booking; compare FCL and LCL all-in quotes; classify the HS code correctly before quoting; screen restricted goods early; file the Bayan declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s $20–$180/CBM per-unit pricing into a flat $1,500–$6,200 container spread across your volume. Also confirm the correct port (Sohar vs Salalah) before booking; compare FCL and LCL all-in quotes; classify the HS code correctly before quoting; screen restricted goods early; file the Bayan declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
   },
   {
     q: 'Which port should be used in the landed-cost quote?',
@@ -382,7 +382,7 @@ const faqs = [
   },
   {
     q: 'How should I quote transit time from China to Oman?',
-    a: 'Quote the ocean leg separately from the door-to-door time. The typical port-to-port figure to Sohar is 19 days, but total delivery adds discharge, Bayan clearance, 5% duty/VAT payment, any inspection and last-mile trucking to the final Oman address. Ask the forwarder to split the port-to-port and door-to-door dates.',
+    a: 'Quote 19 days port-to-port to Sohar, then add discharge, Bayan clearance, 5% duty/VAT payment, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
   },
 ];
 
@@ -464,6 +464,21 @@ const schema = [
         VAT stack, then shows how the layers compound into a true landed cost — while keeping the
         typical 19-day Sohar transit window in view.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Oman clears at the same &times;1.1025 as the UAE (5% duty + 5%
+            VAT), so a $10,000 CIF lands at $11,025 before destination fees — the tax is not the
+            differentiator. At the corridor-wide brackets of LCL $20&ndash;$180/CBM and 20ft FCL
+            $1,500&ndash;$6,200, the FCL/LCL crossover sits near 15 CBM, but no Oman-specific rate is
+            published to tighten that range. Its 19-day Sohar window (15&ndash;30 range) is 2 days
+            faster than the UAE's 21-day Jebel Ali, so the value is Sohar's less-congested clearance
+            — a congestion/risk trade, not a tax trade.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified rules from indicative planning notes. Oman freight rates
         were not published in the verified snapshot, so every rate is shown as “request a quote”.

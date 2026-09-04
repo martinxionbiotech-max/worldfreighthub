@@ -381,35 +381,35 @@ const faqs = [
   },
   {
     q: 'Why is the China-to-Qatar corridor cost-sensitive despite the short distance?',
-    a: 'Qatar is a smaller market than the UAE or Saudi Arabia, so it has less shipment volume and schedule density to absorb fixed handling costs. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
+    a: 'Qatar\u2019s LCL floor of USD 70/CBM is 3.5× the corridor-wide $20 floor, and its typical 22-day sea window sits 1 day behind the UAE\u2019s 21, so the smaller market shows up as a higher per-CBM base. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
   },
   {
     q: 'How is the Qatar landed cost calculated?',
-    a: 'Build the CIF value from cost, insurance and freight. For most goods, add 5% customs duty on CIF. No general VAT is applied in the current framework, so the baseline statutory landed cost is CIF × 1.05. Add destination THC, documentation, Al-Nadeeb clearance, inland trucking and any demurrage/detention on top of that.',
+    a: 'On a $10,000 CIF, Qatar\u2019s baseline statutory landed cost is $10,500 — 5% duty on CIF with no general VAT — because the stack is CIF × 1.05. Add destination THC, documentation, Al-Nadeeb clearance, inland trucking and any demurrage/detention on top of that.',
   },
   {
     q: 'Does the 5% duty apply to freight and insurance?',
-    a: 'Yes. The duty base is CIF — cost, insurance and freight — so freight and insurance are included in the value used for the 5% calculation. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
+    a: 'Yes — every $1 of freight or insurance adds 5 cents of duty, because the 5% charge applies to the full CIF value, not just the invoice. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
   },
   {
     q: 'What hidden fees should I expect on a Qatar shipment?',
-    a: 'Beyond the freight rate, expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Al-Nadeeb processing, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Duty (5% CIF) is statutory. Specific fee amounts were not published in the research snapshot — request an itemised schedule.',
+    a: 'Duty is the only quantified statutory line at 5% of CIF — every other Qatar fee amount was not published, so budget the destination-fee stack as an unknown add-on. Expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Al-Nadeeb processing, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
   },
   {
     q: 'What is the cheapest way to ship from China to Qatar?',
-    a: 'For most high-volume, non-urgent cargo, sea freight gives the lowest unit cost — but only if you include all destination fees and compare the all-in cost, not the headline rate. Air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'Below ~15 CBM, LCL\u2019s USD 70\u2013155/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL becomes cheaper per CBM — the published Qatar LCL floor starts 3.5× above the corridor\u2019s $20 floor. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Qatar?',
-    a: 'LCL suits small-volume shipments and charges per CBM, but it adds consolidation, minimum charges and more destination handling. FCL is usually better as cargo approaches a meaningful share of a container. The research snapshot only quantified Qatar LCL at USD 70–155 per CBM, so request FCL and LCL all-in quotes and compare the full landed cost.',
+    a: 'The ~15 CBM crossover is the decision rule: below it, LCL at USD 70\u2013155/CBM usually wins; above it, a flat FCL container becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. The research snapshot only quantified Qatar LCL at USD 70–155 per CBM, so request FCL and LCL all-in quotes and compare the full landed cost.',
   },
   {
     q: 'Does Qatar charge VAT on top of import duty?',
-    a: 'No general VAT is currently applied on Qatar imports. The main statutory charge is 5% customs duty on CIF. This differs from Saudi Arabia and the UAE, which apply VAT on top of duty. Verify the current Qatar position with the General Authority of Customs before finalising a quote.',
+    a: 'No — Qatar\u2019s stack stops at ×1.05 (5% duty, 0% VAT), so a $10,000 CIF clears at $10,500 versus $12,075 in Saudi Arabia (×1.2075). The main statutory charge is 5% customs duty on CIF. Verify the current Qatar position with the General Authority of Customs before finalising a quote.',
   },
   {
     q: 'How can I reduce the landed cost on the China-to-Qatar route?',
-    a: 'Consolidate into fewer, fuller containers; compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Al-Nadeeb declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s USD 70\u2013155/CBM per-unit pricing into a flat FCL container spread across your volume. Also compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Al-Nadeeb declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
   },
   {
     q: 'Which port should be used in the landed-cost quote?',
@@ -417,7 +417,7 @@ const faqs = [
   },
   {
     q: 'How should I quote transit time from China to Qatar?',
-    a: 'Quote the ocean leg separately from the door-to-door time. The typical port-to-port figure is 22 days, but total delivery adds discharge, Al-Nadeeb clearance, any inspection and last-mile trucking to the final Qatar address. Ask the forwarder to split the port-to-port and door-to-door dates.',
+    a: 'Quote 22 days port-to-port, then add discharge, Al-Nadeeb clearance, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
   },
 ];
 
@@ -499,6 +499,20 @@ const schema = [
         duty stack, then shows how the layers compound into a true landed cost — while keeping the
         typical 22-day transit window in view.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Qatar's ×1.05 stack (5% duty, 0% VAT) clears a $10,000 CIF at
+            $10,500 versus $12,075 in Saudi Arabia (×1.2075) — a $1,575 saving that offsets a
+            higher per-CBM floor. Its published LCL bracket is USD 70&ndash;155/CBM, a $70 floor that
+            is 3.5× the corridor's $20 floor, alongside air at USD 4.5&ndash;7.5/kg. The typical
+            22-day sea window (15&ndash;30 range) runs 1 day behind the UAE's 21, so the clearance
+            tax-saving trade is what separates Qatar from the bigger hubs.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified rules from indicative market snapshots. Treat every
         LOW-confidence rate and fee note as indicative, and verify with your carrier before relying

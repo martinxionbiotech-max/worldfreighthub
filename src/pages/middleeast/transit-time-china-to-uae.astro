@@ -253,7 +253,7 @@ const faqs = [
   },
   {
     q: 'How long does sea freight take to Khalifa Port or Sharjah?',
-    a: 'The verified research snapshot does not publish a Khalifa Port or Port Khalid specific figure. The UAE corridor ballpark is 14–18 days by sea as a fast-guide window, but port-specific schedules differ, so request the exact transit for Abu Dhabi or Sharjah discharge.',
+    a: 'Khalifa Port and Sharjah have no port-specific figure, so plan on the 14\u201318-day fast corridor window or the 21-day Jebel Ali typical and confirm the exact Abu Dhabi or Sharjah schedule. Port-specific schedules differ, so request the exact transit for that discharge.',
   },
   {
     q: 'How fast is air freight from China to Dubai?',
@@ -261,27 +261,27 @@ const faqs = [
   },
   {
     q: 'Is FCL faster than LCL from China to the UAE?',
-    a: 'In most cases FCL is faster because the sealed container moves as one consignment. LCL adds consolidation at origin and deconsolidation at the destination CFS, which can add scheduling and handling risk even when the main carriage time is similar.',
+    a: 'In most cases FCL is faster — a sealed direct FCL can hit the 14\u201318-day fast window, while LCL consolidation pushes the planning number toward the 21-day typical or the 15\u201330-day range. LCL adds consolidation at origin and deconsolidation at the destination CFS, which can add scheduling and handling risk even when the main carriage time is similar.',
   },
   {
     q: 'Why is there a gap between vessel arrival and cargo release?',
-    a: 'Arrival is not release. After discharge the container must be made available, then the Mirsal 2 declaration is processed, duty and VAT are settled, and any inspection is completed. A late Mirsal 2 filing or document mismatch holds cargo at the port even though the vessel arrived on schedule.',
+    a: 'The gap is the 21-day schedule clock versus the release clock, which adds Mirsal 2 processing, duty/VAT settlement and any inspection before cargo is free. A late Mirsal 2 filing or document mismatch holds cargo at the port even though the vessel arrived on schedule.',
   },
   {
     q: 'What is the difference between port-to-port and door-to-door transit time?',
-    a: 'Port-to-port stops at the UAE terminal or airport and leaves pre-carriage, clearance and delivery to you. Door-to-door bundles pick-up, export, transit, UAE import and final delivery into one window. Confirm where the clock starts and stops on every quote — the same route can be quoted as 21 days or 30 days depending on scope.',
+    a: 'Port-to-port shows only the 21-day Jebel Ali sea leg, while door-to-door adds pick-up, clearance and delivery — the same route can be quoted as 21 or 30 days depending on scope. Confirm where the clock starts and stops on every quote.',
   },
   {
     q: 'What delays UAE transit the most?',
-    a: 'The usual levers are transshipment, peak-season capacity, port congestion, a late Mirsal 2 filing, an incorrect HS code, missing permits and the inland delivery leg. The controllable half is document and clearance readiness; the uncontrollable half is schedule, season and congestion.',
+    a: 'The published spread is 15\u201330 days (typical 21), so 15 days of variance is schedule risk before a single clearance or transshipment event. The controllable half is document and clearance readiness; the uncontrollable half is schedule, season and congestion.',
   },
   {
     q: 'Does UAE customs clearance add much time?',
-    a: 'The research snapshot does not publish a reliable hour or day figure for UAE clearance. Effective lead time depends on HS accuracy, document consistency, whether inspection is selected, and free time. Complete pre-arrival work first; clearance is usually faster than fixing a wrong HS code or missing permit.',
+    a: 'The snapshot publishes no clearance-day figure, but clearance sits between the 21-day ocean typical and your delivery date, so treat it as an unquantified add-on driven by HS accuracy and pre-arrival Mirsal 2 filing. Complete pre-arrival work first; clearance is usually faster than fixing a wrong HS code or missing permit.',
   },
   {
     q: 'How can I shorten China to UAE transit time?',
-    a: 'Book a direct sailing or direct airport pair; file the Mirsal 2 pre-arrival declaration early; classify the HS code correctly; prepare documents before departure; match the discharge port to the final destination; and switch urgent replenishment to air while the main stock moves by sea.',
+    a: 'Book a direct sailing to hit the 14\u201318-day fast window instead of the 21-day typical, and file Mirsal 2 pre-arrival to protect the release clock. Also classify the HS code correctly; prepare documents before departure; match the discharge port to the final destination; and switch urgent replenishment to air while the main stock moves by sea.',
   },
 ];
 
@@ -362,6 +362,20 @@ const schema = [
         arrival, and the Mirsal 2 clearance that lets your buyer take delivery. This page separates
         Jebel Ali from Khalifa and Sharjah, sea from air, and port-to-port from door-to-door.
       </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> UAE transit is ~21 days to Jebel Ali (15&ndash;30-day planning
+            range), with a faster 14&ndash;18-day corridor window that should be treated as best case
+            rather than promise. Air cuts the lane to 3&ndash;7 days airport-to-airport — a
+            3&ndash;7× speed gain over the 21-day sea typical — while express lands at 2&ndash;4
+            days. Free-zone cargo can defer the 5% + 5% (×1.1025) customs/VAT clock until exit, so
+            the 21-day ocean figure is only the first of two clocks you are planning around.
+          </p>
+        </blockquote>
+      </section>
+
       <p class="small muted">
         Confidence badges separate verified figures from indicative market snapshots. Treat every
         LOW-confidence transit window as indicative, verify with carrier before relying on it.
