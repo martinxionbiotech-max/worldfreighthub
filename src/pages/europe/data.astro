@@ -1,0 +1,612 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { europePorts } from '../../data/europe-ports';
+import { europeRoutes } from '../../data/europe-routes';
+import { portName } from '../../data/lookup';
+
+const pageUrl = `${SITE_URL}/europe/data/`;
+const cif = 10000;
+const dutyPct = 8; // stated worked example, not a market-wide fact
+const notPublished = 'Not published in verified snapshot — request an itemised schedule';
+
+// 11-market landed-cost table. Multiplier = (1 + duty) × (1 + VAT); all values verified by hand.
+const landedCostRows = [
+  { market: 'Germany', slug: 'germany', vat: '19%', multiplier: '×1.2852', total: '$12,852', tax: '$2,852', confidence: 'MEDIUM' },
+  { market: 'United Kingdom', slug: 'united-kingdom', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'France', slug: 'france', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'Austria', slug: 'austria', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
+  { market: 'Netherlands', slug: 'netherlands', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Belgium', slug: 'belgium', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Spain', slug: 'spain', vat: '21%', multiplier: '×1.3068', total: '$13,068', tax: '$3,068', confidence: 'MEDIUM' },
+  { market: 'Italy', slug: 'italy', vat: '22%', multiplier: '×1.3176', total: '$13,176', tax: '$3,176', confidence: 'MEDIUM' },
+  { market: 'Poland', slug: 'poland', vat: '23%', multiplier: '×1.3284', total: '$13,284', tax: '$3,284', confidence: 'MEDIUM' },
+  { market: 'Portugal', slug: 'portugal', vat: '23%', multiplier: '×1.3284', total: '$13,284', tax: '$3,284', confidence: 'MEDIUM' },
+  { market: 'Sweden', slug: 'sweden', vat: '25%', multiplier: '×1.35', total: '$13,500', tax: '$3,500', confidence: 'MEDIUM' },
+].map((r) => ({
+  market: { href: `/europe/shipping-from-china-to-${r.slug}/`, label: r.market },
+  vat: r.vat,
+  multiplier: r.multiplier,
+  total: r.total,
+  tax: r.tax,
+  confidence: r.confidence,
+}));
+
+const regimeRows = [
+  {
+    regime: 'European Union (27 member states)',
+    duty: 'EU Common Customs Tariff (TARIC) — one schedule for all member states',
+    vat: 'Member-state rate, 19% (Germany) to 25% (Sweden)',
+    chinaStatus: 'No China–EU FTA; TARIC MFN rate by HS code, typically 0–12% for consumer goods',
+    confidence: 'HIGH',
+  },
+  {
+    regime: 'United Kingdom',
+    duty: 'UK Global Tariff (UKGT) — independent since 1 January 2021',
+    vat: '20% standard (5% reduced, 0% some items)',
+    chinaStatus: 'No UK trade agreement or DCTS coverage; UKGT MFN rate by HS code',
+    confidence: 'HIGH',
+  },
+];
+
+const portRows = europePorts.map((p) => {
+  const throughput = p.specs.find((s) => s.label === 'Container throughput')?.value ?? notPublished;
+  const draft = p.specs.find((s) => s.label === 'Max draft')?.value ?? notPublished;
+  return {
+    port: { href: `/europe/ports/${p.slug}/`, label: p.name },
+    country: { href: `/europe/shipping-from-china-to-${p.countrySlug}/`, label: p.country },
+    unlocode: p.unlocode ?? '—',
+    throughput,
+    draft,
+  };
+});
+
+const gatewaySlugs = ['rotterdam', 'hamburg', 'antwerp', 'felixstowe', 'le-havre', 'valencia', 'genoa', 'gdansk'];
+const gatewayTransitRows = gatewaySlugs.map((slug) => {
+  const route = europeRoutes.find((r) => r.destPort === slug);
+  return {
+    gateway: { href: `/europe/ports/${slug}/`, label: portName(slug) },
+    typical: route ? `${route.transitDays.typical} days` : notPublished,
+    range: route ? `${route.transitDays.range[0]}–${route.transitDays.range[1]} days` : '—',
+    routing: route ? route.routingNote : 'Transships via a northern-range or Med hub — add 4–7 days',
+    confidence: route ? route.confidence : 'LOW',
+  };
+});
+
+const gatewayCostRows = gatewaySlugs.map((slug) => {
+  const route = europeRoutes.find((r) => r.destPort === slug);
+  return {
+    gateway: { href: `/europe/ports/${slug}/`, label: portName(slug) },
+    fcl20: route ? route.costRows[0].range : notPublished,
+    fcl40: route ? route.costRows[1].range : notPublished,
+    lcl: route ? route.costRows[2].range : notPublished,
+    confidence: route ? 'MEDIUM' : 'LOW',
+  };
+});
+
+const faqs = [
+  {
+    q: 'What is the landed cost of importing goods into Europe?',
+    a: "On a $10,000 CIF shipment at 8% duty, landed cost runs from $12,852 in Germany (×1.2852) to $13,500 in Sweden (×1.35) — a $648 spread that is entirely VAT, because EU common duty is identical across all 27 member states. Landed total = CIF × (1 + duty) × (1 + VAT), so the destination's VAT rate, not the duty line, is the variable you price.",
+  },
+  {
+    q: 'Which European country has the lowest import VAT?',
+    a: "Germany at 19%, which on a $10,000 CIF at 8% duty lands $108 cheaper than the UK, France and Austria at 20% ($12,852 vs $12,960) and $648 cheaper than Sweden's 25% ($13,500). Each VAT percentage point is worth $108 per $10,000 CIF at 8% duty, so the 19%–25% band is a clean six-point, $648 swing.",
+  },
+  {
+    q: 'How do I calculate landed cost including duty and VAT?',
+    a: "Multiply, never add. Landed = CIF × (1 + duty) × (1 + VAT): on $10,000 at 8% duty and 21% VAT that is 10,000 × 1.08 × 1.21 = $13,068, not the $12,900 an 8% + 21% = 29% additive sum gives you. The $168 gap is VAT charged on the duty itself — the compounding penalty additive math misses.",
+  },
+  {
+    q: 'What is the VAT rate for importing into Germany?',
+    a: "19% standard — the lowest in the EU — with a 7% reduced rate on some essentials. On a duty-inclusive $10,800 base, German import VAT is $2,052 versus $2,700 at Sweden's 25%, a $648 cash difference before any logistics cost.",
+  },
+  {
+    q: 'Is UK VAT higher than EU VAT?',
+    a: "No. The UK's 20% sits mid-band against the EU's 19%–25% range, landing the same $12,960 on a $10,000/8% basis as France and Austria, and below the Netherlands, Belgium, Spain, Italy, Poland, Portugal and Sweden. The UK's real landed-cost difference is its separate UK Global Tariff, not a higher VAT rate.",
+  },
+  {
+    q: 'How long does sea freight take from China to Europe?',
+    a: "28–33 days port-to-port by gateway. The northern range (Rotterdam, Antwerp, Hamburg) averages 28.3 days while the Mediterranean (Valencia, Genoa) averages 32.5 days — 4.2 days slower because most China Med calls transship at a hub first; the Cape-of-Good-Hope rerouting adds a further 10–14 days versus the pre-crisis Suez routing.",
+  },
+  {
+    q: 'What is the EU common customs tariff?',
+    a: "One duty schedule applied by all 27 member states, so duty is identical across the EU and the only landed-cost difference between member states is VAT — typically 0–12% for consumer goods by HS code, with no China–EU free-trade agreement in force. The UK sits outside it on its own UK Global Tariff since 2021.",
+  },
+  {
+    q: 'How much does duty and VAT add to my landed cost?',
+    a: "More than the sum of the two rates. At 8% duty + 19% VAT the true uplift is ×1.2852 = 28.52% (not 27%), and at 12% duty + 25% VAT it is ×1.40 = 40% (not 37%). The extra 1.5–2.0 percentage points are the VAT paid on the duty itself, which grows as duty rises.",
+  },
+  {
+    q: 'Which port should I use when shipping from China to Europe?',
+    a: "The destination country decides: Rotterdam for the Rhine basin, Hamburg for Central Europe and rail, Valencia for Iberia, Genoa for northern Italy, Gdańsk for Central-Eastern Europe and Felixstowe for the UK. The northern range (Rotterdam + Antwerp + Hamburg) still moves 33.6m TEU, roughly 67% of the nine published gateway total.",
+  },
+  {
+    q: 'Is rail cheaper than sea freight from China to Europe?',
+    a: "No — rail costs roughly 2–3× the ocean rate but only about 1/3 the air rate, and lands in ~18–22 days versus 28–33 by sea, buying back roughly 10 days. That premium only pays for high-value or deadline-sensitive cargo, which is why rail stays a niche versus the 28–33-day sea default.",
+  },
+];
+
+const keyTakeaways = [
+  "Germany is the cheapest EU landing at ×1.2852 ($12,852) and Sweden the dearest at ×1.35 ($13,500) — a $648 spread on a $10,000/8% shipment that is 100% VAT, since EU duty is uniform across all 27 member states.",
+  "Each VAT percentage point costs $108 per $10,000 CIF at 8% duty (1.08 × $10,000 × 0.01), so the 19%→25% VAT band is a clean 6 × $108 = $648 swing — the number to remember when choosing an EU base.",
+  "Additive duty+VAT understates landed cost: 8% + 20% = 28% is really ×1.296 = 29.6%, because VAT is charged on the duty-inclusive base — a $160-per-$10,000 tax-on-tax at 20% VAT that additive quotes hide.",
+  "The northern range (Rotterdam + Antwerp + Hamburg) moves 33.6m TEU, ~67% of the 50.1m total across nine published gateways — a concentration most first-time importers underweight when they default to Rotterdam without pricing the inland leg.",
+  "Mediterranean gateways run ~4.2 days slower than the northern range (32.5 vs 28.3 days average) because most China Med calls transship, not because of distance — so the 'cheaper' Med routing can hide a longer goods-in-transit clock.",
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'China to Europe freight data — import VAT, EU common duty, gateway ports and landed cost',
+      description:
+        'Indicative import VAT, EU common duty, gateway port throughput, transit times and the (1+duty)×(1+VAT) landed-cost table for the 11 China-to-Europe destination markets, assembled from the WorldFreightHub data layer with per-figure confidence levels.',
+      url: pageUrl,
+      identifier: pageUrl,
+      dateModified: '2026-09-06',
+      inLanguage: 'en',
+      creator: organization,
+      publisher: organization,
+      variableMeasured: [
+        { '@type': 'PropertyValue', name: 'Standard import VAT rate', minValue: 19, maxValue: 25, unitText: 'percent' },
+        { '@type': 'PropertyValue', name: 'Landed-cost multiplier at 8% duty', minValue: 1.2852, maxValue: 1.35 },
+        { '@type': 'PropertyValue', name: 'Gateway container throughput (2023)', minValue: 0.9, maxValue: 13.4, unitText: 'million TEU' },
+        { '@type': 'PropertyValue', name: 'Typical sea transit, China to Europe', minValue: 28, maxValue: 33, unitText: 'days' },
+      ],
+    },
+  },
+  {
+    type: 'Article',
+    data: {
+      headline: 'China to Europe Freight Data — VAT, Duty & Landed Cost',
+      description:
+        'China to Europe freight data: 11-country import VAT (19% to 25%), EU common duty, 10 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table.',
+      datePublished: '2026-09-06',
+      dateModified: '2026-09-06',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+];
+
+const vatSources = sourcesByIds([
+  'eu-taric',
+  'german-customs',
+  'french-customs',
+  'dutch-customs',
+  'spanish-customs',
+  'italian-customs',
+  'polish-customs',
+  'belgian-customs',
+  'austrian-customs',
+  'swedish-tax',
+  'portuguese-customs',
+  'hmrc',
+  'gov-uk',
+]);
+const portSources = sourcesByIds([
+  'port-rotterdam',
+  'port-hamburg',
+  'port-antwerp',
+  'port-gdansk',
+  'port-valencia',
+  'port-genoa',
+  'port-gothenburg',
+  'port-sines',
+  'french-customs',
+  'hmrc',
+]);
+const transitSources = sourcesByIds(['port-rotterdam', 'port-hamburg', 'port-antwerp', 'port-gdansk', 'port-valencia', 'port-genoa', 'freightsurcharge']);
+---
+
+<BaseLayout
+  title="China to Europe Freight Data — VAT, Duty & Landed Cost"
+  description="China to Europe freight data: 11-country import VAT (19% to 25%), EU common duty, 10 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Europe', href: '/europe/' },
+          { label: 'Data' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>China to Europe freight data at a glance</h1>
+      <p class="lead">
+        Eleven destination markets, ten gateway ports and one formula. Import
+        VAT, EU common duty, transit times and freight ranges in one place — with
+        the landed-cost table that turns a list of rates into a ranking you can
+        price.
+      </p>
+      <p class="small muted">
+        Confidence badges separate statutory facts from worked examples. VAT
+        rates are HIGH; the 8% and 12% duty figures are stated worked examples
+        and are MEDIUM; transit times and freight ranges are indicative and LOW
+        to MEDIUM, not live quotes.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">EU import VAT range</span>
+          <span class="fact-value">19% – 25% <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Landed-cost spread</span>
+          <span class="fact-value">$648 on $10,000 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Gateway ports</span>
+          <span class="fact-value">10 covered <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sea transit</span>
+          <span class="fact-value">28 – 33 days <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">EU common duty</span>
+          <span class="fact-value">Uniform, by HS code <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <blockquote class="tldr">
+      <p>
+        <strong>TL;DR:</strong> On a $10,000 CIF shipment at 8% duty, landed
+        cost spans $12,852 (Germany ×1.2852) to $13,500 (Sweden ×1.35) — a $648
+        spread driven entirely by VAT, since EU common duty is uniform across
+        all 27 member states. Each VAT point costs $108 per $10,000 CIF, so the
+        19%–25% band is a clean 6-point, $648 swing. Additive “8% + 20% = 28%”
+        is wrong — the true compound is ×1.296 (29.6%), because VAT taxes the
+        duty itself. The northern range (Rotterdam, Antwerp, Hamburg) moves
+        33.6m TEU, ~67% of the nine published gateways, while Med gateways run
+        ~4.2 days slower (32.5 vs 28.3 days) on transshipment. UK VAT (20%) is
+        mid-band; the UK’s real difference is its own UK Global Tariff, not a
+        higher rate.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>1. The 11-market landed-cost table</h2>
+    <p>
+      Landed cost is <strong>multiplicative, not additive</strong>. The formula
+      is <strong>landed total = CIF × (1 + duty) × (1 + VAT)</strong>, and
+      <strong>tax paid = landed total − CIF</strong>. On a
+      <strong>$10,000 CIF</strong> shipment with a stated <strong>8% duty</strong> worked
+      example, Germany is <strong>10,000 × 1.08 × 1.19 = $12,852</strong>
+      <ConfidenceBadge level="MEDIUM" />. The 8% figure is an assumption for
+      illustration, not a market-wide duty fact; substitute a real HS-code rate
+      and the same arithmetic holds.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'market', label: 'Market', type: 'link' },
+        { key: 'vat', label: 'Standard VAT' },
+        { key: 'multiplier', label: 'Landed multiplier' },
+        { key: 'total', label: 'Landed total on $10,000' },
+        { key: 'tax', label: 'Tax paid' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Standard VAT rates are HIGH statutory values; the multiplier, total and tax cells are MEDIUM because the 8% duty is a stated worked example."
+    />
+    <p class="mt-2">
+      The ranking is the insight a rate list cannot give you: the $648 spread
+      between Germany and Sweden is <strong>100% VAT</strong>. Every EU member
+      state applies the same TARIC duty line, so duty cancels out of any
+      cross-country comparison and only VAT — 19% to 25% — moves the total.
+      Germany is cheapest at <strong>×1.2852</strong>; the UK, France and
+      Austria tie at <strong>×1.296</strong>; the Netherlands, Belgium and Spain
+      tie at <strong>×1.3068</strong>; Italy is <strong>×1.3176</strong>; Poland
+      and Portugal tie at <strong>×1.3284</strong>; Sweden closes the range at
+      <strong>×1.35</strong>.
+    </p>
+    <p>
+      The spread linearises cleanly. At 8% duty, each percentage point of VAT is
+      worth <strong>1.08 × $10,000 × 0.01 = $108</strong>, so the 19%→25% gap is
+      <strong>6 × $108 = $648</strong>. That is the number to keep when choosing
+      an EU base: moving a $10,000 consignment from a 19% to a 25% member state
+      is a predictable $648, before a single euro of freight.
+    </p>
+    <p>
+      Why “8% + 20% = 28%” is wrong: the true compound for the UK, France and
+      Austria is <strong>×1.296 = a 29.6% uplift</strong>, not 28%. VAT is
+      charged on the <strong>duty-inclusive</strong> base, so the $800 of duty
+      (8% of $10,000) is itself VAT-taxed — $160 at 20% VAT, $152 at Germany’s
+      19%, $200 at Sweden’s 25%. That tax-on-tax is exactly the money an
+      additive quote quietly leaves off the invoice.
+    </p>
+    <p>
+      Sensitivity is mechanical. At a stated <strong>12% duty</strong> worked
+      example, Germany lands at <strong>1.12 × 1.19 = ×1.3328 → $13,328</strong>,
+      Sweden at <strong>1.12 × 1.25 = ×1.40 → $14,000</strong>
+      <ConfidenceBadge level="MEDIUM" />, widening the spread to <strong>$672</strong>.
+      Higher duty widens the gap because VAT compounds on the duty-inclusive
+      base; at 0% duty the comparison collapses to pure VAT and the spread
+      shrinks to $600 (19% vs 25% on $10,000).
+    </p>
+    <SourceList sources={vatSources} title="Sources — standard VAT rates and the compound calculation" />
+    <p class="mt-2">
+      For the two ends of the ranking, read
+      <a href="/europe/shipping-from-china-to-germany/">Shipping from China to Germany</a> and
+      <a href="/europe/shipping-from-china-to-sweden/">Shipping from China to Sweden</a>;
+      for the UK side of the split, see
+      <a href="/europe/eu-vs-uk-customs/">EU vs UK Customs for China Imports</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Why the spread is VAT-only: one duty schedule, many VAT rates</h2>
+      <p>
+        Europe runs <strong>two customs regimes</strong>, not eleven. The
+        European Union applies the <strong>Common Customs Tariff (TARIC)</strong> —
+        one schedule for all <strong>27 member states</strong> — while the
+        United Kingdom applies its own <strong>UK Global Tariff (UKGT)</strong>,
+        independent since <strong>1 January 2021</strong>
+        <ConfidenceBadge level="HIGH" />. That is why the landed-cost table above
+        separates on VAT only for the EU rows, and why the UK row is not purely
+        a VAT comparison.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'regime', label: 'Regime' },
+          { key: 'duty', label: 'Duty schedule' },
+          { key: 'vat', label: 'VAT' },
+          { key: 'chinaStatus', label: 'China status' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={regimeRows}
+        caption="Both regimes are HIGH confidence from the European Commission and GOV.UK; the 0–12% duty behaviour is MEDIUM because the final rate depends on the HS-code line."
+      />
+      <p class="mt-2">
+        What most guides skip is the consequence of this two-regime split for
+        landed-cost modelling. Inside the EU, you can drop duty from any
+        cross-country comparison because it is identical — the entire
+        member-state difference is VAT. Against the UK, you cannot: the UKGT and
+        TARIC are <strong>separate lookup tables</strong>, and a China SKU can
+        carry a materially different rate in Great Britain than in the EU even
+        when the product is identical. So an EU-vs-EU comparison is a one-variable
+        problem (VAT); a UK-vs-EU comparison is a two-variable problem (VAT plus
+        the HS-line duty divergence). China has no free-trade agreement with
+        either side, so MFN rates apply on both.
+      </p>
+      <SourceList sources={sourcesByIds(['eu-taric', 'gov-uk', 'hmrc'])} title="Sources — TARIC and the UK Global Tariff" />
+      <p class="mt-2">
+        For the full post-Brexit arithmetic, read
+        <a href="/europe/eu-vs-uk-customs/">EU vs UK Customs for China Imports</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Gateway ports at a glance</h2>
+    <p>
+      Ten gateways carry the China-to-Europe trade, from Rotterdam’s
+      <strong>≈ 13.4m TEU</strong> to Gothenburg’s <strong>≈ 0.9m TEU</strong>
+      <ConfidenceBadge level="MEDIUM" />. Throughput and draft are 2023 port-authority
+      snapshots; Sines’ container throughput is not published in the snapshot,
+      so it stays marked rather than guessed.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port', type: 'link' },
+        { key: 'country', label: 'Country', type: 'link' },
+        { key: 'unlocode', label: 'UN/LOCODE' },
+        { key: 'throughput', label: 'Throughput (2023)' },
+        { key: 'draft', label: 'Max draft' },
+      ]}
+      rows={portRows}
+      caption="Throughput and draft are 2023 port-authority figures at MEDIUM confidence; UN/LOCODE is HIGH. Sines container throughput is not published in the verified snapshot."
+    />
+    <p class="mt-2">
+      The concentration is the number to remember. The northern range — Rotterdam
+      (13.4m), Antwerp (12.5m) and Hamburg (7.7m) — totals
+      <strong>33.6m TEU</strong>, which is <strong>67% of the 50.1m TEU</strong>
+      moved across the nine published gateways. That two-thirds share is why the
+      northern range sets the rate floor, and why Mediterranean and Baltic ports
+      price against it. Antwerp is <strong>93% of Rotterdam</strong> by throughput,
+      Hamburg <strong>57%</strong>, Valencia <strong>36%</strong>, Felixstowe
+      <strong>27%</strong>, Le Havre <strong>19%</strong>, Genoa <strong>19%</strong>,
+      Gdańsk <strong>16%</strong> and Gothenburg <strong>7%</strong>.
+    </p>
+    <p>
+      Draft tells the same story from the vessel side. Rotterdam’s Maasvlakte 2
+      reaches <strong>≈ 24 m</strong>, the deepest in Northwest Europe, while
+      Sines’ Terminal XXI at <strong>≈ 17.5 m</strong> and Gdańsk’s DCT at
+      <strong>≈ 17 m</strong> are the deep-water outliers on the Atlantic and
+      Baltic edges; tidal Hamburg is constrained to <strong>≈ 15.2 m</strong>
+      and Gothenburg to <strong>≈ 13.5 m</strong>, which is why the ultra-large
+      vessels cannot call every gateway fully loaded.
+    </p>
+    <SourceList sources={portSources} title="Sources — gateway throughput and draft" />
+    <p class="mt-2">
+      For the port-by-port routing logic, see the
+      <a href="/europe/ports/">Europe ports directory</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Transit times by gateway</h2>
+      <p>
+        Eight gateways carry the published route snapshot; Gothenburg and Sines
+        are transshipment-only entries that are not in the route layer, so their
+        transit is marked rather than invented. All times are port-to-port and
+        reflect the post-2024 Cape-of-Good-Hope rerouting.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'Gateway', type: 'link' },
+          { key: 'typical', label: 'Typical' },
+          { key: 'range', label: 'Range' },
+          { key: 'routing', label: 'Routing' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={gatewayTransitRows}
+        caption="Transit times are indicative LOW-confidence estimates that move with Cape-versus-Suez routing and season; routing notes are drawn from the route layer."
+      />
+      <p class="mt-2">
+        The structural gap is Med versus northern range. Valencia (32 days) and
+        Genoa (33 days) average <strong>32.5 days</strong>, against
+        <strong>28.3 days</strong> for Rotterdam, Antwerp and Hamburg — a
+        <strong>4.2-day penalty, or ~15% slower</strong>. That gap is not distance;
+        it is <strong>transshipment</strong>. China mainline services concentrate
+        on the northern range, so most Med cargo transships at a hub such as
+        Tanger Med or Malta before a feeder south. The Cape rerouting adds a
+        further <strong>10–14 days</strong> on top of every sea estimate versus
+        the pre-crisis Suez routing.
+      </p>
+      <p>
+        Rail is the alternative the transit table invites you to consider:
+        China–Europe rail lands in <strong>~18–22 days</strong>, buying back
+        roughly <strong>10 days</strong> against the northern range and
+        <strong>~14 days</strong> against the Med. The premium — about
+        <strong>2–3× the ocean rate</strong>, but only ~1/3 the air rate — is the
+        price of that time. For the trade-off, see
+        <a href="/europe/sea-vs-rail/">Sea vs Rail Freight from China to Europe</a>.
+      </p>
+      <SourceList sources={transitSources} title="Sources — transit time and routing basis" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Freight cost ranges by gateway</h2>
+    <p>
+      Indicative China-to-Europe ranges for the eight published gateways, per
+      container and per cubic metre. Rates move with fuel, season and the Red
+      Sea risk picture, so the ranges are wide by design.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway', type: 'link' },
+        { key: 'fcl20', label: '20ft FCL' },
+        { key: 'fcl40', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL (per CBM)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={gatewayCostRows}
+      caption="Indicative MEDIUM ranges only; confirm with a carrier before booking. UK and Med gateways carry a floor premium over the northern range."
+    />
+    <p class="mt-2">
+      The pattern is a geographic floor premium. The northern range (Rotterdam,
+      Antwerp, Hamburg, Le Havre, Gdańsk) opens 20ft at <strong>$1,200</strong>
+      and 40ft at <strong>$1,600</strong>, while the UK (Felixstowe) and Med
+      (Valencia, Genoa) open 20ft at <strong>$1,300</strong> — a
+      <strong>$100 (+8.3%)</strong> floor premium — and 40ft at
+      <strong>$1,800</strong>, a <strong>$200 (+12.5%)</strong> premium. Genoa’s
+      40ft ceiling of <strong>$7,200</strong> is the dearest in the set, against
+      Rotterdam’s <strong>$6,800</strong>. That premium is the price of the extra
+      transshipment move and thinner direct capacity on the UK and Med lanes.
+    </p>
+    <p>
+      Two decisions follow from the numbers. First, the <strong>FCL/LCL
+      break-even sits near 15 CBM</strong> — below it, LCL at $60–$170/CBM is
+      usually cheaper; above it, a full container starts to win. Second, the
+      “cheapest port” is rarely the cheapest landed cost: a $100 floor saving at
+      Rotterdam is wiped out if the cargo then trucks 1,000+ km inland to Iberia
+      or northern Italy. Match the gateway to the destination market, then
+      compare the inland-total, not the headline ocean rate. See
+      <a href="/europe/fcl-vs-lcl/">FCL vs LCL for China to Europe</a> and
+      <a href="/europe/hidden-charges/">Hidden Charges on China to Europe Shipments</a>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Key takeaways</h2>
+    <ol>
+      {keyTakeaways.map((k) => (
+        <li>{k}</li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>8. Data freshness and update basis</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>.
+      Standard VAT rates were re-checked against each member-state authority —
+      Germany 19%, France 20%, the Netherlands 21%, Spain 21%, Italy 22%, Poland
+      23%, Belgium 21%, Austria 20%, Sweden 25%, Portugal 23% — and the UK 20%
+      rate and UKGT independence were re-checked against GOV.UK and HMRC. The
+      EU-wide TARIC uniformity was re-checked against the European Commission.
+      Gateway throughput and draft are 2023 port-authority snapshots; transit
+      times and cost ranges are the route layer’s indicative LOW-to-MEDIUM
+      estimates, not live quotes.
+    </p>
+    <p>
+      Per-HS duty rates and unpublished fee lines stay
+      <span class="muted">notPublished</span> rather than invented. The page
+      therefore treats the 8% and 12% duty figures as stated worked examples,
+      keeps every unpublished figure LOW, and derives every landed-cost result
+      from the multiplicative formula so a reader can recompute it line by line.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a landed-cost comparison for your exact HS code"
+      text="Tell us your origin, commodity, HS/TARIC code, value, volume and final market, and we will run the (1+duty)×(1+VAT) compound across your shortlisted countries so you can price the destination decision on one basis."
+    />
+  </section>
+</BaseLayout>
