@@ -580,4 +580,57 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: 'portugal',
+    name: 'Portugal',
+    iso2: 'PT',
+    capital: 'Lisbon',
+    currency: 'EUR',
+    vatRate: 23,
+    vatNote: '23% standard (13% and 6% reduced).',
+    ports: ['sines'],
+    tldr:
+      'Portugal is the Atlantic end of Iberia — entered through Sines (PTSIE), a deep-water gateway reached ahead of the northern range on the Cape routing, with 23% VAT on EU common duty and a 1668mm Iberian-gauge rail wall between it and the New Silk Road.',
+    dutyRate: 'EU Common Customs Tariff (MFN, varies by HS code)',
+    dutyNote:
+      'Portugal applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.',
+    deMinimis: '€150 (VAT threshold)',
+    deMinimisNote:
+      'The EU €22 threshold was abolished in 2021; import VAT applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Portuguese customs.',
+    compliance: [
+      'EORI number for EU imports.',
+      'CE marking for regulated products.',
+      'REACH for chemical substances.',
+      'Correct 10-digit TARIC classification.',
+    ],
+    clearanceProcess: [
+      'Register for an EORI number.',
+      'Classify under the TARIC code.',
+      'File the import declaration and pay duty plus 23% VAT.',
+      'Clear through Sines, Lisbon or Leixões.',
+      'Release and deliver across Portugal.',
+    ],
+    insight:
+      'Portugal is the Atlantic mirror of the Iberian story: its deep-water gateway Sines sits further west than any northern-range port, so on the Cape-of-Good-Hope routing a China vessel reaches Sines before Rotterdam or Hamburg — yet most importers still route Portugal through Rotterdam out of habit. The 23% VAT is two points above Spain\u2019s 21%, which on a $10,000 CIF shipment at 5% duty is $210 more in landed tax before any logistics. And the rail question is structural: Spain and Portugal run 1668mm Iberian gauge, so a standard-gauge China-Europe train cannot roll into Portugal without a transload at the Spanish border — the same gauge wall the New Silk Road meets on its eastern edge, repeated on Europe\u2019s western edge.',
+    keyTakeaways: [
+      'Sines (PTSIE) is the first deep-water European gateway on the Cape routing — reached ahead of the northern range.',
+      '23% VAT is two points above Spain\u2019s 21%; 5% duty + 23% VAT compounds to ×1.2915, not 28%.',
+      '1668mm Iberian gauge forces a transload for any rail cargo crossing from standard-gauge Europe.',
+      'Three-port geometry: Sines (deep-water south), Lisbon (capital), Leixões (Porto north).',
+    ],
+    faqs: [
+      {
+        q: 'What is the VAT rate in Portugal?',
+        a: '23% standard, with reduced rates of 13% and 6% on some goods. Import VAT is charged on the duty-inclusive value, so 5% duty plus 23% VAT compounds to ×1.2915 — a $10,000 CIF shipment at 5% duty lands at $12,915, not the $12,800 you get by adding the two rates.',
+      },
+      {
+        q: 'Which port should I use when shipping from China to Portugal?',
+        a: 'Sines (PTSIE) is the deep-water default for mainline containers, Lisbon (PTLIS) serves the capital market, and Leixões (PTLEI) serves Porto and the industrial north — so the port choice follows the destination, not a single national gateway.',
+      },
+      {
+        q: 'Can I ship from China to Portugal by rail?',
+        a: 'Yes in principle, but Spain and Portugal run 1668mm Iberian gauge against the standard 1435mm the New Silk Road uses, so a China-Europe train must transload at the Spanish border before any rail leg into Portugal — most cargo therefore trucks from Madrid or feeds from the northern range instead.',
+      },
+    ],
+  },
 ];

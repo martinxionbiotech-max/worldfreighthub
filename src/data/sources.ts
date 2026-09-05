@@ -17,6 +17,7 @@ export const countrySourceIds: Record<string, string[]> = {
   belgium: ['eu-taric', 'belgian-customs', 'port-antwerp'],
   austria: ['eu-taric', 'austrian-customs'],
   sweden: ['eu-taric', 'swedish-customs', 'swedish-tax'],
+  portugal: ['eu-taric', 'portuguese-customs'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -48,6 +49,7 @@ export const portSourceIds: Record<string, string[]> = {
   genoa: ['port-genoa'],
   gdansk: ['port-gdansk'],
   gothenburg: ['port-gothenburg'],
+  sines: ['port-sines'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -324,5 +326,17 @@ export const sources: Source[] = [
     name: 'GOV.UK — UK Global Tariff, VAT, EORI and product-marking guidance',
     url: 'https://www.gov.uk',
     type: 'government',
+  },
+  {
+    id: 'portuguese-customs',
+    name: 'Portuguese Tax and Customs Authority (Autoridade Tributária e Aduaneira — AT)',
+    url: 'https://www.portaldasfinancas.gov.pt',
+    type: 'government',
+  },
+  {
+    id: 'port-sines',
+    name: 'Port of Sines and the Algarve Authority (APS)',
+    url: 'https://www.apsinesalgarve.pt',
+    type: 'port-authority',
   },
 ];

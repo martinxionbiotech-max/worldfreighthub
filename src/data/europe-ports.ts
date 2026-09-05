@@ -347,4 +347,42 @@ export const europePorts: Port[] = [
     ],
     updated: '2026-09-04',
   },
+  {
+    slug: 'sines',
+    name: 'Sines',
+    country: 'Portugal',
+    countrySlug: 'portugal',
+    type: 'seaport',
+    unlocode: 'PTSIE',
+    tldr:
+      "Portugal's deep-water Atlantic gateway — Terminal XXI (PSA) is the first deep-sea European call on the Cape routing, sitting further west than any northern-range port.",
+    operator: 'Port of Sines and the Algarve Authority (APS)',
+    specs: [
+      { label: 'Container throughput', value: 'Not published in snapshot' },
+      { label: 'Max draft', value: '≈ 17.5 m (Terminal XXI, approximate)' },
+      { label: 'Key terminals', value: 'Terminal XXI (PSA Sines)' },
+      { label: 'UN/LOCODE', value: 'PTSIE' },
+    ],
+    hinterland:
+      'Portugal and Iberia — Sines serves the Lisbon–Setúbal corridor and, by rail/road, the wider Iberian market; its Atlantic position makes it a relay for West Africa and South America.',
+    insight:
+      "Sines is the port most China-to-Portugal importers skip because they default to Rotterdam or Valencia. But its position is structural: on the Cape-of-Good-Hope routing a China vessel reaches Sines before the northern range, and Terminal XXI's ≈17.5 m draft takes the ultra-large vessels the smaller Iberian ports cannot. The catch is frequency — direct China calls are thinner than at Rotterdam, so much cargo transships at Algeciras or Tanger Med first. For southern Portugal and Lisbon, pricing Sines before assuming a northern-range discharge is usually the cheaper total landed cost.",
+    keyTakeaways: [
+      'Deep-water Atlantic gateway; first deep-sea European call on the Cape routing.',
+      "Terminal XXI (PSA) takes ultra-large vessels the smaller Iberian ports cannot.",
+      'Direct China calls are thinner than the northern range; transshipment is common.',
+      'For Lisbon and southern Portugal, Sines usually beats a Rotterdam or Valencia discharge.',
+    ],
+    faqs: [
+      {
+        q: 'Is Sines a real alternative to Rotterdam for Portugal?',
+        a: 'For southern Portugal and Lisbon, yes — its Atlantic position puts it ahead of the northern range on the Cape routing, and Terminal XXI takes ultra-large vessels. Direct China calls are thinner, so much cargo transships at Algeciras or Tanger Med first.',
+      },
+      {
+        q: 'How deep is the Port of Sines?',
+        a: 'Terminal XXI, the container terminal, has a draft around 17.5 m (approximate, MEDIUM confidence) — deep enough for the ultra-large container vessels that the smaller Iberian ports cannot handle. Confirm the current figure with the Port of Sines authority.',
+      },
+    ],
+    updated: '2026-09-05',
+  },
 ];
