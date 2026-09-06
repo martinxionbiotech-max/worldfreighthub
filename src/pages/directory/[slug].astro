@@ -123,6 +123,7 @@ const schema = [
   description={provider.description}
   canonical={`${SITE_URL}/directory/${provider.slug}/`}
   schema={schema}
+  noindex={provider.verification !== 'verified'}
 >
   <div class="page-header">
     <div class="container">
