@@ -46,7 +46,7 @@ const schema = [
         },
         {
           '@type': 'Question',
-          name: `Why does ${term.term} matter for China-to-GCC shipping?`,
+          name: `Why does ${term.term} matter for importers?`,
           acceptedAnswer: { '@type': 'Answer', text: term.whyItMatters },
         },
       ],
@@ -74,7 +74,7 @@ const schema = [
       <span class="badge">{term.category}</span>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> This term is one of {termCount} definitions in the China–GCC freight glossary, so the signal is the number it changes — not the acronym. It sits in the {term.category} category and links to {relatedCount} related terms for adjacent freight math. Use the example below to turn the definition into a before/after calculation before you quote or clear cargo.
+          <strong>TL;DR:</strong> This term is one of {termCount} definitions in the freight glossary, so the signal is the number it changes — not the acronym. It sits in the {term.category} category and links to {relatedCount} related terms for adjacent freight math. Use the example below to turn the definition into a before/after calculation before you quote or clear cargo.
         </p>
       </blockquote>
     </div>
@@ -86,7 +86,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>Why it matters on the China–GCC route</h2>
+    <h2>Why it matters</h2>
     <p>{term.whyItMatters}</p>
   </section>
 

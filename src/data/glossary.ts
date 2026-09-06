@@ -421,6 +421,156 @@ export const glossary: GlossaryTerm[] = [
     related: ['packing-list', 'certificate-of-origin', 'customs-broker'],
     updated: '2026-09-01',
   },
+  {
+    slug: 'eori',
+    term: 'EORI',
+    definition:
+      'Economic Operators Registration and Identification \u2014 the free EU or UK identifier required to clear imports and exports, using an ISO country code plus up to 15 alphanumeric characters.',
+    category: 'EU & UK customs',
+    inDetail:
+      'EORI (Economic Operators Registration and Identification) is issued free by the EU member state or HMRC where an operator is established, and it stays with that legal entity. The format is an ISO country code plus up to 15 alphanumeric characters; the UK uses \u201cGB\u201d followed by 12 digits. No EORI means customs cannot accept the declaration, so the cargo waits at the terminal while the importer applies. The number that changes is the hold cost. If a container is stuck for 7 days and terminal demurrage is estimated at \u20ac90 per day (estimate, MEDIUM confidence, because rates vary by terminal and free time), the exposure is 7 days \u00d7 \u20ac90/day = \u20ac630. That is the cost of not holding a free number. The form itself is once-only per legal entity; the recurring loss appears only when the number is missing or the EORI and VAT registration are not linked. Most operators only discover the gap after arrival, when the cost is already running.',
+    whyItMatters:
+      'A missing EORI can park a container at port for days; at an estimated \u20ac90/day terminal demurrage, a 7-day hold adds \u20ac630 to landed cost before duty or VAT. Treat the EORI as a pre-shipment checklist item, not a customs form you can sort after arrival.',
+    example:
+      'A UK importer\u2019s first container arrives without an EORI on file and sits for 7 days; at an estimated \u20ac90/day terminal demurrage the delay adds 7 \u00d7 \u20ac90 = \u20ac630 to landed cost, whereas the free EORI number would have let clearance start on day one.',
+    related: ['vat-deferral', 'ioss', 'union-customs-code', 'customs-broker'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'taric',
+    term: 'TARIC',
+    definition:
+      'Integrated Tariff of the European Union \u2014 the 10-digit code formed by the 8-digit Combined Nomenclature plus 2 TARIC digits, updated daily with EU measures such as duties, quotas and suspensions.',
+    category: 'EU & UK customs',
+    inDetail:
+      'TARIC is the EU Integrated Tariff: a 10-digit code made of the 8-digit Combined Nomenclature plus 2 extra TARIC digits. The first 8 digits follow the harmonised structure; the last 2 carry the EU-specific measures \u2014 anti-dumping duties, tariff suspensions, quotas and restrictions. The database is updated daily, so the duty on the same 8-digit CN line can change while the TARIC tail changes. The arithmetic trap is that the final 2 digits are not cosmetic. On a $10,000 CIF consignment, a wrong adjacent CN/TARIC classification can flip the line from 0% to 12%, and the swing is 12% \u00d7 $10,000 = $1,200. That is not a filing fee; it is the duty line itself. Most guides stop at the 8-digit code, but the last two TARIC digits are where anti-dumping and suspension measures actually live. The classification decision is therefore a duty decision: the eight-digit line sets the base, and the two TARIC digits set whether an extra measure applies.',
+    whyItMatters:
+      'Get the first 8 digits wrong and a $10,000 CIF shipment can swing from 0% to 12% duty, a $1,200 landed-cost change before VAT. Verify the full 10-digit TARIC line on the day of entry, because daily updates can move the applicable measure.',
+    example:
+      'Two identical $10,000 CIF consignments are declared under adjacent TARIC lines: the correct code carries 0%, the wrong one carries 12%, producing $0 versus $1,200 duty on the same goods \u2014 a $1,200 swing from two digits.',
+    related: ['eori', 'union-customs-code', 'hs-code', 'customs-broker'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'ce-marking',
+    term: 'CE Marking',
+    definition:
+      'A conformity mark that is mandatory for products covered by around 30 EU harmonised directives or regulations before they can be placed on the EU single market.',
+    category: 'EU & UK compliance',
+    inDetail:
+      'CE Marking is the manufacturer\u2019s declaration that a product meets every EU harmonised requirement that applies to it, and it is mandatory for products covered by around 30 EU directives or regulations before placement on the single market. It is a conformity and market-access mark, not a general quality or safety \u201cpassed\u201d badge. The practical fork is the conformity route. Low-risk products can follow manufacturer self-declaration, often with no external fee beyond the technical file and internal testing. Higher-risk products must involve a Notified Body, which can add an estimated \u20ac4,000\u2013\u20ac8,000 and 4\u20138 weeks (estimate, MEDIUM confidence, product-dependent). If the product batch is worth \u20ac20,000 and the estimated holding cost of capital is 0.05% per day, a 6-week (42-day) delay is 42 \u00d7 (0.0005 \u00d7 \u20ac20,000) = 42 \u00d7 \u20ac10 = \u20ac420. The real fork is the lead time plus testing fee, not the mark itself. For an importer, the fork is worth confirming before manufacture because the conformity route determines both cash outlay and the date the goods can legally be sold.',
+    whyItMatters:
+      'Choosing the wrong route changes landed cost: Notified Body involvement can add an estimated \u20ac4,000\u2013\u20ac8,000 and 4\u20138 weeks, while low-risk self-declaration is mainly a documentation job. Above roughly a \u20ac20,000 batch, the delay\u2019s capital cost becomes material even before testing fees.',
+    example:
+      'A \u20ac20,000 batch of low-risk electronics follows manufacturer self-declaration and clears for the cost of the technical file; the same batch pushed unnecessarily through a Notified Body adds an estimated \u20ac4,000\u2013\u20ac8,000 and 4\u20138 weeks, raising landed cost and delaying launch.',
+    related: ['reach', 'ukca', 'hs-code', 'customs-broker'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'reach',
+    term: 'REACH',
+    definition:
+      'EU Regulation (EC) No 1907/2006 that requires registration of chemical substances manufactured or imported at 1 tonne or more per year per legal entity, with a Chemical Safety Report added above 10 tonnes per year.',
+    category: 'EU & UK compliance',
+    inDetail:
+      'REACH (EU Regulation (EC) No 1907/2006) makes registration of a chemical substance mandatory once a legal entity manufactures or imports 1 tonne or more per year, with a Chemical Safety Report required above 10 tonnes per year. The registration threshold is a cliff, not a gradient. At 900 kg/yr, the importer is below the line: 900 kg \u00f7 1,000 kg = 0.9 tonnes per year, so no registration dossier is due. At 1,000 kg/yr, the same calculation gives 1.0 tonnes per year and the full registration obligation switches on with one extra 100 kg. Above 10,000 kg/yr, the chemical safety report adds another layer of data to the same dossier. ECHA runs the registry, but the data duty sits with the importer or manufacturer. The part most guides skip is that the threshold is per legal entity and per substance, not per product line: two product lines that each carry 600 kg of the same substance inside one entity total 1,200 kg and cross the line.',
+    whyItMatters:
+      'REACH is a cliff, not a slope: at 900 kg/yr you owe no registration, at 1,000 kg/yr you owe a full dossier, and at 10,000 kg/yr the Chemical Safety Report adds another compliance layer. Plan the tonnage line before ordering, because the obligation is triggered by total annual volume per legal entity.',
+    example:
+      'An importer brings in 950 kg of a plasticiser per year with no REACH registration; a new product line pushes the same substance to 1,000 kg per year, so the full registration dossier becomes due from that year onward \u2014 a 50 kg volume change that flips the compliance obligation.',
+    related: ['ce-marking', 'ukca', 'union-customs-code', 'hs-code'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'ukca',
+    term: 'UKCA',
+    definition:
+      'UK Conformity Assessed \u2014 the UK product marking introduced on 1 January 2021 to replace CE, now indefinitely recognising CE marking for most product areas after repeated delays.',
+    category: 'UK compliance',
+    inDetail:
+      'UKCA was introduced on 1 January 2021 as the UK replacement for CE, but it was never fully enforced as the only acceptable mark. The UK moved the mandatory date several times, then in 2023 announced that CE marking would be recognised indefinitely for most product areas, a position reaffirmed in 2024. The trap is conflating the physical mark with the conformity obligation: even where CE remains recognised, the importer or manufacturer still has to hold the technical file, declaration and any required testing. The mark itself is not the expensive part. If a \u00a310,000 batch is sent for UKCA-only duplicate testing at an estimated \u00a33,000 (estimate, MEDIUM confidence), that spend is 3,000 \u00f7 10,000 = 0.30, or 30% of invoice value. For goods in scope of the extension, that is avoidable cost with no legal benefit, while the underlying technical file remains non-negotiable. A UKCA mark alone does not create conformity if the underlying assessment is missing.',
+    whyItMatters:
+      'For most goods in scope of the extension, UKCA is optional, so paying for duplicate UKCA-only testing can add an estimated \u00a32,000\u2013\u00a34,000 of landed cost for no legal benefit. The technical file remains mandatory regardless of which mark appears.',
+    example:
+      'Before the 2023/2024 recognition position, a manufacturer budgeted an estimated \u00a33,000 for UKCA-only duplicate testing on a \u00a310,000 batch; after relying on the indefinite CE recognition for their product area, that spend is removed, so landed cost falls by \u00a33,000 while the technical file still must exist.',
+    related: ['ce-marking', 'reach', 'union-customs-code', 'hs-code'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'china-europe-railway-express',
+    term: 'China-Europe Railway Express',
+    definition:
+      'Scheduled block trains between Chinese hubs such as Chengdu, Chongqing, Xi\u2019an and Zhengzhou and European terminals including Ma\u0142aszewicze, Duisburg, Hamburg and Budapest, with transit typically around 12\u201318 days.',
+    category: 'Freight mode',
+    inDetail:
+      'The China-Europe Railway Express is a network of scheduled block trains linking Chinese hubs \u2014 Chengdu, Chongqing, Xi\u2019an and Zhengzhou \u2014 with European terminals such as Ma\u0142aszewicze, Duisburg, Hamburg and Budapest. Transit typically runs around 12\u201318 days, versus roughly 30\u201340 days by sea, at roughly 2\u20133\u00d7 sea-freight cost and about one-third to one-quarter of air-freight cost (ranges, MEDIUM confidence, as of 2026 in China State Railway Group and BRI reporting). The break-even is an inventory-financing equation. If a shipment is worth $100,000 and the importer\u2019s estimated inventory carrying cost is 0.05% per day, the value of time is 0.0005 \u00d7 $100,000 = $50/day. Saving 20 days (35 sea days minus 15 rail days) is worth 20 \u00d7 $50 = $1,000. Rail is rational only when the freight premium is below that time value, or when a missed sale or stock-out exceeds the premium. That is why rail is quoted as a time-versus-money trade, not simply as a middle speed.',
+    whyItMatters:
+      'Rail can cut transit from roughly 30\u201340 sea days to around 12\u201318 days, but at roughly 2\u20133\u00d7 sea freight; treat it as buying about two weeks of cash-flow time. Use it when the saved inventory-carrying cost exceeds the premium, not as a default.',
+    example:
+      'A $100,000 shipment can go by sea in 35 days at $1,200 freight or by rail in 15 days at $2,800 freight (roughly 2.3\u00d7 sea). Rail saves an estimated 20 days \u00d7 $50/day = $1,000 of inventory carrying cost but costs $1,600 more in freight, so sea wins by about $600 unless the faster arrival protects a sale.',
+    related: ['station-to-station', 'fcl', 'cbm', 'demurrage'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'vat-deferral',
+    term: 'VAT Deferral',
+    definition:
+      'A customs mechanism, including UK Postponed VAT Accounting since 1 January 2021, that lets VAT-registered importers account for import VAT on their next VAT return instead of paying at the border.',
+    category: 'EU & UK customs',
+    inDetail:
+      'VAT Deferral (Postponed VAT Accounting in the UK, and VAT deferment under Article 211 UCC in the EU) lets a VAT-registered importer account for import VAT on the next VAT return rather than paying at the border. In the UK the scheme has been in force since 1 January 2021, and the standard VAT rate is 20%. The cash-flow shift is easy to understate. On a \u00a310,000 CIF import, the deferred amount is 20% \u00d7 \u00a310,000 = \u00a32,000. That \u00a32,000 stays in the importer\u2019s bank from the border date until the next VAT return, roughly 30\u201345 days later. For a fully reclaimable input VAT, this is timing, not money: the \u00a32,000 is declared and reclaimed on the same return, so the benefit is working capital, not a discount. EU deferment needs a prior authorisation from the importing member state, while UK PVA is available without a separate guarantee for many VAT-registered importers.',
+    whyItMatters:
+      'On a \u00a310,000 CIF import, deferring 20% VAT moves \u00a32,000 from the border to the next return 30\u201345 days later \u2014 a cash-flow shift, not a saving, since reclaimable input VAT is only delayed. The working-capital benefit disappears if the trader is not fully VAT-reclaimable.',
+    example:
+      'On a \u00a310,000 CIF import, paying at the border removes \u00a32,000 immediately (20% \u00d7 \u00a310,000); using UK PVA shifts that \u00a32,000 to the next VAT return 30\u201345 days later, where it is declared and reclaimed, keeping \u00a32,000 of working capital in the business for the window.',
+    related: ['eori', 'ioss', 'union-customs-code', 'customs-broker'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'station-to-station',
+    term: 'Station-to-station',
+    definition:
+      'Rail freight priced for the terminal-to-terminal haul only \u2014 the middle leg of a three-leg move \u2014 which excludes pre-carriage and last-mile trucking that can add roughly 10\u201320% to total freight cost and 1\u20132 days each.',
+    category: 'Freight mode',
+    inDetail:
+      'Station-to-station is rail freight quoted terminal-to-terminal only: the origin rail terminal and the destination rail terminal are covered, but the pre-carriage trucking from the shipper\u2019s door to origin terminal and the last-mile trucking from destination terminal to the consignee are not. It is the middle leg of a three-leg move, and the quote is therefore a cost component, not a landed figure. On a \u20ac2,000 Chengdu\u2013Duisburg terminal-to-terminal rate, adding an estimated 12% origin trucking and 15% destination trucking (estimates, MEDIUM confidence) gives \u20ac2,000 + (12% \u00d7 \u20ac2,000) + (15% \u00d7 \u20ac2,000) = \u20ac2,000 + \u20ac240 + \u20ac300 = \u20ac2,540. The legs also add time: roughly 1\u20132 days at each end. The trap most buyers hit is comparing a station-to-station rail quote with a door-to-door sea or air quote and concluding rail is cheaper when the missing trucking legs erase the gap. Quotes that omit these legs are not wrong, but they answer a narrower question than the buyer usually thinks.',
+    whyItMatters:
+      'A station-to-station rate understates landed cost by the trucking legs; on a \u20ac2,000 rail quote, estimated pre-carriage and last-mile can add 25\u201330%, or about \u20ac500\u2013\u20ac600, plus 2\u20134 days. Compare door-to-door figures, not terminal-to-terminal rates, before choosing rail.',
+    example:
+      'A buyer budgets \u20ac2,000 from a station-to-station Chengdu\u2013Duisburg quote; adding an estimated 12% origin and 15% destination trucking moves the landed freight to \u20ac2,540 (\u20ac2,000 + \u20ac240 + \u20ac300) and adds roughly 2\u20134 days, so the door-to-door cost is \u20ac540 higher than the terminal rate.',
+    related: ['china-europe-railway-express', 'fcl', 'lcl', 'demurrage'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'ioss',
+    term: 'IOSS',
+    definition:
+      'EU Import One-Stop Shop, in force since 1 July 2021, allowing sellers and marketplaces to charge and remit EU VAT at the point of sale for B2C distance sales of goods with an intrinsic value up to \u20ac150.',
+    category: 'EU & UK customs',
+    inDetail:
+      'IOSS (Import One-Stop Shop) has applied since 1 July 2021 to B2C distance sales of goods with an intrinsic value up to \u20ac150, letting the seller or marketplace charge EU VAT at checkout and remit it through one member state. The \u20ac150 threshold is a hard cliff. A \u20ac149 item with 20% VAT charges \u20ac29.80 at the point of sale. A \u20ac151 item is outside IOSS, so import VAT is collected at delivery: 20% \u00d7 \u20ac151 = \u20ac30.20, plus an estimated \u20ac10\u2013\u20ac25 courier handling fee (estimate, MEDIUM confidence), giving \u20ac40.20\u2013\u20ac55.20 in tax and fee at the door. The gap is not \u20ac2 of goods value; it is the difference between \u20ac29.80 collected upfront and \u20ac40.20\u2013\u20ac55.20 collected later. Above \u20ac150, the seller should instead state that import VAT and duty are due at destination. A seller pricing a product at \u20ac151 creates a worse delivery experience than one at \u20ac149, which is why margin decisions should be tested against the threshold rather than after launch.',
+    whyItMatters:
+      'For a B2C parcel at the \u20ac150 boundary, IOSS moves VAT to checkout; above \u20ac150 the same item can trigger destination import VAT plus an estimated \u20ac10\u2013\u20ac25 courier fee, a cash-flow and customer-experience cliff that pricing cannot smooth over.',
+    example:
+      'A consumer buys a \u20ac149 phone case under IOSS and pays \u20ac29.80 VAT at checkout; the same case priced at \u20ac151 falls outside IOSS, so they pay \u20ac30.20 import VAT plus an estimated \u20ac10\u2013\u20ac25 courier handling fee at delivery \u2014 \u20ac40.20\u2013\u20ac55.20 at the door instead of \u20ac29.80 upfront.',
+    related: ['vat-deferral', 'eori', 'union-customs-code', 'dap'],
+    updated: '2026-09-07',
+  },
+  {
+    slug: 'union-customs-code',
+    term: 'Union Customs Code (UCC)',
+    definition:
+      'Regulation (EU) No 952/2013, in force since 1 May 2016, setting EU customs rules for valuation, origin and procedures, with duty levied on the transaction value adjusted to a CIF basis at the EU border.',
+    category: 'EU & UK customs',
+    inDetail:
+      'The Union Customs Code, Regulation (EU) No 952/2013, has been in force since 1 May 2016 and sets the EU rules on customs valuation, origin and procedures. The valuation point is the part importers miss: duty is levied on the transaction value adjusted to a CIF basis at the EU border, not on the supplier invoice alone. If goods are bought at \u20ac10,000 and freight to Rotterdam is \u20ac1,200 with insurance of \u20ac80, the CIF value is \u20ac10,000 + \u20ac1,200 + \u20ac80 = \u20ac11,280. At an illustrative product-line duty rate of 5% (example rate; the actual rate comes from TARIC), the charge is 5% \u00d7 \u20ac11,280 = \u20ac564, not the naive 5% \u00d7 \u20ac10,000 = \u20ac500. The \u20ac64 difference is created entirely by adding freight and insurance before applying the rate. UCC also governs the origin and procedure rules that determine whether a preferential rate applies. In practice, this means asking the forwarder for the CIF value before the entry is filed, not after the duty invoice arrives.',
+    whyItMatters:
+      'UCC changes the base: import duty is assessed on CIF value, not the supplier invoice, so a \u20ac10,000 invoice with \u20ac1,280 of freight and insurance becomes \u20ac11,280 of dutiable value. At an illustrative 5% rate that is \u20ac564 duty, \u20ac64 more than the naive invoice-based \u20ac500.',
+    example:
+      'An importer budgets \u20ac500 duty as 5% of a \u20ac10,000 supplier invoice; UCC values the same goods at \u20ac11,280 CIF after \u20ac1,200 freight and \u20ac80 insurance, so the correct 5% charge is \u20ac564 \u2014 \u20ac64 more than the invoice-only calculation.',
+    related: ['taric', 'eori', 'vat-deferral', 'cif'],
+    updated: '2026-09-07',
+  },
 ];
 
 export function getTermBySlug(slug: string): GlossaryTerm | undefined {
