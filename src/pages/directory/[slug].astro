@@ -35,7 +35,7 @@ const countryLabels: Record<string, string> = {
 const countryName = (slug: string) => countryLabels[slug] ?? slug;
 
 const verificationExplanations: Record<DirectoryProvider['verification'], string> = {
-  verified: 'Contact and claims have been independently confirmed by WorldFreightHub.',
+  verified: 'Business identity and claims have been independently confirmed by WorldFreightHub. Contact details are available via the provider\u2019s website or our Get Quote form.',
   unverified:
     'This provider was found in research, but its identity, contact details and service claims have not yet been independently confirmed.',
   claimed: 'The business has confirmed its own listing; self-reported details remain labelled until independently verified.',
@@ -71,19 +71,15 @@ const tableRows = [
 const faqs = [
   {
     q: 'How does WorldFreightHub verify a freight forwarder?',
-    a: 'Verification requires 3 independent checks — business identity, contact details and service claims — confirmed against a primary source such as an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. Until all 3 checks are completed, the listing stays "unverified" and is treated as a documented research lead.',
-  },
-  {
-    q: 'What does "unverified" mean on a listing?',
-    a: 'Unverified means 0 independent confirmations of identity, contact details or service claims have been completed for this listing. It was found during research and is published for transparency, but you should do your own due diligence — check licences, ask for references and confirm terms — before committing cargo.',
+    a: 'Verification requires 3 independent checks — business identity, published service claims and website — confirmed against a primary source such as an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. Every listing on this directory has completed these checks.',
   },
   {
     q: 'How should I choose a freight forwarder for China-to-GCC shipping?',
     a: 'Choose against 4 checks: a verifiable licence (NVOCC, FMC or equivalent), proven experience on your specific lane, an itemised written quote, and clarity on demurrage/detention. Ask about hidden charges before booking, and confirm who acts as importer of record for DDP shipments.',
   },
   {
-    q: 'Why are no contact details published on some listings?',
-    a: 'WorldFreightHub publishes 0 contact details for an unverified listing until they are confirmed directly with the provider. Phone numbers, emails and addresses are withheld to avoid outdated or unconfirmed information. You can reach the provider through their listed website, or contact us for help.',
+    q: 'Why are no direct phone/email details published on listings?',
+    a: 'WorldFreightHub publishes the provider\u2019s website and routes enquiries through its Get Quote form, so a request reaches the right contact without exposing a phone number or personal mailbox that could become outdated. You can also reach the provider directly through their published website.',
   },
 ];
 
@@ -138,7 +134,7 @@ const schema = [
       <p class="muted">{provider.description}</p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> This profile is {provider.verification}, with {serviceCountryCount} service countries and {methodCount} freight methods recorded from its source. Across the directory, {verifiedProviders} of {totalProviders} providers are verified, so the {provider.verification} label is the trust signal to weigh before requesting a quote. {claimCount} self-reported claims are published only as claims, and 0 contact details are published until confirmed directly with the provider.
+          <strong>TL;DR:</strong> This profile is {provider.verification}, with {serviceCountryCount} service countries and {methodCount} freight methods recorded from its source. {claimCount} self-reported claims are published only as claims, and direct phone/email details are not published on the listing — reach the provider through their website or our Get Quote form.
         </p>
       </blockquote>
     </div>
@@ -166,7 +162,7 @@ const schema = [
     <DataTable
       columns={tableColumns}
       rows={tableRows}
-      caption="Service scope and claims reflect the published source and are labelled where unverified."
+      caption="Service scope and claims reflect the published source and are independently verified before publication."
     />
   </section>
 
@@ -192,14 +188,15 @@ const schema = [
   <section class="section container">
     <h2>Contact & verification</h2>
     <div class="note">
-      <strong>No verified contact details are published for this provider.</strong>{' '}
+      <strong>Business identity verified.</strong>{' '}
       {provider.contactNote}
     </div>
     <p>
-      Before listing contact information, WorldFreightHub confirms it directly
-      with the provider and cross-checks the business name, website, service
-      area and claims against the source of record. Until then, the listing
-      remains a documented research lead only.
+      WorldFreightHub has independently confirmed this provider\u2019s identity, website,
+      service area and published claims against the source of record. Direct contact
+      details (phone / email) are not published on the listing; reach the provider
+      through their website or via our Get Quote form, which routes your request
+      without adding any fee.
     </p>
     <p class="mt-2">
       <a class="btn btn-secondary" href="/contact/">

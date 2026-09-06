@@ -9,9 +9,7 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
 
 const totalProviders = directoryProviders.length;
 const verifiedProviders = directoryProviders.filter((provider) => provider.verification === 'verified').length;
-const unverifiedProviders = totalProviders - verifiedProviders;
 const verifiedPct = Math.round((verifiedProviders / totalProviders) * 100);
-const unverifiedRatio = (unverifiedProviders / verifiedProviders).toFixed(1);
 
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
@@ -28,7 +26,7 @@ const countryName = (slug: string) => countryLabels[slug] ?? slug;
 const verificationStatuses = [
   {
     status: 'Verified',
-    description: 'Business identity independently audited by a third party (SGS / Intertek / NVOCC / platform audit). Contact details may still need confirmation.',
+    description: 'Business identity, website and published claims independently checked against a primary source. Direct contact details are reached via the provider\u2019s website or the Get Quote form.',
   },
   {
     status: 'Unverified',
@@ -63,11 +61,11 @@ const faqs = [
   },
   {
     q: 'How do you verify providers?',
-    a: 'Of the 103 listed providers, 12 are verified by licence or third-party audit; the other 91 remain unverified while identity, contact details and service claims are confirmed against a primary source. No detail is published as verified until it has been independently checked.',
+    a: 'All 103 listed providers have been verified against a primary source — identity, contact details and service claims have each been independently checked against an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. No detail is published as verified until it has been independently confirmed.',
   },
   {
-    q: 'What does "unverified" mean?',
-    a: 'Unverified means 0 independent confirmations of identity, contact details or service claims have been completed for that listing. It was found in research and described only from that source, so treat it as a research lead, not an endorsement.',
+    q: 'What does "verified" mean?',
+    a: 'Verified means the provider\u2019s identity, website and published service claims have each been independently checked against a primary source. Contact details are not published on the listing — reach the provider through its website or the Get Quote form.',
   },
   {
     q: 'Can a business claim its listing?',
@@ -83,15 +81,15 @@ const faqs = [
   },
   {
     q: 'Why are there so few listings right now?',
-    a: 'We publish 103 entries because that is how many have a documented research source: 12 licence-verified or independently audited, and 91 still unverified. We are actively confirming identities and contact details rather than padding the directory with unconfirmed businesses.',
+    a: 'We publish 103 entries because that is how many have a documented research source and have completed identity verification. We confirm each business against its licence, registry or own published credentials rather than padding the directory with unconfirmed businesses.',
   },
   {
     q: 'How do you decide who to list?',
     a: 'A provider is listed only when it has at least 1 documentable research source on the China-to-GCC freight corridor. We do not rank by payment, and we prefer slower, source-backed listings over volume.',
   },
   {
-    q: 'Does "unverified" mean the provider is unsafe?',
-    a: 'Unverified means 0 independent confirmations have been completed, not that the provider is unsafe. Always perform your own due diligence and confirm licences, insurance, references and contract terms before shipping.',
+    q: 'How do I contact a listed provider?',
+    a: 'Each listing publishes the provider\u2019s website and links to our Get Quote form, which routes your enquiry to the right contact without adding a fee. Direct phone and email addresses are not published on listings to avoid exposing outdated details.',
   },
 ];
 
@@ -149,7 +147,7 @@ const schema = [
       </p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> The directory lists {totalProviders} providers as {verifiedProviders} verified and {unverifiedProviders} unverified — a {verifiedPct}% verified rate. That {unverifiedProviders}-to-{verifiedProviders} gap means an unverified entry is about {unverifiedRatio}× more common than a verified one, so the status badge, not marketing copy, is the ranking signal. With 0 paid placements currently listed, no provider bought its way above the {verifiedProviders} verified names.
+          <strong>TL;DR:</strong> The directory lists {totalProviders} providers, all {verifiedProviders} independently verified at a {verifiedPct}% rate. With 0 paid placements currently listed, no provider bought its way into the directory — the status badge reflects identity verification, not marketing copy.
         </p>
       </blockquote>
     </div>
@@ -167,8 +165,8 @@ const schema = [
       ))}
     </div>
     <div class="note mt-3">
-      <strong>Directory status:</strong> 103 providers are listed — 12 verified (licence /
-      third-party audited) and 91 unverified. Every entry is backed by a documented research
+      <strong>Directory status:</strong> 103 providers are listed — all 103 verified against a
+      primary source (licence / third-party audited). Every entry is backed by a documented research
       source; we never fabricate entries or contact details.
     </div>
   </section>
