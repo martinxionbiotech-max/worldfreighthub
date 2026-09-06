@@ -4,7 +4,7 @@ import Card from '../components/Card.astro';
 import Cta from '../components/Cta.astro';
 import AdSlot from '../components/AdSlot.astro';
 import FaqBlock from '../components/FaqBlock.astro';
-import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION } from '../site';
+import { SITE_URL, SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, ORGANIZATION_SCHEMA } from '../site';
 
 const stats = [
   { value: '6', label: 'GCC countries covered' },
@@ -51,26 +51,7 @@ const schema = [
       description: SITE_DESCRIPTION,
     },
   },
-  {
-    type: 'Organization',
-    data: {
-      name: SITE_NAME,
-      url: SITE_URL,
-      description: SITE_DESCRIPTION,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_URL}/og.png`,
-      },
-      contactPoint: {
-        '@type': 'ContactPoint',
-        contactType: 'customer support',
-        email: 'martin@dinweys.com',
-        telephone: '+86-13323237275',
-        availableLanguage: ['English'],
-      },
-      sameAs: [SITE_URL],
-    },
-  },
+  ORGANIZATION_SCHEMA,
   {
     type: 'FAQPage',
     data: {

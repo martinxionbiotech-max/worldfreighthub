@@ -2,13 +2,16 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import Cta from '../components/Cta.astro';
-import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../site';
+import { SITE_URL, SITE_NAME, SITE_TAGLINE, ORGANIZATION, ORGANIZATION_SCHEMA } from '../site';
+
+const schema = [ORGANIZATION_SCHEMA];
 ---
 
 <BaseLayout
   title="About WorldFreightHub"
   description="WorldFreightHub is a neutral freight intelligence reference for the China-to-GCC corridor — source-backed routes, ports, countries and a verification-first provider directory."
   canonical={`${SITE_URL}/about/`}
+  schema={schema}
 >
   <div class="page-header">
     <div class="container">
@@ -113,6 +116,26 @@ import { SITE_URL, SITE_NAME, SITE_TAGLINE } from '../site';
       firm price, our get-quote form routes your request to a provider on the
       corridor, and that provider quotes your specific shipment.
     </p>
+  </section>
+
+  <section class="section container">
+    <div class="container">
+      <h2>Who is behind {SITE_NAME}</h2>
+      <p>
+        {SITE_NAME} is published and edited by{' '}
+        <strong>{ORGANIZATION.publisherName}</strong>{' '}
+        ({ORGANIZATION.publisherRole}). Every page is a reference document built
+        from structured source data, with no hidden vendor affiliation. Editorial
+        standards, the confidence-labelling system and the correction process are
+        documented and public.
+      </p>
+      <p>
+        Reach the editor directly at{' '}
+        <a href={`mailto:${ORGANIZATION.publisherEmail}`}>
+          {ORGANIZATION.publisherEmail}</a
+        >.
+      </p>
+    </div>
   </section>
 
   <section class="section section--alt">
