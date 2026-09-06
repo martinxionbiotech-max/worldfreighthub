@@ -17,7 +17,7 @@ const cif = 10000;
 const dutyPct = 8; // stated worked example, not a market-wide fact
 const notPublished = 'Not published in verified snapshot — request an itemised schedule';
 
-// 11-market landed-cost table. Multiplier = (1 + duty) × (1 + VAT); all values verified by hand.
+// 12-market landed-cost table. Multiplier = (1 + duty) × (1 + VAT); all values verified by hand.
 const landedCostRows = [
   { market: 'Germany', slug: 'germany', vat: '19%', multiplier: '×1.2852', total: '$12,852', tax: '$2,852', confidence: 'MEDIUM' },
   { market: 'United Kingdom', slug: 'united-kingdom', vat: '20%', multiplier: '×1.296', total: '$12,960', tax: '$2,960', confidence: 'MEDIUM' },
@@ -29,6 +29,7 @@ const landedCostRows = [
   { market: 'Italy', slug: 'italy', vat: '22%', multiplier: '×1.3176', total: '$13,176', tax: '$3,176', confidence: 'MEDIUM' },
   { market: 'Poland', slug: 'poland', vat: '23%', multiplier: '×1.3284', total: '$13,284', tax: '$3,284', confidence: 'MEDIUM' },
   { market: 'Portugal', slug: 'portugal', vat: '23%', multiplier: '×1.3284', total: '$13,284', tax: '$3,284', confidence: 'MEDIUM' },
+  { market: 'Greece', slug: 'greece', vat: '24%', multiplier: '×1.3392', total: '$13,392', tax: '$3,392', confidence: 'MEDIUM' },
   { market: 'Sweden', slug: 'sweden', vat: '25%', multiplier: '×1.35', total: '$13,500', tax: '$3,500', confidence: 'MEDIUM' },
 ].map((r) => ({
   market: { href: `/europe/shipping-from-china-to-${r.slug}/`, label: r.market },
@@ -158,7 +159,7 @@ const schema = [
     data: {
       name: 'China to Europe freight data — import VAT, EU common duty, gateway ports and landed cost',
       description:
-        'Indicative import VAT, EU common duty, gateway port throughput, transit times and the (1+duty)×(1+VAT) landed-cost table for the 11 China-to-Europe destination markets, assembled from the WorldFreightHub data layer with per-figure confidence levels.',
+        'Indicative import VAT, EU common duty, gateway port throughput, transit times and the (1+duty)×(1+VAT) landed-cost table for the 12 China-to-Europe destination markets, assembled from the WorldFreightHub data layer with per-figure confidence levels.',
       url: pageUrl,
       identifier: pageUrl,
       dateModified: '2026-09-06',
@@ -178,7 +179,7 @@ const schema = [
     data: {
       headline: 'China to Europe Freight Data — VAT, Duty & Landed Cost',
       description:
-        'China to Europe freight data: 11-country import VAT (19% to 25%), EU common duty, 10 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table.',
+        'China to Europe freight data: 12-country import VAT (19% to 25%), EU common duty, 11 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table.',
       datePublished: '2026-09-06',
       dateModified: '2026-09-06',
       inLanguage: 'en',
@@ -228,6 +229,7 @@ const vatSources = sourcesByIds([
   'austrian-customs',
   'swedish-tax',
   'portuguese-customs',
+  'greek-customs',
   'hmrc',
   'gov-uk',
 ]);
@@ -240,6 +242,7 @@ const portSources = sourcesByIds([
   'port-genoa',
   'port-gothenburg',
   'port-sines',
+  'port-piraeus',
   'french-customs',
   'hmrc',
 ]);
@@ -248,7 +251,7 @@ const transitSources = sourcesByIds(['port-rotterdam', 'port-hamburg', 'port-ant
 
 <BaseLayout
   title="China to Europe Freight Data — VAT, Duty & Landed Cost"
-  description="China to Europe freight data: 11-country import VAT (19% to 25%), EU common duty, 10 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table."
+  description="China to Europe freight data: 12-country import VAT (19% to 25%), EU common duty, 11 gateway ports, transit times and the (1+duty)×(1+VAT) landed-cost table."
   canonical={pageUrl}
   ogType="article"
   schema={schema}
@@ -320,7 +323,7 @@ const transitSources = sourcesByIds(['port-rotterdam', 'port-hamburg', 'port-ant
   </section>
 
   <section class="section container">
-    <h2>1. The 11-market landed-cost table</h2>
+    <h2>1. The 12-market landed-cost table</h2>
     <p>
       Landed cost is <strong>multiplicative, not additive</strong>. The formula
       is <strong>landed total = CIF × (1 + duty) × (1 + VAT)</strong>, and

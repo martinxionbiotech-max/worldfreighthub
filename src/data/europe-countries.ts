@@ -633,4 +633,58 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: 'greece',
+    name: 'Greece',
+    iso2: 'GR',
+    capital: 'Athens',
+    currency: 'EUR',
+    vatRate: 24,
+    vatNote: '24% standard (13% and 6% reduced).',
+    ports: ['piraeus'],
+    tldr:
+      'Greece is the maritime-Silk-Road end of Europe — entered through Piraeus (GRPIR), the only EU gateway owned by a Chinese state carrier (COSCO 67%), with 24% VAT on EU common duty and a sea transit that flips between roughly 22–28 days via Suez and 33–40 days via the Cape.',
+    dutyRate: 'EU Common Customs Tariff (MFN, varies by HS code)',
+    dutyNote:
+      'Greece applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.',
+    deMinimis: '€150 (VAT threshold)',
+    deMinimisNote:
+      'The EU €22 threshold was abolished in 2021; import VAT applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Greek customs.',
+    compliance: [
+      'EORI number for EU imports.',
+      'CE marking for regulated products.',
+      'REACH for chemical substances.',
+      'Correct 10-digit TARIC classification.',
+    ],
+    clearanceProcess: [
+      'Register for an EORI number.',
+      'Classify under the TARIC code.',
+      'File the import declaration and pay duty plus 24% VAT.',
+      'Clear through Piraeus (or Thessaloniki for the north).',
+      'Release and deliver across Greece or into the Western Balkans.',
+    ],
+    insight:
+      "Greece is the one EU market whose gateway is owned by China. COSCO Shipping Ports holds 67% of Piraeus Port Authority, making Piraeus the maritime terminus of the Belt-and-Road — a China-controlled hub inside the EU customs union. That single fact drives everything: COSCO's own Asia–Europe mainline services are tied to Piraeus (reliable direct calls), and the port functions as a Balkans gateway feeding North Macedonia, Serbia, Kosovo and Bulgaria, competing with Koper and Constanța rather than just Greek ports. The second Greece-specific variable is the Red Sea: on the Suez routing Piraeus is the first major EU call (~22–28 days), on the Cape routing it is one of the last (~33–40 days) — an 11–18-day swing no other gateway suffers. And there is no mainstream China→Greece rail lane, so Greece is a maritime market where the sea-versus-air decision has no rail middle option.",
+    keyTakeaways: [
+      'Piraeus (GRPIR) is the only EU gateway owned by a Chinese state carrier — COSCO holds 67%.',
+      '24% VAT on EU common duty; 5% duty + 24% VAT compounds to ×1.302, not 29%.',
+      'The Red Sea inverts Piraeus: ~22–28 days via Suez versus ~33–40 days via the Cape.',
+      'No mainstream China→Greece rail lane — the Budapest–Belgrade corridor is still emerging.',
+      'Piraeus is a Balkans gateway (North Macedonia, Serbia, Kosovo, Bulgaria), not just a Greek port.',
+    ],
+    faqs: [
+      {
+        q: 'What is the VAT rate in Greece?',
+        a: '24% standard, with reduced rates of 13% and 6% on some goods. Import VAT is charged on the duty-inclusive value, so 5% duty plus 24% VAT compounds to ×1.302 — a $10,000 CIF shipment at 5% duty lands at $13,020, not the $12,900 you get by adding the two rates.',
+      },
+      {
+        q: 'Why is Piraeus owned by a Chinese company?',
+        a: 'COSCO Shipping Ports (CSP), the terminal arm of China\u2019s state carrier COSCO, holds a 67% majority stake in Piraeus Port Authority — acquired 51% in 2016 and raised to 67% in 2021. That makes Piraeus the only EU gateway run by a Chinese state carrier and the maritime terminus of the Belt-and-Road.',
+      },
+      {
+        q: 'How does the Red Sea crisis affect shipping to Greece?',
+        a: 'It inverts Piraeus\u2019s position more than any other EU gateway: on the Suez routing Piraeus is the first major EU call after the canal (~22–28 days), while on the Cape routing it becomes one of the last calls (~33–40 days) — a swing of roughly 11–18 days.',
+      },
+    ],
+  },
 ];

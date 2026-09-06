@@ -339,4 +339,22 @@ export const sources: Source[] = [
     url: 'https://www.apsinesalgarve.pt',
     type: 'port-authority',
   },
+  {
+    id: 'greek-customs',
+    name: 'Independent Authority for Public Revenue (AADE) — Greek Customs & VAT',
+    url: 'https://www.aade.gr',
+    type: 'government',
+  },
+  {
+    id: 'port-piraeus',
+    name: 'Piraeus Port Authority S.A. (OLP)',
+    url: 'https://www.olp.gr',
+    type: 'port-authority',
+  },
+  {
+    id: 'port-thessaloniki',
+    name: 'Thessaloniki Port Authority (ThPA)',
+    url: 'https://www.thpa.gr',
+    type: 'port-authority',
+  },
 ];

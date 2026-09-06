@@ -385,4 +385,42 @@ export const europePorts: Port[] = [
     ],
     updated: '2026-09-05',
   },
+  {
+    slug: 'piraeus',
+    name: 'Piraeus',
+    country: 'Greece',
+    countrySlug: 'greece',
+    type: 'seaport',
+    unlocode: 'GRPIR',
+    tldr:
+      "Greece's primary gateway and Europe's only China-owned container hub — COSCO Shipping Ports holds a 67% majority stake, making Piraeus the maritime terminus of the Belt-and-Road and a direct-call Mediterranean port for China cargo.",
+    operator: 'Piraeus Port Authority S.A. (OLP) — COSCO Shipping Ports majority',
+    specs: [
+      { label: 'Container throughput', value: '≈ 5.0m TEU (2023, approximate)' },
+      { label: 'Max draft', value: '≈ 18 m (approximate)' },
+      { label: 'Key terminals', value: 'Piers II & III (PCT, COSCO-operated), Pier I' },
+      { label: 'UN/LOCODE', value: 'GRPIR' },
+    ],
+    hinterland:
+      'Greece and the Western Balkans — Piraeus serves Athens (~10 km) and, by rail/road, feeds North Macedonia, Serbia, Bulgaria and Kosovo, making it a sea anchor for the landlocked Balkans.',
+    insight:
+      "Piraeus is the one European gateway whose ownership is Chinese: COSCO Shipping Ports holds 67% of Piraeus Port Authority, which turns the port into the maritime terminus of the Belt-and-Road rather than a purely commercial Greek port. That ownership has a practical consequence importers rarely price — COSCO's own Asia–Europe mainline services are structurally tied to Piraeus, so direct-call frequency and schedule reliability are higher than a neutral Mediterranean port of similar size would deliver. The second variable is the Red Sea: on the Suez routing Piraeus is the first major EU call after the canal, on the Cape routing it is one of the last — an inversion that swings transit by roughly two weeks. For Athens and the south, Piraeus is the default; for the landlocked Balkans it competes with Koper and Constanța on inland cost.",
+    keyTakeaways: [
+      "Europe's only China-owned container hub — COSCO Shipping Ports holds 67%.",
+      'Direct COSCO Asia–Europe mainline calls give it higher schedule reliability than a neutral Med port.',
+      'Red Sea inversion: first major EU call via Suez, one of the last via the Cape.',
+      'Athens is ~10 km away; the port also feeds North Macedonia, Serbia, Bulgaria and Kosovo.',
+    ],
+    faqs: [
+      {
+        q: 'Is Piraeus really owned by a Chinese company?',
+        a: 'Yes — COSCO Shipping Ports (CSP), the terminal arm of China\u2019s state carrier COSCO, holds a 67% majority stake in Piraeus Port Authority (OLP), acquired 51% in 2016 and raised to 67% in 2021. It is the only EU gateway with a Chinese state carrier as its controlling shareholder.',
+      },
+      {
+        q: 'How far is Piraeus from Athens?',
+        a: 'Roughly 10 km — Piraeus is effectively the port of Athens, so the inland leg to the capital market is short and cheap, unlike Gothenburg-to-Stockholm or Koper-to-Vienna where the inland leg decides the landed cost.',
+      },
+    ],
+    updated: '2026-09-06',
+  },
 ];
