@@ -27,6 +27,11 @@ const tools = [
     description: 'Estimate the landed cost of a China-to-GCC shipment — freight, duty, VAT and the destination charges most quotes leave out.',
     href: '/tools/freight-cost-calculator/',
   },
+  {
+    name: 'Freight Decision Engine',
+    description: 'Recommend FCL vs LCL vs air vs rail from your volume, value and deadline, with the 15 CBM and time-value break-evens.',
+    href: '/tools/decision-engine/',
+  },
 ];
 
 const faqs = [
@@ -36,7 +41,7 @@ const faqs = [
   },
   {
     q: 'Do these calculators charge me?',
-    a: 'All four tools are free and run 100% in your browser with $0 fees and no server upload. They are planning aids, not quotes — use them to estimate, then confirm figures with a licensed forwarder before booking.',
+    a: 'All five tools are free and run 100% in your browser with $0 fees and no server upload. They are planning aids, not quotes — use them to estimate, then confirm figures with a licensed forwarder before booking.',
   },
   {
     q: 'How accurate are the results?',
@@ -89,11 +94,11 @@ const schema = [
       <Breadcrumb items={[{ label: 'Tools' }]} />
       <h1>Freight tools & calculators</h1>
       <p class="lead">
-        Four free, client-side calculators to plan a China–GCC shipment — volume,
+        Five free, client-side tools to plan a China–GCC shipment — volume,
         container loading, chargeable weight and landed cost, in the order you actually need them.
       </p>
       <blockquote class="tldr">
-        <p><strong>TL;DR:</strong> WorldFreightHub’s four tools turn three recurring freight math traps into calculators — chargeable weight (÷6000 air vs ÷5000 courier, up to a 20% billable swing), CBM, and container loading. A 60×50×40 cm box is 20 kg by air but 24 kg by courier, a 4 kg jump on one carton. Start with CBM below ~15 CBM for LCL and move to container loading above it, so the number you quote is the number you’ll actually be billed on.</p>
+        <p><strong>TL;DR:</strong> WorldFreightHub’s five tools turn three recurring freight math traps into calculators — chargeable weight (÷6000 air vs ÷5000 courier, up to a 20% billable swing), CBM, and container loading. A 60×50×40 cm box is 20 kg by air but 24 kg by courier, a 4 kg jump on one carton. Start with CBM below ~15 CBM for LCL and move to container loading above it, so the number you quote is the number you’ll actually be billed on.</p>
       </blockquote>
     </div>
   </div>
@@ -123,6 +128,10 @@ const schema = [
         <div class="fact">
           <span class="fact-label">Freight Cost Calculator</span>
           <span class="fact-value">The landed-cost estimate: freight range, duty, VAT, insurance and the destination charges most quotes leave out.</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Freight Decision Engine</span>
+          <span class="fact-value">The mode recommendation: FCL vs LCL vs air vs rail, decided by the 15 CBM line and the time-value break-even.</span>
         </div>
       </div>
     </div>

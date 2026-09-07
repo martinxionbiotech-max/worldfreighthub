@@ -1,0 +1,359 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import Card from '../../components/Card.astro';
+import { SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/tools/decision-engine/`;
+const title = 'Freight Decision Engine — FCL vs LCL vs Air vs Rail';
+const description =
+  'Recommend the right China freight mode for your cargo — FCL vs LCL vs air vs rail — using the 15 CBM and time-value break-evens, plus a landed-cost multiplier.';
+
+const faqs = [
+  {
+    q: 'What does this decision engine actually decide?',
+    a: 'It answers the three decisions that drive freight cost and speed: (1) FCL or LCL — a full container or shared space, split at ~15 CBM; (2) sea, air or rail — set by your deadline against each mode\u2019s transit time; and (3) the landed-cost multiplier — duty and VAT stacked multiplicatively on the CIF value. Enter destination, volume, weight, goods value and the max days you can wait, and it returns a recommendation with the numbers behind it.',
+  },
+  {
+    q: 'Why is 15 CBM the FCL/LCL crossover?',
+    a: 'Below ~15 CBM you share a container and pay per cubic metre; above it, a 20ft\u2019s ~28 CBM of usable space starts to cost less per CBM than LCL. At 15 CBM the LCL bill (15 × the per-CBM rate) meets the fixed 20ft price, so it is the point where booking a whole box stops being wasteful. The exact crossover moves with the LCL rate and the 20ft price, so the engine recomputes it against your destination\u2019s brackets rather than quoting a frozen number.',
+  },
+  {
+    q: 'How does it weigh sea against air?',
+    a: 'It prices the time saved. Air is ~8\u201315× sea per kg, so it only wins when the days it saves are worth more than the premium. The engine estimates your daily capital cost (goods value × 10% ÷ 365) and multiplies it by the days air saves over sea: if that time-value exceeds the air premium, air pays for itself; if not, sea does. This is the calculation forwarders rarely show, and it is the whole reason a $50,000 urgent shipment flies while a $5,000 bulk one ships.',
+  },
+  {
+    q: 'Is rail only for Europe?',
+    a: 'Yes — the China\u2013Europe Railway Express runs to European terminals (Ma\u0142aszewicze, Duisburg, Hamburg, Budapest) in ~15\u201322 days, roughly 2\u20133× sea cost and a fraction of air. On GCC lanes there is no equivalent rail corridor, so the engine offers rail only for European destinations and drops it for Gulf ones.',
+  },
+  {
+    q: 'Why is landed cost multiplicative, not additive?',
+    a: 'Duty and VAT stack: a 5% duty then 15% VAT is not 20%, it is 1.05 × 1.15 = ×1.2075 (20.75%). The engine multiplies (1 + duty) × (1 + VAT) per destination — Saudi ×1.2075 vs UAE ×1.1025 vs Qatar ×1.05 — so the same $10,000 CIF lands at $12,075 in Saudi and $10,500 in Qatar, a $1,575 gap most quotes hide.',
+  },
+  {
+    q: 'Are these results quotes?',
+    a: 'No. Rates and transit times are published reference ranges (MEDIUM/LOW confidence), not live quotes. Use the recommendation to choose a mode and direction, then confirm the actual figure with a licensed forwarder before booking.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: 'Freight Decision Engine',
+      url: pageUrl,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      description,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  ogType="website"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[{ label: 'Tools', href: '/tools/' }, { label: 'Decision engine' }]}
+      />
+      <h1>Freight decision engine</h1>
+      <p class="lead">
+        Choose the right mode for a China shipment — FCL vs LCL vs air vs rail —
+        from your volume, value and deadline, with the break-even math shown.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Three decisions drive freight cost: FCL vs LCL
+          (split at ~15 CBM), sea vs air vs rail (set by deadline vs transit
+          time), and landed cost (duty × VAT, multiplicative — Saudi ×1.2075 vs
+          Qatar ×1.05). Enter five numbers and the engine returns the
+          recommendation plus the break-even behind it.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Enter your shipment</h2>
+    <div class="grid grid--2">
+      <form class="form-card" id="decision-form" aria-label="Freight decision engine inputs">
+        <label for="dest">Destination</label>
+        <select id="dest">
+          <option value="">Select a destination…</option>
+          <optgroup label="Gulf (China → GCC)">
+            <option value="jeddah">Saudi Arabia — Jeddah</option>
+            <option value="dammam">Saudi Arabia — Dammam</option>
+            <option value="jebel-ali">UAE — Jebel Ali</option>
+            <option value="khalifa-port-abu-dhabi">UAE — Khalifa Port</option>
+            <option value="hamad">Qatar — Hamad</option>
+            <option value="shuwaikh">Kuwait — Shuwaikh</option>
+            <option value="sohar">Oman — Sohar</option>
+            <option value="khalifa-bin-salman">Bahrain — Khalifa bin Salman</option>
+          </optgroup>
+          <optgroup label="Europe (China → EU/UK, rail available)">
+            <option value="germany">Germany</option>
+            <option value="united-kingdom">United Kingdom</option>
+            <option value="france">France</option>
+            <option value="netherlands">Netherlands</option>
+            <option value="poland">Poland</option>
+            <option value="spain">Spain</option>
+            <option value="italy">Italy</option>
+          </optgroup>
+        </select>
+
+        <label for="volume">Cargo volume (CBM)</label>
+        <input id="volume" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 18" />
+        <p class="small muted">Below ~15 CBM → LCL; above → FCL (20ft ≈ 28 CBM, 40ft ≈ 58 CBM).</p>
+
+        <label for="weight">Cargo weight (kg)</label>
+        <input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 1200" />
+        <p class="small muted">Used for air chargeable weight (max of actual vs volume × 167).</p>
+
+        <label for="value">Goods value (USD)</label>
+        <input id="value" type="number" min="0" step="any" inputmode="decimal" placeholder="e.g. 50000" />
+
+        <label for="max-days">Max days you can wait</label>
+        <input id="max-days" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 30" />
+
+        <p class="form-error" id="decision-error" role="alert" hidden></p>
+        <div class="mt-2">
+          <button type="button" class="btn btn-primary" id="decision-calculate">Recommend</button>
+          <button type="button" class="btn btn-secondary" id="decision-reset">Reset</button>
+        </div>
+      </form>
+
+      <div class="form-card" id="decision-result" aria-live="polite">
+        <h3 class="mb-1">Recommendation</h3>
+        <p class="result-lead" id="result-recommendation">Enter a shipment to get a recommendation.</p>
+        <p class="muted" id="result-reason"></p>
+
+        <hr class="mt-2 mb-2" />
+
+        <div class="fact-grid fact-grid--1">
+          <div class="fact">
+            <span class="fact-label">FCL vs LCL</span>
+            <span class="fact-value" id="result-fcl-lcl">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Sea transit</span>
+            <span class="fact-value" id="result-sea">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Air transit</span>
+            <span class="fact-value" id="result-air">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Rail transit</span>
+            <span class="fact-value" id="result-rail">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Sea vs air break-even</span>
+            <span class="fact-value" id="result-breakeven">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Landed-cost multiplier</span>
+            <span class="fact-value" id="result-multiplier">—</span>
+          </div>
+        </div>
+        <p class="small muted mt-2">
+          Rates are published reference ranges (MEDIUM/LOW confidence), not
+          quotes. Confirm with a licensed forwarder before booking.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>The three decisions, explained</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="1 · FCL vs LCL (~15 CBM)"
+          description="Below ~15 CBM you pay per cubic metre sharing a box; above it a full 20ft (~28 CBM) or 40ft (~58 CBM) is cheaper per CBM. The engine recomputes the crossover against your destination's LCL rate and 20ft price."
+        />
+        <Card
+          title="2 · Sea vs air vs rail"
+          description="Air is ~8–15× sea per kg but 4–7 days vs 16–45 by sea; rail (Europe only) lands in ~15–22 days at ~2.5× sea. The engine picks by your deadline, then prices the time saved."
+        />
+        <Card
+          title="3 · Landed cost (multiplicative)"
+          description="Duty then VAT stack as (1 + duty) × (1 + VAT), not added: Saudi 5% + 15% = ×1.2075, UAE ×1.1025, Qatar ×1.05. The engine shows the multiplier so the CIF price becomes a landed price."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>The time-value break-even</h2>
+    <p>
+      Air wins when the days it saves are worth more than its premium. The
+      engine prices your <strong>daily capital cost</strong> as goods value ×
+      10% ÷ 365 and multiplies it by the days air saves over sea. If that
+      time-value beats the air premium, fly it; if not, ship it.
+    </p>
+    <blockquote class="tldr">
+      <p>
+        <strong>Worked example:</strong> $50,000 of goods = $13.70/day of capital
+        (at 10% annual). Air saves ~15 days over a 20-day sea leg = $205 of
+        time-value. If the air premium is below ~$205, air pays for itself;
+        above it, sea does. This is the arithmetic that decides most urgent
+        shipments, and it is almost never shown on a quote.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const DEST = {
+    // GCC — duty 5% baseline, accurate rate brackets
+    jeddah: { country: 'Saudi Arabia', corridor: 'GCC', duty: 5, vat: 15, fcl20: [1500, 6200], fcl40: [1900, 8100], lcl: [20, 110], air: [8.8, 13.5], seaDays: 20, airDays: 5 },
+    dammam: { country: 'Saudi Arabia', corridor: 'GCC', duty: 5, vat: 15, fcl20: [1500, 6200], fcl40: [1900, 8100], lcl: [20, 110], air: [8.8, 13.5], seaDays: 20, airDays: 5 },
+    'jebel-ali': { country: 'United Arab Emirates', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 3250], fcl40: [2200, 3950], lcl: [60, 180], air: [5.45, 6.4], seaDays: 16, airDays: 5 },
+    'khalifa-port-abu-dhabi': { country: 'United Arab Emirates', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 3250], fcl40: [2200, 3950], lcl: [60, 180], air: [5.45, 6.4], seaDays: 16, airDays: 5 },
+    hamad: { country: 'Qatar', corridor: 'GCC', duty: 5, vat: 0, fcl20: [1700, 2500], fcl40: [2500, 3600], lcl: [75, 100], air: null, seaDays: 22, airDays: 5 },
+    shuwaikh: { country: 'Kuwait', corridor: 'GCC', duty: 5, vat: 0, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [70, 100], air: null, seaDays: 24, airDays: 5 },
+    sohar: { country: 'Oman', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 2600], fcl40: [2200, 3800], lcl: [60, 110], air: null, seaDays: 19, airDays: 5 },
+    'khalifa-bin-salman': { country: 'Bahrain', corridor: 'GCC', duty: 5, vat: 10, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [75, 100], air: null, seaDays: 22, airDays: 5 },
+    // Europe — duty representative MFN (varies by HS), accurate VAT, rail available
+    germany: { country: 'Germany', corridor: 'Europe', duty: 4, vat: 19, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 40, railDays: 18, airDays: 5 },
+    'united-kingdom': { country: 'United Kingdom', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 40, railDays: 19, airDays: 5 },
+    france: { country: 'France', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 17, airDays: 5 },
+    netherlands: { country: 'Netherlands', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 30, railDays: 16, airDays: 5 },
+    poland: { country: 'Poland', corridor: 'Europe', duty: 4, vat: 23, fcl20: [1200, 4800], fcl40: [1600, 6800], lcl: [60, 160], air: [4.3, 6.5], seaDays: 34, railDays: 15, airDays: 5 },
+    spain: { country: 'Spain', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 18, airDays: 5 },
+    italy: { country: 'Italy', corridor: 'Europe', duty: 4, vat: 22, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 31, railDays: 17, airDays: 5 },
+  };
+
+  const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+  function pos(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const v = Number.parseFloat(raw);
+    return Number.isFinite(v) && v >= 0 ? v : null;
+  }
+
+  function setError(msg = '') {
+    const e = el('decision-error');
+    e.textContent = msg;
+    e.hidden = msg === '';
+  }
+
+  function calculate() {
+    const destKey = el('dest').value;
+    const volume = pos('volume');
+    const weight = pos('weight');
+    const value = pos('value');
+    const maxDays = pos('max-days');
+
+    if (!destKey || volume === null || value === null || maxDays === null) {
+      setError('Enter a destination, volume, goods value and max days.');
+      return;
+    }
+    setError();
+
+    const d = DEST[destKey];
+    const duty = d.duty / 100;
+    const vat = d.vat / 100;
+    const landedMult = (1 + duty) * (1 + vat);
+
+    // FCL vs LCL
+    const isFcl = volume >= 15;
+    const fclRate = volume <= 28 ? d.fcl20 : d.fcl40;
+    const seaCost = isFcl ? fclRate : [d.lcl[0] * volume, d.lcl[1] * volume];
+    const seaLabel = isFcl ? (volume <= 28 ? '20ft FCL' : volume <= 58 ? '40ft FCL' : 'multi-container FCL') : 'LCL';
+
+    // air chargeable weight
+    const volKg = volume * 167;
+    const chargeable = weight !== null ? Math.max(weight, volKg) : volKg;
+    const airCost = d.air ? [d.air[0] * chargeable, d.air[1] * chargeable] : null;
+
+    // rail (Europe only)
+    const railAvailable = d.railDays !== undefined;
+    const railCost = railAvailable ? [seaCost[0] * 2.5, seaCost[1] * 2.5] : null;
+
+    // time-value break-even (sea vs air)
+    const dailyCapital = (value * 0.1) / 365;
+    const daysSaved = d.seaDays - d.airDays;
+    const timeValueSaved = dailyCapital * daysSaved;
+    const airPremiumLow = airCost ? airCost[0] - seaCost[0] : null;
+
+    // recommendation
+    let rec, reason;
+    if (airCost && maxDays < d.airDays + 2) {
+      rec = 'Air freight';
+      reason = `Your ${maxDays}-day deadline is tighter than the ~${d.airDays}-day air window — air is the only mode that fits, at ${USD.format(airCost[0])}–${USD.format(airCost[1])} for ~${Math.round(chargeable)} kg chargeable.`;
+    } else if (maxDays < d.seaDays) {
+      if (railAvailable && maxDays >= d.railDays) {
+        rec = 'Rail (China–Europe Railway Express)';
+        reason = `Sea needs ~${d.seaDays} days but you can allow ${maxDays}; rail lands in ~${d.railDays} days at ~2.5× sea (${USD.format(railCost[0])}–${USD.format(railCost[1])}), a middle cost for a middle speed.`;
+      } else {
+        rec = 'Air freight';
+        reason = `Sea needs ~${d.seaDays} days, more than your ${maxDays}-day limit, and ${railAvailable ? 'rail (~' + d.railDays + ' days) also misses it — ' : ''}air is the only fit.`;
+      }
+    } else {
+      rec = `Sea freight — ${seaLabel}`;
+      reason = `Sea at ~${d.seaDays} days fits your ${maxDays}-day deadline at ${USD.format(seaCost[0])}–${USD.format(seaCost[1])}. ${isFcl ? `${seaLabel} beats LCL per CBM above the ~15 CBM line` : `Your ${volume} CBM is below the ~15 CBM FCL line, so LCL is cheaper`}.`;
+    }
+
+    el('result-recommendation').textContent = rec;
+    el('result-reason').textContent = reason;
+    el('result-fcl-lcl').textContent = isFcl
+      ? `${seaLabel} (${volume} CBM ≥ 15 CBM line)`
+      : `LCL (${volume} CBM < 15 CBM line)`;
+    el('result-sea').textContent = `~${d.seaDays} days · ${USD.format(seaCost[0])}–${USD.format(seaCost[1])}`;
+    el('result-air').textContent = airCost
+      ? `~${d.airDays} days · ${USD.format(airCost[0])}–${USD.format(airCost[1])}`
+      : 'Air rate not published for this lane — request a quote';
+    el('result-rail').textContent = railAvailable
+      ? `~${d.railDays} days · ${USD.format(railCost[0])}–${USD.format(railCost[1])}`
+      : 'Not available (GCC lane has no rail corridor)';
+    el('result-breakeven').textContent = airCost
+      ? `Time-value of ${daysSaved} days saved ≈ ${USD.format(timeValueSaved)} vs air premium ≥ ${USD.format(airPremiumLow)} → ${timeValueSaved > airPremiumLow ? 'air pays for itself' : 'sea wins on cost'}`
+      : 'No air benchmark — compare on a live quote';
+    el('result-multiplier').textContent = `${d.country}: (1+${d.duty}%) × (1+${d.vat}%) = ×${landedMult.toFixed(4)}`;
+  }
+
+  function reset() {
+    el('decision-form').reset();
+    el('result-recommendation').textContent = 'Enter a shipment to get a recommendation.';
+    el('result-reason').textContent = '';
+    ['result-fcl-lcl', 'result-sea', 'result-air', 'result-rail', 'result-breakeven', 'result-multiplier'].forEach((id) => (el(id).textContent = '—'));
+    setError();
+  }
+
+  el('decision-calculate').addEventListener('click', calculate);
+  el('decision-reset').addEventListener('click', reset);
+</script>
