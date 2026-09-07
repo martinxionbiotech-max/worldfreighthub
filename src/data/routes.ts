@@ -133,17 +133,35 @@ const destinations: { port: string; country: string; typical: number }[] = [
   { port: 'khalifa-bin-salman', country: 'bahrain', typical: 22 },
 ];
 
+function parseUsdRange(s: string): [number, number] {
+  const m = s.match(/\$([\d,]+)\s*[-\u2013]\s*\$([\d,]+)/);
+  if (!m) return [0, 0];
+  return [Number(m[1].replace(/,/g, '')), Number(m[2].replace(/,/g, ''))];
+}
+
 function buildFaqs(
   originName: string,
   destName: string,
   typical: number,
   range: [number, number],
   routing: string,
+  costRows: RouteCostRow[],
 ): FaqItem[] {
+  const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
+  const [lo, hi] = fcl ? parseUsdRange(fcl.range) : [0, 0];
+  const perDayLo = lo > 0 ? Math.round(lo / typical) : 0;
+  const perDayHi = hi > 0 ? Math.round(hi / typical) : 0;
+  const spread = lo > 0 ? (hi / lo).toFixed(1) : '0';
   return [
     {
       q: `How long does shipping from ${originName} to ${destName} take?`,
       a: `Typically ${typical} days, with a range of ${range[0]}–${range[1]} days depending on direct versus transshipped routing, seasonal congestion and the specific carrier schedule.`,
+    },
+    {
+      q: `How much does a 20ft container cost from ${originName} to ${destName}?`,
+      a: fcl && lo > 0
+        ? `Indicative 20ft FCL ${fcl.range}, which works out to roughly $${perDayLo}–$${perDayHi} per day in transit over a ${typical}-day sailing — a ${spread}× spread between the low and high ends of the published range. Treat these as estimates, not quotes.`
+        : `Request a live quote through the Get Quote form for a current, lane-specific figure rather than relying on a published rate.`,
     },
     {
       q: `Is ${originName} to ${destName} a direct sailing?`,
@@ -163,13 +181,26 @@ function buildKeyTakeaways(
   destNote: string,
   typical: number,
   range: [number, number],
+  costRows: RouteCostRow[],
 ): string[] {
-  return [
+  const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
+  const [lo, hi] = fcl ? parseUsdRange(fcl.range) : [0, 0];
+  const perDayLo = lo > 0 ? Math.round(lo / typical) : 0;
+  const perDayHi = hi > 0 ? Math.round(hi / typical) : 0;
+  const items = [
     `${originName} → ${destName} typically runs ${typical} days, with a ${range[0]}–${range[1]} day range.`,
     originNote,
     destNote,
-    `Confirm direct vs transshipped routing, as it is the biggest variable in both time and cost.`,
   ];
+  if (lo > 0 && fcl) {
+    items.push(
+      `A 20ft FCL at ${fcl.range} works out to $${perDayLo}–$${perDayHi} per day in transit — the per-day cost most guides never state.`,
+    );
+  }
+  items.push(
+    `Confirm direct vs transshipped routing, as it is the biggest variable in both time and cost.`,
+  );
+  return items;
 }
 
 export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
@@ -193,7 +224,7 @@ export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
-      faqs: buildFaqs(originName, destName, dest.typical, [15, 30], destProfile.routing),
+      faqs: buildFaqs(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.costRows),
       keyTakeaways: buildKeyTakeaways(
         originName,
         destName,
@@ -201,6 +232,7 @@ export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
         destProfile.note,
         dest.typical,
         [15, 30],
+        destProfile.costRows,
       ),
     };
   }),
