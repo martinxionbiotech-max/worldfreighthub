@@ -141,17 +141,35 @@ const destinationsAr: { port: string; country: string; typical: number }[] = [
   { port: 'khalifa-bin-salman', country: 'bahrain', typical: 22 },
 ];
 
+function parseUsdRangeAr(s: string): [number, number] {
+  const m = s.match(/\$([\d,]+)\s*[-\u2013]\s*\$([\d,]+)/);
+  if (!m) return [0, 0];
+  return [Number(m[1].replace(/,/g, '')), Number(m[2].replace(/,/g, ''))];
+}
+
 function buildFaqsAr(
   originName: string,
   destName: string,
   typical: number,
   range: [number, number],
   routing: string,
+  costRows: RouteCostRow[],
 ): FaqItem[] {
+  const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
+  const [lo, hi] = fcl ? parseUsdRangeAr(fcl.range) : [0, 0];
+  const perDayLo = lo > 0 ? Math.round(lo / typical) : 0;
+  const perDayHi = hi > 0 ? Math.round(hi / typical) : 0;
+  const spread = lo > 0 ? (hi / lo).toFixed(1) : '0';
   return [
     {
       q: `كم تستغرق مدة الشحن من ${originName} إلى ${destName}؟`,
       a: `عادةً ${typical} يومًا، بمدى ${range[0]}–${range[1]} يومًا حسب التوجيه المباشر مقابل المعاد الشحن والازدحام الموسمي وجدول الناقل المحدد.`,
+    },
+    {
+      q: `كم تبلغ تكلفة حاوية 20 قدمًا من ${originName} إلى ${destName}؟`,
+      a: fcl && lo > 0
+        ? `تبلغ تكلفة FCL 20 قدمًا إرشاديًا ${fcl.range}، أي ما يعادل تقريبًا $${perDayLo}–$${perDayHi} يوميًا أثناء النقل على مدى رحلة ${typical} يومًا — بفارق ${spread}× بين الحد الأدنى والأعلى للنطاق المنشور. تعامل مع هذه الأرقام كتقديرات، لا عروض سعر.`
+        : `اطلب عرض سعر مباشر عبر نموذج الحصول على عرض سعر للحصول على رقم حالي خاص بالمسار، بدل الاعتماد على سعر منشور.`,
     },
     {
       q: `هل الرحلة من ${originName} إلى ${destName} مباشرة؟`,
@@ -171,13 +189,26 @@ function buildKeyTakeawaysAr(
   destNote: string,
   typical: number,
   range: [number, number],
+  costRows: RouteCostRow[],
 ): string[] {
-  return [
+  const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
+  const [lo, hi] = fcl ? parseUsdRangeAr(fcl.range) : [0, 0];
+  const perDayLo = lo > 0 ? Math.round(lo / typical) : 0;
+  const perDayHi = hi > 0 ? Math.round(hi / typical) : 0;
+  const items = [
     `${originName} → ${destName} تستغرق عادةً ${typical} يومًا، بمدى ${range[0]}–${range[1]} يومًا.`,
     originNote,
     destNote,
-    `أكد التوجيه المباشر مقابل المعاد الشحن، فهو أكبر متغير في كل من الوقت والتكلفة.`,
   ];
+  if (lo > 0 && fcl) {
+    items.push(
+      `حاوية 20 قدمًا FCL بسعر ${fcl.range} تعادل $${perDayLo}–$${perDayHi} يوميًا أثناء النقل — التكلفة اليومية التي لا يذكرها معظم المرشدين.`,
+    );
+  }
+  items.push(
+    `أكد التوجيه المباشر مقابل المعاد الشحن، فهو أكبر متغير في كل من الوقت والتكلفة.`,
+  );
+  return items;
 }
 
 export const routesAr: Route[] = Object.keys(originProfilesAr).flatMap((origin) =>
@@ -201,7 +232,7 @@ export const routesAr: Route[] = Object.keys(originProfilesAr).flatMap((origin) 
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
-      faqs: buildFaqsAr(originName, destName, dest.typical, [15, 30], destProfile.routing),
+      faqs: buildFaqsAr(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.costRows),
       keyTakeaways: buildKeyTakeawaysAr(
         originName,
         destName,
@@ -209,6 +240,7 @@ export const routesAr: Route[] = Object.keys(originProfilesAr).flatMap((origin) 
         destProfile.note,
         dest.typical,
         [15, 30],
+        destProfile.costRows,
       ),
     };
   }),
