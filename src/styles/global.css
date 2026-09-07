@@ -1063,3 +1063,15 @@ html[dir="rtl"] ol,
 html[dir="rtl"] ul {
   direction: rtl;
 }
+
+
+/* Language switcher */
+.site-nav a.lang-switch {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+}
+.site-nav a.lang-switch:hover {
+  border-color: var(--amber-400);
+  color: #fff;
+}
+
