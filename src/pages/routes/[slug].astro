@@ -8,7 +8,7 @@ import Cta from '../../components/Cta.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import { routes } from '../../data/routes';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
-import { portName } from '../../data/lookup';
+import { portName, countryName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
 
 export function getStaticPaths() {
@@ -85,6 +85,10 @@ const schema = [
       <div class="fact">
         <span class="fact-label">Destination</span>
         <span class="fact-value"><a href={`/ports/${route.destPort}/`}>{destName}</a></span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Destination country</span>
+        <span class="fact-value"><a href={`/countries/${route.country}/`}>{countryName(route.country)}</a></span>
       </div>
       <div class="fact">
         <span class="fact-label">Typical transit</span>

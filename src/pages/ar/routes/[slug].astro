@@ -8,6 +8,7 @@ import Cta from '../../../components/Cta.astro';
 import FaqBlock from '../../../components/FaqBlock.astro';
 import { routesAr } from '../../../data/routes.ar';
 import { getArPortBySlug } from '../../../data/ports.ar';
+import { getArCountryBySlug } from '../../../data/countries.ar';
 import { countrySourceIds, sourcesByIds } from '../../../data/sources';
 import { t } from '../../../i18n/ui';
 import { SITE_URL } from '../../../site';
@@ -22,6 +23,7 @@ export function getStaticPaths() {
 const { route } = Astro.props;
 const locale = 'ar' as const;
 const portNameAr = (slug: string) => getArPortBySlug(slug)?.name ?? slug;
+const countryNameAr = (slug: string) => getArCountryBySlug(slug)?.name ?? slug;
 
 const originName = portNameAr(route.originPort);
 const destName = portNameAr(route.destPort);
@@ -89,6 +91,10 @@ const schema = [
       <div class="fact">
         <span class="fact-label">الوجهة</span>
         <span class="fact-value"><a href={`/ar/ports/${route.destPort}/`}>{destName}</a></span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">بلد الوجهة</span>
+        <span class="fact-value"><a href={`/ar/countries/${route.country}/`}>{countryNameAr(route.country)}</a></span>
       </div>
       <div class="fact">
         <span class="fact-label">مدة النقل النموذجية</span>
