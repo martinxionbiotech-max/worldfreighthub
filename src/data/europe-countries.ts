@@ -699,4 +699,59 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: "ireland",
+    updated: "2026-09-07",
+    name: "Ireland",
+    iso2: "IE",
+    capital: "Dublin",
+    currency: "EUR",
+    vatRate: 23,
+    vatNote: "23% standard (13.5% and 9% reduced).",
+    ports: ["dublin", "cork"],
+    tldr:
+      "Ireland is the EU's Atlantic island — entered through Dublin (IEDUB) and Cork (IEORK), both reached by a final short-sea crossing continental markets never need, with 23% VAT on EU common duty and a post-Brexit routing question the UK landbridge once answered.",
+    dutyRate: "EU Common Customs Tariff (MFN, varies by HS code)",
+    dutyNote:
+      "Ireland applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.",
+    deMinimis: "€150 (VAT threshold)",
+    deMinimisNote:
+      "The EU €22 threshold was abolished in 2021; import VAT applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Irish Revenue.",
+    compliance: [
+      "EORI number for EU imports.",
+      "CE marking for regulated products.",
+      "REACH for chemical substances.",
+      "Correct 10-digit TARIC classification.",
+    ],
+    clearanceProcess: [
+      "Register for an EORI number.",
+      "Classify under the TARIC code.",
+      "File the import declaration and pay duty plus 23% VAT.",
+      "Clear through Dublin, Cork or Rosslare.",
+      "Release and deliver across Ireland (or onward to Northern Ireland).",
+    ],
+    insight:
+      "Ireland is the one EU market that needs an extra sea leg no continental destination carries: the container must cross the Irish Sea or Celtic Sea at the end, either as a direct lo-lo deep-sea call, a northern-range transshipment feeding west, or — the pre-Brexit default — the UK landbridge across Britain. Brexit changed that third option's arithmetic: routing through the UK now means clearing two customs regimes (EU entry plus UK transit) where a direct Dublin or Cork call clears one, which is why direct continental lo-lo services have grown since 2021. The 23% VAT sits four points above Germany's 19% and compounds with duty — 5% duty + 23% VAT is ×1.2915, not 28% — so a $10,000 CIF shipment lands at $12,915 before the short-sea leg and destination fees are added. And Ireland has no practical China-Europe rail option: the New Silk Road stops at German and Polish termini, and any final rail move still ends in a ferry or feeder crossing that erodes the speed advantage, leaving Ireland a sea-versus-air market.",
+    keyTakeaways: [
+      "Ireland is an island — every China shipment needs a final short-sea crossing continental markets never pay.",
+      "23% VAT on EU common duty; 5% duty + 23% VAT compounds to ×1.2915, not 28%.",
+      "Post-Brexit, the UK landbridge means two customs regimes versus one for a direct Dublin or Cork call.",
+      "No practical China-Europe rail lane — Ireland is a sea-versus-air market.",
+      "Dublin (IEDUB) is the volume gate; Cork (IEORK) is the deep-water alternative.",
+    ],
+    faqs: [
+      {
+        q: "What is the VAT rate in Ireland?",
+        a: "23% standard, with reduced rates of 13.5% (the broad reduced band) and 9% (tourism, hospitality, newspapers). Import VAT is charged on the duty-inclusive value, so 5% duty plus 23% VAT compounds to ×1.2915 — a $10,000 CIF shipment at 5% duty lands at $12,915, not the $12,800 you get by adding the two rates.",
+      },
+      {
+        q: "Which port should I use when shipping from China to Ireland?",
+        a: "Dublin (UN/LOCODE IEDUB) is the volume gate for most of the country, while Cork (IEORK) is the deep-water alternative on the south coast and Rosslare serves the southeast. Dublin is tidal with draft limits, so much China cargo transships via the northern range and feeds west rather than calling direct.",
+      },
+      {
+        q: "Does the UK landbridge still make sense for China to Ireland?",
+        a: "Post-Brexit it usually costs more in paperwork than it saves in days — routing through the UK means clearing two customs regimes (EU entry plus UK transit) where a direct Dublin or Cork call clears one. That is why direct continental lo-lo services to Irish ports have grown since 2021, and why most new quotes price the direct call first.",
+      },
+    ],
+  },
 ];

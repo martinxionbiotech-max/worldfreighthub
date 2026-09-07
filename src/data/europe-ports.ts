@@ -434,4 +434,82 @@ export const europePorts: Port[] = [
     ],
     updated: '2026-09-06',
   },
+  {
+    slug: "dublin",
+    confidence: "HIGH",
+    name: "Dublin",
+    country: "Ireland",
+    countrySlug: "ireland",
+    type: "seaport",
+    unlocode: "IEDUB",
+    tldr:
+      "Ireland's dominant container gateway — a tidal port on the Liffey that handles most of the country's unitised traffic but cannot take the largest vessels, so China cargo typically transships via the northern range and feeds west.",
+    operator: "Dublin Port Company",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — request from Dublin Port Company" },
+      { label: "Max draft", value: "Tidal, limited — cannot take the largest mainline vessels" },
+      { label: "Key terminals", value: "Marine Terminals Ltd (MTL), Dublin Ferryport Terminals" },
+      { label: "UN/LOCODE", value: "IEDUB" },
+    ],
+    hinterland:
+      "Ireland — Dublin serves the Greater Dublin Area, the largest consumer market, and by road most of the island; it is the default gate for Irish imports.",
+    insight:
+      "Dublin is Ireland's volume gate but not a deep-sea gate: as a tidal river port it cannot take the ultra-large vessels, so most China cargo lands at a northern-range hub and feeds west across the Irish Sea rather than calling Dublin direct. That final short-sea leg is the cost and time continental markets never pay, and it is the reason Dublin's routing question is really 'which continental hub do I transship at' rather than 'which Irish port do I land at'.",
+    keyTakeaways: [
+      "Ireland's dominant container gateway and the default gate for Irish imports.",
+      "Tidal port that cannot take the largest mainline vessels.",
+      "Most China cargo transships via the northern range and feeds west.",
+      "The final short-sea leg across the Irish Sea is the cost continental markets never pay.",
+    ],
+    faqs: [
+      {
+        q: "Is Dublin a deep-sea port?",
+        a: "No — Dublin is a tidal river port with draft limits, so the largest mainline container vessels cannot call fully loaded. Most China cargo therefore transships at a northern-range hub such as Rotterdam or Antwerp and feeds west to Dublin, rather than calling direct.",
+      },
+      {
+        q: "How does cargo from China reach Dublin?",
+        a: "Three ways: a direct lo-lo deep-sea call (thinner), a northern-range transshipment feeding west across the Irish Sea (the norm), or — the pre-Brexit default now fading — the UK landbridge across Britain. Post-Brexit the direct continental call is usually cheaper in paperwork than the landbridge.",
+      },
+    ],
+    updated: "2026-09-07",
+  },
+  {
+    slug: "cork",
+    confidence: "HIGH",
+    name: "Cork",
+    country: "Ireland",
+    countrySlug: "ireland",
+    type: "seaport",
+    unlocode: "IEORK",
+    tldr:
+      "Ireland's deep-water southern gateway — Ringaskiddy takes larger vessels than Dublin and serves the south and southwest, with direct continental lo-lo links that grew after Brexit.",
+    operator: "Port of Cork Company",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — request from Port of Cork Company" },
+      { label: "Max draft", value: "Deeper water at Ringaskiddy than Dublin (tidal) — verify with the port" },
+      { label: "Key terminals", value: "Ringaskiddy (container), Tivoli" },
+      { label: "UN/LOCODE", value: "IEORK" },
+    ],
+    hinterland:
+      "Southern Ireland — Cork serves the south and southwest and is the natural deep-water alternative to Dublin for larger or south-bound cargo.",
+    insight:
+      "Cork is the port you choose when Dublin's tidal draft is the constraint. Its Ringaskiddy terminal takes larger vessels, and its position on the south coast means it is reached directly from the Atlantic without the extra Irish Sea leg that Dublin-bound feeders cross. For south and southwest Ireland, and for any cargo that outgrows Dublin's draft, pricing Cork before defaulting to Dublin can cut both the feeder move and the inland haul.",
+    keyTakeaways: [
+      "Ireland's deep-water southern gateway — Ringaskiddy takes larger vessels than Dublin.",
+      "Reached directly from the Atlantic, skipping the Irish Sea feeder that Dublin needs.",
+      "Serves the south and southwest of Ireland.",
+      "Grew its direct continental lo-lo links after Brexit.",
+    ],
+    faqs: [
+      {
+        q: "Is Cork better than Dublin for China cargo?",
+        a: "For the south and southwest, or for cargo that outgrows Dublin's tidal draft, yes — Cork's Ringaskiddy terminal takes larger vessels and is reached directly from the Atlantic without the extra Irish Sea leg Dublin-bound feeders cross. For the Dublin market itself, Dublin remains the default.",
+      },
+      {
+        q: "Does Cork take direct deep-sea calls from China?",
+        a: "Direct China calls to Cork are thinner than on the northern range, so much cargo still transships. But Cork's deeper water and Atlantic position make it the more capable Irish gate for larger vessels when a direct or first-port call is available — confirm direct-versus-transshipped service with your forwarder.",
+      },
+    ],
+    updated: "2026-09-07",
+  },
 ];

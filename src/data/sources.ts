@@ -18,6 +18,7 @@ export const countrySourceIds: Record<string, string[]> = {
   austria: ['eu-taric', 'austrian-customs'],
   sweden: ['eu-taric', 'swedish-customs', 'swedish-tax'],
   portugal: ['eu-taric', 'portuguese-customs'],
+  ireland: ['eu-taric', 'irish-customs'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -50,6 +51,8 @@ export const portSourceIds: Record<string, string[]> = {
   gdansk: ['port-gdansk'],
   gothenburg: ['port-gothenburg'],
   sines: ['port-sines'],
+  dublin: ['port-dublin'],
+  cork: ['port-cork'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -356,5 +359,23 @@ export const sources: Source[] = [
     name: 'Thessaloniki Port Authority (ThPA)',
     url: 'https://www.thpa.gr',
     type: 'port-authority',
+  },
+  {
+    id: "irish-customs",
+    name: "Irish Revenue (Revenue) — Customs & VAT",
+    url: "https://www.revenue.ie",
+    type: "government",
+  },
+  {
+    id: "port-dublin",
+    name: "Dublin Port Company",
+    url: "https://www.dublinport.ie",
+    type: "port-authority",
+  },
+  {
+    id: "port-cork",
+    name: "Port of Cork Company",
+    url: "https://www.portofcork.ie",
+    type: "port-authority",
   },
 ];
