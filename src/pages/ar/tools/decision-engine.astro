@@ -1,0 +1,364 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import FaqBlock from '../../../components/FaqBlock.astro';
+import Cta from '../../../components/Cta.astro';
+import Card from '../../../components/Card.astro';
+import { SITE_URL } from '../../../site';
+
+const locale = 'ar' as const;
+
+const pageUrl = `${SITE_URL}/ar/tools/decision-engine/`;
+const title = 'محرك قرار الشحن — FCL أم LCL أم الجوي أم السككي';
+const description =
+  'يوصي بوضع الشحن الأنسب من الصين لشحنتك — FCL أم LCL أم الجوي أم السككي — باستخدام عتبتي التعادل عند 15 CBM والقيمة الزمنية، إضافةً إلى مُضاعف التكلفة الإجمالية للوصول.';
+
+const faqs = [
+  {
+    q: 'ما الذي يقرره محرك القرار هذا فعلياً؟',
+    a: 'يجيب عن القرارات الثلاثة التي تتحكم في تكلفة الشحن وسرعته: (1) FCL أم LCL — حاوية كاملة أم مساحة مشتركة، والانقسام عند نحو 15 CBM؛ و(2) البحري أم الجوي أم السككي — تحدده المهلة النهائية مقارنةً بزمن عبور كل وسيلة؛ و(3) مُضاعف التكلفة الإجمالية للوصول — الرسوم وضريبة القيمة المضافة تُضربان معاً على قيمة CIF. أدخل الوجهة والحجم والوزن وقيمة البضاعة والحد الأقصى للأيام التي يمكنك انتظارها، فيعيد لك توصية مع الأرقام التي تقف خلفها.',
+  },
+  {
+    q: 'لماذا تُعد 15 CBM هي نقطة التحول بين FCL وLCL؟',
+    a: 'تحت نحو 15 CBM تشارك حاوية وتدفع لكل متر مكعب؛ وفوقها تبدأ حاوية 20 قدماً بنحو 28 CBM من المساحة القابلة للاستخدام في أن تصبح أقل تكلفة لكل CBM من LCL. وعند 15 CBM تتقابل فاتورة LCL (15 × معدل كل CBM) مع سعر حاوية 20 قدماً الثابت، فتلك هي النقطة التي يتوقف عندها حجز حاوية كاملة عن كونه هدراً. تتحرك نقطة التحول الفعلية مع معدل LCL وسعر حاوية 20 قدماً، لذلك يعيد المحرك حسابها وفق شرائح وجهتك بدلاً من الاستشهاد برقم جامد.',
+  },
+  {
+    q: 'كيف يوازن المحرك بين البحري والجوي؟',
+    a: 'يُسعّر الوقتَ الموفَّر. الشحن الجوي أغلى من البحري بنحو 8–15 مرة لكل كجم، فلا يفوز إلا عندما تكون الأيام التي يوفرها أكثر قيمة من الفارق. يقدّر المحرك تكلفة رأس المال اليومية (قيمة البضاعة × 10% ÷ 365) ويضربها في الأيام التي يوفرها الجوي عن البحري: إذا تجاوزت هذه القيمة الزمنية فارقَ الشحن الجوي، فإن الجوي يدفع عن نفسه؛ وإلا فيفوز البحري. هذه هي الحسبة التي نادراً ما يعرضها وكلاء الشحن، وهي السبب كله في أن شحنة عاجلة بقيمة 50,000 دولار تسافر جواً بينما شحنة ضخمة بقيمة 5,000 دولار تُشحن بحراً.',
+  },
+  {
+    q: 'هل السكة الحديدية لأوروبا فقط؟',
+    a: 'نعم — يسير قطار الصين–أوروبا السريع إلى المحطات الأوروبية (مالاشيفيتشه، دويسبورغ، هامبورغ، بودابست) في نحو 15–22 يوماً، وبتكلفة تعادل تقريباً 2–3 أضعاف البحري وجزء يسير من الجوي. ولا يوجد على ممرات الخليج ممر سككي مماثل، لذلك يعرض المحرك السكة الحديدية للوجهات الأوروبية فقط ويُسقطها عن وجهات الخليج.',
+  },
+  {
+    q: 'لماذا تكون التكلفة الإجمالية للوصول مضروبة لا مضافة؟',
+    a: 'تتراكم الرسوم وضريبة القيمة المضافة: رسم 5% ثم ضريبة قيمة مضافة 15% لا تعني 20%، بل 1.05 × 1.15 = ×1.2075 (أي 20.75%). يضرب المحرك (1 + الرسم) × (1 + ضريبة القيمة المضافة) لكل وجهة — السعودية ×1.2075 مقابل الإمارات ×1.1025 مقابل قطر ×1.05 — فقيمة CIF نفسها البالغة 10,000 دولار تهبط عند 12,075 دولاراً في السعودية و10,500 دولار في قطر، وهو فارق 1,575 دولاراً تخفيه معظم عروض الأسعار.',
+  },
+  {
+    q: 'هل هذه النتائج عروض أسعار؟',
+    a: 'لا. الأسعار وأزمنة العبور نطاقات مرجعية منشورة (بموثوقية متوسطة/منخفضة)، وليست عروض أسعار مباشرة. استخدم التوصية لاختيار الوسيلة والوجهة، ثم أكد الرقم الفعلي مع وكيل شحن مرخص قبل الحجز.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: title,
+      url: pageUrl,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      description,
+      inLanguage: 'ar',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  ogType="website"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        locale={locale}
+        items={[{ label: 'الأدوات', href: '/ar/tools/' }, { label: 'محرك قرار الشحن' }]}
+      />
+      <h1>محرك قرار الشحن</h1>
+      <p class="lead">
+        اختر الوسيلة الأنسب لشحنة من الصين — FCL أم LCL أم الجوي أم السككي —
+        من حجم شحنتك وقيمتها وموعد التسليم، مع عرض حساب التعادل.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>الخلاصة:</strong> ثلاثة قرارات تتحكم في تكلفة الشحن: FCL أم LCL
+          (الانقسام عند نحو 15 CBM)، والبحري أم الجوي أم السككي (تحدده المهلة
+          مقارنةً بزمن العبور)، والتكلفة الإجمالية للوصول (الرسم × ضريبة القيمة
+          المضافة، مضروبة — السعودية ×1.2075 مقابل قطر ×1.05). أدخل خمسة أرقام
+          وسيعيد المحرك التوصية مع حساب التعادل الذي يقف خلفها.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>أدخل بيانات شحنتك</h2>
+    <div class="grid grid--2">
+      <form class="form-card" id="decision-form" aria-label="مدخلات محرك قرار الشحن">
+        <label for="dest">الوجهة</label>
+        <select id="dest">
+          <option value="">اختر وجهة…</option>
+          <optgroup label="الخليج (من الصين إلى دول مجلس التعاون الخليجي)">
+            <option value="jeddah">السعودية — جدة</option>
+            <option value="dammam">السعودية — الدمام</option>
+            <option value="jebel-ali">الإمارات — جبل علي</option>
+            <option value="khalifa-port-abu-dhabi">الإمارات — ميناء خليفة</option>
+            <option value="hamad">قطر — حمد</option>
+            <option value="shuwaikh">الكويت — الشويخ</option>
+            <option value="sohar">عُمان — صحار</option>
+            <option value="khalifa-bin-salman">البحرين — خليفة بن سلمان</option>
+          </optgroup>
+          <optgroup label="أوروبا (من الصين إلى الاتحاد الأوروبي/المملكة المتحدة، السكة الحديدية متاحة)">
+            <option value="germany">ألمانيا</option>
+            <option value="united-kingdom">المملكة المتحدة</option>
+            <option value="france">فرنسا</option>
+            <option value="netherlands">هولندا</option>
+            <option value="poland">بولندا</option>
+            <option value="spain">إسبانيا</option>
+            <option value="italy">إيطاليا</option>
+          </optgroup>
+        </select>
+
+        <label for="volume">حجم البضاعة (CBM)</label>
+        <input id="volume" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 18" />
+        <p class="small muted">تحت نحو 15 CBM → LCL؛ وفوقها → FCL (حاوية 20 قدماً ≈ 28 CBM، و40 قدماً ≈ 58 CBM).</p>
+
+        <label for="weight">وزن البضاعة (كجم)</label>
+        <input id="weight" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 1200" />
+        <p class="small muted">يُستخدم لحساب الوزن القابل للتحصيل الجوي (الأعلى من الوزن الفعلي مقابل الحجم × 167).</p>
+
+        <label for="value">قيمة البضاعة (بالدولار)</label>
+        <input id="value" type="number" min="0" step="any" inputmode="decimal" placeholder="مثال: 50000" />
+
+        <label for="max-days">الحد الأقصى للأيام التي يمكنك انتظارها</label>
+        <input id="max-days" type="number" min="1" step="1" inputmode="numeric" placeholder="مثال: 30" />
+
+        <p class="form-error" id="decision-error" role="alert" hidden></p>
+        <div class="mt-2">
+          <button type="button" class="btn btn-primary" id="decision-calculate">احصل على التوصية</button>
+          <button type="button" class="btn btn-secondary" id="decision-reset">إعادة تعيين</button>
+        </div>
+      </form>
+
+      <div class="form-card" id="decision-result" aria-live="polite">
+        <h3 class="mb-1">التوصية</h3>
+        <p class="result-lead" id="result-recommendation">أدخل بيانات شحنة للحصول على توصية.</p>
+        <p class="muted" id="result-reason"></p>
+
+        <hr class="mt-2 mb-2" />
+
+        <div class="fact-grid fact-grid--1">
+          <div class="fact">
+            <span class="fact-label">FCL أم LCL</span>
+            <span class="fact-value" id="result-fcl-lcl">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">زمن العبور البحري</span>
+            <span class="fact-value" id="result-sea">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">زمن العبور الجوي</span>
+            <span class="fact-value" id="result-air">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">زمن العبور السككي</span>
+            <span class="fact-value" id="result-rail">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">التعادل بين البحري والجوي</span>
+            <span class="fact-value" id="result-breakeven">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">مُضاعف التكلفة الإجمالية للوصول</span>
+            <span class="fact-value" id="result-multiplier">—</span>
+          </div>
+        </div>
+        <p class="small muted mt-2">
+          الأسعار نطاقات مرجعية منشورة (بموثوقية متوسطة/منخفضة)، وليست عروض
+          أسعار. أكد مع وكيل شحن مرخص قبل الحجز.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>القرارات الثلاثة، بالشرح</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="1 · FCL أم LCL (نحو 15 CBM)"
+          description="تحت نحو 15 CBM تدفع لكل متر مكعب وتشارك حاوية؛ وفوقها تكون حاوية 20 قدماً كاملة (نحو 28 CBM) أو 40 قدماً (نحو 58 CBM) أرخص لكل CBM. يعيد المحرك حساب نقطة التحول وفق معدل LCL وسعر حاوية 20 قدماً في وجهتك."
+        />
+        <Card
+          title="2 · البحري أم الجوي أم السككي"
+          description="الجوي أغلى من البحري بنحو 8–15 مرة لكل كجم لكنه يستغرق 4–7 أيام مقابل 16–45 يوماً بحراً؛ والسككي (لأوروبا فقط) يهبط في نحو 15–22 يوماً بنحو 2.5 ضعف البحري. يختار المحرك بحسب مهلك، ثم يُسعّر الوقت الموفَّر."
+        />
+        <Card
+          title="3 · التكلفة الإجمالية للوصول (مضروبة)"
+          description="تتراكم الرسوم ثم ضريبة القيمة المضافة على أنها (1 + الرسم) × (1 + ضريبة القيمة المضافة) لا جمعاً: السعودية 5% + 15% = ×1.2075، والإمارات ×1.1025، وقطر ×1.05. يعرض المحرك المُضاعف ليتحول سعر CIF إلى سعر إجمالي للوصول."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>التعادل بالقيمة الزمنية</h2>
+    <p>
+      يفوز الجوي عندما تكون الأيام التي يوفرها أكثر قيمة من فارق سعره. يقدّر
+      المحرك <strong>تكلفة رأس المال اليومية</strong> لديك على أنها قيمة البضاعة
+      × 10% ÷ 365 ويضربها في الأيام التي يوفرها الجوي عن البحري. إذا تجاوزت هذه
+      القيمة الزمنية فارق الجوي فاشحنه جواً؛ وإلا فاشحنه بحراً.
+    </p>
+    <blockquote class="tldr">
+      <p>
+        <strong>مثال تطبيقي:</strong> بضاعة بقيمة 50,000 دولار = 13.70 دولار يومياً
+        من رأس المال (بمعدل سنوي 10%). يوفر الجوي نحو 15 يوماً مقارنة برحلة بحرية
+        تستغرق 20 يوماً = 205 دولارات من القيمة الزمنية. إذا كان فارق الجوي أقل من
+        نحو 205 دولارات، فإن الجوي يدفع عن نفسه؛ وفوقها يفوز البحري. هذه هي الحسبة
+        التي تحسم معظم الشحنات العاجلة، وهي لا تُعرض تقريباً على أي عرض سعر.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>الأسئلة الشائعة</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta locale={locale} href="/ar/get-quote/" />
+  </section>
+</BaseLayout>
+
+<script>
+  const el = (id) => document.getElementById(id);
+
+  const DEST = {
+    // GCC — duty 5% baseline, accurate rate brackets
+    jeddah: { country: 'السعودية', corridor: 'GCC', duty: 5, vat: 15, fcl20: [1500, 6200], fcl40: [1900, 8100], lcl: [20, 110], air: [8.8, 13.5], seaDays: 20, airDays: 5 },
+    dammam: { country: 'السعودية', corridor: 'GCC', duty: 5, vat: 15, fcl20: [1500, 6200], fcl40: [1900, 8100], lcl: [20, 110], air: [8.8, 13.5], seaDays: 20, airDays: 5 },
+    'jebel-ali': { country: 'الإمارات', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 3250], fcl40: [2200, 3950], lcl: [60, 180], air: [5.45, 6.4], seaDays: 16, airDays: 5 },
+    'khalifa-port-abu-dhabi': { country: 'الإمارات', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 3250], fcl40: [2200, 3950], lcl: [60, 180], air: [5.45, 6.4], seaDays: 16, airDays: 5 },
+    hamad: { country: 'قطر', corridor: 'GCC', duty: 5, vat: 0, fcl20: [1700, 2500], fcl40: [2500, 3600], lcl: [75, 100], air: null, seaDays: 22, airDays: 5 },
+    shuwaikh: { country: 'الكويت', corridor: 'GCC', duty: 5, vat: 0, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [70, 100], air: null, seaDays: 24, airDays: 5 },
+    sohar: { country: 'عُمان', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 2600], fcl40: [2200, 3800], lcl: [60, 110], air: null, seaDays: 19, airDays: 5 },
+    'khalifa-bin-salman': { country: 'البحرين', corridor: 'GCC', duty: 5, vat: 10, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [75, 100], air: null, seaDays: 22, airDays: 5 },
+    // Europe — duty representative MFN (varies by HS), accurate VAT, rail available
+    germany: { country: 'ألمانيا', corridor: 'Europe', duty: 4, vat: 19, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 40, railDays: 18, airDays: 5 },
+    'united-kingdom': { country: 'المملكة المتحدة', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 40, railDays: 19, airDays: 5 },
+    france: { country: 'فرنسا', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 17, airDays: 5 },
+    netherlands: { country: 'هولندا', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 30, railDays: 16, airDays: 5 },
+    poland: { country: 'بولندا', corridor: 'Europe', duty: 4, vat: 23, fcl20: [1200, 4800], fcl40: [1600, 6800], lcl: [60, 160], air: [4.3, 6.5], seaDays: 34, railDays: 15, airDays: 5 },
+    spain: { country: 'إسبانيا', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 18, airDays: 5 },
+    italy: { country: 'إيطاليا', corridor: 'Europe', duty: 4, vat: 22, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 31, railDays: 17, airDays: 5 },
+  };
+
+  const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+  function pos(id) {
+    const raw = el(id).value.trim();
+    if (raw === '') return null;
+    const v = Number.parseFloat(raw);
+    return Number.isFinite(v) && v >= 0 ? v : null;
+  }
+
+  function setError(msg = '') {
+    const e = el('decision-error');
+    e.textContent = msg;
+    e.hidden = msg === '';
+  }
+
+  function calculate() {
+    const destKey = el('dest').value;
+    const volume = pos('volume');
+    const weight = pos('weight');
+    const value = pos('value');
+    const maxDays = pos('max-days');
+
+    if (!destKey || volume === null || value === null || maxDays === null) {
+      setError('أدخل الوجهة والحجم وقيمة البضاعة والحد الأقصى للأيام.');
+      return;
+    }
+    setError();
+
+    const d = DEST[destKey];
+    const duty = d.duty / 100;
+    const vat = d.vat / 100;
+    const landedMult = (1 + duty) * (1 + vat);
+
+    // FCL vs LCL
+    const isFcl = volume >= 15;
+    const fclRate = volume <= 28 ? d.fcl20 : d.fcl40;
+    const seaCost = isFcl ? fclRate : [d.lcl[0] * volume, d.lcl[1] * volume];
+    const seaLabel = isFcl ? (volume <= 28 ? 'FCL حاوية 20 قدماً' : volume <= 58 ? 'FCL حاوية 40 قدماً' : 'FCL متعدد الحاويات') : 'LCL';
+
+    // air chargeable weight
+    const volKg = volume * 167;
+    const chargeable = weight !== null ? Math.max(weight, volKg) : volKg;
+    const airCost = d.air ? [d.air[0] * chargeable, d.air[1] * chargeable] : null;
+
+    // rail (Europe only)
+    const railAvailable = d.railDays !== undefined;
+    const railCost = railAvailable ? [seaCost[0] * 2.5, seaCost[1] * 2.5] : null;
+
+    // time-value break-even (sea vs air)
+    const dailyCapital = (value * 0.1) / 365;
+    const daysSaved = d.seaDays - d.airDays;
+    const timeValueSaved = dailyCapital * daysSaved;
+    const airPremiumLow = airCost ? airCost[0] - seaCost[0] : null;
+
+    // recommendation
+    let rec, reason;
+    if (airCost && maxDays < d.airDays + 2) {
+      rec = 'شحن جوي';
+      reason = `مهلة ${maxDays} يوماً أضيق من نافذة الشحن الجوي البالغة نحو ${d.airDays} يوماً — الجوي هو الوسيلة الوحيدة المناسبة، بتكلفة ${USD.format(airCost[0])}–${USD.format(airCost[1])} لنحو ${Math.round(chargeable)} كجم قابل للتحصيل.`;
+    } else if (maxDays < d.seaDays) {
+      if (railAvailable && maxDays >= d.railDays) {
+        rec = 'السكة الحديدية (قطار الصين–أوروبا السريع)';
+        reason = `البحري يحتاج نحو ${d.seaDays} يوماً بينما تسمح بـ ${maxDays}؛ وتهبط السكة الحديدية في نحو ${d.railDays} يوماً بنحو 2.5 ضعف البحري (${USD.format(railCost[0])}–${USD.format(railCost[1])})، بتكلفة وسط وسرعة وسط.`;
+      } else {
+        rec = 'شحن جوي';
+        reason = `البحري يحتاج نحو ${d.seaDays} يوماً، أي أكثر من حدّك البالغ ${maxDays} يوماً، ${railAvailable ? 'والسكة الحديدية (نحو ' + d.railDays + ' يوماً) تتجاوزه أيضاً — ' : ''}فالجوي هو الوسيلة الوحيدة المناسبة.`;
+      }
+    } else {
+      rec = `شحن بحري — ${seaLabel}`;
+      reason = `البحري بنحو ${d.seaDays} يوماً يتوافق مع مهلك البالغة ${maxDays} يوماً بتكلفة ${USD.format(seaCost[0])}–${USD.format(seaCost[1])}. ${isFcl ? `${seaLabel} يتفوق على LCL لكل CBM فوق خط 15 CBM تقريباً` : `حجمك البالغ ${volume} CBM تحت خط FCL البالغ 15 CBM تقريباً، لذا فإن LCL أرخص`}.`;
+    }
+
+    el('result-recommendation').textContent = rec;
+    el('result-reason').textContent = reason;
+    el('result-fcl-lcl').textContent = isFcl
+      ? `${seaLabel} (${volume} CBM ≥ خط 15 CBM)`
+      : `LCL (${volume} CBM < خط 15 CBM)`;
+    el('result-sea').textContent = `نحو ${d.seaDays} يوماً · ${USD.format(seaCost[0])}–${USD.format(seaCost[1])}`;
+    el('result-air').textContent = airCost
+      ? `نحو ${d.airDays} يوماً · ${USD.format(airCost[0])}–${USD.format(airCost[1])}`
+      : 'سعر الشحن الجوي غير منشور لهذا الممر — اطلب عرض سعر';
+    el('result-rail').textContent = railAvailable
+      ? `نحو ${d.railDays} يوماً · ${USD.format(railCost[0])}–${USD.format(railCost[1])}`
+      : 'غير متاحة (ممر الخليج لا يملك ممراً سككياً)';
+    el('result-breakeven').textContent = airCost
+      ? `القيمة الزمنية لـ ${daysSaved} يوماً موفَّراً ≈ ${USD.format(timeValueSaved)} مقابل فارق جوي ≥ ${USD.format(airPremiumLow)} ← ${timeValueSaved > airPremiumLow ? 'الجوي يدفع عن نفسه' : 'البحري يفوز بالتكلفة'}`
+      : 'لا معيار جوي — قارن على عرض سعر مباشر';
+    el('result-multiplier').textContent = `${d.country}: (1+${d.duty}%) × (1+${d.vat}%) = ×${landedMult.toFixed(4)}`;
+  }
+
+  function reset() {
+    el('decision-form').reset();
+    el('result-recommendation').textContent = 'أدخل بيانات شحنة للحصول على توصية.';
+    el('result-reason').textContent = '';
+    ['result-fcl-lcl', 'result-sea', 'result-air', 'result-rail', 'result-breakeven', 'result-multiplier'].forEach((id) => (el(id).textContent = '—'));
+    setError();
+  }
+
+  el('decision-calculate').addEventListener('click', calculate);
+  el('decision-reset').addEventListener('click', reset);
+</script>
