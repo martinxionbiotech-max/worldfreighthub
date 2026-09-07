@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
 import { glossary } from '../../data/glossary';
+import { glossaryAr } from '../../data/glossary.ar';
 import { SITE_URL } from '../../site';
 
 export function getStaticPaths() {
@@ -14,6 +15,8 @@ export function getStaticPaths() {
 
 const { term } = Astro.props;
 
+const arSlugs = new Set(glossaryAr.map((t) => t.slug));
+const hasAr = arSlugs.has(term.slug);
 const termCount = glossary.length;
 
 const relatedTerms = term.related
@@ -57,6 +60,7 @@ const schema = [
 
 <BaseLayout
   title={`${term.term} — Freight Glossary`}
+  hreflang={hasAr}
   description={term.definition}
   canonical={`${SITE_URL}/glossary/${term.slug}/`}
   schema={schema}

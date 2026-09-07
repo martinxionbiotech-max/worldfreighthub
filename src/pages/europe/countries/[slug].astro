@@ -46,7 +46,7 @@ const schema = [
 ];
 ---
 
-<BaseLayout
+<BaseLayout hreflang={false}
   title={`Shipping to ${country.name} from China — Duty, VAT & Clearance`}
   description={`Freight and customs information for ${country.name}: ${country.vatRate === null ? 'no VAT' : `${country.vatRate}% VAT`}, EU import duty, de minimis, compliance and entry ports.`}
   canonical={`${SITE_URL}/europe/countries/${country.slug}/`}

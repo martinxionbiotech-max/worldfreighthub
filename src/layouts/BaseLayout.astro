@@ -22,6 +22,7 @@ interface Props {
   noindex?: boolean;
   schema?: SchemaEntry[];
   locale?: Locale;
+  hreflang?: boolean;
 }
 
 const {
@@ -34,6 +35,7 @@ const {
   noindex,
   schema = [],
   locale = 'en',
+  hreflang = true,
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
@@ -54,7 +56,7 @@ const arHref = isAr ? selfHref : otherHref;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <link rel="alternate" hreflang="en" href={enHref} />
-    <link rel="alternate" hreflang="ar" href={arHref} />
+    {hreflang && <link rel="alternate" hreflang="ar" href={arHref} />}
     <link rel="alternate" hreflang="x-default" href={enHref} />
     {isAr && (
       <>
