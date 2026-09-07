@@ -3,6 +3,7 @@ import type { Port } from './types';
 export const europePorts: Port[] = [
   {
     slug: 'rotterdam',
+    confidence: 'HIGH',
     name: 'Rotterdam',
     country: 'Netherlands',
     countrySlug: 'netherlands',
@@ -45,6 +46,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'hamburg',
+    confidence: 'HIGH',
     name: 'Hamburg',
     country: 'Germany',
     countrySlug: 'germany',
@@ -83,6 +85,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'antwerp',
+    confidence: 'HIGH',
     name: 'Antwerp',
     country: 'Belgium',
     countrySlug: 'belgium',
@@ -121,6 +124,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'felixstowe',
+    confidence: 'HIGH',
     name: 'Felixstowe',
     country: 'United Kingdom',
     countrySlug: 'united-kingdom',
@@ -159,6 +163,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'le-havre',
+    confidence: 'HIGH',
     name: 'Le Havre',
     country: 'France',
     countrySlug: 'france',
@@ -197,6 +202,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'valencia',
+    confidence: 'HIGH',
     name: 'Valencia',
     country: 'Spain',
     countrySlug: 'spain',
@@ -235,6 +241,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'genoa',
+    confidence: 'HIGH',
     name: 'Genoa',
     country: 'Italy',
     countrySlug: 'italy',
@@ -273,6 +280,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'gdansk',
+    confidence: 'HIGH',
     name: 'Gdańsk',
     country: 'Poland',
     countrySlug: 'poland',
@@ -311,6 +319,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'gothenburg',
+    confidence: 'HIGH',
     name: 'Gothenburg',
     country: 'Sweden',
     countrySlug: 'sweden',
@@ -349,6 +358,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'sines',
+    confidence: 'HIGH',
     name: 'Sines',
     country: 'Portugal',
     countrySlug: 'portugal',
@@ -387,6 +397,7 @@ export const europePorts: Port[] = [
   },
   {
     slug: 'piraeus',
+    confidence: 'HIGH',
     name: 'Piraeus',
     country: 'Greece',
     countrySlug: 'greece',

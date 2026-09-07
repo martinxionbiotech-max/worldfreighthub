@@ -3,6 +3,7 @@ import type { Port } from './types';
 export const gccPortsAr: Port[] = [
   {
     slug: 'jeddah',
+    confidence: 'HIGH',
     name: 'ميناء جدة الإسلامي',
     country: 'السعودية',
     countrySlug: 'saudi-arabia',
@@ -49,6 +50,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'dammam',
+    confidence: 'HIGH',
     name: 'ميناء الملك عبدالعزيز الدمام',
     country: 'السعودية',
     countrySlug: 'saudi-arabia',
@@ -91,6 +93,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'riyadh-dry-port',
+    confidence: 'HIGH',
     name: 'ميناء الرياض الجاف',
     country: 'السعودية',
     countrySlug: 'saudi-arabia',
@@ -133,6 +136,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'jebel-ali',
+    confidence: 'HIGH',
     name: 'جبل علي',
     country: 'الإمارات',
     countrySlug: 'united-arab-emirates',
@@ -175,6 +179,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'khalifa-port-abu-dhabi',
+    confidence: 'HIGH',
     name: 'ميناء خليفة أبوظبي',
     country: 'الإمارات',
     countrySlug: 'united-arab-emirates',
@@ -217,6 +222,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'port-khalid',
+    confidence: 'HIGH',
     name: 'الشارقة / ميناء خالد',
     country: 'الإمارات',
     countrySlug: 'united-arab-emirates',
@@ -259,6 +265,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'hamad',
+    confidence: 'HIGH',
     name: 'ميناء حمد',
     country: 'قطر',
     countrySlug: 'qatar',
@@ -301,6 +308,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'shuwaikh',
+    confidence: 'HIGH',
     name: 'الشويخ',
     country: 'الكويت',
     countrySlug: 'kuwait',
@@ -343,6 +351,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'shuaiba',
+    confidence: 'HIGH',
     name: 'الشعيبة',
     country: 'الكويت',
     countrySlug: 'kuwait',
@@ -385,6 +394,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'sohar',
+    confidence: 'HIGH',
     name: 'صحار',
     country: 'عُمان',
     countrySlug: 'oman',
@@ -427,6 +437,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'salalah',
+    confidence: 'HIGH',
     name: 'صلالة',
     country: 'عُمان',
     countrySlug: 'oman',
@@ -469,6 +480,7 @@ export const gccPortsAr: Port[] = [
   },
   {
     slug: 'khalifa-bin-salman',
+    confidence: 'HIGH',
     name: 'خليفة بن سلمان',
     country: 'البحرين',
     countrySlug: 'bahrain',
@@ -514,6 +526,7 @@ export const gccPortsAr: Port[] = [
 export const chinaPortsAr: Port[] = [
   {
     slug: 'shanghai',
+    confidence: 'HIGH',
     name: 'شنغهاي',
     country: 'الصين',
     countrySlug: 'china',
@@ -560,6 +573,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'ningbo-zhoushan',
+    confidence: 'HIGH',
     name: 'نينغبو-تشوشان',
     country: 'الصين',
     countrySlug: 'china',
@@ -602,6 +616,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'shenzhen',
+    confidence: 'HIGH',
     name: 'شنجن (يانتان / شيكو)',
     country: 'الصين',
     countrySlug: 'china',
@@ -644,6 +659,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'guangzhou',
+    confidence: 'MEDIUM',
     name: 'قوانغتشو',
     country: 'الصين',
     countrySlug: 'china',
@@ -686,6 +702,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'qingdao',
+    confidence: 'MEDIUM',
     name: 'تشينغداو',
     country: 'الصين',
     countrySlug: 'china',
@@ -728,6 +745,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'tianjin',
+    confidence: 'MEDIUM',
     name: 'تيانجين',
     country: 'الصين',
     countrySlug: 'china',
@@ -770,6 +788,7 @@ export const chinaPortsAr: Port[] = [
   },
   {
     slug: 'xiamen',
+    confidence: 'MEDIUM',
     name: 'شيامن',
     country: 'الصين',
     countrySlug: 'china',

@@ -3,6 +3,7 @@ import type { Port } from './types';
 export const gccPorts: Port[] = [
   {
     slug: 'jeddah',
+    confidence: 'HIGH',
     name: 'Jeddah Islamic Port',
     country: 'Saudi Arabia',
     countrySlug: 'saudi-arabia',
@@ -46,6 +47,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'dammam',
+    confidence: 'HIGH',
     name: 'King Abdulaziz Port Dammam',
     country: 'Saudi Arabia',
     countrySlug: 'saudi-arabia',
@@ -85,6 +87,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'riyadh-dry-port',
+    confidence: 'HIGH',
     name: 'Riyadh Dry Port',
     country: 'Saudi Arabia',
     countrySlug: 'saudi-arabia',
@@ -124,6 +127,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'jebel-ali',
+    confidence: 'HIGH',
     name: 'Jebel Ali',
     country: 'United Arab Emirates',
     countrySlug: 'united-arab-emirates',
@@ -163,6 +167,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'khalifa-port-abu-dhabi',
+    confidence: 'HIGH',
     name: 'Khalifa Port Abu Dhabi',
     country: 'United Arab Emirates',
     countrySlug: 'united-arab-emirates',
@@ -202,6 +207,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'port-khalid',
+    confidence: 'HIGH',
     name: 'Sharjah / Port Khalid',
     country: 'United Arab Emirates',
     countrySlug: 'united-arab-emirates',
@@ -241,6 +247,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'hamad',
+    confidence: 'HIGH',
     name: 'Hamad Port',
     country: 'Qatar',
     countrySlug: 'qatar',
@@ -280,6 +287,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'shuwaikh',
+    confidence: 'HIGH',
     name: 'Shuwaikh',
     country: 'Kuwait',
     countrySlug: 'kuwait',
@@ -319,6 +327,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'shuaiba',
+    confidence: 'HIGH',
     name: 'Shuaiba',
     country: 'Kuwait',
     countrySlug: 'kuwait',
@@ -358,6 +367,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'sohar',
+    confidence: 'HIGH',
     name: 'Sohar',
     country: 'Oman',
     countrySlug: 'oman',
@@ -397,6 +407,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'salalah',
+    confidence: 'HIGH',
     name: 'Salalah',
     country: 'Oman',
     countrySlug: 'oman',
@@ -436,6 +447,7 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'khalifa-bin-salman',
+    confidence: 'HIGH',
     name: 'Khalifa bin Salman',
     country: 'Bahrain',
     countrySlug: 'bahrain',

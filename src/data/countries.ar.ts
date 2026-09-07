@@ -3,6 +3,7 @@ import type { Country } from './types';
 export const gccCountriesAr: Country[] = [
   {
     slug: 'saudi-arabia',
+    updated: '2026-09-06',
     name: 'السعودية',
     iso2: 'SA',
     capital: 'الرياض',
@@ -57,6 +58,7 @@ export const gccCountriesAr: Country[] = [
   },
   {
     slug: 'united-arab-emirates',
+    updated: '2026-09-06',
     name: 'الإمارات',
     iso2: 'AE',
     capital: 'أبوظبي',
@@ -110,6 +112,7 @@ export const gccCountriesAr: Country[] = [
   },
   {
     slug: 'qatar',
+    updated: '2026-09-06',
     name: 'قطر',
     iso2: 'QA',
     capital: 'الدوحة',
@@ -163,6 +166,7 @@ export const gccCountriesAr: Country[] = [
   },
   {
     slug: 'kuwait',
+    updated: '2026-09-06',
     name: 'الكويت',
     iso2: 'KW',
     capital: 'مدينة الكويت',
@@ -216,6 +220,7 @@ export const gccCountriesAr: Country[] = [
   },
   {
     slug: 'oman',
+    updated: '2026-09-06',
     name: 'عُمان',
     iso2: 'OM',
     capital: 'مسقط',
@@ -269,6 +274,7 @@ export const gccCountriesAr: Country[] = [
   },
   {
     slug: 'bahrain',
+    updated: '2026-09-06',
     name: 'البحرين',
     iso2: 'BH',
     capital: 'المنامة',

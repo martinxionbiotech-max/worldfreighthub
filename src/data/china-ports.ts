@@ -3,6 +3,7 @@ import type { Port } from './types';
 export const chinaPorts: Port[] = [
   {
     slug: 'shanghai',
+    confidence: 'HIGH',
     name: 'Shanghai',
     country: 'China',
     countrySlug: 'china',
@@ -46,6 +47,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'ningbo-zhoushan',
+    confidence: 'HIGH',
     name: 'Ningbo-Zhoushan',
     country: 'China',
     countrySlug: 'china',
@@ -85,6 +87,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'shenzhen',
+    confidence: 'HIGH',
     name: 'Shenzhen (Yantian / Shekou)',
     country: 'China',
     countrySlug: 'china',
@@ -124,6 +127,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'guangzhou',
+    confidence: 'MEDIUM',
     name: 'Guangzhou',
     country: 'China',
     countrySlug: 'china',
@@ -163,6 +167,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'qingdao',
+    confidence: 'MEDIUM',
     name: 'Qingdao',
     country: 'China',
     countrySlug: 'china',
@@ -202,6 +207,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'tianjin',
+    confidence: 'MEDIUM',
     name: 'Tianjin',
     country: 'China',
     countrySlug: 'china',
@@ -241,6 +247,7 @@ export const chinaPorts: Port[] = [
   },
   {
     slug: 'xiamen',
+    confidence: 'MEDIUM',
     name: 'Xiamen',
     country: 'China',
     countrySlug: 'china',

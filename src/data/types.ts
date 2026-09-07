@@ -14,6 +14,7 @@ export interface FaqItem {
 
 export interface Country {
   slug: string;
+  updated: string;
   name: string;
   iso2: string;
   capital: string;
@@ -40,6 +41,7 @@ export interface PortSpec {
 
 export interface Port {
   slug: string;
+  confidence: Confidence;
   name: string;
   country: string;
   countrySlug: string;
@@ -64,6 +66,7 @@ export interface RouteCostRow {
 
 export interface Route {
   slug: string;
+  updated: string;
   originPort: string;
   destPort: string;
   country: string;

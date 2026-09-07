@@ -188,6 +188,7 @@ export const routesAr: Route[] = Object.keys(originProfilesAr).flatMap((origin) 
     const destProfile = destProfilesAr[dest.port];
     return {
       slug: `${origin}-${dest.port}`,
+      updated: '2026-09-06',
       originPort: origin,
       destPort: dest.port,
       country: dest.country,

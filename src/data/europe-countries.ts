@@ -3,6 +3,7 @@ import type { Country } from './types';
 export const europeCountries: Country[] = [
   {
     slug: 'germany',
+    updated: '2026-09-06',
     name: 'Germany',
     iso2: 'DE',
     capital: 'Berlin',
@@ -56,6 +57,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'united-kingdom',
+    updated: '2026-09-06',
     name: 'United Kingdom',
     iso2: 'GB',
     capital: 'London',
@@ -109,6 +111,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'france',
+    updated: '2026-09-06',
     name: 'France',
     iso2: 'FR',
     capital: 'Paris',
@@ -158,6 +161,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'netherlands',
+    updated: '2026-09-06',
     name: 'Netherlands',
     iso2: 'NL',
     capital: 'Amsterdam',
@@ -207,6 +211,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'spain',
+    updated: '2026-09-06',
     name: 'Spain',
     iso2: 'ES',
     capital: 'Madrid',
@@ -256,6 +261,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'italy',
+    updated: '2026-09-06',
     name: 'Italy',
     iso2: 'IT',
     capital: 'Rome',
@@ -305,6 +311,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'poland',
+    updated: '2026-09-06',
     name: 'Poland',
     iso2: 'PL',
     capital: 'Warsaw',
@@ -354,6 +361,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'belgium',
+    updated: '2026-09-06',
     name: 'Belgium',
     iso2: 'BE',
     capital: 'Brussels',
@@ -403,6 +411,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'austria',
+    updated: '2026-09-06',
     name: 'Austria',
     iso2: 'AT',
     capital: 'Vienna',
@@ -493,6 +502,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'sweden',
+    updated: '2026-09-06',
     name: 'Sweden',
     iso2: 'SE',
     capital: 'Stockholm',
@@ -582,6 +592,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'portugal',
+    updated: '2026-09-06',
     name: 'Portugal',
     iso2: 'PT',
     capital: 'Lisbon',
@@ -635,6 +646,7 @@ export const europeCountries: Country[] = [
   },
   {
     slug: 'greece',
+    updated: '2026-09-06',
     name: 'Greece',
     iso2: 'GR',
     capital: 'Athens',

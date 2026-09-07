@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import Card from '../../components/Card.astro';
 import SourceList from '../../components/SourceList.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
 import Cta from '../../components/Cta.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import { gccPorts } from '../../data/gcc-ports';
@@ -171,6 +172,7 @@ const schema = [
   <section class="section container">
     <SourceList sources={portSources} title="Port authority & customs sources" />
     <p class="muted">
+      Last updated: {port.updated}. Confidence: <ConfidenceBadge level={port.confidence} />.
       Port facts are indicative and change over time. Always confirm current
       operational details with the relevant port authority before making
       commercial decisions.
