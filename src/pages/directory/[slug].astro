@@ -49,6 +49,7 @@ const tableColumns = [
   { key: 'verification', label: 'Verification' },
   { key: 'lastVerified', label: 'Last verified' },
   { key: 'source', label: 'Source', type: 'link' as const },
+  { key: 'sourceType', label: 'Source type' },
 ];
 
 const tableRows = [
@@ -65,13 +66,14 @@ const tableRows = [
       href: provider.source,
       label: provider.sourceName,
     },
+    sourceType: provider.sourceType === 'own-website' ? 'Own website' : 'Directory listing',
   },
 ];
 
 const faqs = [
   {
     q: 'How does WorldFreightHub verify a freight forwarder?',
-    a: 'Verification requires 3 independent checks — business identity, published service claims and website — confirmed against a primary source such as an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. Every listing on this directory has completed these checks.',
+    a: 'Verification requires 3 independent checks — business identity, published service claims and website — confirmed against a documented source — the provider\u2019s own website or an independent third-party directory. Every listing on this directory has completed these checks.',
   },
   {
     q: 'How should I choose a freight forwarder for China-to-GCC shipping?',

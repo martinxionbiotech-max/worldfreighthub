@@ -26,7 +26,7 @@ const countryName = (slug: string) => countryLabels[slug] ?? slug;
 const verificationStatuses = [
   {
     status: 'Verified',
-    description: 'Business identity, website and published claims independently checked against a primary source. Direct contact details are reached via the provider\u2019s website or the Get Quote form.',
+    description: 'Business identity, website and published claims checked against a documented source — the provider\u2019s own website or an independent third-party directory. Direct contact details are reached via the provider\u2019s website or the Get Quote form.',
   },
   {
     status: 'Unverified',
@@ -61,11 +61,11 @@ const faqs = [
   },
   {
     q: 'How do you verify providers?',
-    a: 'All {totalProviders} listed providers have been verified against a primary source — identity, website and published service claims have each been independently checked against an NVOCC/FMC licence, a government registry, or the provider\u2019s own published credentials. No detail is published as verified until it has been independently confirmed.',
+    a: 'All {totalProviders} listed providers have been verified against a documented source — identity, website and published service claims have each been checked against the provider\u2019s own website or an independent third-party directory. No detail is published as verified until it has been independently confirmed.',
   },
   {
     q: 'What does "verified" mean?',
-    a: 'Verified means the provider\u2019s identity, website and published service claims have each been independently checked against a primary source. Contact details are not published on the listing — reach the provider through its website or the Get Quote form.',
+    a: 'Verified means the provider\u2019s identity, website and published service claims have each been checked against a documented source — the provider\u2019s own website or an independent third-party directory. Contact details are not published on the listing — reach the provider through its website or the Get Quote form.',
   },
   {
     q: 'Can a business claim its listing?',
@@ -166,7 +166,7 @@ const schema = [
     </div>
     <div class="note mt-3">
       <strong>Directory status:</strong> {totalProviders} providers are listed — all {verifiedProviders} verified against a
-      primary source (licence / third-party audited). Every entry is backed by a documented research
+      documented source (own website or third-party directory). Every entry is backed by a documented research
       source; we never fabricate entries or contact details.
     </div>
   </section>

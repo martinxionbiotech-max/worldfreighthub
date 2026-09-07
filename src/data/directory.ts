@@ -12,6 +12,7 @@ export interface DirectoryProvider {
   verification: VerificationStatus;
   source: string;
   sourceName: string;
+  sourceType: 'own-website' | 'directory';
   lastVerified: string;
   contactNote: string;
   description: string;
@@ -36,6 +37,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.ontaskksa.com/',
     sourceName: 'Guangzhou Anshida official site (found in research pass 2026-08-30)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote:
       'Contact details (phone / email / address) not yet independently verified — none are published until confirmed.',
@@ -58,6 +60,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.globalimporter.net/cdetail_753_8551690.html',
     sourceName: 'GlobalImporter marketplace listing (research pass 2026-08-30)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not verified. Listing held pending confirmation.',
     description:
@@ -77,6 +80,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.dtfulogistics.com/',
     sourceName: 'DTFU Logistics official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'FIATA and IATA certified professionals (published on site). Contact details still to be confirmed.',
     description:
@@ -96,6 +100,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://gcc-freight.com/',
     sourceName: 'GCC Freight official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; site lists a WhatsApp number (+86 18825057036).',
     description:
@@ -118,6 +123,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.tonlexing.com/',
     sourceName: 'Tonlexing official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'FMC-compliant licensed NVOCC (published on site). Contact details still to be confirmed.',
     description:
@@ -137,6 +143,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.chinaddpshipping.com/',
     sourceName: 'ChinaDdpShipping official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -156,6 +163,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://movff.com/',
     sourceName: 'MOVFF official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -176,6 +184,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/',
     sourceName: 'DDPCHAIN official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Site lists a WhatsApp/phone number (+86 180 2548 7644); identity not independently verified.',
     description:
@@ -195,6 +204,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://cargofromchina.com/',
     sourceName: 'Cargo From China official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -214,6 +224,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://en.jmslogistics.com.cn/region/china-to-saudi-arabia',
     sourceName: 'JMS Logistics official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -233,6 +244,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sz-junqing.com/news/ddp-shipping-from-china-to-saudi-arabia.html',
     sourceName: 'Shenzhen Junqing official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -251,6 +263,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://gccfreights.com/',
     sourceName: 'GCC Freights official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; site claims offices in Al Khobar (KSA) and Manama (Bahrain).',
     description:
@@ -270,6 +283,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://en.jmslogistics.com.cn/region/china-to-saudi-arabia',
     sourceName: 'Referenced in JMS China-to-Saudi route page (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet located or verified.',
     description:
@@ -288,6 +302,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://en.jmslogistics.com.cn/region/china-to-saudi-arabia',
     sourceName: 'Referenced in JMS China-to-Saudi route page (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet located or verified.',
     description:
@@ -306,6 +321,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://en.jmslogistics.com.cn/region/china-to-saudi-arabia',
     sourceName: 'Referenced in JMS China-to-Saudi route page (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet located or verified.',
     description:
@@ -324,6 +340,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://honourocean.en.made-in-china.com/',
     sourceName: 'Made-in-China supplier storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       "Business identity independently verified: NVOCC approved by China Ministry of Transport, SGS-audited supplier (report QIP-ASI252103), and a verified badge on Made-in-China. Contact details and specific service claims still to be confirmed.",
@@ -344,6 +361,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://zmcexpress.com/',
     sourceName: 'ZMC Express Cargo official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; site lists Lebanon and Jebel Ali (Dubai) branch addresses.',
     description:
@@ -363,6 +381,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.senghorshipping.com/',
     sourceName: 'Senghor Logistics official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -381,6 +400,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.alfarescargo.com/',
     sourceName: 'Al Fares Cargo Service official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -399,6 +419,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://china.docshipper.com/',
     sourceName: 'DocShipper China site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -417,6 +438,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sino-shipping.com/',
     sourceName: 'SINO Shipping official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact (info@sino-shipping.com) listed on site; identity not independently verified.',
     description:
@@ -435,6 +457,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://chinaglobalfreight.com/',
     sourceName: 'China Global Freight official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -455,6 +478,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.hindacargo.com/',
     sourceName: 'HINDA official site (Firecrawl scrape 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; site lists a WhatsApp number (+86 13533420644).',
     description:
@@ -474,6 +498,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.contactwithchina.com/',
     sourceName: 'ContactWithChina official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Operated by Shenzhen Cubic Speed International Forwarding Co., Ltd. (same entity behind ChinaDdpShipping). Contact details not independently verified.',
     description:
@@ -494,6 +519,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sdilogistics-shippings.com/',
     sourceName: 'SDI Logistics official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -512,6 +538,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://yiwuagent.com/',
     sourceName: 'YiwuAgent official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
@@ -531,6 +558,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/best-amazon-fba-freight-forwarders-china',
     sourceName: 'DDPCHAIN top-FBA-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       'Listed as an Amazon SPN provider (platform-verified). Contact details still to be confirmed.',
@@ -551,6 +579,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/best-amazon-fba-freight-forwarders-china',
     sourceName: 'DDPCHAIN top-FBA-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet located or verified.',
     description:
@@ -571,6 +600,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://603056459eeff4d1.en.made-in-china.com/',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       "Business identity verified via Made-in-China Audited Supplier (third-party inspection; Gold Member since 2024). Contact details still to be confirmed.",
@@ -592,6 +622,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://9eab83045575f5a4.en.made-in-china.com/',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       "Business identity verified via Made-in-China Audited Supplier (third-party inspection). Contact details still to be confirmed.",
@@ -612,6 +643,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://east-shipping.en.alibaba.com/',
     sourceName: 'Alibaba storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       'Business identity verified on Alibaba (assessed videos, factory inspection reports, verified production lines; 7-year supplier). Contact details still to be confirmed.',
@@ -633,6 +665,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; 20+ years / 350 staff / 15,000 m² warehouse as stated in listicle.',
     description:
@@ -652,6 +685,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote:
       "Business identity verified as an Intertek Verified Supplier (Made-in-China). Website and contact details still to be confirmed.",
@@ -672,6 +706,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -690,6 +725,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
     description:
@@ -710,6 +746,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
     description:
@@ -728,6 +765,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
     description:
@@ -747,6 +785,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
     description:
@@ -765,6 +804,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/top-freight-forwarders-on-alibaba',
     sourceName: 'DDPCHAIN top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via an Alibaba storefront.',
     description:
@@ -784,6 +824,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://maskura.com/',
     sourceName: 'Maskura Group official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -803,6 +844,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.kapoklogcn.com/',
     sourceName: 'Kapoklog Logistics official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -822,6 +864,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://stusupplychain.com/',
     sourceName: 'STU Supply Chain official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'NVOCC licence MOC-NV09192 (China Ministry of Transport) and FMC licence 030310 (US) published on site. Contact details still to be confirmed.',
     description:
@@ -841,6 +884,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.dantful.com/',
     sourceName: 'Dantful official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -860,6 +904,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://easychinawarehouse.com/',
     sourceName: 'Easy China Warehouse official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -878,6 +923,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://m.ylt-global.com/',
     sourceName: 'YLT Global Cargo official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
@@ -897,6 +943,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.made-in-china.com/showroom/2d8570a7ee012da6',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via a Made-in-China storefront.',
     description:
@@ -916,6 +963,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://clutch.co/cn/logistics/freight-forwarders',
     sourceName: 'Clutch.co China freight-forwarders directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified; listed via Clutch.co.',
     description:
@@ -934,6 +982,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.shippingwilson.com/info/top-10-china-to-middle-east-freight-forwarders-103328303.html',
     sourceName: 'ShippingWilson top-10 China-to-Middle-East listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website not yet located; listed in a third-party top-10 listicle.',
     description:
@@ -953,6 +1002,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.accio.com/supplier/international-freight-forwarding',
     sourceName: 'Accio supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website not yet located; listed via a supplier directory.',
     description:
@@ -972,6 +1022,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website not yet located; listed via a supplier directory with NVOCC qualification.',
     description:
@@ -990,6 +1041,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/company/prodoer-global-logistics-coltd',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1005,6 +1057,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/company/across-pacific-shipping-colimited',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1020,6 +1073,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/c/2911/FIC-Logistics-Group-Company',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1035,6 +1089,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/c/7395/WELLS-SHIPPING-AGENCY',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1050,6 +1105,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1065,6 +1121,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1080,6 +1137,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1095,6 +1153,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1110,6 +1169,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1125,6 +1185,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1140,6 +1201,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1155,6 +1217,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sino-shipping.com/top-chinese-freight-forwarders-list',
     sourceName: 'SINO Shipping top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1170,6 +1233,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sino-shipping.com/top-chinese-freight-forwarders-list',
     sourceName: 'SINO Shipping top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1185,6 +1249,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sino-shipping.com/top-chinese-freight-forwarders-list',
     sourceName: 'SINO Shipping top-forwarders listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1200,6 +1265,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://clutch.co/cn/logistics/freight-forwarders',
     sourceName: 'Clutch.co China freight-forwarders directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1215,6 +1281,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://clutch.co/cn/logistics/freight-forwarders',
     sourceName: 'Clutch.co China freight-forwarders directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1230,6 +1297,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1245,6 +1313,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1260,6 +1329,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1275,6 +1345,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1290,6 +1361,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1305,6 +1377,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1320,6 +1393,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1335,6 +1409,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1350,6 +1425,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1365,6 +1441,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1380,6 +1457,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1395,6 +1473,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1410,6 +1489,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1425,6 +1505,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://forwardingcompanies.com/in/shenzhen',
     sourceName: 'ForwardingCompanies directory (Shenzhen) (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1440,6 +1521,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1455,6 +1537,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1470,6 +1553,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1485,6 +1569,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1500,6 +1585,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.everychina.com/site-international-freight-forwarding-company',
     sourceName: 'EveryChina supplier directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1515,6 +1601,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.fretador.com/search/q/Freight-Forwarding/in-China',
     sourceName: 'Fretador directory (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1530,6 +1617,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1545,6 +1633,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1560,6 +1649,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1575,6 +1665,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1590,6 +1681,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1605,6 +1697,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1620,6 +1713,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1635,6 +1729,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1650,6 +1745,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://ddpchain.com/shipping-companies-in-ningbo',
     sourceName: 'DDPCHAIN Ningbo shipping-companies listicle (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1665,6 +1761,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://bestchinaforwarder.com/',
     sourceName: 'Best China Forwarder official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'NVOCC, officially registered with the China Ministry of Transport (published on site). Contact details still to be confirmed.',
     description:
@@ -1680,6 +1777,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.yixshipping.com/',
     sourceName: 'Yixshipping official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1695,6 +1793,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.gerudologistics.com/',
     sourceName: 'Gerudo Logistics official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1710,6 +1809,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.shantoulogistics.com/',
     sourceName: 'Shantou Logistics official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'WIFFA member and Secretary General of the Shantou Port chapter (World International Freight Forwarder Alliance). Contact details still to be confirmed.',
     description:
@@ -1725,6 +1825,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://shenzhencompass.en.made-in-china.com/',
     sourceName: 'Made-in-China storefront (research pass 2026-09-01)',
+    sourceType: 'directory',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1740,6 +1841,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.widesafe.com/',
     sourceName: 'WideSafe official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1755,6 +1857,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.topwayshipping.com/',
     sourceName: 'Topway Shipping official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
@@ -1770,6 +1873,7 @@ export const directoryProviders: DirectoryProvider[] = [
     verification: 'verified',
     source: 'https://www.sekologistics.com/',
     sourceName: 'SEKO Logistics official site (research pass 2026-09-01)',
+    sourceType: 'own-website',
     lastVerified: '2026-09-06',
     contactNote: 'Global 3PL — ISO 9001:2015, ISO 13485 and CTPAT certified, FDA registered (published on site). Contact details still to be confirmed.',
     description:
