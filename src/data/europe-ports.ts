@@ -512,4 +512,121 @@ export const europePorts: Port[] = [
     ],
     updated: "2026-09-07",
   },
+  {
+    slug: "aarhus",
+    confidence: "HIGH",
+    name: "Aarhus",
+    country: "Denmark",
+    countrySlug: "denmark",
+    type: "seaport",
+    unlocode: "DKAAR",
+    tldr:
+      "Denmark's largest container port and the North Sea/Kattegat mainline gate — handles roughly 70% of Danish container traffic and serves Jutland, reached direct from the North Sea via the Skagerrak rather than through the Baltic straits.",
+    operator: "Port of Aarhus",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — port authority cites ~70% of Danish container traffic (approximate)" },
+      { label: "Max draft", value: "≈ 14 m (approximate)" },
+      { label: "Key terminals", value: "APM Terminals Aarhus (container)" },
+      { label: "UN/LOCODE", value: "DKAAR" },
+    ],
+    hinterland:
+      "Jutland and most of Denmark — Aarhus serves the Jutland peninsula, the largest Danish industrial region, and by rail/road reaches Funen and Zealand across the Little Belt and Great Belt.",
+    insight:
+      "Aarhus is the Danish port most importers default to, and for Jutland that is correct — it is the only port with mainline deep-sea container capacity on the Kattegat side, and it is reached direct from the North Sea via the Skagerrak without transiting the Great Belt or Øresund. The catch is frequency: direct China calls are thinner than at Rotterdam or Hamburg, so much cargo transships at a northern-range hub and feeds north. For Zealand/Copenhagen cargo, Aarhus is the wrong port — Copenhagen's Øresund position saves the Great Belt crossing — so the port choice follows the destination rather than a single national gate.",
+    keyTakeaways: [
+      "Denmark's largest container port, handling roughly 70% of Danish container traffic.",
+      "Reached direct from the North Sea via the Skagerrak — no Baltic-strait transit.",
+      "The only Danish port with mainline deep-sea container capacity.",
+      "Direct China calls are thinner than the northern range; transshipment via Rotterdam/Hamburg is common.",
+    ],
+    faqs: [
+      {
+        q: "Is Aarhus Denmark's main port for China cargo?",
+        a: "Yes — Aarhus (DKAAR) is Denmark's largest container port and handles roughly 70% of Danish container traffic, making it the default for Jutland and most of the country. Much China cargo still transships via Rotterdam or Hamburg and feeds north, as direct calls are thinner than on the northern range.",
+      },
+      {
+        q: "How is Aarhus reached from China?",
+        a: "Direct from the North Sea via the Skagerrak into the Kattegat — Aarhus sits on the east coast of Jutland facing the Kattegat, so ships reach it without transiting the Great Belt or Øresund straits that Copenhagen-bound cargo must cross.",
+      },
+    ],
+    updated: "2026-09-08",
+  },
+  {
+    slug: "copenhagen",
+    confidence: "HIGH",
+    name: "Copenhagen",
+    country: "Denmark",
+    countrySlug: "denmark",
+    type: "seaport",
+    unlocode: "DKCPH",
+    tldr:
+      "Denmark's capital gate on the Øresund — Copenhagen Malmö Port (CMP) serves Zealand and the Øresund region and doubles as the Baltic-side link to southern Sweden, reached via the Great Belt or Øresund rather than the open North Sea.",
+    operator: "Copenhagen Malmö Port (CMP)",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — request from CMP" },
+      { label: "Max draft", value: "Tidal, limited — verify with CMP" },
+      { label: "Key terminals", value: "CMP Copenhagen (container/ro-ro), CMP Malmö (Sweden)" },
+      { label: "UN/LOCODE", value: "DKCPH" },
+    ],
+    hinterland:
+      "Zealand and the capital region — Copenhagen serves the Greater Copenhagen market and, via the Øresund crossing, southern Sweden (Malmö), making it a Nordic hub rather than a purely Danish gate.",
+    insight:
+      "Copenhagen is the port you choose for Zealand and the capital — and it is a different sea from Aarhus. Reaching Copenhagen means transiting the Great Belt (from the west) or the Øresund (from the north), which is why Copenhagen-bound cargo often lands at a northern-range hub and feeds east rather than calling direct. The Øresund position also makes Copenhagen a de-facto gateway into southern Sweden via Malmö, so a single discharge can serve both sides of the strait — a routing advantage a Jutland-only port does not offer.",
+    keyTakeaways: [
+      "Denmark's capital gate on the Øresund, serving Zealand and the Copenhagen market.",
+      "Reached via the Great Belt or Øresund — a strait transit Aarhus-bound cargo avoids.",
+      "Doubles as a southern-Sweden (Malmö) gateway across the Øresund.",
+      "Copenhagen Malmö Port (CMP) is a cross-border Danish–Swedish operator.",
+    ],
+    faqs: [
+      {
+        q: "Is Copenhagen better than Aarhus for China cargo?",
+        a: "For Zealand and the capital region, yes — Copenhagen (DKCPH) sits on the Øresund and serves the Copenhagen market directly, avoiding the Great Belt crossing an Aarhus discharge would need. For Jutland, Aarhus remains the default, so the port choice follows the destination.",
+      },
+      {
+        q: "Does Copenhagen also serve Sweden?",
+        a: "Yes — Copenhagen Malmö Port is a cross-border Danish–Swedish operator, and the Øresund crossing links Copenhagen to Malmö, so a single Copenhagen discharge can serve southern Sweden as well as Zealand.",
+      },
+    ],
+    updated: "2026-09-08",
+  },
+  {
+    slug: "fredericia",
+    confidence: "HIGH",
+    name: "Fredericia",
+    country: "Denmark",
+    countrySlug: "denmark",
+    type: "seaport",
+    unlocode: "DKFRH",
+    tldr:
+      "Denmark's Little Belt logistics and energy hub — ADP (Associated Danish Ports) operates Fredericia as an interior Jutland/Funen node for bulk, project and energy cargo on the Little Belt between Jutland and Funen.",
+    operator: "ADP A/S (Associated Danish Ports)",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — request from ADP" },
+      { label: "Max draft", value: "Not published in snapshot" },
+      { label: "Key terminals", value: "ADP Fredericia (bulk/project/energy), Fredericia Container Terminal" },
+      { label: "UN/LOCODE", value: "DKFRH" },
+    ],
+    hinterland:
+      "Jutland and Funen — Fredericia sits on the Little Belt between the two landmasses and serves the central Danish industrial belt, with strong rail links into Jutland and across the Belt to Funen and Zealand.",
+    insight:
+      "Fredericia is Denmark's interior port rather than its ocean gate: on the Little Belt it is closer to the Jutland/Funen industrial core than Aarhus or Copenhagen, which makes it the natural node for bulk, project and energy cargo that benefits from a shorter inland haul. For container imports from China it is usually a feeder destination, not a deep-sea call — so it matters more for the final inland leg than for the ocean routing decision.",
+    keyTakeaways: [
+      "Denmark's Little Belt logistics and energy hub between Jutland and Funen.",
+      "Operated by ADP A/S (Associated Danish Ports).",
+      "An inland-feeder node for container cargo, not a deep-sea mainline call.",
+      "Strong rail links into Jutland and across the Belt to Funen/Zealand.",
+    ],
+    faqs: [
+      {
+        q: "Is Fredericia a deep-sea port for China cargo?",
+        a: "No — Fredericia (DKFRH) is Denmark's Little Belt interior hub for bulk, project and energy cargo, and for China container imports it is usually a feeder destination rather than a deep-sea call. Aarhus or Copenhagen handle the mainline, with Fredericia as the final inland node.",
+      },
+      {
+        q: "Why does Fredericia matter for Danish landed cost?",
+        a: "Because it sits on the Little Belt between Jutland and Funen, closer to the central industrial belt than Aarhus or Copenhagen — so for cargo whose final site is in central Jutland or Funen, a Fredericia discharge can cut the inland haul even though the ocean leg still lands at Aarhus or a northern-range hub.",
+      },
+    ],
+    updated: "2026-09-08",
+  },
 ];

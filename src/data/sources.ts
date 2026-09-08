@@ -19,6 +19,7 @@ export const countrySourceIds: Record<string, string[]> = {
   sweden: ['eu-taric', 'swedish-customs', 'swedish-tax'],
   portugal: ['eu-taric', 'portuguese-customs'],
   ireland: ['eu-taric', 'irish-customs'],
+  denmark: ['eu-taric', 'danish-customs', 'danish-tax'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -53,6 +54,9 @@ export const portSourceIds: Record<string, string[]> = {
   sines: ['port-sines'],
   dublin: ['port-dublin'],
   cork: ['port-cork'],
+  aarhus: ['port-aarhus'],
+  copenhagen: ['port-copenhagen'],
+  fredericia: ['port-aarhus'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -376,6 +380,36 @@ export const sources: Source[] = [
     id: "port-cork",
     name: "Port of Cork Company",
     url: "https://www.portofcork.ie",
+    type: "port-authority",
+  },
+  {
+    id: "danish-customs",
+    name: "Danish Customs Agency (Toldstyrelsen)",
+    url: "https://www.toldst.dk",
+    type: "government",
+  },
+  {
+    id: "danish-tax",
+    name: "Danish Tax Agency (Skattestyrelsen) — VAT",
+    url: "https://www.skat.dk",
+    type: "government",
+  },
+  {
+    id: "danmarks-nationalbank",
+    name: "Danmarks Nationalbank — DKK exchange-rate policy (ERM II)",
+    url: "https://www.nationalbanken.dk",
+    type: "government",
+  },
+  {
+    id: "port-aarhus",
+    name: "Port of Aarhus",
+    url: "https://www.portofaarhus.dk",
+    type: "port-authority",
+  },
+  {
+    id: "port-copenhagen",
+    name: "Copenhagen Malmö Port (CMP)",
+    url: "https://www.cmport.com",
     type: "port-authority",
   },
 ];

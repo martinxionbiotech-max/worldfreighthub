@@ -754,4 +754,59 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: "denmark",
+    updated: "2026-09-08",
+    name: "Denmark",
+    iso2: "DK",
+    capital: "Copenhagen",
+    currency: "DKK",
+    vatRate: 25,
+    vatNote: "25% flat — single rate, no reduced band (0% only on newspapers/periodicals).",
+    ports: ["aarhus", "copenhagen", "fredericia"],
+    tldr:
+      "Denmark is Sweden's VAT twin but its currency opposite — 25% flat VAT on EU common duty, a DKK pegged to the euro at ±2.25% (ERM II) instead of a floating krona, and an Aarhus/Copenhagen split between the North Sea/Kattegat and the Øresund/Baltic.",
+    dutyRate: "EU Common Customs Tariff (MFN, varies by HS code)",
+    dutyNote:
+      "Denmark applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.",
+    deMinimis: "€150 (VAT threshold)",
+    deMinimisNote:
+      "The EU €22 threshold was abolished in 2021; import VAT applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Danish customs.",
+    compliance: [
+      "EORI number for EU imports.",
+      "CE marking for regulated products.",
+      "REACH for chemical substances.",
+      "Correct 10-digit TARIC classification.",
+    ],
+    clearanceProcess: [
+      "Register for an EORI number.",
+      "Classify under the TARIC code.",
+      "File the import declaration and pay duty plus 25% VAT.",
+      "Clear through Aarhus, Copenhagen or Fredericia.",
+      "Release and deliver across Denmark (Jutland or Zealand).",
+    ],
+    insight:
+      "Denmark is the Nordic market most guides flatten into 'a 25% VAT country' — which hides the fact that actually decides the landed cost: the currency regime. Denmark's krone is pegged to the euro at ±2.25% under ERM II, so a Danish importer carries only the USD→EUR leg floating while Sweden's floating krona carries both. The second Denmark-specific variable is the flat 25%: no reduced band means food, books and hospitality pay 25% where Sweden's 12%/6% reduced rates apply, so Denmark's effective VAT is higher despite an equal headline. And the geography splits the port decision — Aarhus on the Kattegat serves Jutland from the North Sea side, while Copenhagen on the Øresund serves Zealand, so the port choice follows the destination rather than a single national gate.",
+    keyTakeaways: [
+      "Denmark's 25% VAT is flat — no reduced band (0% only on newspapers) — so its effective VAT on food and books exceeds Sweden's despite an equal headline.",
+      "DKK is pegged to EUR at ±2.25% (ERM II), so Denmark carries roughly half the currency exposure of a floating-currency market like Sweden.",
+      "5% duty + 25% VAT compounds to ×1.3125 — a $10,000 CIF lands at $13,125, identical to Sweden and $630 above Germany's 19%.",
+      "Aarhus (DKAAR) handles ~70% of Danish containers on the Kattegat, while Copenhagen (DKCPH) is the Øresund/Baltic capital gate.",
+      "The Fehmarn Belt tunnel (~2029) will cut Hamburg–Copenhagen rail from ~4.5h to ~2.5h, rewiring Scandinavia's China-rail feed.",
+    ],
+    faqs: [
+      {
+        q: "What is the VAT rate in Denmark?",
+        a: "25% flat — a single rate with no reduced band (0% only on newspapers and periodicals). Import VAT is charged on the duty-inclusive value, so 5% duty plus 25% VAT compounds to ×1.3125 — a $10,000 CIF shipment at 5% duty lands at $13,125, not the $13,000 you get by adding the two rates.",
+      },
+      {
+        q: "Which port should I use when shipping from China to Denmark?",
+        a: "Aarhus (DKAAR) is the mainline gate for Jutland, handling roughly 70% of Danish container traffic, while Copenhagen (DKCPH) serves Zealand and the capital and Fredericia (DKFRH) serves Jutland/Funen on the Little Belt — so the port follows the destination, not a single national gate.",
+      },
+      {
+        q: "Why is Denmark's currency (DKK) different from Sweden's (SEK)?",
+        a: "Denmark's krone is pegged to the euro at ±2.25% under ERM II, so only the USD→EUR leg floats, while Sweden's krona floats freely against both — Denmark therefore carries roughly half the currency exposure of Sweden on identical cargo.",
+      },
+    ],
+  },
 ];
