@@ -46,6 +46,12 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 
 - [Get Quote](https://worldfreighthub.net/get-quote/): Submit a freight quote request for a China-to-GCC shipment. Requests are routed to a provider on the corridor; no obligation, no fee.
 
+## Contact
+
+- Contact person: Martin.Wong
+- Phone / WhatsApp: +86 13323237275 (https://wa.me/8613323237275)
+- Email: martin@dinweys.com
+
 ## Arabic (العربية)
 
 The Arabic version mirrors the China-to-GCC data reference under the /ar/ path (RTL, lang="ar").
