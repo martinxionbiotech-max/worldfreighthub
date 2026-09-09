@@ -809,4 +809,67 @@ export const europeCountries: Country[] = [
       },
     ],
   },
+  {
+    slug: "finland",
+    updated: "2026-09-09",
+    name: "Finland",
+    iso2: "FI",
+    capital: "Helsinki",
+    currency: "EUR",
+    vatRate: 25.5,
+    vatNote: "25.5% standard (raised from 24% on 1 Sep 2024; 14% and 10% reduced).",
+    ports: ["helsinki", "kotka"],
+    tldr:
+      "Finland is the EU's far-north Baltic market — entered through Helsinki (FIHEL) and Kotka (FIKTK), both feeder ports reached from the northern range, with 25.5% VAT on EU common duty, a 1524mm broad-gauge rail wall and a winter ice season no western EU port carries.",
+    dutyRate: "EU Common Customs Tariff (MFN, varies by HS code)",
+    dutyNote:
+      "Finland applies the EU Common Customs Tariff — duty depends on the HS code and is uniform across member states, typically 0–12% for consumer goods. No China-EU FTA is in force.",
+    deMinimis: "€150 (VAT threshold)",
+    deMinimisNote:
+      "The EU €22 threshold was abolished in 2021; import VAT applies from the first euro, with IOSS simplifying sub-€150 consignments. Confirm current thresholds with Finnish Customs.",
+    compliance: [
+      "EORI number — required for any import into the EU.",
+      "CE marking for regulated products.",
+      "REACH registration for chemical substances.",
+      "Correct 10-digit TARIC classification for duty.",
+    ],
+    clearanceProcess: [
+      "Register for an EORI number before shipping.",
+      "Classify goods under the correct TARIC code.",
+      "File the import declaration and pay EU duty plus 25.5% VAT.",
+      "Clear through Helsinki (Vuosaari) or Kotka/Hamina.",
+      "Release and deliver by rail or truck across Finland.",
+    ],
+    insight:
+      "Finland is the Nordic market most guides flatten into 'a 25.5% VAT country' — which hides the three things that actually decide the landed cost: the gauge, the ice, and the euro. Finland runs 1524mm Russian broad gauge against Europe's 1435mm standard, so a China-Europe train cannot roll into Finland without a transload, and the historic rail lane through Russia is sanctions-restricted — which is why Finland, like Ireland, is effectively a sea-versus-air market with no practical direct rail lane. Second, the Gulf of Finland freezes roughly December–April, so winter sailings need ice-class vessels (1A/1A Super), Finnish icebreaker assistance and higher fairway dues — a seasonal cost Rotterdam or Hamburg never pays. Third, Finland is the only eurozone Nordic on this list, so it carries none of the SEK/DKK currency risk its neighbours do.",
+    keyTakeaways: [
+      "5% duty + 25.5% VAT compounds to ×1.31775 — a $10,000 CIF lands at $13,177.50, $52.50 above Sweden's 25% on the same base.",
+      "25.5% VAT (raised from 24% on 1 Sep 2024) is now the EU's highest standard tier except Hungary's 27%.",
+      "1524mm broad gauge + Russia sanctions mean no practical direct China-Europe rail lane — Finland is a sea-versus-air market.",
+      "The Gulf of Finland freezes roughly Dec–Apr, so winter imports need ice-class vessels and icebreaker/fairway dues.",
+      "Finland is the eurozone's Nordic (EUR), carrying no SEK/DKK currency risk.",
+    ],
+    faqs: [
+      {
+        q: "What is the VAT rate in Finland?",
+        a: "25.5% standard — raised from 24% on 1 September 2024 — with reduced rates of 14% (food, restaurants) and 10% (books, medicines, passenger transport). Import VAT is charged on the duty-inclusive value, so 5% duty plus 25.5% VAT compounds to ×1.31775 — a $10,000 CIF shipment at 5% duty lands at $13,177.50, not the $13,050 you get by adding the two rates.",
+      },
+      {
+        q: "Which port should I use when shipping from China to Finland?",
+        a: "Helsinki (UN/LOCODE FIHEL, Vuosaari container terminal) is the default for the capital market, while Kotka (FIKTK, part of Port of HaminaKotka) is Finland's largest general-cargo port for the eastern Gulf of Finland — both are feeder ports reached by transshipping at a northern-range hub, not direct deep-sea calls.",
+      },
+      {
+        q: "Does the Baltic freeze affect shipping to Finland?",
+        a: "Yes — the Gulf of Finland freezes roughly December–April, so winter sailings need ice-class vessels (1A/1A Super) and Finnish icebreaker assistance, and Finland charges higher fairway dues in winter. That is a seasonal schedule and cost variable a western EU port like Rotterdam or Hamburg never carries.",
+      },
+      {
+        q: "Can I ship China-to-Finland by rail?",
+        a: "Not as a direct lane — Finland runs 1524mm broad gauge against Europe's 1435mm standard gauge, and the historic rail route through Russia is sanctions-restricted, so 'rail to Finland' in practice means rail to a Baltic hub (Gdańsk, Hamburg) plus a short-sea ferry across the Baltic. Finland is therefore a sea-versus-air market, like Ireland.",
+      },
+      {
+        q: "Why is Finland's currency not a landed-cost risk?",
+        a: "Finland is in the eurozone, so you pay both ocean freight and import VAT in EUR — unlike Sweden (floating SEK) or Denmark (pegged DKK), Finland carries no Nordic currency risk, which removes one variable from the landed-cost model.",
+      },
+    ],
+  },
 ];

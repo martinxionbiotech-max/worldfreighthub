@@ -629,4 +629,82 @@ export const europePorts: Port[] = [
     ],
     updated: "2026-09-08",
   },
+  {
+    slug: "helsinki",
+    confidence: "HIGH",
+    name: "Helsinki",
+    country: "Finland",
+    countrySlug: "finland",
+    type: "seaport",
+    unlocode: "FIHEL",
+    tldr:
+      "Finland's capital gate and largest container port — the Vuosaari container terminal on the Gulf of Finland serves the Helsinki capital region, but as a feeder port it is reached by transshipping at a northern-range hub rather than by direct China deep-sea calls.",
+    operator: "Port of Helsinki Ltd",
+    specs: [
+      { label: "Container throughput", value: "≈ 0.5m TEU (approximate) — verify with Port of Helsinki" },
+      { label: "Max draft", value: "≈ 11 m at Vuosaari (approximate) — verify with the port" },
+      { label: "Key terminals", value: "Vuosaari Harbour (container), West Harbour (ro-pax), South Harbour" },
+      { label: "UN/LOCODE", value: "FIHEL" },
+    ],
+    hinterland:
+      "Southern Finland and the capital region — Helsinki serves the Greater Helsinki market (roughly 1.5m people) and, by rail/road, the rest of southern Finland.",
+    insight:
+      "Helsinki is Finland's volume gate but not a deep-sea gate: as a Baltic feeder port on the Gulf of Finland it is reached by transshipping at Rotterdam, Hamburg or Gdańsk and feeding north through the Danish straits, rather than by direct China mainline calls. That Baltic leg adds roughly 3–5 days to the northern-range transit, and in winter it is exactly where Finland's ice problem bites — the Gulf of Finland freezes roughly December–April, so ice-class vessels and Finnish icebreaker assistance become a cost and schedule variable no western EU port carries.",
+    keyTakeaways: [
+      "Finland's largest container port and the capital gate, serving the Helsinki region.",
+      "A Baltic feeder port reached by transshipment — not a direct China deep-sea call.",
+      "The ~3–5-day Baltic leg and the winter ice season are the two Finland-specific variables.",
+      "Vuosaari Harbour (2008) is the dedicated container terminal.",
+    ],
+    faqs: [
+      {
+        q: "Is Helsinki a direct deep-sea call from China?",
+        a: "Rarely — Helsinki (FIHEL) is a Baltic feeder port, so most China cargo transships at a northern-range hub such as Rotterdam, Hamburg or Gdańsk and feeds north through the Danish straits, adding roughly 3–5 days to the ocean transit.",
+      },
+      {
+        q: "Does Helsinki freeze in winter?",
+        a: "The Gulf of Finland can freeze roughly December–April, so winter calls need ice-class vessels (1A/1A Super) and Finnish icebreaker assistance. That adds a seasonal schedule and cost variable — confirm the ice situation and fairway dues with your forwarder for winter sailings.",
+      },
+    ],
+    updated: "2026-09-09",
+  },
+  {
+    slug: "kotka",
+    confidence: "HIGH",
+    name: "Kotka",
+    country: "Finland",
+    countrySlug: "finland",
+    type: "seaport",
+    unlocode: "FIKTK",
+    tldr:
+      "Finland's largest general-cargo port (Port of HaminaKotka) on the eastern Gulf of Finland — the merged Hamina-Kotka system handles most Finnish container, forest-product and transit cargo, positioned close to the Russian border and the Helsinki market's eastern edge.",
+    operator: "Port of HaminaKotka Ltd",
+    specs: [
+      { label: "Container throughput", value: "Not published in snapshot — request from Port of HaminaKotka" },
+      { label: "Max draft", value: "≈ 12 m (approximate) — verify with the port" },
+      { label: "Key terminals", value: "Mussalo (container/liquid), Kotka, Hamina terminals" },
+      { label: "UN/LOCODE", value: "FIKTK" },
+    ],
+    hinterland:
+      "Eastern and southeastern Finland — Kotka/Hamina serves the eastern Gulf of Finland, the forest-products industry and transit cargo, and sits close to the Russian border on the Helsinki–St Petersburg axis.",
+    insight:
+      "Kotka is Finland's workhorse port rather than its ocean gate: as part of the merged Port of HaminaKotka it is the country's largest general-cargo port and the natural destination for eastern Finland and forest-product/transit cargo. For China container imports it is, like Helsinki, a feeder destination reached via a northern-range hub — the difference is that Kotka's eastern position puts it closer to the Russian border, so it carries both the winter ice exposure and the historical transit-cargo legacy that sanctions have since reshaped.",
+    keyTakeaways: [
+      "Finland's largest general-cargo port (Port of HaminaKotka).",
+      "A feeder destination for China containers, reached via a northern-range hub.",
+      "Serves eastern Finland, forest products and transit cargo near the Russian border.",
+      "Shares Helsinki's winter ice exposure on the eastern Gulf of Finland.",
+    ],
+    faqs: [
+      {
+        q: "Is Kotka better than Helsinki for China cargo?",
+        a: "For eastern/southeastern Finland, forest-product or transit cargo, yes — Kotka (FIKTK, Port of HaminaKotka) is Finland's largest general-cargo port and closer to the eastern market. For the capital region, Helsinki remains the default, so the port choice follows the destination.",
+      },
+      {
+        q: "Does Kotka take direct deep-sea calls from China?",
+        a: "No — Kotka is a Baltic feeder port reached by transshipping at a northern-range hub, not a direct China deep-sea call. Direct China calls to Finnish ports are rare, so budget the Baltic leg and the winter ice season in the same plan.",
+      },
+    ],
+    updated: "2026-09-09",
+  },
 ];

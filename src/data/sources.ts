@@ -20,6 +20,7 @@ export const countrySourceIds: Record<string, string[]> = {
   portugal: ['eu-taric', 'portuguese-customs'],
   ireland: ['eu-taric', 'irish-customs'],
   denmark: ['eu-taric', 'danish-customs', 'danish-tax'],
+  finland: ['eu-taric', 'finnish-customs', 'finnish-tax'],
 };
 
 export const portSourceIds: Record<string, string[]> = {
@@ -57,6 +58,8 @@ export const portSourceIds: Record<string, string[]> = {
   aarhus: ['port-aarhus'],
   copenhagen: ['port-copenhagen'],
   fredericia: ['port-aarhus'],
+  helsinki: ['port-helsinki'],
+  kotka: ['port-kotka'],
 };
 
 export function sourcesByIds(ids: string[]): Source[] {
@@ -410,6 +413,30 @@ export const sources: Source[] = [
     id: "port-copenhagen",
     name: "Copenhagen Malmö Port (CMP)",
     url: "https://www.cmport.com",
+    type: "port-authority",
+  },
+  {
+    id: "finnish-customs",
+    name: "Finnish Customs (Tulli)",
+    url: "https://tulli.fi",
+    type: "government",
+  },
+  {
+    id: "finnish-tax",
+    name: "Finnish Tax Administration (Vero Skatt) — VAT",
+    url: "https://www.vero.fi",
+    type: "government",
+  },
+  {
+    id: "port-helsinki",
+    name: "Port of Helsinki",
+    url: "https://www.portofhelsinki.fi",
+    type: "port-authority",
+  },
+  {
+    id: "port-kotka",
+    name: "Port of HaminaKotka",
+    url: "https://www.haminakotka.com",
     type: "port-authority",
   },
 ];
