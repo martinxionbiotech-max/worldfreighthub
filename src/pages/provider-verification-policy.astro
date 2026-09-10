@@ -1,0 +1,229 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import ConfidenceBadge from '../components/ConfidenceBadge.astro';
+import FaqBlock from '../components/FaqBlock.astro';
+import SourceList from '../components/SourceList.astro';
+import { SITE_URL } from '../site';
+import type { Source } from '../data/types';
+
+const faqs = [
+  {
+    q: 'What does "verified" mean in the directory?',
+    a: 'Verified means business identity, website and published service claims are each supported by a documented source — the provider\u2019s own website or an independent third-party directory. It is not a licence, registry or government-registration check.',
+  },
+  {
+    q: 'Does WorldFreightHub verify licences or company registration?',
+    a: 'No. We do not claim that a provider\u2019s licence, accreditation or government registration has been officially verified. Our check is limited to identity, website and published service claims against a documented source.',
+  },
+  {
+    q: 'What is the difference between verified and claimed?',
+    a: 'Verified means a documented source supports the listing checks. Claimed means the business has claimed its own listing, and any self-reported material is labelled as not independently verified until evidence supports it.',
+  },
+  {
+    q: 'How are sponsored listings handled?',
+    a: 'A sponsored listing is a paid placement, always labelled, and kept separate from editorial rankings. It is held to the same honesty standard as every other listing.',
+  },
+  {
+    q: 'How do I report an error in a provider listing?',
+    a: 'Report one listing at a time through the contact page with the provider name, the incorrect detail and a source or correction. We review the report before updating published information.',
+  },
+];
+
+const schema = [
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+
+const relatedPolicies: Source[] = [
+  {
+    id: 'wfh-methodology',
+    name: 'WorldFreightHub methodology — how providers are verified and how confidence levels are assigned',
+    url: `${SITE_URL}/methodology/`,
+    type: 'organization',
+  },
+  {
+    id: 'wfh-editorial-policy',
+    name: 'WorldFreightHub editorial policy — independence, data integrity and the correction process',
+    url: `${SITE_URL}/editorial-policy/`,
+    type: 'organization',
+  },
+  {
+    id: 'wfh-directory',
+    name: 'WorldFreightHub provider directory — verification-first listings on the China to GCC corridor',
+    url: `${SITE_URL}/directory/`,
+    type: 'organization',
+  },
+];
+---
+
+<BaseLayout
+  title="Provider Verification Policy"
+  description="How WorldFreightHub verifies directory providers: what verified, unverified, claimed and sponsored mean, what the checks do and do not cover, and how to report an error."
+  canonical={`${SITE_URL}/provider-verification-policy/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Provider Verification Policy' }]} />
+      <h1>Provider verification policy</h1>
+      <p class="lead">
+        How we verify the freight providers in the WorldFreightHub directory —
+        and, just as importantly, what our checks do not certify.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Provider verification is evidence-based, not
+          licence-based. We check business identity, website and published
+          service claims against a documented source — the provider&rsquo;s own
+          website or an independent third-party directory. This is not a
+          licence, registry or government-registration verification, and we do
+          not claim that a provider&rsquo;s licences or company registration
+          have been officially checked.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>What we verify</h2>
+    <p>
+      A provider listing is checked against one or more documented sources:
+      the provider&rsquo;s own website or an independent third-party
+      directory. For each listing we compare three things:
+    </p>
+    <ol>
+      <li>
+        <strong>Business identity.</strong> The name and entity presented in
+        the source must match the listing.
+      </li>
+      <li>
+        <strong>Website.</strong> Where a provider publishes a website, we link
+        to that website rather than publishing unverified direct contact
+        details.
+      </li>
+      <li>
+        <strong>Published service claims.</strong> The services and markets
+        shown in the listing must be supported by the documented source.
+      </li>
+    </ol>
+    <p>
+      A listing is marked <strong>verified</strong> only when these checks are
+      supported by a documented source. Until then it stays
+      <strong>unverified</strong> or <strong>claimed</strong>.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>What verification does not certify</h2>
+      <p>
+        We do not verify licences, accreditations, registry entries or
+        government registration. <strong>Verified</strong> means the identity,
+        website and published service claims have documented-source support —
+        it does not mean WorldFreightHub has confirmed a provider&rsquo;s
+        licence, permit or official company registration.
+      </p>
+      <p>
+        Where evidence is insufficient to make a judgement, we mark the item
+        <ConfidenceBadge level="UNKNOWN" /> instead of guessing. This is the
+        same discipline used across WorldFreightHub data: no evidence, no
+        confidence claim.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Listing statuses</h2>
+    <ul>
+      <li>
+        <strong>Verified.</strong> Business identity, website and published
+        service claims are supported by a documented source.
+      </li>
+      <li>
+        <strong>Unverified.</strong> The documented source is insufficient, or
+        the listing checks have not yet been independently confirmed.
+      </li>
+      <li>
+        <strong>Claimed.</strong> The business has claimed its own listing.
+        Self-reported material is marked as not independently verified.
+      </li>
+      <li>
+        <strong>Sponsored.</strong> A paid or sponsored placement. It is always
+        labelled and kept separate from editorial rankings.
+      </li>
+    </ul>
+    <p>
+      These statuses describe evidence, not a ranking. A sponsored listing can
+      never outrank or hide an editorial listing.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Data integrity rules</h2>
+      <ul>
+        <li>
+          <strong>No invented providers.</strong> We never create a listing
+          that does not exist.
+        </li>
+        <li>
+          <strong>No invented contact details.</strong> We publish only details
+          that have a source, or we route enquiries through the provider&rsquo;s
+          website or the Get Quote form.
+        </li>
+        <li>
+          <strong>No unsourced details.</strong> A fact with no source is
+          withheld or labelled as unverified.
+        </li>
+        <li>
+          <strong>Self-reported claims stay labelled.</strong> Statements such
+          as &ldquo;20 years experience&rdquo; are published only as claims and
+          marked as not independently verified.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Report an error</h2>
+    <p>
+      Provider details can change, and sources can go out of date. To report a
+      problem:
+    </p>
+    <ol>
+      <li>Go to the contact page.</li>
+      <li>Include the provider name, the incorrect detail and a source or correction.</li>
+      <li>The entry is reviewed against the documented source and updated if needed.</li>
+    </ol>
+    <p>
+      <a class="btn btn-secondary" href="/contact/">
+        Report a listing error
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section container">
+    <p>
+      Read more about
+      <a href="/methodology/">how providers are verified</a>,
+      <a href="/editorial-policy/">our editorial independence and correction process</a>,
+      and the
+      <a href="/directory/">verification-first provider directory</a>.
+    </p>
+    <SourceList sources={relatedPolicies} title="Related policies" />
+  </section>
+</BaseLayout>

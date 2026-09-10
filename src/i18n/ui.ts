@@ -35,6 +35,7 @@ const en: Dict = {
   'footer.about': 'About',
   'footer.methodology': 'Methodology',
   'footer.editorial': 'Editorial Policy',
+  'footer.providerVerification': 'Provider Verification Policy',
   'footer.contact': 'Contact',
   'footer.disclaimer':
     'Disclaimer: All freight rates and transit times on this site are indicative estimates, not live quotes. Always confirm figures with a licensed carrier or customs broker before making commercial decisions.',
@@ -106,6 +107,7 @@ const en: Dict = {
   'confidence.HIGH': 'High',
   'confidence.MEDIUM': 'Medium',
   'confidence.LOW': 'Low',
+  'confidence.UNKNOWN': 'Unknown',
 
   // CTA
   'cta.title': 'Get a freight quote',
@@ -156,6 +158,7 @@ const ar: Dict = {
   'footer.about': 'من نحن',
   'footer.methodology': 'المنهجية',
   'footer.editorial': 'السياسة التحريرية',
+  'footer.providerVerification': 'Provider Verification Policy',
   'footer.contact': 'اتصل بنا',
   'footer.disclaimer':
     'إخلاء مسؤولية: جميع أسعار الشحن ومدد النقل على هذا الموقع تقديرات استرشادية وليست عروض أسعار فورية. أكد الأرقام دائمًا مع ناقل مرخص أو مخلص جمركي قبل اتخاذ قرارات تجارية.',
@@ -227,6 +230,7 @@ const ar: Dict = {
   'confidence.HIGH': 'مرتفع',
   'confidence.MEDIUM': 'متوسط',
   'confidence.LOW': 'منخفض',
+  'confidence.UNKNOWN': 'غير معروف',
 
   // CTA
   'cta.title': 'احصل على عرض سعر للشحن',

@@ -1,4 +1,4 @@
-export type Confidence = 'HIGH' | 'MEDIUM' | 'LOW';
+export type Confidence = 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
 
 export interface Source {
   id: string;
