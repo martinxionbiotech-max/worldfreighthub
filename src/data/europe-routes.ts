@@ -169,6 +169,7 @@ function buildFaqs(
   typical: number,
   range: [number, number],
   routing: string,
+  destInsight: string,
 ): FaqItem[] {
   return [
     {
@@ -178,6 +179,10 @@ function buildFaqs(
     {
       q: `Is ${originName} to ${destName} a direct sailing?`,
       a: `${routing} Confirm direct versus transshipped service with your forwarder, as this varies by carrier and season.`,
+    },
+    {
+      q: `What makes ${destName} different from other Europe gateways?`,
+      a: destInsight,
     },
     {
       q: `How do I get a current rate for ${originName} to ${destName}?`,
@@ -191,6 +196,7 @@ function buildKeyTakeaways(
   destName: string,
   originNote: string,
   destNote: string,
+  destInsight: string,
   typical: number,
   range: [number, number],
 ): string[] {
@@ -198,6 +204,7 @@ function buildKeyTakeaways(
     `${originName} → ${destName} typically runs ${typical} days, with a ${range[0]}–${range[1]} day range.`,
     originNote,
     destNote,
+    destInsight,
     `Confirm Cape-versus-Suez routing and direct-versus-transshipped service — both are the biggest variables in time and cost.`,
   ];
 }
@@ -222,12 +229,13 @@ export const europeRoutes: Route[] = Object.keys(originProfiles).flatMap((origin
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
-      faqs: buildFaqs(originName, destName, dest.typical, [25, 45], destProfile.routing),
+      faqs: buildFaqs(originName, destName, dest.typical, [25, 45], destProfile.routing, destProfile.insight),
       keyTakeaways: buildKeyTakeaways(
         originName,
         destName,
         originProfile.note,
         destProfile.note,
+        destProfile.insight,
         dest.typical,
         [25, 45],
       ),
