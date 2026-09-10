@@ -153,6 +153,7 @@ function buildFaqsAr(
   typical: number,
   range: [number, number],
   routing: string,
+  destInsight: string,
   costRows: RouteCostRow[],
 ): FaqItem[] {
   const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
@@ -176,6 +177,10 @@ function buildFaqsAr(
       a: `${routing} أكد الخدمة المباشرة مقابل المعاد شحنها مع وكيل الشحن لديك، إذ يختلف ذلك حسب الناقل والموسم.`,
     },
     {
+      q: `ما الذي يجعل ${destName} مختلفًا عن البوابات الأخرى على هذا الممر؟`,
+      a: destInsight,
+    },
+    {
       q: `كيف أحصل على سعر حالي من ${originName} إلى ${destName}؟`,
       a: `تتغير الأسعار على هذا المسار أسبوعيًا مع الوقود والموسم والمخاطر الجيوسياسية. اطلب عرض سعر مباشر عبر نموذج الحصول على عرض سعر للحصول على رقم حالي خاص بالمسار، بدل الاعتماد على سعر منشور.`,
     },
@@ -187,6 +192,7 @@ function buildKeyTakeawaysAr(
   destName: string,
   originNote: string,
   destNote: string,
+  destInsight: string,
   typical: number,
   range: [number, number],
   costRows: RouteCostRow[],
@@ -199,6 +205,7 @@ function buildKeyTakeawaysAr(
     `${originName} → ${destName} تستغرق عادةً ${typical} يومًا، بمدى ${range[0]}–${range[1]} يومًا.`,
     originNote,
     destNote,
+    destInsight,
   ];
   if (lo > 0 && fcl) {
     items.push(
@@ -232,12 +239,13 @@ export const routesAr: Route[] = Object.keys(originProfilesAr).flatMap((origin) 
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
-      faqs: buildFaqsAr(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.costRows),
+      faqs: buildFaqsAr(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.insight, destProfile.costRows),
       keyTakeaways: buildKeyTakeawaysAr(
         originName,
         destName,
         originProfile.note,
         destProfile.note,
+        destProfile.insight,
         dest.typical,
         [15, 30],
         destProfile.costRows,

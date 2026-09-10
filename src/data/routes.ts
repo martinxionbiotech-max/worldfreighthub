@@ -145,6 +145,7 @@ function buildFaqs(
   typical: number,
   range: [number, number],
   routing: string,
+  destInsight: string,
   costRows: RouteCostRow[],
 ): FaqItem[] {
   const fcl = costRows.find((r) => r.label.includes('20ft')) ?? costRows[0];
@@ -168,6 +169,10 @@ function buildFaqs(
       a: `${routing} Confirm the direct versus transshipped service with your forwarder, as this varies by carrier and season.`,
     },
     {
+      q: `What makes ${destName} different from other gateways on this corridor?`,
+      a: destInsight,
+    },
+    {
       q: `How do I get a current rate for ${originName} to ${destName}?`,
       a: `Rates on this lane shift weekly with fuel, season and geopolitical risk. Request a live quote through the Get Quote form for a current, lane-specific figure rather than relying on a published rate.`,
     },
@@ -179,6 +184,7 @@ function buildKeyTakeaways(
   destName: string,
   originNote: string,
   destNote: string,
+  destInsight: string,
   typical: number,
   range: [number, number],
   costRows: RouteCostRow[],
@@ -191,6 +197,7 @@ function buildKeyTakeaways(
     `${originName} → ${destName} typically runs ${typical} days, with a ${range[0]}–${range[1]} day range.`,
     originNote,
     destNote,
+    destInsight,
   ];
   if (lo > 0 && fcl) {
     items.push(
@@ -224,12 +231,13 @@ export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
-      faqs: buildFaqs(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.costRows),
+      faqs: buildFaqs(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.insight, destProfile.costRows),
       keyTakeaways: buildKeyTakeaways(
         originName,
         destName,
         originProfile.note,
         destProfile.note,
+        destProfile.insight,
         dest.typical,
         [15, 30],
         destProfile.costRows,
