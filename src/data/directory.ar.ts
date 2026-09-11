@@ -96,8 +96,8 @@ const descAr: Record<string, string> = {
     'وكيل شحن بموقع بالصينية/العربية يدّعي خبرة تزيد على 10 سنوات في الشحن من الصين إلى دول الخليج، مع مستودع في المنطقة الحرة بجبل علي (دبي) وتسوية متعددة العملات (درهم/ريال/يوان).',
   'China-based freight forwarder marketing air, sea (FCL/LCL), rail and DDP shipping to 150+ countries, with a published China-to-Saudi DDP guide.':
     'وكيل شحن مقره الصين يسوّق الشحن الجوي والبحري (FCL/LCL) وبالسكك الحديدية وDDP إلى أكثر من 150 دولة، مع دليل منشور للشحن DDP من الصين إلى السعودية.',
-  'DDP-focused Chinese freight forwarder with route pages for China to North America, Europe and the Gulf, advertising tax-inclusive door-to-door LCL sea and air freight.':
-    'وكيل شحن صيني متخصص في DDP بصفحات مسارات من الصين إلى أمريكا الشمالية وأوروبا والخليج، يعلن عن شحن بحري وجوي LCL من الباب إلى الباب شامل الضرائب.',
+  'DDP-focused Chinese freight forwarder with route pages for China to North America and the Gulf, advertising tax-inclusive door-to-door LCL sea and air freight.':
+    'وكيل شحن صيني متخصص في DDP بصفحات مسارات من الصين إلى أمريكا الشمالية والخليج، يعلن عن شحن بحري وجوي LCL من الباب إلى الباب شامل الضرائب.',
   'China-based full-service freight forwarder describing itself as an Amazon-certified service provider with carrier agreements (Maersk/MSC/COSCO/UPS/DHL/FedEx) and 15+ consolidation warehouses across China.':
     'وكيل شحن صيني متكامل الخدمات يصف نفسه كمزود معتمد من أمازون باتفاقيات ناقلين (Maersk/MSC/COSCO/UPS/DHL/FedEx) وأكثر من 15 مستودع تجميع في أنحاء الصين.',
   'China shipping agent and freight forwarder advertising air, sea, rail, road and DDP shipping with a China-to-Saudi cost guide (DDP air ~33-48 RMB/kg, DDP sea from ~1,600 RMB/CBM).':
@@ -146,8 +146,8 @@ const descAr: Record<string, string> = {
     'شركة نقل عابر للحدود مقرها شنجن (تأسست 2015) تغطي البريد السريع الدولي والمرحلة الأولى لـFBA والشحن الجوي/البحري وخطوط DDP مخصصة إلى دبي والإمارات والسعودية.',
   'Guangdong-based logistics company offering sea freight from Shenzhen/Shanghai to Saudi Arabia, plus DDP/FBA air and sea shipping to Dubai, Qatar and Kuwait.':
     'شركة لوجستيات مقرها قوانغدونغ تقدم الشحن البحري من شنجن/شنغهاي إلى السعودية، إضافة إلى الشحن الجوي والبحري DDP/FBA إلى دبي وقطر والكويت.',
-  'Shenzhen-based logistics partner (founded 2016) specialising in cross-border shipping to Saudi Arabia, the US and Europe, with COSCO/MSC/CMA-CGM agency and DDP door-to-door.':
-    'شريك لوجستي مقره شنجن (تأسس 2016) متخصص في الشحن العابر للحدود إلى السعودية والولايات المتحدة وأوروبا، مع وكالة COSCO/MSC/CMA-CGM وDDP من الباب إلى الباب.',
+  'Shenzhen-based logistics partner (founded 2016) specialising in cross-border shipping to Saudi Arabia and the US, with COSCO/MSC/CMA-CGM agency and DDP door-to-door.':
+    'شريك لوجستي مقره شنجن (تأسس 2016) متخصص في الشحن العابر للحدود إلى السعودية والولايات المتحدة، مع وكالة COSCO/MSC/CMA-CGM وDDP من الباب إلى الباب.',
   'Shenzhen freight forwarder with 20+ years of experience, over 350 staff and 15,000 m² of warehouse space, serving EU, US, Canada, Mexico and the Middle East.':
     'وكيل شحن في شنجن بخبرة تزيد على 20 عامًا وأكثر من 350 موظفًا ومساحة مستودعات 15,000 م²، يخدم الاتحاد الأوروبي والولايات المتحدة وكندا والمكسيك والشرق الأوسط.',
   'Shenzhen freight forwarder positioned for DDP and Middle East routes, offering air, sea, rail and DDP door-to-door.':
@@ -164,8 +164,8 @@ const descAr: Record<string, string> = {
     'وكيل شحن في شنجن متخصص في DDP وشحن أمازون FBA، يقدم البحر والجو وDDP.',
   'Shenzhen freight forwarder focused on bulk shipping and dropshipping, offering sea freight (FCL/LCL), DDP door-to-door and warehousing.':
     'وكيل شحن في شنجن يركز على الشحن بالجملة والدروب شيبينغ، يقدم الشحن البحري (FCL/LCL) وDDP من الباب إلى الباب والتخزين.',
-  'Guangzhou-based logistics group offering DDP/FBA warehousing and door-to-door shipping from China to the UAE, Dubai and Saudi Arabia (Riyadh, Dammam, Jeddah), plus US/UK/Canada/Europe routes.':
-    'مجموعة لوجستيات مقرها قوانغتشو تقدم تخزين DDP/FBA وشحنًا من الباب إلى الباب من الصين إلى الإمارات ودبي والسعودية (الرياض والدمام وجدة)، إضافة إلى مسارات الولايات المتحدة والمملكة المتحدة وكندا وأوروبا.',
+  'Guangzhou-based logistics group offering DDP/FBA warehousing and door-to-door shipping from China to the UAE, Dubai and Saudi Arabia (Riyadh, Dammam, Jeddah), plus US/UK/Canada routes.':
+    'مجموعة لوجستيات مقرها قوانغتشو تقدم تخزين DDP/FBA وشحنًا من الباب إلى الباب من الصين إلى الإمارات ودبي والسعودية (الرياض والدمام وجدة)، إضافة إلى مسارات الولايات المتحدة والمملكة المتحدة وكندا.',
   'China freight forwarder offering sea and air shipping to Dubai/UAE Amazon FBA and Saudi Arabia, departing Shanghai, Shenzhen, Ningbo, Hong Kong, Guangzhou, Xiamen and Tianjin.':
     'وكيل شحن صيني يقدم الشحن البحري والجوي إلى أمازون FBA في دبي/الإمارات والسعودية، بانطلاق من شنغهاي وشنجن ونينغبو وهونغ كونغ وقوانغتشو وشيامن وتيانجين.',
   'China-based logistics provider specialising in Amazon.sa and Noon.com FBA logistics from China to Saudi Arabia.':
@@ -208,8 +208,8 @@ const descAr: Record<string, string> = {
     'شركة لوجستيات دولية في شنجن.',
   'China supply chain management and freight forwarding company.':
     'شركة إدارة سلسلة توريد ووكالة شحن صينية.',
-  'Shenzhen railway logistics company specialising in China-Europe, CIS and Iran multimodal rail.':
-    'شركة لوجستيات سكك في شنجن متخصصة في السكك متعددة الوسائط بين الصين وأوروبا ورابطة الدول المستقلة وإيران.',
+  'Shenzhen railway logistics company specialising in CIS and Iran multimodal rail.':
+    'شركة لوجستيات سكك في شنجن متخصصة في السكك متعددة الوسائط بين رابطة الدول المستقلة وإيران.',
   'China supply chain company handling overweight cargo, logs, lumber, agriculture and food.':
     'شركة سلسلة توريد صينية تتعامل مع البضائع زائدة الوزن والجذوع والأخشاب والزراعة والأغذية.',
   'China international freight forwarding company offering full logistics solutions.':
@@ -242,8 +242,8 @@ const descAr: Record<string, string> = {
     'شركة لوجستيات في شنجن (نحو 20 عامًا) تقدم البحر والسكك والجو والشاحنات، مع تغطية للشرق الأوسط.',
   'Shenzhen supply chain company.':
     'شركة سلسلة توريد في شنجن.',
-  'Shenzhen forwarder offering China-to-Europe DDP rail freight door-to-door.':
-    'وكيل شحن في شنجن يقدم شحنًا بالسكك DDP من الباب إلى الباب من الصين إلى أوروبا.',
+  'Shenzhen forwarder offering DDP rail freight door-to-door.':
+    'وكيل شحن في شنجن يقدم شحنًا بالسكك DDP من الباب إلى الباب.',
   'Shanghai international freight transport agency offering air cargo forwarding.':
     'وكالة نقل شحن دولية في شنغهاي تقدم وكالة الشحن الجوي.',
   'Shenzhen transport company offering express and air freight door-to-door DDU/DDP.':
@@ -260,12 +260,12 @@ const descAr: Record<string, string> = {
     'وكيل شحن مرخص في نينغبو يقدم الشحن الجوي الدولي ووكالة الشحن البحري/البري/الجوي.',
   'Ningbo forwarder offering tailored logistics plans with WMS/VMI I.T. systems.':
     'وكيل شحن في نينغبو يقدم خطط لوجستيات مخصصة مع أنظمة WMS/VMI.',
-  'Ningbo consolidation specialist running weekly boxes from Ningbo/Shanghai to South-East Asia, India, the Middle East and Europe.':
-    'متخصص تجميع في نينغبو يشغّل حاويات أسبوعية من نينغبو/شنغهاي إلى جنوب شرق آسيا والهند والشرق الأوسط وأوروبا.',
+  'Ningbo consolidation specialist running weekly boxes from Ningbo/Shanghai to South-East Asia, India and the Middle East.':
+    'متخصص تجميع في نينغبو يشغّل حاويات أسبوعية من نينغبو/شنغهاي إلى جنوب شرق آسيا والهند والشرق الأوسط.',
   'Ningbo NVOCC and international freight forwarder.':
     'وكيل NVOCC ووكيل شحن دولي في نينغبو.',
-  'Ningbo forwarder on Middle East and Europe corridors with a global agency network.':
-    'وكيل شحن في نينغبو على ممرّي الشرق الأوسط وأوروبا بشبكة وكالات عالمية.',
+  'Ningbo forwarder on Middle East corridors with a global agency network.':
+    'وكيل شحن في نينغبو على ممرّات الشرق الأوسط بشبكة وكالات عالمية.',
   'Ningbo supply chain manager partnered with China Railway Corporation, with financial logistics.':
     'مدير سلسلة توريد في نينغبو شريك لشركة السكك الحديدية الصينية، مع لوجستيات مالية.',
   'Top-3 Ningbo listed forwarder with cold chain, project and oversize cargo services.':
@@ -282,10 +282,10 @@ const descAr: Record<string, string> = {
     'وكيل شحن صيني يقدم الشحن البحري من نينغبو إلى الدمام في السعودية.',
   'Shenzhen forwarder offering shipping service from China to the Middle East, Iran and UAE.':
     'وكيل شحن في شنجن يقدم خدمة الشحن من الصين إلى الشرق الأوسط وإيران والإمارات.',
-  'Xian-based China-Europe Railway Express specialist connecting China with Europe, Central Asia and the Middle East via FCL/LCL/SOC/COC rail.':
-    'متخصص في قطار الصين-أوروبا السريع مقره شيان يربط الصين بأوروبا وآسيا الوسطى والشرق الأوسط عبر سكك FCL/LCL/SOC/COC.',
-  'Shenzhen forwarder (since 2010) specialising in China-Europe Railway Express and cross-border logistics.':
-    'وكيل شحن في شنجن (منذ 2010) متخصص في قطار الصين-أوروبا السريع واللوجستيات العابرة للحدود.',
+  'Xian-based rail specialist connecting China with Central Asia and the Middle East via FCL/LCL/SOC/COC rail.':
+    'متخصص في السكك الحديدية مقره شيان يربط الصين بآسيا الوسطى والشرق الأوسط عبر سكك FCL/LCL/SOC/COC.',
+  'Shenzhen forwarder (since 2010) specialising in rail and cross-border logistics.':
+    'وكيل شحن في شنجن (منذ 2010) متخصص في السكك الحديدية واللوجستيات العابرة للحدود.',
   'Global freight forwarder with China offices in Qingdao, Ningbo, Guangzhou and Xiamen serving ocean and DG cargo.':
     'وكيل شحن عالمي بمكاتب صينية في تشينغداو ونينغبو وقوانغتشو وشيامن يخدم البضائع البحرية والخطرة.',
 };

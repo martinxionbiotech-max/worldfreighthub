@@ -147,7 +147,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Company identity and contact details not yet independently verified.',
     description:
-      'DDP-focused Chinese freight forwarder with route pages for China to North America, Europe and the Gulf, advertising tax-inclusive door-to-door LCL sea and air freight.',
+      'DDP-focused Chinese freight forwarder with route pages for China to North America and the Gulf, advertising tax-inclusive door-to-door LCL sea and air freight.',
     selfReportedClaims: [
       'DDP door-to-door with duties and taxes included — self-reported',
     ],
@@ -648,7 +648,7 @@ export const directoryProviders: DirectoryProvider[] = [
     contactNote:
       'Business identity verified on Alibaba (assessed videos, factory inspection reports, verified production lines; 7-year supplier). Contact details still to be confirmed.',
     description:
-      'Shenzhen-based logistics partner (founded 2016) specialising in cross-border shipping to Saudi Arabia, the US and Europe, with COSCO/MSC/CMA-CGM agency and DDP door-to-door.',
+      'Shenzhen-based logistics partner (founded 2016) specialising in cross-border shipping to Saudi Arabia and the US, with COSCO/MSC/CMA-CGM agency and DDP door-to-door.',
     selfReportedClaims: [
       'Founded 2016, 100+ staff, 98.5% on-time delivery — self-reported storefront listing',
     ],
@@ -828,7 +828,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Contact details not independently verified.',
     description:
-      'Guangzhou-based logistics group offering DDP/FBA warehousing and door-to-door shipping from China to the UAE, Dubai and Saudi Arabia (Riyadh, Dammam, Jeddah), plus US/UK/Canada/Europe routes.',
+      'Guangzhou-based logistics group offering DDP/FBA warehousing and door-to-door shipping from China to the UAE, Dubai and Saudi Arabia (Riyadh, Dammam, Jeddah), plus US/UK/Canada routes.',
     selfReportedClaims: [
       'Guangzhou DDP/FBA warehouse for UAE & Saudi — self-reported',
     ],
@@ -1221,7 +1221,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Shenzhen railway logistics company specialising in China-Europe, CIS and Iran multimodal rail.',
+      'Shenzhen railway logistics company specialising in CIS and Iran multimodal rail.',
   },
   {
     slug: 'greatmicro-supply-chain',
@@ -1525,7 +1525,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Shenzhen forwarder offering China-to-Europe DDP rail freight door-to-door.',
+      'Shenzhen forwarder offering DDP rail freight door-to-door.',
   },
   {
     slug: 'shanghai-juncan-international-freight-transport',
@@ -1669,7 +1669,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Ningbo consolidation specialist running weekly boxes from Ningbo/Shanghai to South-East Asia, India, the Middle East and Europe.',
+      'Ningbo consolidation specialist running weekly boxes from Ningbo/Shanghai to South-East Asia, India and the Middle East.',
   },
   {
     slug: 'holly-shipping',
@@ -1701,7 +1701,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Ningbo forwarder on Middle East and Europe corridors with a global agency network.',
+      'Ningbo forwarder on Middle East corridors with a global agency network.',
   },
   {
     slug: 'huanji-supply-chain-management',
@@ -1845,7 +1845,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Xian-based China-Europe Railway Express specialist connecting China with Europe, Central Asia and the Middle East via FCL/LCL/SOC/COC rail.',
+      'Xian-based rail specialist connecting China with Central Asia and the Middle East via FCL/LCL/SOC/COC rail.',
   },
   {
     slug: 'topway-shipping',
@@ -1861,7 +1861,7 @@ export const directoryProviders: DirectoryProvider[] = [
     lastVerified: '2026-09-06',
     contactNote: 'Website and contact details not yet independently located or verified.',
     description:
-      'Shenzhen forwarder (since 2010) specialising in China-Europe Railway Express and cross-border logistics.',
+      'Shenzhen forwarder (since 2010) specialising in rail and cross-border logistics.',
   },
   {
     slug: 'seko-logistics',

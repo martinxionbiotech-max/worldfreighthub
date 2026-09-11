@@ -266,7 +266,7 @@ export const methods: Method[] = [
     tldr:
       'Rail sits between sea and air on cost and speed, but its reach into the GCC is limited — most Gulf destinations still need a road or sea bridging leg. It is a genuine option on Central Asian corridors and a niche one for the Gulf itself.',
     definition:
-      'Rail freight moves containerised cargo overland on the China–Europe and Central Asia rail network. For the GCC it is less direct than ocean or air — rail typically reaches the Gulf via Central Asian or Iranian corridors — but it fills a middle ground on cost and speed for cargo that cannot justify air and cannot wait for sea.',
+      'Rail freight moves containerised cargo overland on Central Asian rail corridors. For the GCC it is less direct than ocean or air — rail typically reaches the Gulf via Central Asian or Iranian corridors — but it fills a middle ground on cost and speed for cargo that cannot justify air and cannot wait for sea.',
     bestFor: [
       'Cargo bound for Central Asia or the northern Gulf where rail corridors reach.',
       'Shipments where 2–3 weeks is acceptable but a 4-week ocean sailing is not.',
@@ -280,7 +280,7 @@ export const methods: Method[] = [
     ],
     transitTime: {
       range: '18–25 days',
-      note: 'Highly corridor-dependent. China–Europe block trains run ~15–20 days; routes into the Gulf via Central Asia are less standardised and should be confirmed per lane.',
+      note: 'Highly corridor-dependent. Dedicated block-train corridors run ~15–20 days; routes into the Gulf via Central Asia are less standardised and should be confirmed per lane.',
       confidence: 'LOW',
     },
     pros: [
@@ -296,7 +296,7 @@ export const methods: Method[] = [
       'Track gauge changes at some borders require container transfer.',
     ],
     insight:
-      'Rail is a middle option that mostly exists for Europe and Central Asia, not the Gulf. China-to-GCC rail typically routes through Central Asian or Iranian corridors and still needs a road or sea leg to reach most Gulf cities — which is why, despite attractive headline transit times of 18–25 days and 20ft rates around $1,500–5,500, rail to the GCC is a niche choice. It earns its place when the destination is inland Central Asia, or when a slower sea sailing is unacceptable and air is over budget.',
+      'Rail is a middle option that mostly exists for Central Asian corridors, not the Gulf. China-to-GCC rail typically routes through Central Asian or Iranian corridors and still needs a road or sea leg to reach most Gulf cities — which is why, despite attractive headline transit times of 18–25 days and 20ft rates around $1,500–5,500, rail to the GCC is a niche choice. It earns its place when the destination is inland Central Asia, or when a slower sea sailing is unacceptable and air is over budget.',
     process: [
       'Confirm the rail corridor and whether the destination is directly served.',
       'Cargo is containerised and delivered to the origin rail terminal.',
@@ -315,7 +315,7 @@ export const methods: Method[] = [
       },
       {
         q: 'What is the transit time for China to the GCC by rail?',
-        a: 'Around 18–25 days depending on the corridor, but Gulf-bound rail is less standardised than China–Europe trains. Confirm per lane, as this is the least predictable of the methods.',
+        a: 'Around 18–25 days depending on the corridor, but Gulf-bound rail is less standardised than dedicated block-train corridors. Confirm per lane, as this is the least predictable of the methods.',
       },
     ],
     keyTakeaways: [
@@ -329,7 +329,7 @@ export const methods: Method[] = [
     sources: [
       {
         id: 'eurasian-rail',
-        name: 'Eurasian Rail Alliance — China–Europe rail corridors',
+        name: 'Eurasian Rail Alliance — rail corridors',
         url: 'https://index1520.com/en/',
         type: 'organization',
       },

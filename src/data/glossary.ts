@@ -440,7 +440,7 @@ export const glossary: GlossaryTerm[] = [
     slug: 'taric',
     term: 'TARIC',
     definition:
-      'Integrated Tariff of the European Union \u2014 the 10-digit code formed by the 8-digit Combined Nomenclature plus 2 TARIC digits, updated daily with EU measures such as duties, quotas and suspensions.',
+      'Integrated Tariff of the EU \u2014 the 10-digit code formed by the 8-digit Combined Nomenclature plus 2 TARIC digits, updated daily with EU measures such as duties, quotas and suspensions.',
     category: 'EU & UK customs',
     inDetail:
       'TARIC is the EU Integrated Tariff: a 10-digit code made of the 8-digit Combined Nomenclature plus 2 extra TARIC digits. The first 8 digits follow the harmonised structure; the last 2 carry the EU-specific measures \u2014 anti-dumping duties, tariff suspensions, quotas and restrictions. The database is updated daily, so the duty on the same 8-digit CN line can change while the TARIC tail changes. The arithmetic trap is that the final 2 digits are not cosmetic. On a $10,000 CIF consignment, a wrong adjacent CN/TARIC classification can flip the line from 0% to 12%, and the swing is 12% \u00d7 $10,000 = $1,200. That is not a filing fee; it is the duty line itself. Most guides stop at the 8-digit code, but the last two TARIC digits are where anti-dumping and suspension measures actually live. The classification decision is therefore a duty decision: the eight-digit line sets the base, and the two TARIC digits set whether an extra measure applies.',
@@ -497,21 +497,6 @@ export const glossary: GlossaryTerm[] = [
     updated: '2026-09-07',
   },
   {
-    slug: 'china-europe-railway-express',
-    term: 'China-Europe Railway Express',
-    definition:
-      'Scheduled block trains between Chinese hubs such as Chengdu, Chongqing, Xi\u2019an and Zhengzhou and European terminals including Ma\u0142aszewicze, Duisburg, Hamburg and Budapest, with transit typically around 12\u201318 days.',
-    category: 'Freight mode',
-    inDetail:
-      'The China-Europe Railway Express is a network of scheduled block trains linking Chinese hubs \u2014 Chengdu, Chongqing, Xi\u2019an and Zhengzhou \u2014 with European terminals such as Ma\u0142aszewicze, Duisburg, Hamburg and Budapest. Transit typically runs around 12\u201318 days, versus roughly 30\u201340 days by sea, at roughly 2\u20133\u00d7 sea-freight cost and about one-third to one-quarter of air-freight cost (ranges, MEDIUM confidence, as of 2026 in China State Railway Group and BRI reporting). The break-even is an inventory-financing equation. If a shipment is worth $100,000 and the importer\u2019s estimated inventory carrying cost is 0.05% per day, the value of time is 0.0005 \u00d7 $100,000 = $50/day. Saving 20 days (35 sea days minus 15 rail days) is worth 20 \u00d7 $50 = $1,000. Rail is rational only when the freight premium is below that time value, or when a missed sale or stock-out exceeds the premium. That is why rail is quoted as a time-versus-money trade, not simply as a middle speed.',
-    whyItMatters:
-      'Rail can cut transit from roughly 30\u201340 sea days to around 12\u201318 days, but at roughly 2\u20133\u00d7 sea freight; treat it as buying about two weeks of cash-flow time. Use it when the saved inventory-carrying cost exceeds the premium, not as a default.',
-    example:
-      'A $100,000 shipment can go by sea in 35 days at $1,200 freight or by rail in 15 days at $2,800 freight (roughly 2.3\u00d7 sea). Rail saves an estimated 20 days \u00d7 $50/day = $1,000 of inventory carrying cost but costs $1,600 more in freight, so sea wins by about $600 unless the faster arrival protects a sale.',
-    related: ['station-to-station', 'fcl', 'cbm', 'demurrage'],
-    updated: '2026-09-07',
-  },
-  {
     slug: 'vat-deferral',
     term: 'VAT Deferral',
     definition:
@@ -538,7 +523,7 @@ export const glossary: GlossaryTerm[] = [
       'A station-to-station rate understates landed cost by the trucking legs; on a \u20ac2,000 rail quote, estimated pre-carriage and last-mile can add 25\u201330%, or about \u20ac500\u2013\u20ac600, plus 2\u20134 days. Compare door-to-door figures, not terminal-to-terminal rates, before choosing rail.',
     example:
       'A buyer budgets \u20ac2,000 from a station-to-station Chengdu\u2013Duisburg quote; adding an estimated 12% origin and 15% destination trucking moves the landed freight to \u20ac2,540 (\u20ac2,000 + \u20ac240 + \u20ac300) and adds roughly 2\u20134 days, so the door-to-door cost is \u20ac540 higher than the terminal rate.',
-    related: ['china-europe-railway-express', 'fcl', 'lcl', 'demurrage'],
+    related: ['fcl', 'lcl', 'demurrage'],
     updated: '2026-09-07',
   },
   {
