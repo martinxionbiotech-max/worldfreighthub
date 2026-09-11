@@ -1,12 +1,10 @@
 import { chinaPorts } from './china-ports';
 import { gccPorts } from './gcc-ports';
 import { gccCountries } from './gcc-countries';
-import { europePorts } from './europe-ports';
-import { europeCountries } from './europe-countries';
 import type { Port, Country } from './types';
 
-const allPorts: Port[] = [...chinaPorts, ...gccPorts, ...europePorts];
-const allCountries: Country[] = [...gccCountries, ...europeCountries];
+const allPorts: Port[] = [...chinaPorts, ...gccPorts];
+const allCountries: Country[] = [...gccCountries];
 
 export function getPortBySlug(slug: string): Port | undefined {
   return allPorts.find((port) => port.slug === slug);

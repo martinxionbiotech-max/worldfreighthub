@@ -27,7 +27,6 @@ export default defineConfig({
         methods: chunk('methods/'),
         countries: chunk('countries/'),
         tools: chunk('tools/'),
-        europe: chunk('europe/'),
         middleeast: chunk('middleeast/'),
         arabic: chunk('ar/'),
       },

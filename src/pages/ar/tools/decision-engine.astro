@@ -9,9 +9,9 @@ import { SITE_URL } from '../../../site';
 const locale = 'ar' as const;
 
 const pageUrl = `${SITE_URL}/ar/tools/decision-engine/`;
-const title = 'محرك قرار الشحن — FCL أم LCL أم الجوي أم السككي';
+const title = 'محرك قرار الشحن — FCL أم LCL أم الجوي';
 const description =
-  'يوصي بوضع الشحن الأنسب من الصين لشحنتك — FCL أم LCL أم الجوي أم السككي — باستخدام عتبتي التعادل عند 15 CBM والقيمة الزمنية، إضافةً إلى مُضاعف التكلفة الإجمالية للوصول.';
+  'يوصي بوضع الشحن الأنسب من الصين لشحنتك — FCL أم LCL أم الجوي — باستخدام عتبتي التعادل عند 15 CBM والقيمة الزمنية، إضافةً إلى مُضاعف التكلفة الإجمالية للوصول.';
 
 const faqs = [
   {
@@ -25,10 +25,6 @@ const faqs = [
   {
     q: 'كيف يوازن المحرك بين البحري والجوي؟',
     a: 'يُسعّر الوقتَ الموفَّر. الشحن الجوي أغلى من البحري بنحو 8–15 مرة لكل كجم، فلا يفوز إلا عندما تكون الأيام التي يوفرها أكثر قيمة من الفارق. يقدّر المحرك تكلفة رأس المال اليومية (قيمة البضاعة × 10% ÷ 365) ويضربها في الأيام التي يوفرها الجوي عن البحري: إذا تجاوزت هذه القيمة الزمنية فارقَ الشحن الجوي، فإن الجوي يدفع عن نفسه؛ وإلا فيفوز البحري. هذه هي الحسبة التي نادراً ما يعرضها وكلاء الشحن، وهي السبب كله في أن شحنة عاجلة بقيمة 50,000 دولار تسافر جواً بينما شحنة ضخمة بقيمة 5,000 دولار تُشحن بحراً.',
-  },
-  {
-    q: 'هل السكة الحديدية لأوروبا فقط؟',
-    a: 'نعم — يسير قطار الصين–أوروبا السريع إلى المحطات الأوروبية (مالاشيفيتشه، دويسبورغ، هامبورغ، بودابست) في نحو 15–22 يوماً، وبتكلفة تعادل تقريباً 2–3 أضعاف البحري وجزء يسير من الجوي. ولا يوجد على ممرات الخليج ممر سككي مماثل، لذلك يعرض المحرك السكة الحديدية للوجهات الأوروبية فقط ويُسقطها عن وجهات الخليج.',
   },
   {
     q: 'لماذا تكون التكلفة الإجمالية للوصول مضروبة لا مضافة؟',
@@ -114,15 +110,6 @@ const schema = [
             <option value="sohar">عُمان — صحار</option>
             <option value="khalifa-bin-salman">البحرين — خليفة بن سلمان</option>
           </optgroup>
-          <optgroup label="أوروبا (من الصين إلى الاتحاد الأوروبي/المملكة المتحدة، السكة الحديدية متاحة)">
-            <option value="germany">ألمانيا</option>
-            <option value="united-kingdom">المملكة المتحدة</option>
-            <option value="france">فرنسا</option>
-            <option value="netherlands">هولندا</option>
-            <option value="poland">بولندا</option>
-            <option value="spain">إسبانيا</option>
-            <option value="italy">إيطاليا</option>
-          </optgroup>
         </select>
 
         <label for="volume">حجم البضاعة (CBM)</label>
@@ -196,8 +183,8 @@ const schema = [
           description="تحت نحو 15 CBM تدفع لكل متر مكعب وتشارك حاوية؛ وفوقها تكون حاوية 20 قدماً كاملة (نحو 28 CBM) أو 40 قدماً (نحو 58 CBM) أرخص لكل CBM. يعيد المحرك حساب نقطة التحول وفق معدل LCL وسعر حاوية 20 قدماً في وجهتك."
         />
         <Card
-          title="2 · البحري أم الجوي أم السككي"
-          description="الجوي أغلى من البحري بنحو 8–15 مرة لكل كجم لكنه يستغرق 4–7 أيام مقابل 16–45 يوماً بحراً؛ والسككي (لأوروبا فقط) يهبط في نحو 15–22 يوماً بنحو 2.5 ضعف البحري. يختار المحرك بحسب مهلك، ثم يُسعّر الوقت الموفَّر."
+          title="2 · البحري أم الجوي"
+          description="الجوي أغلى من البحري بنحو 8–15 مرة لكل كجم لكنه يستغرق 4–7 أيام مقابل 16–45 يوماً بحراً. يختار المحرك بحسب مهلك، ثم يُسعّر الوقت الموفَّر."
         />
         <Card
           title="3 · التكلفة الإجمالية للوصول (مضروبة)"
@@ -251,14 +238,6 @@ const schema = [
     shuwaikh: { country: 'الكويت', corridor: 'GCC', duty: 5, vat: 0, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [70, 100], air: null, seaDays: 24, airDays: 5 },
     sohar: { country: 'عُمان', corridor: 'GCC', duty: 5, vat: 5, fcl20: [1500, 2600], fcl40: [2200, 3800], lcl: [60, 110], air: null, seaDays: 19, airDays: 5 },
     'khalifa-bin-salman': { country: 'البحرين', corridor: 'GCC', duty: 5, vat: 10, fcl20: [1500, 2500], fcl40: [2200, 3600], lcl: [75, 100], air: null, seaDays: 22, airDays: 5 },
-    // Europe — duty representative MFN (varies by HS), accurate VAT, rail available
-    germany: { country: 'ألمانيا', corridor: 'Europe', duty: 4, vat: 19, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 40, railDays: 18, airDays: 5 },
-    'united-kingdom': { country: 'المملكة المتحدة', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 40, railDays: 19, airDays: 5 },
-    france: { country: 'فرنسا', corridor: 'Europe', duty: 4, vat: 20, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 17, airDays: 5 },
-    netherlands: { country: 'هولندا', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4600], fcl40: [1600, 6500], lcl: [60, 160], air: [4.3, 6.5], seaDays: 30, railDays: 16, airDays: 5 },
-    poland: { country: 'بولندا', corridor: 'Europe', duty: 4, vat: 23, fcl20: [1200, 4800], fcl40: [1600, 6800], lcl: [60, 160], air: [4.3, 6.5], seaDays: 34, railDays: 15, airDays: 5 },
-    spain: { country: 'إسبانيا', corridor: 'Europe', duty: 4, vat: 21, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 33, railDays: 18, airDays: 5 },
-    italy: { country: 'إيطاليا', corridor: 'Europe', duty: 4, vat: 22, fcl20: [1200, 4700], fcl40: [1600, 6600], lcl: [60, 150], air: [4.3, 6.5], seaDays: 31, railDays: 17, airDays: 5 },
   };
 
   const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -305,9 +284,6 @@ const schema = [
     const chargeable = weight !== null ? Math.max(weight, volKg) : volKg;
     const airCost = d.air ? [d.air[0] * chargeable, d.air[1] * chargeable] : null;
 
-    // rail (Europe only)
-    const railAvailable = d.railDays !== undefined;
-    const railCost = railAvailable ? [seaCost[0] * 2.5, seaCost[1] * 2.5] : null;
 
     // time-value break-even (sea vs air)
     const dailyCapital = (value * 0.1) / 365;
@@ -321,13 +297,8 @@ const schema = [
       rec = 'شحن جوي';
       reason = `مهلة ${maxDays} يوماً أضيق من نافذة الشحن الجوي البالغة نحو ${d.airDays} يوماً — الجوي هو الوسيلة الوحيدة المناسبة، بتكلفة ${USD.format(airCost[0])}–${USD.format(airCost[1])} لنحو ${Math.round(chargeable)} كجم قابل للتحصيل.`;
     } else if (maxDays < d.seaDays) {
-      if (railAvailable && maxDays >= d.railDays) {
-        rec = 'السكة الحديدية (قطار الصين–أوروبا السريع)';
-        reason = `البحري يحتاج نحو ${d.seaDays} يوماً بينما تسمح بـ ${maxDays}؛ وتهبط السكة الحديدية في نحو ${d.railDays} يوماً بنحو 2.5 ضعف البحري (${USD.format(railCost[0])}–${USD.format(railCost[1])})، بتكلفة وسط وسرعة وسط.`;
-      } else {
-        rec = 'شحن جوي';
-        reason = `البحري يحتاج نحو ${d.seaDays} يوماً، أي أكثر من حدّك البالغ ${maxDays} يوماً، ${railAvailable ? 'والسكة الحديدية (نحو ' + d.railDays + ' يوماً) تتجاوزه أيضاً — ' : ''}فالجوي هو الوسيلة الوحيدة المناسبة.`;
-      }
+      rec = 'شحن جوي';
+      reason = `البحري يحتاج نحو ${d.seaDays} يوماً، أي أكثر من حدّك البالغ ${maxDays} يوماً، فالجوي هو الوسيلة الوحيدة المناسبة.`;
     } else {
       rec = `شحن بحري — ${seaLabel}`;
       reason = `البحري بنحو ${d.seaDays} يوماً يتوافق مع مهلك البالغة ${maxDays} يوماً بتكلفة ${USD.format(seaCost[0])}–${USD.format(seaCost[1])}. ${isFcl ? `${seaLabel} يتفوق على LCL لكل CBM فوق خط 15 CBM تقريباً` : `حجمك البالغ ${volume} CBM تحت خط FCL البالغ 15 CBM تقريباً، لذا فإن LCL أرخص`}.`;
@@ -342,9 +313,7 @@ const schema = [
     el('result-air').textContent = airCost
       ? `نحو ${d.airDays} يوماً · ${USD.format(airCost[0])}–${USD.format(airCost[1])}`
       : 'سعر الشحن الجوي غير منشور لهذا الممر — اطلب عرض سعر';
-    el('result-rail').textContent = railAvailable
-      ? `نحو ${d.railDays} يوماً · ${USD.format(railCost[0])}–${USD.format(railCost[1])}`
-      : 'غير متاحة (ممر الخليج لا يملك ممراً سككياً)';
+    el('result-rail').textContent = 'غير متاحة (ممر الخليج لا يملك ممراً سككياً)';
     el('result-breakeven').textContent = airCost
       ? `القيمة الزمنية لـ ${daysSaved} يوماً موفَّراً ≈ ${USD.format(timeValueSaved)} مقابل فارق جوي ≥ ${USD.format(airPremiumLow)} ← ${timeValueSaved > airPremiumLow ? 'الجوي يدفع عن نفسه' : 'البحري يفوز بالتكلفة'}`
       : 'لا معيار جوي — قارن على عرض سعر مباشر';
