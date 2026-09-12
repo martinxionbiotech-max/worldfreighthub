@@ -1,0 +1,335 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { gccCountries } from '../../data/gcc-countries';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/ddp-vs-self-clearance/`;
+const saudi = gccCountries.find((country) => country.slug === 'saudi-arabia');
+
+const comparisonRows = [
+  {
+    parameter: 'Who clears import',
+    ddp: 'Seller, through a destination agent or importer-of-record arrangement',
+    self: 'Buyer, or the buyer’s appointed local broker',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Who pays duty and VAT',
+    ddp: 'Seller pays duty + VAT and builds it into the delivered price',
+    self: 'Buyer pays duty + VAT directly to customs',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Who carries clearance risk',
+    ddp: 'Seller — including rate changes, SABER/SASO holds and last-mile risk',
+    self: 'Buyer — controls documentation, clearance pace and any hold resolution',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Best fit',
+    ddp: 'First-time importers, small parcels, no local EORI or broker, fixed landed-price requirement',
+    self: 'VAT-registered buyers, large shipments, existing EORI/broker, importers that want input-VAT control',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Typical cost difference',
+    ddp: 'Convenience premium, usually 5–15% above a buyer-controlled clearance',
+    self: 'Usually lower delivered cost when the buyer already has local capability',
+    confidence: 'LOW',
+  },
+];
+
+const saudiRows = [
+  {
+    item: 'Importer of record',
+    ddp: 'Seller must have or appoint a Saudi-side agent capable of acting as importer of record',
+    self: 'Buyer uses its own Saudi importer registration/EORI',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'SABER / SASO compliance',
+    ddp: 'Seller manages product registration, certificates and shipment conformity end-to-end',
+    self: 'Buyer manages SABER/SASO under its own importer identity',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Duty + VAT',
+    ddp: 'Seller prices in the 5% base duty + 15% VAT and any change risk',
+    self: 'Buyer pays the same 5% base duty + 15% VAT and can claim input VAT where eligible',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is DDP always more expensive than self-clearance?',
+    a: 'Usually, but not automatically. DDP bundles freight, duty, VAT, clearance and final delivery into one price, and the seller adds margin for carrying the clearance and tax risk. The convenience premium is commonly 5–15%, but it can be smaller when the seller already has a strong destination-agent setup.',
+  },
+  {
+    q: 'What does the buyer need for self-clearance?',
+    a: 'A local importer of record or EORI, a broker that can file the import declaration, the correct HS codes and documents, and the cashflow to pay duty and VAT directly. Without those, DDP is usually simpler and safer for the first shipment.',
+  },
+  {
+    q: 'Does self-clearance let me recover import VAT?',
+    a: 'It can improve control and documentation, but recovery depends on the buyer being VAT-registered in the destination country and the import being attributable to taxable activity. The customs import record matters more than whether the shipment was quoted DDP or not.',
+  },
+  {
+    q: 'Is DDP available and practical for Saudi Arabia?',
+    a: 'In practice yes, but it is heavier than in the UAE. The seller needs a Saudi-side agent that can act as importer of record and manage SABER/SASO before the goods arrive. Self-clearance is often preferable when the buyer already has a Saudi importer identity and wants to control that compliance chain.',
+  },
+  {
+    q: 'How do I choose between DDP and self-clearance?',
+    a: 'Choose DDP when the buyer has no local importer identity or broker, the shipment is small, or a locked delivered price is worth the premium. Choose self-clearance when the buyer has an EORI/broker, the shipment is large enough for the 5–15% saving to matter, or VAT recovery and clearance timing need to stay buyer-controlled.',
+  },
+];
+
+const wfhMethods: Source = {
+  id: 'wfh-methods-ddp',
+  name: 'WorldFreightHub methods data — DDP definition, obligations and Saudi importer-of-record guidance',
+  url: `${SITE_URL}/methods/ddp/`,
+  type: 'organization',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-gcc-country-data-ddp',
+  name: 'WorldFreightHub GCC country data — Saudi Arabia 5% duty + 15% VAT and SABER/SASO requirements',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const sources: Source[] = [wfhMethods, wfhCountryData];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      name: 'DDP vs Self-Clearance: China to GCC Import Decision',
+      url: pageUrl,
+      description:
+        'Compare DDP and buyer self-clearance for China-to-GCC imports: who clears, who pays duty and VAT, who carries risk, and the Saudi SABER/EORI scenario.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'DDP vs self-clearance for GCC imports',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="DDP vs Self-Clearance: China to GCC Import Decision"
+  description="Compare DDP and self-clearance for China-to-GCC imports: who clears, who pays duty and VAT, who carries risk, and how the Saudi SABER/EORI scenario changes the choice."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'DDP vs self-clearance' },
+        ]}
+      />
+      <span class="badge badge--amber">Estimated Â· Confidence MEDIUM Â· Not a quote</span>
+      <h1>DDP vs self-clearance: who pays, who clears, and who carries the risk</h1>
+      <p class="lead">
+        DDP means the seller pays freight, duty, VAT and clearance to the door; the buyer only
+        receives the goods. Self-clearance means the buyer, or its local broker, clears and pays the
+        taxes. DDP is expensive convenience; self-clearance saves on the tax-control and process
+        advantages.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> choose DDP when the buyer has no local EORI or broker, is a
+          first-time importer, ships small parcels, or wants one locked landed price. Choose
+          self-clearance when the buyer has an EORI or broker, ships large volumes, wants to recover
+          input VAT, or wants to control the clearance timeline — the DDP premium is commonly 5–15%.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">DDP risk owner</span>
+          <span class="fact-value">Seller <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Self-clearance risk owner</span>
+          <span class="fact-value">Buyer / local broker <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">DDP typical premium</span>
+          <span class="fact-value">5–15% <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi baseline</span>
+          <span class="fact-value">5% duty + 15% VAT <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The direct answer</h2>
+    <p>
+      <strong>DDP (Delivered Duty Paid)</strong> puts freight, export and import clearance, import
+      duty, VAT and final delivery on the seller. The buyer receives goods and pays one delivered
+      price. That convenience is not free: the seller prices in the clearance work, the tax cashflow
+      and the risk of a hold or rate change.
+    </p>
+    <p>
+      <strong>Self-clearance</strong> splits the obligations differently: the buyer, or its appointed
+      local broker, acts as the importer of record, clears the cargo, and pays duty and VAT directly.
+      The buyer can use its own VAT registration, control the documentation, and avoid the seller's
+      DDP risk margin.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Side-by-side comparison</h2>
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Decision point' },
+          { key: 'ddp', label: 'DDP' },
+          { key: 'self', label: 'Self-clearance' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="DDP vs buyer self-clearance for China-to-GCC imports."
+      />
+      <p class="small muted mt-2">
+        The 5–15% convenience premium is a planning estimate from common forwarder pricing logic,
+        not a quote. The actual spread depends on commodity, destination, volume and whether the
+        buyer already has a local importer identity.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. When to choose each</h2>
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose DDP when">
+        <ul>
+          <li>The buyer has no local EORI or appointed broker.</li>
+          <li>This is the first import, or the first import into a complex GCC market.</li>
+          <li>The shipment is small and the tax savings from self-clearance are modest.</li>
+          <li>The buyer wants a locked landed price and no customs interaction.</li>
+        </ul>
+      </Card>
+      <Card title="Choose self-clearance when">
+        <ul>
+          <li>The buyer already has an EORI or trusted local broker.</li>
+          <li>The shipment is large enough that a 5–15% DDP premium is material.</li>
+          <li>The buyer is VAT-registered and needs a clean import record for input VAT recovery.</li>
+          <li>The buyer wants to control clearance pace and hold resolution.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Saudi Arabia: where the choice gets harder</h2>
+      <p>
+        Saudi Arabia is the clearest example of why this is not a pure price decision. The statutory
+        cost is the same either way — {saudi?.dutyRate ?? '5% base duty'} plus{' '}
+        {saudi?.vatRate ?? 15}% VAT — but the compliance chain is not.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Saudi requirement' },
+          { key: 'ddp', label: 'DDP treatment' },
+          { key: 'self', label: 'Self-clearance treatment' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={saudiRows}
+        caption="DDP vs self-clearance for Saudi Arabia using the GCC country data."
+      />
+      <p class="small muted mt-2">
+        DDP into Saudi Arabia means the seller must manage SABER compliance and importer-of-record
+        requirements. Self-clearance keeps those under the buyer's own Saudi registration — useful
+        when the buyer already has the EORI and product certificates in place.
+      </p>
+      <p class="mt-2">
+        <a class="btn btn-secondary" href="/middleeast/saso-saber-certification/">SABER / SASO certification guide</a>
+        <a class="btn btn-secondary" href="/middleeast/china-to-gcc-landed-cost/">Complete landed cost model</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related pages</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="DDP method guide"
+          description="What Delivered Duty Paid includes, when the seller should take the risk, and Saudi importer-of-record guidance."
+          href="/methods/ddp/"
+        />
+        <Card
+          title="China to GCC landed cost"
+          description="Build the full landed cost: ocean freight, insurance, duty, VAT, port charges, clearance and last-mile."
+          href="/middleeast/china-to-gcc-landed-cost/"
+        />
+        <Card
+          title="SASO / SABER certification"
+          description="Saudi product conformity requirements that determine whether cargo clears without a hold."
+          href="/middleeast/saso-saber-certification/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={sources} title="Sources" />
+    <p class="small muted">
+      <strong>Estimate boundary:</strong> this page is a decision aid built from WorldFreightHub
+      methods and GCC country data plus common industry pricing logic. It is not a binding quote.
+      Duty, VAT, importer-of-record rules and SABER/SASO scope must be confirmed with the destination
+      customs authority or a licensed broker for your exact HS code and transaction.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a DDP or self-clearance comparison quote"
+      text="Tell us the destination, commodity, volume and whether the buyer already has a local EORI/broker, and we will connect you with providers who can quote both structures."
+    />
+  </section>
+</BaseLayout>

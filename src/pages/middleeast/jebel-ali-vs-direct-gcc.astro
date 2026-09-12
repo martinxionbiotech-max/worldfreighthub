@@ -1,0 +1,338 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { routes } from '../../data/routes';
+import { portName, countryName } from '../../data/lookup';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/jebel-ali-vs-direct-gcc/`;
+
+const frequencyLabels: Record<string, string> = {
+  'jebel-ali': 'Highest on the corridor — densest direct calls and carrier choices',
+  jeddah: 'Direct calls common, but Red Sea volatility is HIGH',
+  dammam: 'Direct calls less frequent than Jeddah; Strait of Hormuz exposure',
+  hamad: 'Single-gateway market with a thinner schedule',
+  shuwaikh: 'Lower-frequency lane with wider schedule windows',
+  sohar: 'Improving direct calls and less congestion than the main hubs',
+  'khalifa-bin-salman': 'Moderate frequency, often transshipped via a regional hub',
+};
+
+const shanghaiRoutes = routes.filter((route) => route.originPort === 'shanghai');
+
+const gatewayRows = shanghaiRoutes.map((route) => {
+  const twenty = route.costRows.find((row) => row.label.includes('20ft'));
+  const forty = route.costRows.find((row) => row.label.includes('40ft'));
+  const lcl = route.costRows.find((row) => row.label.toLowerCase().includes('lcl'));
+  return {
+    gateway: portName(route.destPort),
+    country: countryName(route.country),
+    twenty: twenty?.range ?? 'Request quote',
+    forty: forty?.range ?? 'Request quote',
+    lcl: lcl?.range ?? 'Request quote',
+    typical: `~${route.transitDays.typical} days`,
+    frequency: frequencyLabels[route.destPort] ?? route.routingNote,
+    confidence: 'MEDIUM',
+  };
+});
+
+const comparisonRows = [
+  {
+    parameter: 'Frequency',
+    jebelAli: 'Highest frequency on the China–GCC lane with the most carrier options',
+    direct: 'Varies by destination; Jeddah is strong, but Hamad/Shuwaikh/Khalifa bin Salman are thinner',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Transit time',
+    jebelAli: 'Jebel Ali typical ~21 days plus an estimated 2–5 day transshipment leg',
+    direct: 'Destination-typical sailing without the Jebel Ali transshipment leg',
+    confidence: 'LOW',
+  },
+  {
+    parameter: 'Cost',
+    jebelAli: 'Ocean to Jebel Ali + transshipment, free-zone handling and onward freight',
+    direct: 'One destination ocean freight; no Jebel Ali transshipment fee',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Warehousing / distribution',
+    jebelAli: 'JAFZA-style free-zone staging, consolidation and multi-country splitting',
+    direct: 'No regional staging unless you build it separately at destination',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Best fit',
+    jebelAli: 'Multi-country distribution, small-batch replenishment, free-zone stock, carrier-rate leverage',
+    direct: 'Single large B2B destination, time-sensitive cargo, no desire for transshipment risk',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much time does a Jebel Ali transshipment add?',
+    a: 'Plan for roughly 2–5 days on top of the China–UAE sailing, covering discharge, free-zone or terminal handling, and the onward feeder/truck leg. This is an estimate; the actual wait depends on the onward destination, carrier schedule and whether the cargo stays in bond.',
+  },
+  {
+    q: 'Why is the Jebel Ali rate range narrower than other GCC ports?',
+    a: 'Jebel Ali has the most carrier competition on the corridor, which compresses the spread. The published 20ft FCL range is $1,500–$3,250, compared with wider ranges at volatile ports such as Jeddah and Dammam.',
+  },
+  {
+    q: 'Does Jebel Ali transshipment make sense for one big direct shipment?',
+    a: 'Usually not. A single large B2B shipment to a fixed destination is better served by a direct call when frequency allows, because it avoids the 2–5 day transshipment leg and the extra handling/fee.',
+  },
+  {
+    q: 'Does transshipment through Jebel Ali avoid destination duty or VAT?',
+    a: 'No. If the final destination is another GCC country, that country’s import duty and VAT still apply when the cargo enters its customs territory. UAE free-zone movement can defer UAE import duty while goods remain in the zone, but it does not remove the final-market tax.',
+  },
+  {
+    q: 'How should I compare Jebel Ali transshipment vs direct for my lane?',
+    a: 'Compare total delivered cost, not the ocean rate alone: China–Jebel Ali freight + transshipment/warehousing + final-leg freight versus one direct destination rate, then add the destination port charges, clearance and last-mile for both.',
+  },
+];
+
+const wfhRouteData: Source = {
+  id: 'wfh-jebel-direct-route-data',
+  name: 'WorldFreightHub route data — China to the seven main GCC destination ports, including Jebel Ali 20ft FCL $1,500–$3,250 and transit-day benchmarks',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
+const wfhCountryData: Source = {
+  id: 'wfh-jebel-direct-country-data',
+  name: 'WorldFreightHub GCC country data — destination duty and VAT profiles used for final-market cost checks',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const sources: Source[] = [wfhRouteData, wfhCountryData];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      name: 'Jebel Ali Transshipment vs Direct GCC Ports',
+      url: pageUrl,
+      description:
+        'Compare routing China cargo through Jebel Ali to other GCC countries versus sailing direct to the destination port: frequency, transit, cost, warehousing and best-fit scenarios.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Jebel Ali transshipment vs direct GCC port selection',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Jebel Ali Transshipment vs Direct GCC Ports"
+  description="Port-selection decision for China-to-GCC cargo: route through Jebel Ali for frequency and free-zone distribution, or sail direct to the destination port for fewer handling steps."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Jebel Ali vs direct GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">Estimated Â· Confidence MEDIUM Â· Not a quote</span>
+      <h1>Jebel Ali transshipment vs direct GCC ports</h1>
+      <p class="lead">
+        Jebel Ali uses the UAE’s highest flight of carrier competition, free-zone warehousing and
+        regional distribution muscle, at the cost of a transshipment step and onward freight. Direct
+        sailing skips the middle step but depends on the destination port’s own frequency and
+        space.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> transship through Jebel Ali for multi-country distribution,
+          small-batch replenishment and UAE free-zone staging; sail direct for a single large B2B
+          destination where you do not want the extra 2–5 day transshipment leg and fee.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Jebel Ali 20ft FCL</span>
+          <span class="fact-value">$1,500–$3,250 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali frequency</span>
+          <span class="fact-value">Highest on corridor <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Transshipment add</span>
+          <span class="fact-value">~2–5 days + fee <ConfidenceBadge level="LOW" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Direct route</span>
+          <span class="fact-value">No Jebel Ali transshipment <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The direct answer</h2>
+    <p>
+      <strong>Via Jebel Ali:</strong> cargo lands in the UAE, can be staged in a free zone, split by
+      destination, and forwarded to another GCC country. The advantage is schedule density and
+      distribution flexibility; the cost is an added transshipment leg and handling fee.
+    </p>
+    <p>
+      <strong>Direct to the destination port:</strong> cargo sails once from China to Jeddah, Dammam,
+      Hamad, Shuwaikh, Sohar or Khalifa bin Salman. The advantage is fewer handling steps and no Jebel
+      Ali transshipment fee; the trade-off is that some destination ports have thinner schedules or
+      less carrier competition.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Jebel Ali transshipment vs direct destination</h2>
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Decision point' },
+          { key: 'jebelAli', label: 'Via Jebel Ali' },
+          { key: 'direct', label: 'Direct to destination port' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="Port-selection comparison: Jebel Ali transshipment versus direct GCC destination call."
+      />
+      <p class="small muted mt-2">
+        Transshipment time of 2–5 days and the transshipment fee are planning estimates from
+        regional-hub practice, not carrier-confirmed figures. Confirm the final leg and bonded/status
+        treatment with your forwarder.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. The gateway data behind the choice</h2>
+    <p>
+      The route table below is pulled from the existing WorldFreightHub route data for Shanghai to the
+      seven main GCC gateways. It shows why Jebel Ali is the transshipment default: its 20ft FCL range
+      is the narrowest of the UAE lane and its frequency label is the highest on the corridor.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'gateway', label: 'Gateway' },
+        { key: 'country', label: 'Country' },
+        { key: 'twenty', label: '20ft FCL' },
+        { key: 'forty', label: '40ft FCL' },
+        { key: 'lcl', label: 'LCL / CBM' },
+        { key: 'typical', label: 'Typical transit' },
+        { key: 'frequency', label: 'Frequency profile' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={gatewayRows}
+      caption="Shanghai-to-GCC route data: gateway cost ranges and frequency notes from routes.ts."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>4. When to choose each</h2>
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose Jebel Ali transshipment when">
+        <ul>
+          <li>You distribute to multiple GCC countries from one inbound stock.</li>
+          <li>You want small-batch, high-frequency replenishment.</li>
+          <li>You need UAE free-zone staging or regional consolidation.</li>
+          <li>You want to use Jebel Ali carrier competition to negotiate the inbound leg.</li>
+        </ul>
+      </Card>
+      <Card title="Choose direct to the destination port when">
+        <ul>
+          <li>You have one fixed destination and a large volume.</li>
+          <li>The cargo is time-sensitive and cannot absorb a 2–5 day transshipment wait.</li>
+          <li>You want to avoid transshipment fees and an extra handling step.</li>
+          <li>The destination port has a direct service and enough schedule reliability for your lead time.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related pages</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Jebel Ali port profile"
+        description="Middle East re-export hub, JAFZA free zone and the corridor’s highest-frequency gateway."
+        href="/ports/jebel-ali/"
+      />
+      <Card
+        title="China to GCC routes"
+        description="Compare route cost ranges, transit benchmarks and gateway notes for the seven main GCC ports."
+        href="/routes/"
+      />
+      <Card
+        title="China to GCC landed cost"
+        description="Add ocean freight, insurance, duty, VAT, port charges, clearance and last-mile into one model."
+        href="/middleeast/china-to-gcc-landed-cost/"
+      />
+      <Card
+        title="UAE distribution vs direct GCC"
+        description="Supply-chain strategy view: UAE regional hub inventory versus direct destination fulfillment."
+        href="/middleeast/china-uae-gcc-vs-direct/"
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={sources} title="Sources" />
+    <p class="small muted">
+      <strong>Estimate boundary:</strong> this page is a port-selection planning aid built from
+      WorldFreightHub route data and common regional-hub practice. The 2–5 day transshipment add,
+      transshipment fees and final-leg rates are estimates, not quotes. Confirm the exact routing and
+      total delivered cost with a carrier or licensed forwarder.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a Jebel Ali vs direct routing quote"
+      text="Tell us the final GCC destination, commodity, volume and whether you need free-zone staging, and we will connect you with providers who can quote both structures."
+    />
+  </section>
+</BaseLayout>

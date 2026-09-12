@@ -8,6 +8,8 @@ import SourceList from '../../components/SourceList.astro';
 import Card from '../../components/Card.astro';
 import Cta from '../../components/Cta.astro';
 import { gccCountries } from '../../data/gcc-countries';
+import { routes } from '../../data/routes';
+import { portName, countryName } from '../../data/lookup';
 import { SITE_NAME, SITE_URL } from '../../site';
 import type { Source } from '../../data/types';
 
@@ -40,10 +42,82 @@ const landedCostRows = gccCountries.map((country) => {
 
 const saudiRow = landedCostRows.find((row) => row.country === 'Saudi Arabia');
 
+const componentRows = [
+  {
+    item: '1. Ocean freight (FCL / LCL)',
+    estimate: 'From existing routes.ts cost-row ranges',
+    basis: 'WorldFreightHub route data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: '2. Insurance (marine cargo)',
+    estimate: '~0.3–0.5% of CIF',
+    basis: 'Industry planning estimate',
+    confidence: 'LOW',
+  },
+  {
+    item: '3. Duty',
+    estimate: '6-country dutyRate on CIF',
+    basis: 'WorldFreightHub GCC country data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: '4. VAT',
+    estimate: '6-country vatRate on duty-inclusive base',
+    basis: 'WorldFreightHub GCC country data',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: '5. Port charges (OTHC / DTHC / THC)',
+    estimate: '~$150–$300 per container',
+    basis: 'Industry planning estimate',
+    confidence: 'LOW',
+  },
+  {
+    item: '6. Clearance (broker)',
+    estimate: '~$100–$300 per shipment',
+    basis: 'Industry planning estimate',
+    confidence: 'LOW',
+  },
+  {
+    item: '7. Last-mile (inland delivery)',
+    estimate: 'Variable by port-to-door distance',
+    basis: 'Distance-driven estimate',
+    confidence: 'LOW',
+  },
+];
+
+const shanghaiRoutes = routes.filter((route) => route.originPort === 'shanghai');
+
+const oceanRows = shanghaiRoutes.map((route) => {
+  const twenty = route.costRows.find((row) => row.label.includes('20ft'));
+  const forty = route.costRows.find((row) => row.label.includes('40ft'));
+  const lcl = route.costRows.find((row) => row.label.toLowerCase().includes('lcl'));
+  return {
+    gateway: portName(route.destPort),
+    country: countryName(route.country),
+    twenty: twenty?.range ?? 'Request quote',
+    forty: forty?.range ?? 'Request quote',
+    lcl: lcl?.range ?? 'Request quote',
+    typical: `~${route.transitDays.typical} days`,
+    confidence: 'MEDIUM',
+  };
+});
+
+const workedExampleRows = [
+  { component: 'Ocean freight (FCL)', estimate: '$1,500–$6,200 per 20ft', basis: 'Existing route range', confidence: 'MEDIUM' },
+  { component: 'Insurance (marine cargo)', estimate: '$30–$50', basis: '~0.3–0.5% of $10,000 CIF', confidence: 'LOW' },
+  { component: 'Duty (5%)', estimate: '$500', basis: '5% of $10,000 CIF', confidence: 'MEDIUM' },
+  { component: 'VAT (15%)', estimate: '$1,575', basis: '15% of $10,500 duty-inclusive base', confidence: 'MEDIUM' },
+  { component: 'Port charges', estimate: '~$200', basis: '$150–$300 planning range', confidence: 'LOW' },
+  { component: 'Clearance (broker)', estimate: '~$200', basis: '$100–$300 planning range', confidence: 'LOW' },
+  { component: 'Last-mile', estimate: 'Variable', basis: 'Depends on port-to-door distance', confidence: 'LOW' },
+];
+
 const faqs = [
   {
     q: 'What is the China-to-GCC landed cost formula?',
-    a: 'For a planning estimate, use CIF × (1 + duty rate) × (1 + VAT rate). At the GCC baseline of 5% duty, that means CIF × 1.05 × (1 + VAT rate). This assumes duty is charged on CIF and VAT is charged on the duty-inclusive amount. The actual taxable base and rate can vary by country and HS code.',
+    a: 'The full planning model is: landed cost = ocean freight + insurance + duty + VAT + port charges + clearance + last-mile. The statutory tax-only shortcut is CIF × (1 + duty rate) × (1 + VAT rate). At the GCC baseline of 5% duty, that shortcut is CIF × 1.05 × (1 + VAT rate).',
   },
   {
     q: 'Which GCC country has the highest landed-cost multiplier?',
@@ -55,11 +129,15 @@ const faqs = [
   },
   {
     q: 'Does the multiplier include freight, insurance, clearance and delivery?',
-    a: 'No. It only estimates the statutory duty and VAT uplift on an already-known CIF value. You still need to add destination handling, clearance, SABER/SASO where required, inland delivery, and any demurrage or detention.',
+    a: 'No. It only estimates the statutory duty and VAT uplift on an already-known CIF value. The full landed-cost model adds ocean freight, insurance, port charges, clearance, last-mile, and any demurrage or detention.',
   },
   {
     q: 'Should I use DDP or clear the goods myself?',
     a: 'Use DDP when the buyer wants one delivered price and you have a reliable destination agent and importer-of-record setup. Clear yourself when the buyer already has a local importer of record, wants to control clearance, or when the DDP premium is greater than the convenience it buys.',
+  },
+  {
+    q: 'Which landed-cost components are estimates rather than statutory rates?',
+    a: 'Duty and VAT are the statutory rates from the GCC country data. Ocean freight comes from existing route ranges. Insurance (~0.3–0.5% of CIF), port charges (~$150–$300 per container), clearance (~$100–$300 per shipment) and last-mile are planning estimates and must be confirmed with the carrier, broker and customs authority.',
   },
 ];
 
@@ -70,14 +148,21 @@ const countryDataSource: Source = {
   type: 'organization',
 };
 
+const routeDataSource: Source = {
+  id: 'wfh-gcc-landed-cost-route-data',
+  name: 'WorldFreightHub route data — China to the seven main GCC destination ports (FCL 20ft/40ft and LCL per-CBM ranges)',
+  url: `${SITE_URL}/routes/`,
+  type: 'industry',
+};
+
 const schema = [
   {
     type: 'WebPage',
     data: {
-      name: 'China to GCC Landed Cost: Duty + VAT Multiplier by Country',
+      name: 'China to GCC Landed Cost: Complete Duty + VAT + Destination Cost Model',
       url: pageUrl,
       description:
-        'Plan China-to-GCC landed cost with the six-country duty and VAT multiplier: Saudi Arabia ×1.2075, UAE ×1.1025, Qatar and Kuwait ×1.05, Oman ×1.1025, and Bahrain ×1.155.',
+        'Plan China-to-GCC landed cost with the six-country duty and VAT multiplier plus ocean freight, insurance, port charges, clearance and last-mile: Saudi Arabia ×1.2075, UAE ×1.1025, Qatar and Kuwait ×1.05, Oman ×1.1025, and Bahrain ×1.155.',
       inLanguage: 'en',
       datePublished: '2026-09-12',
       dateModified: '2026-09-12',
@@ -109,8 +194,8 @@ const schema = [
 ---
 
 <BaseLayout
-  title="China to GCC Landed Cost: Duty + VAT Multiplier by Country"
-  description="China-to-GCC landed cost decision page: CIF × duty × VAT multipliers for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain, with a $10,000 CIF worked example."
+  title="China to GCC Landed Cost: Complete Duty + VAT + Destination Cost Model"
+  description="China-to-GCC landed cost decision page: full seven-component model plus the CIF × duty × VAT multipliers for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain, with a $10,000 CIF worked example."
   canonical={pageUrl}
   ogType="article"
   schema={schema}
@@ -123,26 +208,32 @@ const schema = [
           { label: 'China to GCC landed cost' },
         ]}
       />
-      <span class="badge badge--amber">Estimated · Confidence MEDIUM · Not a quote</span>
-      <h1>China to GCC landed cost: duty + VAT multiplier by country</h1>
+      <span class="badge badge--amber">Estimated Â· Confidence MEDIUM Â· Not a quote</span>
+      <h1>China to GCC landed cost: complete duty + VAT + destination cost model</h1>
       <p class="lead">
         The first landed-cost question is not the freight rate — it is which GCC country will clear
-        the goods. Start with CIF, add the country duty and VAT multiplier, then add destination fees.
+        the goods. Start with the statutory duty and VAT multiplier, then add the seven-part delivered
+        model so no destination fee is missed.
       </p>
 
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> landed cost ≈ CIF × (1 + duty%) × (1 + VAT%). On the GCC 5% CIF
-          duty baseline, Saudi Arabia's 15% VAT gives the largest multiplier at ×1.2075 — a
-          $10,000 CIF shipment clears at $12,075 before destination fees. The UAE and Oman are
-          ×1.1025 ($11,025), Bahrain is ×1.155 ($11,550), and Qatar and Kuwait are ×1.05 ($10,500)
-          because they do not currently charge VAT.
+          <strong>TL;DR:</strong> landed cost = ocean freight + insurance + duty + VAT + port charges
+          + clearance + last-mile. On the GCC 5% CIF duty baseline, Saudi Arabia's 15% VAT gives the
+          largest tax multiplier at ×1.2075 — a $10,000 CIF shipment clears at $12,075 before
+          destination fees. The UAE and Oman are ×1.1025 ($11,025), Bahrain is ×1.155
+          ($11,550), and Qatar and Kuwait are ×1.05 ($10,500) because they do not currently charge
+          VAT.
         </p>
       </blockquote>
 
       <div class="fact-grid mt-3">
         <div class="fact">
-          <span class="fact-label">Formula</span>
+          <span class="fact-label">Full formula</span>
+          <span class="fact-value">freight + insurance + duty + VAT + port + clearance + last-mile</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Tax shortcut</span>
           <span class="fact-value">CIF × (1 + duty) × (1 + VAT)</span>
         </div>
         <div class="fact">
@@ -162,15 +253,28 @@ const schema = [
   </div>
 
   <section class="section container">
-    <h2>1. The planning formula, answered first</h2>
+    <h2>1. The two-layer model, answered first</h2>
     <p>
-      For planning, use <strong>CIF × (1 + duty%) × (1 + VAT%)</strong>. The duty is applied first,
-      then VAT is applied to the duty-inclusive amount. The result is the statutory duty + VAT
-      uplift — not the final invoice.
+      Use the tax shortcut for country comparison: <strong>CIF × (1 + duty%) × (1 +
+      VAT%)</strong>. The duty is applied first, then VAT is applied to the duty-inclusive amount.
+      That gives the statutory duty + VAT uplift, not the final invoice.
     </p>
     <p>
-      <strong>Saudi Arabia worked example:</strong> $10,000 CIF × 1.05 (5% duty) = $10,500, then
-      $10,500 × 1.15 (15% VAT) = <strong>$12,075</strong>. The shorthand multiplier is
+      Then use the complete model for a delivered estimate:
+    </p>
+    <div class="card">
+      <h3>Complete landed cost formula</h3>
+      <p>
+        <code>landed cost = ocean freight + insurance + duty + VAT + port charges + clearance + last-mile</code>
+      </p>
+      <p class="small muted">
+        The seven items are explained below. The statutory duty and VAT items are the only ones with a
+        fixed country rate; ocean freight is a route range, and the remaining items are estimates.
+      </p>
+    </div>
+    <p>
+      <strong>Saudi Arabia tax worked example:</strong> $10,000 CIF × 1.05 (5% duty) = $10,500,
+      then $10,500 × 1.15 (15% VAT) = <strong>$12,075</strong>. The shorthand multiplier is
       <strong>×1.2075</strong>.
     </p>
     <p class="muted">
@@ -231,7 +335,80 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>4. Country-level duty and VAT notes</h2>
+    <h2>4. The seven-part landed cost model</h2>
+    <p>
+      The country multiplier only handles duty and VAT. Add the other five items to get a complete
+      landed cost. All non-tax-rate items below are planning estimates and must be confirmed by the
+      carrier, broker and customs authority.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'item', label: 'Component' },
+        { key: 'estimate', label: 'Planning estimate' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={componentRows}
+      caption="Seven-part China-to-GCC landed cost model."
+    />
+    <p class="small muted mt-2">
+      Ocean freight ranges are read from the existing route data; duty and VAT rates are read from the
+      GCC country data. Insurance, port charges, clearance and last-mile are industry planning
+      estimates, not a carrier or broker quote.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>5. Ocean freight reference ranges</h2>
+      <p>
+        Ocean freight is the largest range in the model and the most market-sensitive item. The table
+        below is pulled from the existing Shanghai-to-GCC route cost rows.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'gateway', label: 'Gateway' },
+          { key: 'country', label: 'Country' },
+          { key: 'twenty', label: '20ft FCL' },
+          { key: 'forty', label: '40ft FCL' },
+          { key: 'lcl', label: 'LCL / CBM' },
+          { key: 'typical', label: 'Typical transit' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={oceanRows}
+        caption="Shanghai-to-GCC route data: ocean freight cost rows from routes.ts."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>6. Saudi Arabia worked example</h2>
+    <p>
+      Use the same $10,000 CIF planning base to show where the statutory tax and the destination-cost
+      estimates sit side by side. Ocean freight and insurance are shown as the route/risk context; in
+      a strict CIF definition those two are already embedded in the $10,000 CIF base, so do not double
+      count them when you already have a firm CIF quote.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'component', label: 'Component' },
+        { key: 'estimate', label: 'Saudi estimate' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={workedExampleRows}
+      caption="$10,000 CIF to Saudi Arabia worked example; non-tax items are estimate ranges."
+    />
+    <p class="small muted mt-2">
+      <strong>All non-tax items are estimate ranges.</strong> The statutory result is $12,075 for duty
+      + VAT on $10,000 CIF; add roughly $150–$300 port charges and $100–$300 clearance, then
+      add a distance-dependent last-mile figure. Actual totals must come from the carrier, broker and
+      Saudi customs.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>7. Country-level duty and VAT notes</h2>
     <div class="grid grid--2 mt-2">
       {gccCountries.map((country) => (
         <Card title={`${country.name} — ${country.dutyRate}`}>
@@ -247,7 +424,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>5. DDP, self-clearance, and the two windows that matter</h2>
+    <h2>8. DDP, self-clearance, and the two windows that matter</h2>
     <div class="grid grid--2">
       <div>
         <h3>Choose DDP when</h3>
@@ -258,6 +435,7 @@ const schema = [
         </ul>
         <p class="mt-2">
           <a class="btn btn-secondary" href="/methods/ddp/">DDP method guide</a>
+          <a class="btn btn-secondary" href="/middleeast/ddp-vs-self-clearance/">DDP vs self-clearance</a>
         </p>
       </div>
       <div>
@@ -286,7 +464,7 @@ const schema = [
   </section>
 
   <section class="section container">
-    <h2>6. Related tools and country pages</h2>
+    <h2>9. Related tools and country pages</h2>
     <div class="grid grid--3 mt-2">
       <Card
         title="Freight cost calculator"
@@ -297,6 +475,16 @@ const schema = [
         title="DDP shipping method"
         description="What Delivered Duty Paid includes and when the seller should take landed-cost risk."
         href="/methods/ddp/"
+      />
+      <Card
+        title="DDP vs self-clearance"
+        description="Compare seller-managed DDP with buyer-managed clearance for China-to-GCC imports."
+        href="/middleeast/ddp-vs-self-clearance/"
+      />
+      <Card
+        title="Jebel Ali vs direct GCC"
+        description="Decide whether Jebel Ali transshipment or a direct destination call fits the shipment."
+        href="/middleeast/jebel-ali-vs-direct-gcc/"
       />
       {gccCountries.map((country) => (
         <Card
@@ -316,12 +504,13 @@ const schema = [
   </section>
 
   <section class="section container">
-    <SourceList sources={[countryDataSource]} title="Sources" />
+    <SourceList sources={[countryDataSource, routeDataSource]} title="Sources" />
     <p class="small muted">
       <strong>Estimate boundary:</strong> this page is a planning aid built from the published
-      WorldFreightHub GCC country data. It is not a binding landed-cost quote. Duty, VAT and taxable
-      bases must be confirmed with the destination customs authority or a licensed broker for your
-      exact HS code and transaction.
+      WorldFreightHub GCC country data and route data. The non-tax components — insurance, port
+      charges, clearance and last-mile — are industry planning estimates, not a binding landed-cost
+      quote. Duty, VAT, taxable bases and destination charges must be confirmed with the destination
+      customs authority or a licensed broker for your exact HS code and transaction.
     </p>
   </section>
 
