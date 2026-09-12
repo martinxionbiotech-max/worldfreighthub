@@ -29,6 +29,9 @@ const schema = [ORGANIZATION_SCHEMA];
   <section class="section container">
     <h2>What we do</h2>
     <p>
+      <strong>WorldFreightHub is a freight intelligence and logistics research platform operated by YIWU DINGWEI TRADING COMPANY, established in Yiwu, Zhejiang, China in 2025.</strong>
+    </p>
+    <p>
       WorldFreightHub is a data-driven reference for importers, exporters,
       freight forwarders and customs brokers moving goods between China and the
       Gulf Cooperation Council. We organize shipping routes, ports, destination
@@ -41,7 +44,7 @@ const schema = [ORGANIZATION_SCHEMA];
       with their duty, VAT and compliance rules; 21 China-to-GCC routes with
       indicative transit times and cost ranges; 19 port profiles from Shanghai
       and Ningbo-Zhoushan to Jeddah and Jebel Ali; a freight glossary; and a
-      directory of 103 freight providers, each independently verified against a primary source.
+      directory of 103 freight providers, each source-documented against its own website or a third-party directory.
     </p>
   </section>
 
@@ -52,8 +55,7 @@ const schema = [ORGANIZATION_SCHEMA];
         Most freight websites are written by freight forwarders to sell their
         own service — which is why so much freight content quietly steers you
         toward a particular vendor. WorldFreightHub is built the opposite way:
-        it is a neutral reference that does not sell freight. That independence
-        is the whole point.
+        it is a neutral reference that does not sell freight. Editorial content is separated from commercial provider listings, and every data point carries a source and a confidence label — that separation is documented in our methodology.
       </p>
       <ul>
         <li>
@@ -96,7 +98,7 @@ const schema = [ORGANIZATION_SCHEMA];
       </li>
       <li>
         <strong>Verification first.</strong> Directory listings and contact
-        details are published only after independent confirmation, and
+        details are published only after source-documented confirmation, and
         everything self-reported is labelled as such.
       </li>
     </ul>
@@ -122,15 +124,16 @@ const schema = [ORGANIZATION_SCHEMA];
     <div class="container">
       <h2>Who is behind {SITE_NAME}</h2>
       <p>
-        {SITE_NAME} is published and edited by{' '}
-        <strong>{ORGANIZATION.publisherName}</strong>{' '}
-        ({ORGANIZATION.publisherRole}). Every page is a reference document built
-        from structured source data, with no hidden vendor affiliation. Editorial
-        standards, the confidence-labelling system and the correction process are
-        documented and public.
+        {SITE_NAME} is operated by{' '}
+        <strong>{ORGANIZATION.legalName}</strong>, established in Yiwu, Zhejiang,
+        China in {ORGANIZATION.foundingDate}. It is researched and maintained by
+        the <strong>{ORGANIZATION.publisherName}</strong>. Every page is a
+        reference document built from structured source data, with no hidden
+        vendor affiliation. Editorial standards, the confidence-labelling
+        system and the correction process are documented and public.
       </p>
       <p>
-        Reach the editor directly at{' '}
+        Reach the research desk at{' '}
         <a href={`mailto:${ORGANIZATION.publisherEmail}`}>
           {ORGANIZATION.publisherEmail}</a
         >.
@@ -147,6 +150,10 @@ const schema = [ORGANIZATION_SCHEMA];
         our documented editorial policy, and every fix is traceable.
       </p>
       <p>
+        <a class="btn btn-secondary" href="/corrections/">
+          Read the corrections policy
+        </a>
+        {' '}
         <a class="btn btn-secondary" href="/editorial-policy/">
           Read the editorial policy
         </a>

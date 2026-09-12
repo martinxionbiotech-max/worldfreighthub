@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, CONTACT } from '../site';
+---
+
+<BaseLayout
+  title="Corrections & Updates"
+  description="How to report incorrect or outdated WorldFreightHub data, how corrections are reviewed and recorded, and when pages are updated."
+  canonical={`${SITE_URL}/corrections/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Corrections & Updates' }]} />
+      <h1>Corrections & Updates</h1>
+      <p class="lead">
+        Freight data changes often. This page explains how to report a mistake,
+        how we review it, how a correction is recorded, and when pages are
+        updated.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Report an error</h2>
+    <p>
+      If you find incorrect or outdated data, send a report to{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Include:
+    </p>
+    <ul>
+      <li>the page URL;</li>
+      <li>the specific fact or figure that is wrong;</li>
+      <li>the correction and, where possible, the source supporting it.</li>
+    </ul>
+    <p>
+      We review one issue at a time so each report can be traced against the
+      published data.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How reports are reviewed</h2>
+      <p>
+        Each report is checked against the documented source or a better source
+        supplied by the reporter. A correction is made only when the published
+        entry no longer matches the source. If the evidence is unclear, the
+        item is left unchanged and the page is marked for review rather than
+        guessed.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>How corrections are recorded</h2>
+    <ul>
+      <li>
+        <strong>No silent deletion.</strong> We do not erase an error without
+        leaving a record; the correction is noted and dated.
+      </li>
+      <li>
+        <strong>Correction date is marked.</strong> Each corrected entry
+        carries the date it was updated.
+      </li>
+      <li>
+        <strong>Traceability is preserved.</strong> The page's last-updated
+        marker and the reported source show what changed and why.
+      </li>
+    </ul>
+    <p>
+      This gives readers a visible trail from the original report to the
+      published correction.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>When pages are updated</h2>
+      <p>
+        Pages are updated when a primary source changes or when a correction is
+        confirmed. Rates and transit times are published as labelled estimates
+        and are refreshed only when a documented source changes. Every page
+        carries a last-updated marker so you can see how current the data is.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Contact for corrections</h2>
+    <p>
+      Send correction reports to{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Please include
+      the page URL, the incorrect detail, and the correct information with a
+      source where available.
+    </p>
+    <p>
+      <a class="btn btn-secondary" href={`mailto:${CONTACT.email}`}>
+        Report a correction
+      </a>
+    </p>
+  </section>
+</BaseLayout>

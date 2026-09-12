@@ -21,12 +21,23 @@ export const ORGANIZATION = {
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
-  publisherName: 'Martin Wong',
-  publisherRole: 'Editor & Publisher',
+  publisherName: 'WorldFreightHub Research Desk',
+  publisherRole: 'Research Desk',
   publisherEmail: CONTACT.email,
-  legalName: SITE_NAME,
+  legalName: 'YIWU DINGWEI TRADING COMPANY',
+  foundingDate: '2025',
+  address: {
+    streetAddress: 'Room 303, Unit 1, Building 71, Shankou Community, Jiangdong Subdistrict',
+    addressLocality: 'Yiwu City, Jinhua',
+    addressRegion: 'Zhejiang',
+    addressCountry: 'CN',
+  },
+  identifier: {
+    propertyID: 'Unified Social Credit Code',
+    value: '92330782MA8GW3P***',
+  },
   editorialPolicy: `${SITE_URL}/editorial-policy/`,
-  correctionsPolicy: `${SITE_URL}/editorial-policy/`,
+  correctionsPolicy: `${SITE_URL}/corrections/`,
   sameAs: [SITE_URL],
 };
 
@@ -38,6 +49,15 @@ export const ORGANIZATION_SCHEMA = {
     url: ORGANIZATION.url,
     legalName: ORGANIZATION.legalName,
     description: ORGANIZATION.description,
+    foundingDate: ORGANIZATION.foundingDate,
+    address: {
+      '@type': 'PostalAddress',
+      ...ORGANIZATION.address,
+    },
+    identifier: {
+      '@type': 'PropertyValue',
+      ...ORGANIZATION.identifier,
+    },
     logo: {
       '@type': 'ImageObject',
       url: `${SITE_URL}/og.png`,
@@ -49,12 +69,6 @@ export const ORGANIZATION_SCHEMA = {
       email: ORGANIZATION.publisherEmail,
       telephone: CONTACT.phoneTel,
       availableLanguage: ['English', 'Arabic'],
-    },
-    founder: {
-      '@type': 'Person',
-      name: ORGANIZATION.publisherName,
-      jobTitle: ORGANIZATION.publisherRole,
-      email: ORGANIZATION.publisherEmail,
     },
     sameAs: ORGANIZATION.sameAs,
   },
