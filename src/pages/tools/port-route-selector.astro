@@ -1,0 +1,435 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Cta from '../../components/Cta.astro';
+import Card from '../../components/Card.astro';
+import { SITE_URL } from '../../site';
+import { chinaPorts } from '../../data/china-ports';
+import { gccPorts } from '../../data/gcc-ports';
+import { gccCountries } from '../../data/gcc-countries';
+import { routes } from '../../data/routes';
+
+const pageUrl = `${SITE_URL}/tools/port-route-selector/`;
+const title = 'China → GCC Port & Route Selector';
+const description =
+  'Choose the China loading port and GCC destination port for your cargo using transparent origin-region and destination-country heuristics, then match the published route and transit estimate.';
+
+const chinaPortData = chinaPorts.map(({ slug, name, hinterland, confidence }) => ({
+  slug,
+  name,
+  hinterland,
+  confidence,
+}));
+
+const gccPortData = gccPorts.map(({ slug, name, country, countrySlug, hinterland, confidence }) => ({
+  slug,
+  name,
+  country,
+  countrySlug,
+  hinterland,
+  confidence,
+}));
+
+const countryData = gccCountries.map(({ slug, name }) => ({ slug, name }));
+
+const routeData = routes.map(({ originPort, destPort, transitDays, confidence, note, updated }) => ({
+  originPort,
+  destPort,
+  transitDays,
+  confidence,
+  note,
+  updated,
+}));
+
+const routeUpdated = routes[0]?.updated ?? '2026-09-06';
+const portUpdated = chinaPorts[0]?.updated ?? '2026-09-01';
+
+const exampleRoutes = ['jeddah', 'dammam', 'shuwaikh'].map((destPort) =>
+  routes.find((route) => route.originPort === 'shanghai' && route.destPort === destPort),
+);
+
+const faqs = [
+  {
+    q: 'Are these results an exact recommendation?',
+    a: 'No. The selector uses transparent heuristics: your cargo origin region chooses the China loading port, and your destination country plus preference chooses the GCC discharge port. It is a planning shortlist, not a live carrier recommendation — confirm the final port pair, service and price with a licensed forwarder.',
+  },
+  {
+    q: 'Why does Saudi Arabia have two port choices?',
+    a: 'Jeddah serves western Saudi Arabia — Jeddah city, Makkah and Madinah — on the Red Sea, while Dammam serves the Eastern Province and Riyadh by rail and road. Since the 2023 Red Sea security disruption, Dammam has also become the more stable routing choice when Red Sea volatility is a concern.',
+  },
+  {
+    q: 'Which should I choose first — origin port or destination port?',
+    a: 'Destination port first. It sets the customs entry, clearance point and last-mile delivery region, and therefore which port actually reaches your consignee. Origin port comes second: it decides inland collection, container availability and how easily your cargo reaches the ocean service.',
+  },
+  {
+    q: 'Why do some recommended ports show no matched route?',
+    a: 'The current routes.ts dataset contains routes from Shanghai, Ningbo-Zhoushan and Shenzhen to seven GCC gateway ports. Ports such as Guangzhou, Qingdao and Tianjin appear in the port heuristics but have no exact route row yet, so the selector refuses to invent a transit figure for them and asks you to request a carrier schedule instead.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebApplication',
+    data: {
+      name: 'China → GCC Port & Route Selector',
+      url: pageUrl,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      description,
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  ogType="website"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[{ label: 'Tools', href: '/tools/' }, { label: 'Port & route selector' }]}
+      />
+      <h1>China → GCC port & route selector</h1>
+      <p class="lead">
+        Turn a cargo origin and destination country into a transparent port
+        shortlist: which China port to load, which GCC port to discharge, and
+        which published route matches — with the assumptions shown.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Two heuristics answer the “which port, which
+          route?” question: (a) cargo origin region decides the China loading
+          port — East China → Shanghai/Ningbo, South China → Shenzhen/Guangzhou,
+          North China → Qingdao/Tianjin; (b) destination country plus preference
+          decides the GCC discharge port — Saudi west → Jeddah, Saudi east →
+          Dammam, UAE → Jebel Ali/Khalifa, Qatar → Hamad, Kuwait →
+          Shuwaikh/Shuaiba, Oman → Sohar/Salalah, Bahrain → Khalifa bin Salman.
+          Published route data makes the route-time difference concrete:
+          {exampleRoutes[0]?.transitDays.typical ?? 18} days Shanghai→Jeddah vs
+          {exampleRoutes[1]?.transitDays.typical ?? 20} days Shanghai→Dammam vs
+          {exampleRoutes[2]?.transitDays.typical ?? 24} days Shanghai→Shuwaikh.
+          These are estimates, not quotes.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Select ports by cargo and country</h2>
+    <div class="grid grid--2">
+      <form class="form-card" id="selector-form" aria-label="China to GCC port and route selector inputs">
+        <label for="origin-region">Cargo origin region</label>
+        <select id="origin-region">
+          <option value="">Select cargo origin region…</option>
+          <option value="east">East China — 华东 (Yangtze Delta)</option>
+          <option value="south">South China — 华南 (Pearl River Delta)</option>
+          <option value="north">North China — 华北 (Bohai Rim)</option>
+          <option value="unknown">Not sure — default to Shanghai</option>
+        </select>
+        <p class="small muted">The origin region decides collection distance and which China gateway makes sense.</p>
+
+        <label for="destination-country">Destination country</label>
+        <select id="destination-country">
+          <option value="">Select destination country…</option>
+          {countryData.map((country) => <option value={country.slug}>{country.name}</option>)}
+        </select>
+        <p class="small muted">Generated from the six GCC country profiles.</p>
+
+        <label for="destination-preference">Destination preference</label>
+        <select id="destination-preference">
+          <option value="default">Default — largest / most-used port</option>
+          <option value="fastest">Fastest transit</option>
+          <option value="stable">Most stable — avoid Red Sea volatility</option>
+        </select>
+        <p class="small muted">Preference only adjusts the destination-port order and selection; it never creates a rate or transit number.</p>
+
+        <p class="form-error" id="selector-error" role="alert" hidden></p>
+        <div class="mt-2">
+          <button type="button" class="btn btn-primary" id="selector-calculate">Recommend ports & route</button>
+          <button type="button" class="btn btn-secondary" id="selector-reset">Reset</button>
+        </div>
+      </form>
+
+      <div class="form-card" id="selector-result" aria-live="polite">
+        <h3 class="mb-1">Port & route recommendation</h3>
+        <p class="result-lead" id="result-lead">Enter a cargo origin and destination country to get a shortlist.</p>
+        <p class="muted" id="result-reason"></p>
+
+        <hr class="mt-2 mb-2" />
+
+        <div class="fact-grid fact-grid--1">
+          <div class="fact">
+            <span class="fact-label">Recommended China origin port(s)</span>
+            <span class="fact-value" id="result-origin-ports">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Recommended GCC destination port(s)</span>
+            <span class="fact-value" id="result-dest-ports">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Estimated transit</span>
+            <span class="fact-value" id="result-estimated">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Confidence</span>
+            <span class="fact-value" id="result-confidence">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Assumptions</span>
+            <span class="fact-value" id="result-assumptions">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Data date</span>
+            <span class="fact-value" id="result-data-date">—</span>
+          </div>
+          <div class="fact">
+            <span class="fact-label">Limitations</span>
+            <span class="fact-value" id="result-limitations">—</span>
+          </div>
+        </div>
+
+        <h4 class="mt-2 mb-1">Matched routes</h4>
+        <div class="fact-grid fact-grid--1" id="result-routes">
+          <div class="fact">
+            <span class="fact-label">No match yet</span>
+            <span class="fact-value">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How the selector works</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="1 · Origin region → China port"
+          description="East China maps to Shanghai and Ningbo-Zhoushan, South China to Shenzhen and Guangzhou, and North China to Qingdao and Tianjin. The hinterland field explains why the port fits the region."
+        />
+        <Card
+          title="2 · Country + preference → GCC port"
+          description="The destination country narrows the gateway; preference chooses default (largest/most-used), fastest, or most stable routing. Saudi Jeddah vs Dammam is the clearest split: west vs east and Red Sea vs Arabian Gulf."
+        />
+        <Card
+          title="3 · Exact route match only"
+          description="The selector filters routes.ts for an exact origin-port and destination-port match. If no route row exists, it says so and does not substitute a made-up transit number."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Transparency rules</h2>
+    <p>
+      Every result separates <strong>Estimated</strong>, <strong>Confidence</strong>,
+      <strong>Assumptions</strong>, <strong>Data date</strong> and
+      <strong>Limitations</strong>. Transit days come only from
+      <code>routes.ts</code>, and confidence comes only from the data's
+      <code>confidence</code> field. Port selection is a heuristic — the
+      hinterland text is the reason, not a precision claim.
+    </p>
+    <blockquote class="tldr">
+      <p>
+        <strong>Example:</strong> South China cargo to Saudi Arabia with default
+        preference shortlists Shenzhen and Guangzhou as origin ports, Jeddah as
+        the default destination, Dammam as the eastern/stable alternative, and
+        matches Shenzhen→Jeddah and Shenzhen→Dammam from routes.ts. Guangzhou has
+        no exact route row, so no transit figure is shown for it.
+      </p>
+    </blockquote>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
+
+<script define:vars={{
+  chinaPortData,
+  gccPortData,
+  countryData,
+  routeData,
+  routeUpdated,
+  portUpdated,
+}}>
+  const el = (id) => document.getElementById(id);
+
+  const chinaBySlug = Object.fromEntries(chinaPortData.map((port) => [port.slug, port]));
+  const gccBySlug = Object.fromEntries(gccPortData.map((port) => [port.slug, port]));
+
+  const ORIGIN_BY_REGION = {
+    east: ['shanghai', 'ningbo-zhoushan'],
+    south: ['shenzhen', 'guangzhou'],
+    north: ['qingdao', 'tianjin'],
+    unknown: ['shanghai'],
+  };
+
+  const DEST_BY_COUNTRY = {
+    'saudi-arabia': {
+      default: ['jeddah'],
+      fastest: ['jeddah'],
+      stable: ['dammam'],
+      alternatives: ['dammam'],
+    },
+    'united-arab-emirates': {
+      default: ['jebel-ali'],
+      fastest: ['jebel-ali'],
+      stable: ['jebel-ali'],
+      alternatives: ['khalifa-port-abu-dhabi'],
+    },
+    qatar: {
+      default: ['hamad'],
+      fastest: ['hamad'],
+      stable: ['hamad'],
+      alternatives: [],
+    },
+    kuwait: {
+      default: ['shuwaikh'],
+      fastest: ['shuwaikh'],
+      stable: ['shuwaikh'],
+      alternatives: ['shuaiba'],
+    },
+    oman: {
+      default: ['sohar'],
+      fastest: ['sohar'],
+      stable: ['sohar'],
+      alternatives: ['salalah'],
+    },
+    bahrain: {
+      default: ['khalifa-bin-salman'],
+      fastest: ['khalifa-bin-salman'],
+      stable: ['khalifa-bin-salman'],
+      alternatives: [],
+    },
+  };
+
+  function portText(slug, isGcc) {
+    const port = isGcc ? gccBySlug[slug] : chinaBySlug[slug];
+    if (!port) return slug;
+    return `${port.name} — ${port.hinterland}`;
+  }
+
+  function routeName(originSlug, destSlug) {
+    const origin = chinaBySlug[originSlug]?.name ?? originSlug;
+    const dest = gccBySlug[destSlug]?.name ?? destSlug;
+    return `${origin} → ${dest}`;
+  }
+
+  function setError(msg = '') {
+    const error = el('selector-error');
+    error.textContent = msg;
+    error.hidden = msg === '';
+  }
+
+  function resetOutput() {
+    el('result-lead').textContent = 'Enter a cargo origin and destination country to get a shortlist.';
+    el('result-reason').textContent = '';
+    ['result-origin-ports', 'result-dest-ports', 'result-estimated', 'result-confidence', 'result-assumptions', 'result-data-date', 'result-limitations'].forEach((id) => {
+      el(id).textContent = '—';
+    });
+    el('result-routes').innerHTML = '<div class="fact"><span class="fact-label">No match yet</span><span class="fact-value">—</span></div>';
+  }
+
+  function calculate() {
+    const region = el('origin-region').value;
+    const countrySlug = el('destination-country').value;
+    const preference = el('destination-preference').value || 'default';
+
+    if (!region) {
+      setError('Select a cargo origin region.');
+      return;
+    }
+    if (!countrySlug) {
+      setError('Select a destination country.');
+      return;
+    }
+    setError();
+
+    const originSlugs = ORIGIN_BY_REGION[region] ?? ['shanghai'];
+    const destConfig = DEST_BY_COUNTRY[countrySlug];
+    const destSlugs = destConfig?.[preference] ?? ['jeddah'];
+    const alternatives = destConfig?.alternatives ?? [];
+    const consideredDestSlugs = [...new Set([...destSlugs, ...alternatives])];
+    const countryName = countryData.find((country) => country.slug === countrySlug)?.name ?? countrySlug;
+
+    const matchedRoutes = routeData.filter(
+      (route) => originSlugs.includes(route.originPort) && consideredDestSlugs.includes(route.destPort),
+    );
+
+    el('result-lead').textContent = `${countryName} route shortlist`;
+    el('result-reason').textContent =
+      `Origin heuristic: ${region === 'unknown' ? 'unknown region defaults to Shanghai' : `${region} region maps to ${originSlugs.join(' + ')}`}. Destination heuristic: ${countryName} + ${preference} preference selects ${destSlugs.join(' + ')}, with ${alternatives.length ? alternatives.join(' + ') : 'no'} alternative shown for comparison.`;
+
+    el('result-origin-ports').textContent = originSlugs.map((slug) => portText(slug, false)).join(' | ');
+    el('result-dest-ports').textContent = consideredDestSlugs.map((slug) => portText(slug, true)).join(' | ');
+
+    if (matchedRoutes.length) {
+      el('result-estimated').textContent = matchedRoutes
+        .map((route) => `${routeName(route.originPort, route.destPort)}: ~${route.transitDays.typical} days (${route.transitDays.range[0]}–${route.transitDays.range[1]})`)
+        .join(' | ');
+      el('result-confidence').textContent = [...new Set(matchedRoutes.map((route) => route.confidence))].join(' / ') || 'UNKNOWN';
+    } else {
+      el('result-estimated').textContent = 'No exact route row in routes.ts — request a carrier schedule.';
+      el('result-confidence').textContent = 'Not estimated';
+    }
+
+    el('result-assumptions').textContent =
+      'Port selection uses origin-region and destination-country heuristics, marked as assumptions, not precision picks. Transit uses routes.ts transitDays only; no rate or schedule is invented.';
+    el('result-data-date').textContent = `Routes: ${routeUpdated} · Port profiles: ${portUpdated}`;
+    el('result-limitations').textContent =
+      'Not a live quote. routes.ts currently has exact rows for Shanghai, Ningbo-Zhoushan and Shenzhen origins; other recommended ports may have no matching route. Confirm final port pair and service with a licensed forwarder.';
+
+    if (matchedRoutes.length) {
+      el('result-routes').innerHTML = matchedRoutes
+        .map(
+          (route) => `
+            <div class="fact">
+              <span class="fact-label">${routeName(route.originPort, route.destPort)}</span>
+              <span class="fact-value">${route.transitDays.typical} days typical · range ${route.transitDays.range[0]}–${route.transitDays.range[1]} days · confidence ${route.confidence}${route.note ? ` · ${route.note}` : ''}</span>
+            </div>
+          `,
+        )
+        .join('');
+    } else {
+      el('result-routes').innerHTML = `
+        <div class="fact">
+          <span class="fact-label">No exact route match</span>
+          <span class="fact-value">No originPort + destPort combination exists in routes.ts for this selection. Request a current carrier schedule.</span>
+        </div>
+      `;
+    }
+  }
+
+  function reset() {
+    el('selector-form').reset();
+    resetOutput();
+    setError();
+  }
+
+  el('selector-calculate').addEventListener('click', calculate);
+  el('selector-reset').addEventListener('click', reset);
+</script>
