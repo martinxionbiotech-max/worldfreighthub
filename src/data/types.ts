@@ -139,6 +139,9 @@ export interface GlossaryTerm {
   inDetail: string;
   whyItMatters: string;
   example: string;
+  whoPays?: string;
+  whoBearsRisk?: string;
+  commonMisunderstanding?: string;
   related: string[];
   updated: string;
 }

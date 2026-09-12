@@ -13,6 +13,9 @@ export const glossary: GlossaryTerm[] = [
       'For China-to-GCC importers, FCL is usually the lowest cost-per-unit once you exceed roughly 12–15 CBM, and it keeps your cargo sealed and single-origin — important for goods that need clean origin and tamper-evident transport.',
     example:
       'A Saudi importer moving 22 CBM of LED fixtures from Guangzhou to Jeddah ships FCL in a 20ft container: one flat rate, one seal, direct to a single consignee.',
+    whoPays: 'Shipper pays the ocean freight for the box.',
+    whoBearsRisk: 'Risk passes per the agreed Incoterm — not automatically with the container.',
+    commonMisunderstanding: 'FCL does not mean you must fill the box; it means you book the whole box.',
     related: ['lcl', 'teu', 'demurrage'],
     updated: '2026-09-01',
   },
@@ -28,6 +31,9 @@ export const glossary: GlossaryTerm[] = [
       'LCL keeps cash tied to actual volume, which is ideal for first orders and small buyers, but the all-in cost can surprise you if consolidation and deconsolidation fees are not quoted up front.',
     example:
       'A Kuwaiti boutique importing 4 CBM of home goods from Ningbo ships LCL and pays only for 4 cubic metres, sharing a 40ft container with three other consignees.',
+    whoPays: 'Shipper pays per cubic metre (CBM) of cargo consolidated.',
+    whoBearsRisk: 'Shipper bears more handling risk — cargo is loaded and unloaded more often.',
+    commonMisunderstanding: 'LCL is not always cheaper than FCL; above roughly 12-15 CBM, FCL usually wins per unit.',
     related: ['fcl', 'cbm', 'chargeable-weight'],
     updated: '2026-09-01',
   },
@@ -43,6 +49,9 @@ export const glossary: GlossaryTerm[] = [
       'DDP turns a complex multi-party process into a single landed price, but it concentrates all cost and compliance risk on the seller — which the buyer ultimately pays for in the margin.',
     example:
       'A Bahraini retailer orders machinery DDP to their warehouse door, so the Chinese seller handles ocean freight, Saudi-side clearance if routed via causeway, and all duties in one price.',
+    whoPays: 'Seller pays freight, duty, VAT and clearance to the buyer\'s door.',
+    whoBearsRisk: 'Seller bears all risk and cost to the named destination.',
+    commonMisunderstanding: 'DDP does not mean duty-free; the seller has simply priced the duty into the total.',
     related: ['dap', 'incoterms', 'hs-code'],
     updated: '2026-09-01',
   },
@@ -58,6 +67,9 @@ export const glossary: GlossaryTerm[] = [
       'DAP balances responsibility: the seller runs the transport, the buyer runs customs. It suits importers who have their own GCC clearance setup and want control over duties.',
     example:
       'An Omani importer buys DAP Sohar Port: the Chinese seller ships and delivers to the port, while the Omani buyer clears through Oman Customs and pays 5% duty themselves.',
+    whoPays: 'Seller pays freight to the named place; buyer pays import clearance and duty.',
+    whoBearsRisk: 'Seller bears risk to the delivery point; buyer bears import-clearance risk.',
+    commonMisunderstanding: 'DAP and DDP differ on one thing: who clears import and pays duty.',
     related: ['ddp', 'incoterms', 'customs-broker'],
     updated: '2026-09-01',
   },
@@ -73,6 +85,9 @@ export const glossary: GlossaryTerm[] = [
       'Incoterms are the single most important line on a quote — they define exactly where cost and risk transfer. Getting them wrong is how importers quietly overpay or absorb unplanned liability.',
     example:
       'A quote that says \u201cCIF Jebel Ali\u201d tells the Qatari buyer that the seller pays freight and insurance to Jebel Ali, but the buyer owns the cargo risk from that point onward.',
+    whoPays: 'Incoterms split freight, insurance and clearance costs between buyer and seller.',
+    whoBearsRisk: 'Incoterms define the point where risk transfers from seller to buyer.',
+    commonMisunderstanding: 'Incoterms do not transfer ownership of the goods — only cost and risk obligations.',
     related: ['ddp', 'dap', 'bill-of-lading'],
     updated: '2026-09-01',
   },
@@ -88,6 +103,9 @@ export const glossary: GlossaryTerm[] = [
       'CBM is the currency of volume-based freight — an accurate packing list in cubic metres is what keeps LCL and container-planning costs correct.',
     example:
       'A shipment of 200 cartons, each 0.6m × 0.4m × 0.3m, is 200 × 0.072 = 14.4 CBM — just over the point where FCL starts to beat LCL.',
+    whoPays: 'LCL ocean freight is quoted per CBM.',
+    whoBearsRisk: 'Not a risk term — a volume measure.',
+    commonMisunderstanding: 'CBM measures volume, not weight; air freight uses weight instead.',
     related: ['lcl', 'volumetric-weight', 'chargeable-weight'],
     updated: '2026-09-01',
   },
@@ -118,6 +136,9 @@ export const glossary: GlossaryTerm[] = [
       'Demurrage is one of the fastest ways to erase freight savings — a container stuck at Jeddah or Jebel Ali for two weeks of clearance delay can incur hundreds of dollars in fees.',
     example:
       'A container discharged at Jeddah with 5 free days sits for 12 days waiting on a SABER certificate, accruing 7 days of demurrage at a daily terminal rate.',
+    whoPays: 'Consignee (or their forwarder) pays for overstaying free time inside the port.',
+    whoBearsRisk: 'Consignee bears the charge if cargo is not picked up in time.',
+    commonMisunderstanding: 'Demurrage (inside the terminal) is not the same as detention (outside with the container).',
     related: ['detention', 'teu', 'fcl'],
     updated: '2026-09-01',
   },
@@ -133,6 +154,9 @@ export const glossary: GlossaryTerm[] = [
       'Detention is the outside-the-port sibling of demurrage — slow unloading at your own warehouse is enough to trigger it, so plan empty-container return around free days.',
     example:
       'A Dammam consignee keeps a 40ft container at their yard for 18 days as overflow storage, exceeding the 10 free days and accruing 8 days of carrier detention.',
+    whoPays: 'Consignee (or their forwarder) pays for keeping the container past free time outside the port.',
+    whoBearsRisk: 'Consignee bears the charge for late empty return.',
+    commonMisunderstanding: 'Detention is separate from demurrage; a shipment can incur both at once.',
     related: ['demurrage', 'teu'],
     updated: '2026-09-01',
   },
@@ -163,6 +187,9 @@ export const glossary: GlossaryTerm[] = [
       'The HS code determines duty, permits and compliance — a wrong code in GCC trade can overpay duty, trigger inspections, or block entry entirely.',
     example:
       'A UAE importer classifying ceramic tiles under the correct HS heading pays 5% duty; a wrong code could pull a higher rate or a conformity flag.',
+    whoPays: 'Importer pays the duty the HS code determines.',
+    whoBearsRisk: 'Importer bears the penalty risk of misclassification.',
+    commonMisunderstanding: 'The first 6 digits are globally harmonised; the remaining digits vary by country.',
     related: ['saso', 'saber', 'customs-broker'],
     updated: '2026-09-01',
   },
@@ -208,6 +235,9 @@ export const glossary: GlossaryTerm[] = [
       'In the GCC a broker is effectively mandatory for commercial cargo, and a good one catches compliance problems early — before they turn into port-hold demurrage.',
     example:
       'A Kuwait importer\u2019s broker files the entry, applies the correct HS code, and settles the 5% duty so the container can be released from Shuwaikh.',
+    whoPays: 'Importer pays the broker\'s service fee.',
+    whoBearsRisk: 'Importer retains responsibility for declarations, even when a broker files them.',
+    commonMisunderstanding: 'A broker clears your goods but does not absorb your tax or compliance liability.',
     related: ['hs-code', 'bill-of-lading', 'ddp'],
     updated: '2026-09-01',
   },
@@ -223,6 +253,9 @@ export const glossary: GlossaryTerm[] = [
       'Air freight bills on the higher of actual or volumetric weight, so bulky light cargo can cost far more than its physical weight suggests — know the divisor before quoting.',
     example:
       'A 40kg carton of electronics measuring 120×80×60cm has a volumetric weight of 120×80×60÷6000 = 96kg, so it is billed at 96kg.',
+    whoPays: 'Shipper pays air freight on chargeable weight, which uses volumetric weight.',
+    whoBearsRisk: 'Not a risk term — a pricing basis.',
+    commonMisunderstanding: 'The divisor differs: air freight typically divides by 6000, express couriers by 5000.',
     related: ['chargeable-weight', 'cbm'],
     updated: '2026-09-01',
   },
@@ -238,6 +271,9 @@ export const glossary: GlossaryTerm[] = [
       'Chargeable weight is what you actually pay in air freight — optimising packaging to cut volumetric weight is a direct, controllable cost lever.',
     example:
       'A shipment weighing 60kg actual but 96kg volumetric is billed at 96kg chargeable weight; repacking to 70kg volumetric drops the bill materially.',
+    whoPays: 'Shipper pays on the higher of gross or volumetric weight.',
+    whoBearsRisk: 'Not a risk term — a pricing rule.',
+    commonMisunderstanding: 'Chargeable weight is max(gross, volumetric), not a separate physical quantity.',
     related: ['volumetric-weight', 'cbm'],
     updated: '2026-09-01',
   },
@@ -253,6 +289,9 @@ export const glossary: GlossaryTerm[] = [
       'FOB lets you control the carrier and freight cost, but transfers ocean risk to you at the origin port — the most common term for China-to-GCC buyers who have their own forwarder.',
     example:
       'A Dammam importer buys FOB Shanghai: the Chinese seller clears export and loads the container; the Saudi buyer pays the ocean freight to Dammam and owns the goods from the moment they are on board.',
+    whoPays: 'Buyer pays freight and insurance from the moment the goods are on board.',
+    whoBearsRisk: 'Risk transfers to the buyer once goods are loaded on the vessel.',
+    commonMisunderstanding: 'FOB does not mean the seller manages the shipment to the destination port.',
     related: ['cif', 'exw', 'incoterms'],
     updated: '2026-09-01',
   },
@@ -268,6 +307,9 @@ export const glossary: GlossaryTerm[] = [
       'CIF bundles freight and basic insurance into one price, but covers only minimum-risk loss — add your own insurance if the cargo is valuable or fragile.',
     example:
       'A UAE importer buys CIF Jebel Ali: the seller pays freight and minimum insurance to Jebel Ali; the buyer clears import and pays 5% duty plus 5% VAT on arrival.',
+    whoPays: 'Seller pays freight and insurance to the destination port.',
+    whoBearsRisk: 'Risk still transfers to the buyer at loading — insurance covers loss, not the buyer\'s obligation.',
+    commonMisunderstanding: 'CIF does not mean the seller unloads or clears the goods at destination.',
     related: ['fob', 'ddp', 'incoterms'],
     updated: '2026-09-01',
   },
@@ -283,6 +325,9 @@ export const glossary: GlossaryTerm[] = [
       'EXW is the cheapest-looking but most burden-heavy term — it only works for a GCC buyer who already has a forwarder with China-side export capability.',
     example:
       'A Qatari buyer quoted EXW Shenzhen must arrange a China forwarder to collect from the factory, clear export and ship to Hamad Port — otherwise the goods never leave China.',
+    whoPays: 'Buyer pays essentially everything from the seller\'s premises.',
+    whoBearsRisk: 'Buyer bears almost all risk from the moment goods leave the seller.',
+    commonMisunderstanding: 'EXW is the least work for the exporter and the most risk for the importer.',
     related: ['fob', 'incoterms', 'customs-broker'],
     updated: '2026-09-01',
   },

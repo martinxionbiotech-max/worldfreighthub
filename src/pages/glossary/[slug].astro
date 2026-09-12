@@ -24,6 +24,12 @@ const relatedTerms = term.related
   .filter((t) => t !== undefined);
 const relatedCount = relatedTerms.length;
 
+const decisionFacts = [
+  { label: 'Who pays', value: term.whoPays },
+  { label: 'Who bears risk', value: term.whoBearsRisk },
+  { label: 'Common misunderstanding', value: term.commonMisunderstanding },
+].filter((fact) => fact.value);
+
 const schema = [
   {
     type: 'DefinedTerm',
@@ -88,6 +94,17 @@ const schema = [
     <h2>What it means</h2>
     <p>{term.inDetail}</p>
   </section>
+
+  {decisionFacts.length > 0 && (
+    <section class="section container">
+      <h2>Who pays / who bears risk</h2>
+      <div class="grid grid--3 mt-2">
+        {decisionFacts.map((fact) => (
+          <Card title={fact.label} description={fact.value} />
+        ))}
+      </div>
+    </section>
+  )}
 
   <section class="section container">
     <h2>Why it matters</h2>
