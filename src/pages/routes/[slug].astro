@@ -8,7 +8,7 @@ import Cta from '../../components/Cta.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import { routes } from '../../data/routes';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
-import { portName, countryName } from '../../data/lookup';
+import { getCountryBySlug, portName, countryName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
 
 export function getStaticPaths() {
@@ -22,6 +22,7 @@ const { route } = Astro.props;
 
 const originName = portName(route.originPort);
 const destName = portName(route.destPort);
+const destCountry = getCountryBySlug(route.country);
 const routeSources = sourcesByIds(countrySourceIds[route.country] ?? []);
 
 const costRows = route.costRows.map((row) => ({
@@ -29,6 +30,10 @@ const costRows = route.costRows.map((row) => ({
   range: row.range,
   confidence: row.confidence,
 }));
+
+const costSummary = route.costRows.length > 0
+  ? route.costRows.map((row) => `${row.label} ${row.range}`).join(' · ')
+  : 'Cost ranges not published for this route — request a quote.';
 
 const tldr = `${originName} to ${destName} typically runs ${route.transitDays.typical} days, with a ${route.transitDays.range[0]}–${route.transitDays.range[1]} day range. ${route.routingNote}`;
 
@@ -105,6 +110,37 @@ const schema = [
     <blockquote class="tldr">
       <p><strong>TL;DR:</strong> {tldr}</p>
     </blockquote>
+  </section>
+
+  <section class="section container">
+    <h2>Quick answer</h2>
+    <div class="fact-grid">
+      <div class="fact">
+        <span class="fact-label">Transit time</span>
+        <span class="fact-value">{route.transitDays.typical} days (range {route.transitDays.range[0]}–{route.transitDays.range[1]})</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Freight cost</span>
+        <span class="fact-value">{costSummary}</span>
+      </div>
+      {destCountry && (
+        <div class="fact">
+          <span class="fact-label">Import duty</span>
+          <span class="fact-value">{destCountry.dutyRate}</span>
+        </div>
+      )}
+      {destCountry && (
+        <div class="fact">
+          <span class="fact-label">VAT</span>
+          <span class="fact-value">{destCountry.vatRate === null ? 'None' : `${destCountry.vatRate}%`}</span>
+        </div>
+      )}
+    </div>
+    <p class="muted">
+      <ConfidenceBadge level={route.confidence} /> Indicative ranges only — not a
+      live quote. Last reviewed: {route.updated}. Duty/VAT from {destCountry ? destCountry.name : route.country} customs sources; freight costs shift weekly
+      with fuel, season and geopolitical risk. Confirm a current quote before booking.
+    </p>
   </section>
 
   <section class="section container">
