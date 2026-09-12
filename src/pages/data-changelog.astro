@@ -1,0 +1,231 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL } from '../site';
+
+const cadence = [
+  {
+    term: 'Duty / VAT / compliance rules',
+    detail:
+      'Monthly review against ZATCA, Dubai Customs, SASO and other primary sources.',
+  },
+  {
+    term: 'Freight rates / transit times',
+    detail:
+      'Indicative ranges refreshed with the monthly review, not live quotes.',
+  },
+  {
+    term: 'Port / route profiles',
+    detail: 'Quarterly review.',
+  },
+  {
+    term: 'Provider directory',
+    detail: 'Rolling verification, with a recorded lastVerified date.',
+  },
+];
+
+const changelog = [
+  {
+    date: '2026-09-12',
+    title: 'Content depth optimization (V2/V3)',
+    changes: [
+      'Route pages: added chokepoints, geopolitical risks, cargo fit, best-fit decision and Route Volatility (HIGH/MEDIUM/LOW).',
+      'Port pages: added Port Decision Score (3-factor editorial score) and 3 comparison pages (Shanghai vs Ningbo/Shenzhen, Jebel Ali vs Khalifa).',
+      'Country pages: added typical cargo, import risks, best port, inland logistics and decision guide for all 6 GCC countries.',
+      'Method pages: added "when NOT to choose" and a China→GCC landed cost decision page (full 7-part cost model).',
+      'New decision pages: DDP vs Self-clearance, Jebel Ali vs Direct GCC, China→UAE→GCC vs Direct.',
+      'New cargo pages: batteries, machinery, electronics, furniture, food, chemicals.',
+      'Provider directory: added Total/Verified/Unverified/Claimed/Sponsored stats and headquarters field.',
+      'Glossary: added who-pays / who-bears-risk / common-misunderstanding to 15 core terms.',
+    ],
+  },
+  {
+    date: '2026-09-11',
+    title: 'Trust and entity repair (PHASE 2-8)',
+    changes: [
+      'Established YIWU DINGWEI TRADING COMPANY as the operating entity.',
+      'Provider directory: applied LEVEL 1-4 verification model (33 LEVEL 2 + 70 LEVEL 1, 0 independent).',
+      'Added /evidence/ center (8 records), /intelligence/ (4 sourced items), /corrections/.',
+      'Added knowledge-graph Dataset schema (40 measured variables).',
+    ],
+  },
+  {
+    date: '2026-09-07',
+    title: 'Data baseline',
+    changes: [
+      'GCC country, port, route and method data last reviewed; rates flagged LOW/MEDIUM confidence where no primary source publishes a figure.',
+    ],
+  },
+];
+
+const pageUrl = `${SITE_URL}/data-changelog/`;
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      name: 'Data changelog — how WorldFreightHub data is updated',
+      url: pageUrl,
+      description:
+        'Record of WorldFreightHub data and content changes, including update cadence for duty, VAT, compliance, freight rates, transit times, ports, routes and provider listings.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'WorldFreightHub data changelog',
+      },
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Data changelog — how WorldFreightHub data is updated"
+  description="Record of WorldFreightHub data and content changes, including update cadence for duty, VAT, compliance, freight rates, transit times, ports, routes and provider listings."
+  canonical={pageUrl}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Data changelog' }]} />
+      <h1>Data changelog — how WorldFreightHub data is updated</h1>
+      <p class="lead">
+        This page records when WorldFreightHub data and content changed, and how
+        each data type is kept current. The entries are drawn from the site's
+        commit history and data-layer review dates.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Data update principles</h2>
+    <ul>
+      <li>
+        <strong>Duty, VAT and compliance rules</strong> are HIGH confidence and
+        reviewed monthly against primary government and standards sources.
+      </li>
+      <li>
+        <strong>Freight rates and transit times</strong> are indicative ranges
+        labelled LOW or MEDIUM confidence and carry the last review date. They
+        are not live quotes.
+      </li>
+      <li>
+        <strong>Every data point</strong> carries Source + Date + Confidence so
+        readers can trace how it was established and when it was last checked.
+      </li>
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Data update cadence</h2>
+      <ul class="cadence-list">
+        {cadence.map((item) => (
+          <li>
+            <strong>{item.term}:</strong> {item.detail}
+          </li>
+        ))}
+      </ul>
+      <p class="muted small">
+        Cadence describes the review cycle, not a guarantee that a source
+        changed on that date. When a primary source changes earlier, the page
+        is updated to match.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Changelog</h2>
+    <ol class="timeline">
+      {changelog.map((entry) => (
+        <li class="timeline-item">
+          <time class="timeline-date" datetime={entry.date}>{entry.date}</time>
+          <h3 class="timeline-title">{entry.title}</h3>
+          <ul class="timeline-list">
+            {entry.changes.map((change) => (
+              <li>{change}</li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related pages</h2>
+      <ul>
+        <li><a href="/methodology/">Methodology</a></li>
+        <li><a href="/evidence/">Evidence Center</a></li>
+        <li><a href="/corrections/">Corrections & Updates</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cadence-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 2px solid var(--line);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 2rem 1.5rem;
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -0.45rem;
+    top: 0.3rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--amber-500);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--line);
+  }
+
+  .timeline-date {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .timeline-title {
+    margin: 0 0 0.75rem;
+  }
+
+  .timeline-list {
+    padding-left: 1.1rem;
+    margin: 0;
+  }
+
+  .timeline-list li {
+    margin-bottom: 0.35rem;
+  }
+</style>
