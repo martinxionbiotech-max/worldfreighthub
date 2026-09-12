@@ -9,6 +9,9 @@ import Card from '../../components/Card.astro';
 import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
 import { sourcesByIds } from '../../data/sources';
+import { gccCountries } from '../../data/gcc-countries';
+import { getCountryBySlug, getPortBySlug, countrySlugForPort } from '../../data/lookup';
+import { getRouteBySlug } from '../../data/routes';
 
 const pageUrl = `${SITE_URL}/tools/freight-cost-calculator/`;
 const title = 'Freight Cost Calculator: China to GCC Landed-Cost Estimator (August 2026)';
@@ -17,71 +20,153 @@ const description =
 
 const notPublished = 'not published in our research snapshot — request an itemised schedule from your forwarder';
 
-const freightRows = [
+const percentagePattern = /(\d+(?:\.\d+)?)\s*%/;
+const usdRangePattern = /\$([\d,]+)\s*(?:–|-)\s*\$([\d,]+)/;
+
+function parsePercentage(text: string): number {
+  const match = text.match(percentagePattern);
+  return match ? Number.parseFloat(match[1]) : 0;
+}
+
+function parseUsdRange(range: string): [number, number] {
+  const match = range.match(usdRangePattern);
+  if (!match) return [0, 0];
+  return [Number(match[1].replace(/,/g, '')), Number(match[2].replace(/,/g, ''))];
+}
+
+function compactRange(range: string): string {
+  return range.replace(/\s*(?:–|-)\s*/, '–');
+}
+
+function routeRangeFor(costRows, labelPart: string): string {
+  return costRows?.find((row) => row.label.includes(labelPart))?.range ?? '';
+}
+
+const saudiArabia = getCountryBySlug('saudi-arabia');
+const unitedArabEmirates = getCountryBySlug('united-arab-emirates');
+const oman = getCountryBySlug('oman');
+const bahrain = getCountryBySlug('bahrain');
+const qatar = getCountryBySlug('qatar');
+const kuwait = getCountryBySlug('kuwait');
+
+const gccDutyRate = parsePercentage(saudiArabia?.dutyRate ?? '5%');
+const gccDutyBasis = `${gccDutyRate}% × CIF`;
+const gccDutyRuleValue = `${gccDutyRate}% duty on CIF`;
+const gccDutyRuleNote = 'Baseline across the GCC; alcohol, tobacco and some agricultural lines are higher';
+
+const gccShortNames = {
+  'saudi-arabia': 'Saudi',
+  'united-arab-emirates': 'UAE',
+  oman: 'Oman',
+  bahrain: 'Bahrain',
+  qatar: 'Qatar',
+  kuwait: 'Kuwait',
+};
+
+const gccVatOrder = ['saudi-arabia', 'united-arab-emirates', 'oman', 'bahrain', 'qatar', 'kuwait'];
+
+const destinationVatBasis = gccVatOrder
+  .map((slug) => {
+    const country = getCountryBySlug(slug);
+    return `${gccShortNames[slug]} ${country?.vatRate ?? 0}%`;
+  })
+  .join(' · ');
+
+const vatRuleCountries = [saudiArabia, unitedArabEmirates, oman, bahrain]
+  .filter((country) => country)
+  .map((country) => ({
+    rule: `${gccShortNames[country.slug]} VAT`,
+    value: country.vatRate === null ? 'None at present' : `${country.vatRate}% on CIF + duty`,
+    note: country.vatNote,
+    confidence: 'HIGH',
+  }));
+
+const qatarKuwaitVatValue =
+  qatar?.vatRate === null && kuwait?.vatRate === null ? 'None at present' : 'See country notes';
+const qatarKuwaitVatNote = 'No VAT yet in the research snapshot; monitor local legislation';
+
+const gccTaxComplianceRows = [
   {
-    port: 'Jeddah Islamic Port',
-    country: 'Saudi Arabia',
-    fcl20: '$1,500–$6,200',
-    fcl40: '$1,900–$8,100',
-    lcl: '$20–$110/CBM',
-    note: 'Red Sea gateway; wide range reflects route and geopolitical risk — verify with forwarder',
-    confidence: 'MEDIUM',
+    rule: 'GCC Common External Tariff',
+    value: gccDutyRuleValue,
+    note: gccDutyRuleNote,
+    confidence: 'HIGH',
   },
+  ...vatRuleCountries,
   {
-    port: 'King Abdulaziz Port Dammam',
-    country: 'Saudi Arabia',
-    fcl20: '$1,500–$6,200',
-    fcl40: '$1,900–$8,100',
-    lcl: '$20–$110/CBM',
-    note: 'Gulf-side Saudi gateway; Strait of Hormuz routing — verify with forwarder',
-    confidence: 'MEDIUM',
-  },
-  {
-    port: 'Jebel Ali',
-    country: 'United Arab Emirates',
-    fcl20: '$1,500–$3,250',
-    fcl40: '$2,200–$3,950',
-    lcl: '$60–$180/CBM',
-    note: 'Highest-frequency GCC corridor; most carrier options — verify with forwarder',
-    confidence: 'MEDIUM',
-  },
-  {
-    port: 'Hamad',
-    country: 'Qatar',
-    fcl20: '$1,700–$2,500',
-    fcl40: '$2,500–$3,600',
-    lcl: '$75–$100/CBM',
-    note: 'Single-gateway Qatar market; transshipment common — verify with forwarder',
-    confidence: 'MEDIUM',
-  },
-  {
-    port: 'Shuwaikh',
-    country: 'Kuwait',
-    fcl20: '$1,500–$2,500',
-    fcl40: '$2,200–$3,600',
-    lcl: '$70–$100/CBM',
-    note: 'Kuwait gateway; confirm Shuwaikh vs Shuaiba routing — verify with forwarder',
-    confidence: 'MEDIUM',
-  },
-  {
-    port: 'Sohar',
-    country: 'Oman',
-    fcl20: '$1,500–$2,600',
-    fcl40: '$2,200–$3,800',
-    lcl: '$60–$110/CBM',
-    note: 'Oman gateway outside the Strait of Hormuz — verify with forwarder',
-    confidence: 'MEDIUM',
-  },
-  {
-    port: 'Khalifa bin Salman',
-    country: 'Bahrain',
-    fcl20: '$1,500–$2,500',
-    fcl40: '$2,200–$3,600',
-    lcl: '$75–$100/CBM',
-    note: 'Causeway link to eastern Saudi; niche alternate entry — verify with forwarder',
-    confidence: 'MEDIUM',
+    rule: 'Qatar / Kuwait VAT',
+    value: qatarKuwaitVatValue,
+    note: qatarKuwaitVatNote,
+    confidence: 'HIGH',
   },
 ];
+
+const calculatorPorts = [
+  'jeddah',
+  'dammam',
+  'jebel-ali',
+  'khalifa-port-abu-dhabi',
+  'hamad',
+  'shuwaikh',
+  'sohar',
+  'khalifa-bin-salman',
+];
+
+const publishedFreightPorts = calculatorPorts.filter((port) => port !== 'khalifa-port-abu-dhabi');
+
+const destinationTaxData = Object.fromEntries(
+  calculatorPorts.map((port) => {
+    const countrySlug = countrySlugForPort(port);
+    const country = getCountryBySlug(countrySlug ?? '');
+    return [
+      port,
+      {
+        country: country?.name ?? port,
+        vatRate: country?.vatRate ?? 0,
+      },
+    ];
+  }),
+);
+
+const routeCostData = Object.fromEntries(
+  calculatorPorts.map((port) => {
+    const routePort = port === 'khalifa-port-abu-dhabi' ? 'jebel-ali' : port;
+    const route = getRouteBySlug(`shanghai-${routePort}`);
+    return [
+      port,
+      {
+        fcl20: parseUsdRange(routeRangeFor(route?.costRows, '20ft')),
+        fcl40: parseUsdRange(routeRangeFor(route?.costRows, '40ft')),
+        lcl: parseUsdRange(routeRangeFor(route?.costRows, 'LCL')),
+      },
+    ];
+  }),
+);
+
+const freightPlanningNotes = {
+  jeddah: 'Red Sea gateway; wide range reflects route and geopolitical risk — verify with forwarder',
+  dammam: 'Gulf-side Saudi gateway; Strait of Hormuz routing — verify with forwarder',
+  'jebel-ali': 'Highest-frequency GCC corridor; most carrier options — verify with forwarder',
+  hamad: 'Single-gateway Qatar market; transshipment common — verify with forwarder',
+  shuwaikh: 'Kuwait gateway; confirm Shuwaikh vs Shuaiba routing — verify with forwarder',
+  sohar: 'Oman gateway outside the Strait of Hormuz — verify with forwarder',
+  'khalifa-bin-salman': 'Causeway link to eastern Saudi; niche alternate entry — verify with forwarder',
+};
+
+const freightRows = publishedFreightPorts.map((port) => {
+  const route = getRouteBySlug(`shanghai-${port}`);
+  const countrySlug = countrySlugForPort(port);
+  const country = getCountryBySlug(countrySlug ?? '');
+  return {
+    port: getPortBySlug(port)?.name ?? port,
+    country: country?.name ?? port,
+    fcl20: compactRange(routeRangeFor(route?.costRows, '20ft')),
+    fcl40: compactRange(routeRangeFor(route?.costRows, '40ft')),
+    lcl: `${compactRange(routeRangeFor(route?.costRows, 'LCL'))}/CBM`,
+    note: freightPlanningNotes[port],
+    confidence: 'MEDIUM',
+  };
+});
 
 const transitRows = [
   {
@@ -180,13 +265,13 @@ const costRows = [
   },
   {
     layer: 'GCC import duty',
-    basis: '5% × CIF',
+    basis: gccDutyBasis,
     note: 'GCC Common External Tariff baseline; alcohol and tobacco are higher',
     confidence: 'HIGH',
   },
   {
     layer: 'Destination VAT',
-    basis: 'Saudi 15% · UAE 5% · Oman 5% · Bahrain 10% · Qatar 0% · Kuwait 0%',
+    basis: destinationVatBasis,
     note: 'Calculated on CIF plus duty',
     confidence: 'HIGH',
   },
@@ -205,42 +290,7 @@ const costRows = [
 ];
 
 const complianceRows = [
-  {
-    rule: 'GCC Common External Tariff',
-    value: '5% duty on CIF',
-    note: 'Baseline across the GCC; alcohol, tobacco and some agricultural lines are higher',
-    confidence: 'HIGH',
-  },
-  {
-    rule: 'Saudi VAT',
-    value: '15% on CIF + duty',
-    note: 'Effective since 1 July 2020',
-    confidence: 'HIGH',
-  },
-  {
-    rule: 'UAE VAT',
-    value: '5% on CIF + duty',
-    note: 'Effective since 1 January 2018',
-    confidence: 'HIGH',
-  },
-  {
-    rule: 'Oman VAT',
-    value: '5% on CIF + duty',
-    note: 'Effective since 16 April 2021',
-    confidence: 'HIGH',
-  },
-  {
-    rule: 'Bahrain VAT',
-    value: '10% on CIF + duty',
-    note: 'Raised from 5% in 2022',
-    confidence: 'HIGH',
-  },
-  {
-    rule: 'Qatar / Kuwait VAT',
-    value: 'None at present',
-    note: 'No VAT yet in the research snapshot; monitor local legislation',
-    confidence: 'HIGH',
-  },
+  ...gccTaxComplianceRows,
   {
     rule: 'SABER Shipment Conformity Certificate',
     value: 'Must be obtained before vessel arrival',
@@ -462,15 +512,15 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       <div class="fact-grid mt-3">
         <div class="fact">
           <span class="fact-label">GCC duty</span>
-          <span class="fact-value">5% of CIF <ConfidenceBadge level="HIGH" /></span>
+          <span class="fact-value">{gccDutyRate}% of CIF <ConfidenceBadge level="HIGH" /></span>
         </div>
         <div class="fact">
           <span class="fact-label">Saudi VAT</span>
-          <span class="fact-value">15% <ConfidenceBadge level="HIGH" /></span>
+          <span class="fact-value">{saudiArabia?.vatRate ?? 0}% <ConfidenceBadge level="HIGH" /></span>
         </div>
         <div class="fact">
           <span class="fact-label">UAE VAT</span>
-          <span class="fact-value">5% <ConfidenceBadge level="HIGH" /></span>
+          <span class="fact-value">{unitedArabEmirates?.vatRate ?? 0}% <ConfidenceBadge level="HIGH" /></span>
         </div>
         <div class="fact">
           <span class="fact-label">Insurance rate</span>
@@ -956,7 +1006,11 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
   </section>
 </BaseLayout>
 
-<script>
+<script define:vars={{
+  destinationTaxData,
+  routeCostData,
+  gccDutyRate,
+}}>
   const el = (id) => document.getElementById(id);
 
   const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
@@ -966,81 +1020,55 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
   const MED_BADGE = '<span class="confidence-badge confidence--medium">MEDIUM</span>';
   const HIGH_BADGE = '<span class="confidence-badge confidence--high">HIGH</span>';
 
-  const DEST = {
+  const AIR_RATES = {
     'jeddah': {
-      country: 'Saudi Arabia',
-      vatRate: 15,
-      fcl20: [1500, 6200],
-      fcl40: [1900, 8100],
-      lcl: [20, 110],
       air: [8.8, 13.5],
       airNote: 'Saudi air benchmark from research snapshot (LOW)',
     },
     'dammam': {
-      country: 'Saudi Arabia',
-      vatRate: 15,
-      fcl20: [1500, 6200],
-      fcl40: [1900, 8100],
-      lcl: [20, 110],
       air: [8.8, 13.5],
       airNote: 'Saudi air benchmark from research snapshot (LOW)',
     },
     'jebel-ali': {
-      country: 'United Arab Emirates',
-      vatRate: 5,
-      fcl20: [1500, 3250],
-      fcl40: [2200, 3950],
-      lcl: [60, 180],
       air: [5.45, 6.4],
       airNote: 'UAE air benchmark from research snapshot (LOW)',
     },
     'khalifa-port-abu-dhabi': {
-      country: 'United Arab Emirates',
-      vatRate: 5,
-      fcl20: [1500, 3250],
-      fcl40: [2200, 3950],
-      lcl: [60, 180],
       air: [5.45, 6.4],
       airNote: 'UAE air benchmark from research snapshot (LOW)',
       fallbackNote: 'Khalifa Port sea-freight range not published; directional fallback to Jebel Ali UAE range — request an itemised schedule',
     },
     'hamad': {
-      country: 'Qatar',
-      vatRate: 0,
-      fcl20: [1700, 2500],
-      fcl40: [2500, 3600],
-      lcl: [75, 100],
       air: null,
       airNote: 'Qatar air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'shuwaikh': {
-      country: 'Kuwait',
-      vatRate: 0,
-      fcl20: [1500, 2500],
-      fcl40: [2200, 3600],
-      lcl: [70, 100],
       air: null,
       airNote: 'Kuwait air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'sohar': {
-      country: 'Oman',
-      vatRate: 5,
-      fcl20: [1500, 2600],
-      fcl40: [2200, 3800],
-      lcl: [60, 110],
       air: null,
       airNote: 'Oman air freight not published in snapshot — directional Saudi/UAE fallback',
     },
     'khalifa-bin-salman': {
-      country: 'Bahrain',
-      vatRate: 10,
-      fcl20: [1500, 2500],
-      fcl40: [2200, 3600],
-      lcl: [75, 100],
       air: null,
       airNote: 'Bahrain air freight not published in snapshot — directional Saudi/UAE fallback',
     },
   };
+
+  const DEST = Object.fromEntries(
+    Object.keys(destinationTaxData).map((slug) => [
+      slug,
+      {
+        country: destinationTaxData[slug].country,
+        vatRate: destinationTaxData[slug].vatRate,
+        fcl20: routeCostData[slug].fcl20,
+        fcl40: routeCostData[slug].fcl40,
+        lcl: routeCostData[slug].lcl,
+        ...AIR_RATES[slug],
+      },
+    ]),
+  );
 
   const modeLabels = {
     'fcl20': 'per container',
@@ -1143,7 +1171,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
     const mid = (low + high) / 2;
     const insurance = (goods + mid) * (insuranceRate / 100);
     const cifs = [low, mid, high].map((f) => goods + f + insurance);
-    const duties = cifs.map((cif) => cif * 0.05);
+    const duties = cifs.map((cif) => cif * (gccDutyRate / 100));
     const vats = duties.map((duty, index) => (dest.vatRate / 100) * (cifs[index] + duty));
 
     const chargeableDays = Math.max(0, holdDays - 5);
@@ -1169,7 +1197,7 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
       rowHtml('Freight', USD.format(low), USD.format(mid), USD.format(high), freightLevel, freightNote),
       rowHtml('Marine insurance', USD.format(insurance), USD.format(insurance), USD.format(insurance), 'LOW', '≈0.3% industry norm, not in snapshot'),
       rowHtml('CIF value', USD.format(cifs[0]), USD.format(cifs[1]), USD.format(cifs[2]), 'LOW', 'Derived from MEDIUM freight bracket + LOW insurance assumption'),
-      rowHtml('GCC import duty', USD.format(duties[0]), USD.format(duties[1]), USD.format(duties[2]), 'HIGH', '5% of CIF; alcohol and tobacco are higher'),
+      rowHtml('GCC import duty', USD.format(duties[0]), USD.format(duties[1]), USD.format(duties[2]), 'HIGH', `${gccDutyRate}% of CIF; alcohol and tobacco are higher`),
       rowHtml(`${dest.country} VAT`, USD.format(vats[0]), USD.format(vats[1]), USD.format(vats[2]), 'HIGH', dest.vatRate === 0 ? 'No VAT currently in the research snapshot' : `${dest.vatRate}% of CIF + duty`),
       rowHtml('Destination & local charges', 'not published', 'not published', 'not published', 'LOW', '<a href="/middleeast/hidden-charges-china-to-gcc/">Request an itemised schedule</a>'),
     ];
