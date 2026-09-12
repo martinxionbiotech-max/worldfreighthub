@@ -312,6 +312,30 @@ const faqs = [
   },
 ];
 
+const commonErrors = [
+  'Treating the estimate as a live quote — ocean rates move weekly with fuel, season and geopolitical risk',
+  'Forgetting origin and destination terminal handling (OTHC/DTHC) and documentation fees',
+  'Pricing freight alone without landed cost — duty and VAT (up to 15% in Saudi) can exceed the ocean freight itself',
+];
+
+const related = [
+  {
+    title: 'China to GCC landed cost',
+    description: 'Check the duty and VAT multipliers behind a true landed cost.',
+    href: '/middleeast/china-to-gcc-landed-cost/',
+  },
+  {
+    title: 'DDP shipping',
+    description: "Compare DDP's bundled clearance with a self-arranged landed-cost build.",
+    href: '/methods/ddp/',
+  },
+  {
+    title: 'China to GCC routes',
+    description: 'Browse published route and transit references used by the calculator.',
+    href: '/routes/',
+  },
+];
+
 const organization = {
   '@id': `${SITE_URL}/#organization`,
   name: 'WorldFreightHub',
@@ -875,6 +899,26 @@ const costSources = [...new Set([...freightSources, ...complianceSources])];
         forwarder. The alternative — inventing a plausible-looking figure — would make the calculator
         look precise while making the estimate wrong.
       </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Common errors</h2>
+    <ul>
+      {commonErrors.map((error) => (
+        <li>{error}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related</h2>
+      <div class="grid grid--3 mt-2">
+        {related.map((item) => (
+          <Card title={item.title} description={item.description} href={item.href} />
+        ))}
+      </div>
     </div>
   </section>
 

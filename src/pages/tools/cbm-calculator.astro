@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
 import { SITE_URL } from '../../site';
 
 const pageUrl = `${SITE_URL}/tools/cbm-calculator/`;
@@ -33,6 +34,30 @@ const faqs = [
   {
     q: 'What is the difference between CBM and chargeable weight?',
     a: 'CBM measures space in cubic metres, while chargeable weight compares actual weight with volumetric weight and charges the higher value — at ÷6000, 0.12 CBM is equivalent to 20 kg of billable space. Carriers use one or the other depending on the freight mode and cargo density.',
+  },
+];
+
+const commonErrors = [
+  'Mixing units — length/width/height must all be in the same unit (cm or m) before multiplying',
+  'Confusing CBM (volume) with weight — CBM drives LCL ocean pricing, weight drives air and express pricing',
+  'Rounding too early — round only the final CBM, not each dimension',
+];
+
+const related = [
+  {
+    title: 'LCL shipping',
+    description: 'See how CBM becomes the pricing unit for consolidated ocean freight.',
+    href: '/methods/lcl/',
+  },
+  {
+    title: 'Container Loading Calculator',
+    description: 'Turn CBM into carton and piece counts for 20ft and 40ft planning.',
+    href: '/tools/container-loading-calculator/',
+  },
+  {
+    title: 'FCL shipping',
+    description: 'Understand when paying for a full container beats per-CBM LCL.',
+    href: '/methods/fcl/',
   },
 ];
 
@@ -208,6 +233,26 @@ const schema = [
         totals. The “Add to shipment” button below the inputs keeps a running
         total of multiple carton types.
       </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Common errors</h2>
+    <ul>
+      {commonErrors.map((error) => (
+        <li>{error}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related</h2>
+      <div class="grid grid--3 mt-2">
+        {related.map((item) => (
+          <Card title={item.title} description={item.description} href={item.href} />
+        ))}
+      </div>
     </div>
   </section>
 

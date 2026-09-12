@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
 import { SITE_URL } from '../../site';
 
 const pageUrl = `${SITE_URL}/tools/container-loading-calculator/`;
@@ -33,6 +34,30 @@ const faqs = [
   {
     q: 'Can I actually load the full usable CBM?',
     a: 'Rarely. Pallet footprints, dunnage, carton shapes, cargo care rules and stowage efficiency all reduce the practical fill, so treat 28 CBM for a 20ft and 58 CBM for a 40ft as a planning ceiling, not a booking guarantee.',
+  },
+];
+
+const commonErrors = [
+  "Using the box's theoretical cubic capacity instead of usable space — real loads lose volume to dunnage, pallets and imperfect packing",
+  'Ignoring cargo shape — cylinders and irregular items leave dead space that simple L×W×H math misses',
+  'Forgetting weight limits — a 20ft can be volume-empty but weight-full',
+];
+
+const related = [
+  {
+    title: 'FCL shipping',
+    description: 'Compare full-container economics and payload limits before loading.',
+    href: '/methods/fcl/',
+  },
+  {
+    title: 'CBM Calculator',
+    description: 'Compute exact carton CBM before dividing the container space.',
+    href: '/tools/cbm-calculator/',
+  },
+  {
+    title: 'LCL shipping',
+    description: 'See when sharing space makes more sense than a whole box.',
+    href: '/methods/lcl/',
   },
 ];
 
@@ -189,6 +214,26 @@ const schema = [
         pallet footprints, door clearance, weight distribution or stacking
         strength, so use the result for planning only.
       </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Common errors</h2>
+    <ul>
+      {commonErrors.map((error) => (
+        <li>{error}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related</h2>
+      <div class="grid grid--3 mt-2">
+        {related.map((item) => (
+          <Card title={item.title} description={item.description} href={item.href} />
+        ))}
+      </div>
     </div>
   </section>
 

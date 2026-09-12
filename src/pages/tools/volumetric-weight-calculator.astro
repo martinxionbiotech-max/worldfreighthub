@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
 import { SITE_URL } from '../../site';
 
 const pageUrl = `${SITE_URL}/tools/volumetric-weight-calculator/`;
@@ -33,6 +34,30 @@ const faqs = [
   {
     q: 'Can volumetric weight ever be lower than actual weight?',
     a: 'Yes. Dense cargo can have a volumetric weight below its actual weight, in which case chargeable weight simply equals actual weight because the carrier takes the higher of the two.',
+  },
+];
+
+const commonErrors = [
+  'Using the wrong divisor — air freight divides by 6000, express couriers typically by 5000, and the answer changes with the rule',
+  'Comparing gross weight and volumetric weight but charging the smaller — the carrier charges the larger of the two',
+  'Applying the air rule to ocean LCL — ocean LCL prices by CBM, not chargeable weight',
+];
+
+const related = [
+  {
+    title: 'Air Freight',
+    description: 'See how ÷6000 chargeable weight drives air freight pricing.',
+    href: '/methods/air-freight/',
+  },
+  {
+    title: 'Express',
+    description: 'Compare courier ÷5000 pricing for small, urgent parcels.',
+    href: '/methods/express/',
+  },
+  {
+    title: 'CBM Calculator',
+    description: 'Calculate the volume that converts into volumetric weight.',
+    href: '/tools/cbm-calculator/',
   },
 ];
 
@@ -181,6 +206,26 @@ const schema = [
         are indicative and should be checked against the carrier's published
         rate basis.
       </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Common errors</h2>
+    <ul>
+      {commonErrors.map((error) => (
+        <li>{error}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related</h2>
+      <div class="grid grid--3 mt-2">
+        {related.map((item) => (
+          <Card title={item.title} description={item.description} href={item.href} />
+        ))}
+      </div>
     </div>
   </section>
 

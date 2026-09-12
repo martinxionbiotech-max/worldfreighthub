@@ -34,6 +34,30 @@ const faqs = [
   },
 ];
 
+const commonErrors = [
+  'Choosing by price alone and ignoring transit time and schedule reliability',
+  'Ignoring the Red Sea vs Strait of Hormuz risk split when comparing Jeddah against Gulf ports',
+  'Comparing methods without landed cost — a cheaper FCL rate can lose to a dearer DDP once duty, VAT and clearance are added',
+];
+
+const related = [
+  {
+    title: 'FCL vs LCL',
+    description: 'The full comparison behind the ~15 CBM break-even.',
+    href: '/middleeast/fcl-vs-lcl/',
+  },
+  {
+    title: 'Sea vs air freight China to GCC',
+    description: 'Cost, transit and the time-value decision in detail.',
+    href: '/middleeast/sea-vs-air-freight-china-to-gcc/',
+  },
+  {
+    title: 'FCL shipping',
+    description: 'Understand the full-container economics the engine recommends above ~15 CBM.',
+    href: '/methods/fcl/',
+  },
+];
+
 const schema = [
   {
     type: 'WebApplication',
@@ -206,6 +230,26 @@ const schema = [
         shipments, and it is almost never shown on a quote.
       </p>
     </blockquote>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Common errors</h2>
+      <ul>
+        {commonErrors.map((error) => (
+          <li>{error}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related</h2>
+    <div class="grid grid--3 mt-2">
+      {related.map((item) => (
+        <Card title={item.title} description={item.description} href={item.href} />
+      ))}
+    </div>
   </section>
 
   <section class="section section--alt">

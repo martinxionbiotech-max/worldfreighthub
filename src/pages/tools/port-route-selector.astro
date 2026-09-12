@@ -68,6 +68,35 @@ const faqs = [
   },
 ];
 
+const commonErrors = [
+  "Routing by port name alone and ignoring the cargo's origin region — South China cargo should load Shenzhen, not Shanghai",
+  'Ignoring terminal differences — Shanghai Yangshan vs Waigaoqiao changes cut-off times and feeder connections',
+  "Ignoring the destination's inland distance — a cheaper port can cost more after the overland leg",
+];
+
+const related = [
+  {
+    title: 'Shanghai vs Ningbo-Zhoushan',
+    description: 'Compare the two East China loading choices.',
+    href: '/middleeast/shanghai-vs-ningbo/',
+  },
+  {
+    title: 'Shanghai vs Shenzhen',
+    description: 'Choose by factory region, not by port name.',
+    href: '/middleeast/shanghai-vs-shenzhen/',
+  },
+  {
+    title: 'Jeddah vs Dammam',
+    description: "Compare Saudi Arabia's Red Sea and Gulf gateways.",
+    href: '/middleeast/jeddah-vs-dammam/',
+  },
+  {
+    title: 'Ports & terminals',
+    description: 'Browse China and GCC port profiles used by the selector.',
+    href: '/ports/',
+  },
+];
+
 const schema = [
   {
     type: 'WebApplication',
@@ -254,6 +283,26 @@ const schema = [
         no exact route row, so no transit figure is shown for it.
       </p>
     </blockquote>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Common errors</h2>
+      <ul>
+        {commonErrors.map((error) => (
+          <li>{error}</li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Related</h2>
+    <div class="grid grid--3 mt-2">
+      {related.map((item) => (
+        <Card title={item.title} description={item.description} href={item.href} />
+      ))}
+    </div>
   </section>
 
   <section class="section section--alt">
