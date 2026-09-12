@@ -1,0 +1,710 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { chinaPorts } from '../../data/china-ports';
+
+const pageUrl = `${SITE_URL}/middleeast/shanghai-vs-ningbo/`;
+const shanghai = chinaPorts.find((item) => item.slug === 'shanghai');
+const ningbo = chinaPorts.find((item) => item.slug === 'ningbo-zhoushan');
+const shanghaiCode = shanghai?.unlocode ?? '—';
+const ningboCode = ningbo?.unlocode ?? '—';
+const shanghaiUpdated = shanghai?.updated ?? 'not published';
+const ningboUpdated = ningbo?.updated ?? 'not published';
+
+const portSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port']);
+
+const comparisonRows = [
+  {
+    parameter: 'Region / delta',
+    shanghai: 'Yangtze River Delta — East China',
+    ningbo: 'Zhejiang province and the southern Yangtze River Delta',
+    note: 'Same corridor; the practical choice is origin plus sailing density',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Container throughput',
+    shanghai: '≈ 47m TEU (2023)',
+    ningbo: '≈ 35m TEU (2023)',
+    note: 'Shanghai is the larger container gateway in the port profiles',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Total cargo tonnage',
+    shanghai: 'Not published in port profile',
+    ningbo: 'World #1 by tonnage',
+    note: 'Ningbo-Zhoushan leads on total tonnage, largely from bulk cargo',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Key terminals',
+    shanghai: 'Yangshan deep-water, Waigaoqiao',
+    ningbo: 'Not enumerated in port profile; Zhoushan deep-water emphasised',
+    note: 'Shanghai’s terminal split changes cut-off and feeder connections',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Max draft',
+    shanghai: '≈ 15.5 m (Yangshan)',
+    ningbo: '≈ 18 m',
+    note: 'Ningbo-Zhoushan’s deeper draft accepts the very largest vessels',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    shanghai: shanghaiCode,
+    ningbo: ningboCode,
+    note: 'Use the correct code on the bill of lading',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Direct Gulf sailings',
+    shanghai: 'Port profile: most Gulf-bound cargo consolidates here; all major carriers offer direct Shanghai–Jebel Ali sailings',
+    ningbo: 'Port profile: comparable deep-water access; strong alternative when Shanghai is congested',
+    note: 'The profile points to Shanghai for denser schedule, Ningbo for Zhejiang-origin cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    parameter: 'Manufacturing cluster',
+    shanghai: 'Electronics, machinery, textiles and consumer goods',
+    ningbo: 'Small commodities, hardware, textiles and consumer goods',
+    note: 'Match the load port to where the goods are made',
+    confidence: 'HIGH',
+  },
+];
+
+const decisionRows = [
+  {
+    cargo: 'Time-sensitive project cargo needing the densest direct Gulf schedule',
+    bestPort: 'Shanghai',
+    why: 'The port profile positions Shanghai as the natural consolidation point with the most frequent vessels, space and sailings',
+    confidence: 'MEDIUM',
+  },
+  {
+    cargo: 'Yangtze River Delta electronics, machinery, textiles and consumer goods',
+    bestPort: 'Shanghai',
+    why: 'Shanghai’s hinterland is the YRD manufacturing heartland that dominates China-to-GCC exports',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Zhejiang small commodities, hardware and consumer goods',
+    bestPort: 'Ningbo-Zhoushan',
+    why: 'Ningbo-Zhoushan’s hinterland is Zhejiang and the southern YRD, cutting inland trucking',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Bulk, heavy or ultra-large-vessel cargo where draft and space are decisive',
+    bestPort: 'Ningbo-Zhoushan',
+    why: '≈ 18 m draft and world #1 total tonnage make it the deeper, bulk-oriented option',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Cost-sensitive shipment when Shanghai is congested',
+    bestPort: 'Ningbo-Zhoushan',
+    why: 'The port insight notes Ningbo often has container availability when Shanghai is congested',
+    confidence: 'MEDIUM',
+  },
+  {
+    cargo: 'First-time GCC importer wanting the safest schedule default',
+    bestPort: 'Shanghai',
+    why: 'The port insight describes Shanghai as where most Gulf-bound cargo consolidates',
+    confidence: 'MEDIUM',
+  },
+];
+
+const facilityRows = [
+  {
+    factor: 'Container throughput',
+    shanghai: '≈ 47m TEU (2023)',
+    ningbo: '≈ 35m TEU (2023)',
+    note: 'Shanghai has the larger container base',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Total cargo tonnage',
+    shanghai: 'Not published in port profile',
+    ningbo: 'World #1 by tonnage',
+    note: 'Ningbo-Zhoushan is the bulk and general-cargo leader',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Key terminals',
+    shanghai: 'Yangshan deep-water, Waigaoqiao',
+    ningbo: 'Not enumerated in port profile',
+    note: 'Shanghai requires a terminal-specific bill of lading decision',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Max draft',
+    shanghai: '≈ 15.5 m (Yangshan)',
+    ningbo: '≈ 18 m',
+    note: 'Ningbo-Zhoushan accepts the very largest vessels',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Operator',
+    shanghai: shanghai?.operator ?? 'Not published',
+    ningbo: ningbo?.operator ?? 'Not published',
+    note: 'Both are port-authority profiles from the data layer',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Hinterland',
+    shanghai: shanghai?.hinterland ?? 'Not published',
+    ningbo: ningbo?.hinterland ?? 'Not published',
+    note: 'The deciding factor for most origin-port choices',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Direct Gulf sailings',
+    shanghai: 'Densest direct Gulf sailings in the profile',
+    ningbo: 'Comparable deep-water access; strong second origin',
+    note: 'Confirm the exact vessel and terminal before booking',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Port loading / THC charges',
+    shanghai: 'Not published in port profile',
+    ningbo: 'Not published in port profile',
+    note: 'Request the terminal fee schedule at booking',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to the load port',
+    shanghai: 'Shorter for Jiangsu / northern YRD factories',
+    ningbo: 'Shorter for Zhejiang factories',
+    note: 'Cargo origin, not the port name, drives the inland leg',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Direct Gulf sailing density',
+    shanghai: 'Most frequent Gulf sailings in the profile',
+    ningbo: 'Comparable deep-water access; often has space when Shanghai is congested',
+    note: 'Schedule density is qualitative in the port profiles',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Freight rate / transit time',
+    shanghai: 'Not published in port profile',
+    ningbo: 'Not published in port profile',
+    note: 'No rate or transit numbers are invented on this page',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin documentation / compliance',
+    shanghai: 'Same China export regime',
+    ningbo: 'Same China export regime',
+    note: 'The origin port does not change Chinese export formalities',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which port should I choose right now: Shanghai or Ningbo-Zhoushan?',
+    a: 'Choose by origin and cargo. For Yangtze River Delta electronics, machinery and time-sensitive Gulf project cargo, Shanghai is the denser schedule default. For Zhejiang small commodities, hardware or heavy/deep-draft loads, Ningbo-Zhoushan usually cuts inland trucking and offers the stronger bulk and deep-water profile.',
+  },
+  {
+    q: 'Is Ningbo-Zhoushan cheaper than Shanghai?',
+    a: 'The port profiles do not publish freight rates or terminal fees, so no rate comparison is made here. The profile does say Ningbo-Zhoushan often has container availability when Shanghai is congested, which can help capacity-sensitive shipments — always compare live all-in quotes.',
+  },
+  {
+    q: 'Which port has the deepest draft?',
+    a: 'Ningbo-Zhoushan, with ≈ 18 m against Shanghai’s ≈ 15.5 m at Yangshan. That means Ningbo-Zhoushan can accept the very largest bulk and container vessels, which is relevant for ultra-large-vessel and heavy-cargo routings.',
+  },
+  {
+    q: 'Which port is better for Zhejiang-made goods?',
+    a: 'Ningbo-Zhoushan. Its hinterland is Zhejiang province and the southern Yangtze River Delta, so loading there can reduce inland trucking versus sending the same cargo to Shanghai.',
+  },
+  {
+    q: 'Which port should I use for time-sensitive Gulf project cargo?',
+    a: 'Shanghai is the safer default. Its port profile describes the most frequent direct Gulf sailings and the natural consolidation point for Gulf freight, which matters when a missed cut-off delays a project.',
+  },
+  {
+    q: 'Do both ports have direct Gulf sailings?',
+    a: 'Yes. The Shanghai profile states all major carriers offer direct Shanghai–Jebel Ali sailings, while the Ningbo-Zhoushan profile describes comparable deep-water access and a strong second-origin role when Shanghai is congested. Confirm the specific carrier service before booking.',
+  },
+  {
+    q: 'Should I route Ningbo/Zhejiang cargo through Shanghai?',
+    a: 'Usually not. If cargo originates in Zhejiang, the Ningbo-Zhoushan profile says loading there can save inland trucking without sacrificing sailings. Shanghai becomes the better choice when the goods come from further north in the Delta and you need its denser schedule.',
+  },
+  {
+    q: 'What should I confirm before booking either port?',
+    a: 'Confirm the exact terminal and UN/LOCODE on the bill of lading, the direct-versus-transshipped service, cut-off times, inland trucking from the factory, and a live all-in quote. Neither port profile publishes rate or transit figures, so verify those with the carrier.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shanghai vs Ningbo-Zhoushan — Which China Origin Port Should Your Gulf Freight Use? (September 2026)',
+      description:
+        'Shanghai vs Ningbo-Zhoushan origin-port comparison for China-to-GCC freight: throughput, draft, hinterland, direct Gulf sailing posture and a cargo-based decision framework.',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Shanghai',
+      url: `${SITE_URL}/ports/shanghai/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Shanghai',
+        addressCountry: 'CN',
+      },
+      description:
+        'Shanghai is the world’s busiest container port and the default China loading hub for the Gulf corridor, serving the Yangtze River Delta.',
+    },
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Ningbo-Zhoushan',
+      url: `${SITE_URL}/ports/ningbo-zhoushan/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Ningbo',
+        addressCountry: 'CN',
+      },
+      description:
+        'Ningbo-Zhoushan is the world’s largest port by total cargo tonnage and a strong Zhejiang-origin alternative to Shanghai for Gulf freight.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shanghai vs Ningbo-Zhoushan — Which China Origin Port Should Your Gulf Freight Use? (September 2026)"
+  description="Shanghai vs Ningbo-Zhoushan origin-port comparison for China-to-GCC freight: throughput, draft, hinterland, direct Gulf sailing posture and a cargo-based decision framework."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shanghai vs Ningbo-Zhoushan' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shanghai vs Ningbo-Zhoushan: which China origin port should your Gulf freight use?</h1>
+      <p class="lead">
+        A China-origin port decision for the Gulf corridor. Shanghai and Ningbo-Zhoushan share the
+        Yangtze River Delta, but they split on what matters most: Shanghai has the denser direct Gulf
+        schedule and larger container base, while Ningbo-Zhoushan is the deeper, bulk-oriented gateway
+        with the world-leading total cargo tonnage.
+      </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Do not treat these as interchangeable “East China” gates. Shanghai
+            is the container-consolidation default — ≈47m TEU versus Ningbo-Zhoushan’s ≈35m TEU — and
+            the port profile points to the most frequent direct Gulf sailings, so time-sensitive
+            project cargo belongs there. Ningbo-Zhoushan is the deeper and bulk-stronger option: ≈18 m
+            draft versus ≈15.5 m at Yangshan, world #1 total tonnage, and a Zhejiang hinterland that
+            can cut inland trucking. The rule: densest schedule → Shanghai; Zhejiang origin, bulk or
+            deep-draft economics → Ningbo-Zhoushan.
+          </p>
+        </blockquote>
+      </section>
+
+      <p class="small muted">
+        Confidence badges separate direct port-profile facts from interpretive routing guidance. No
+        freight rate, transit-time or certification numbers are invented on this page; those items are
+        marked LOW where the port profiles do not publish them.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Shanghai throughput</span>
+          <span class="fact-value">≈ 47m TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Ningbo throughput</span>
+          <span class="fact-value">≈ 35m TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai draft</span>
+          <span class="fact-value">≈ 15.5 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Ningbo draft</span>
+          <span class="fact-value">≈ 18 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Ningbo total cargo</span>
+          <span class="fact-value">World #1 <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai role</span>
+          <span class="fact-value">Default Gulf consolidation <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why the Shanghai vs Ningbo-Zhoushan decision matters</h2>
+    <p>
+      Both ports sit in the Yangtze River Delta, so this is not a “right” versus “wrong” choice the
+      way two different coastal regions can be. It is a trade between schedule density and cargo fit.
+      Shanghai is the world’s busiest container port and the profile describes it as the natural
+      consolidation point for Gulf freight. Ningbo-Zhoushan is the world’s largest port by total cargo
+      tonnage, with a deeper draft and a Zhejiang-centred hinterland.
+    </p>
+    <p>
+      That difference changes the booking decision. If your goods are YRD electronics, machinery or
+      time-sensitive project cargo, the Shanghai profile’s direct-sailing density reduces transshipment
+      and cut-off risk. If your goods are Zhejiang small commodities, hardware, bulk or ultra-large-vessel
+      cargo, loading Ningbo-Zhoushan can shorten the inland leg and put you on the deeper-water option.
+      Port choice should therefore follow the factory location and the cargo, not a headline preference.
+    </p>
+    <p>
+      The data on this page comes from the existing Shanghai and Ningbo-Zhoushan port profiles
+      (updated {shanghaiUpdated} and {ningboUpdated} respectively). Where the profiles do not publish a
+      value — for example freight rates, terminal fees and transit windows — the page says so instead of
+      filling the gap with estimates.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Shanghai vs Ningbo-Zhoushan at a glance</h2>
+      <p>
+        Use this table as the orientation before the cargo-specific framework below. The rows that
+        matter most are hinterland, container throughput, total tonnage and draft; the direct-sailings
+        row is a qualitative reading of the port profiles, not a schedule guarantee.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'shanghai', label: 'Shanghai' },
+          { key: 'ningbo', label: 'Ningbo-Zhoushan' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="Side-by-side comparison from the Shanghai and Ningbo-Zhoushan port profiles. Verify terminal names, cut-offs and sailing availability with the carrier before booking."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai & Ningbo-Zhoushan port profiles" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Direct Gulf sailings and routing posture</h2>
+    <p>
+      The port profiles describe both as credible Gulf origins, but they do not publish transit days or
+      per-carrier schedules. Shanghai’s profile says all major carriers offer direct Shanghai–Jebel Ali
+      sailings and that several also call Dammam, Hamad and Jeddah directly. That is the schedule-density
+      edge: for time-sensitive cargo, Shanghai is the lower-variance starting point.
+    </p>
+    <p>
+      Ningbo-Zhoushan’s profile frames it as a strong second origin with comparable deep-water access
+      and container availability when Shanghai is congested. That makes it a capacity and inland-cost
+      alternative rather than a schedule-downgrade — but only if your cargo originates near Zhejiang or
+      needs the deeper draft.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose Shanghai when...">
+        <ul>
+          <li>The cargo originates in Jiangsu or the northern Yangtze River Delta.</li>
+          <li>Time sensitivity makes direct-sailing frequency the priority.</li>
+          <li>The goods are YRD electronics, machinery, textiles or consumer goods.</li>
+          <li>You need the natural Gulf consolidation point with the densest schedule.</li>
+        </ul>
+      </Card>
+      <Card title="Choose Ningbo-Zhoushan instead when...">
+        <ul>
+          <li>The cargo originates in Zhejiang or the southern Yangtze River Delta.</li>
+          <li>Bulk, heavy or ultra-large-vessel draft and space matter most.</li>
+          <li>Shanghai is congested and you need a capacity alternative.</li>
+          <li>You are comparing Zhejiang-origin all-in trucking and terminal cost.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The cargo decision framework: which port for which cargo</h2>
+      <p>
+        This is the core of the page. Instead of asking “which port is better”, ask “where are the
+        goods made, and does the cargo need dense container sailings or deep-draft bulk/space?” The
+        table converts that into a routing rule.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'cargo', label: 'Cargo / origin profile' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Origin routing heuristics from the port profiles, not guaranteed carrier schedules. Confirm the inland leg and sailing availability before choosing."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai vs Ningbo-Zhoushan cargo routing" />
+
+      <h3 class="mt-3">Time-sensitive project and consumer cargo → Shanghai</h3>
+      <p>
+        The Shanghai profile makes the case directly: it is where most Gulf-bound cargo consolidates,
+        and all major carriers offer direct Shanghai–Jebel Ali sailings. If a missed cut-off or a
+        transshipment delay is expensive, the denser schedule is the tie-breaker. The same logic applies
+        to YRD electronics, machinery and textiles, whose factories sit in Shanghai’s hinterland.
+      </p>
+
+      <h3>Zhejiang small commodities and hardware → Ningbo-Zhoushan</h3>
+      <p>
+        Ningbo-Zhoushan’s hinterland is Zhejiang and the southern Yangtze River Delta. For small
+        commodities, hardware and Zhejiang consumer goods, loading at Ningbo-Zhoushan cuts inland
+        trucking versus routing the same cargo north to Shanghai. The port profile explicitly says
+        Zhejiang-origin cargo can save inland trucking without sacrificing sailings.
+      </p>
+
+      <h3>Bulk, heavy and ultra-large-vessel cargo → Ningbo-Zhoushan</h3>
+      <p>
+        Ningbo-Zhoushan is world #1 by total cargo tonnage and has a ≈18 m draft, versus ≈15.5 m at
+        Shanghai’s Yangshan terminal. That deeper water and bulk-oriented capacity make it the natural
+        profile for cargo where vessel size, weight or space is the binding constraint.
+      </p>
+
+      <h3 class="mt-3">Common mistakes that push cargo to the wrong origin gate</h3>
+      <ul>
+        <li>Defaulting every East China shipment to Shanghai without checking the factory location.</li>
+        <li>Ignoring Ningbo-Zhoushan when Shanghai is congested or the cargo is heavy/bulk.</li>
+        <li>Treating the two ports as identical because they share the Yangtze River Delta.</li>
+        <li>Forgetting to name the exact Shanghai terminal — Yangshan versus Waigaoqiao — on the booking.</li>
+        <li>Comparing a Shanghai direct sailing against a Ningbo transshipped service as if they were equal.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Facilities and hinterland compared</h2>
+    <p>
+      The profiles do not enumerate berth counts or terminal-by-terminal operator detail for both ports.
+      What they do publish is the difference in throughput, total tonnage, draft, operator and
+      hinterland — enough to separate a container-consolidation gateway from a deep-water bulk/container
+      alternative.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'shanghai', label: 'Shanghai' },
+        { key: 'ningbo', label: 'Ningbo-Zhoushan' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility and hinterland orientation from the port profiles, not a terminal directory. Confirm operator, berth and terminal details before booking."
+    />
+    <SourceList sources={portSources} title="Sources — Shanghai & Ningbo-Zhoushan facilities and hinterland" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost differences: what the port profiles do and do not publish</h2>
+      <p>
+        The profiles do not publish freight rates, transit times, THC or terminal fees, so this page
+        does not invent a “cheaper port”. The only cost-shaped differences in the data are structural:
+        the inland haul to the load port and the schedule/congestion trade. Ningbo-Zhoushan is
+        frequently described as a capacity option when Shanghai is congested, while Shanghai is the
+        denser schedule default.
+      </p>
+      <p>
+        Compare quotes on the same scope: factory to terminal, direct-versus-transshipped ocean leg,
+        and terminal handling. A Zhejiang-origin shipment loaded at Ningbo-Zhoushan can save inland
+        trucking even when the ocean portion is similar; a northern-YRD shipment pulled south to
+        Ningbo-Zhoushan for a marginal saving can waste more in trucking than it saves.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'shanghai', label: 'Shanghai' },
+          { key: 'ningbo', label: 'Ningbo-Zhoushan' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only structural cost drivers are described. Quantified fees, freight and transit are LOW confidence because the port profiles do not publish them."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai & Ningbo-Zhoushan cost context" />
+
+      <div class="note mt-2">
+        <strong>Rate and fee discipline:</strong> do not accept a “Ningbo is always cheaper” or
+        “Shanghai is always faster” claim without a live quote. The port profiles support the
+        structural logic above, but the booking-level numbers must come from the carrier or forwarder.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Origin compliance and booking notes</h2>
+    <p>
+      Both ports are China origin seaports, so the choice between them does not change Chinese export
+      formalities or destination-country import compliance. The port profiles do not publish a
+      port-specific certification requirement, and none is invented here. The booking-level issues are
+      operational: name the exact terminal, use the correct UN/LOCODE, confirm cut-off times and keep
+      the bill of lading consistent with the intended Gulf routing.
+    </p>
+    <p>
+      For Shanghai, the profile warns that “Shanghai” hides a real choice between Yangshan (deep water,
+      ultra-large vessels, slightly further from factories) and Waigaoqiao (closer to the city, smaller
+      berths). For Ningbo-Zhoushan, confirm the specific terminal and whether the service is direct or
+      transshipped before committing. Those terminal-level details change lead time and transshipment
+      risk more than the headline port name.
+    </p>
+    <SourceList sources={portSources} title="Sources — China origin-port booking context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      <li>Both ports are Yangtze River Delta gateways, but Shanghai is the container-consolidation default and Ningbo-Zhoushan is the deeper, bulk-stronger alternative.</li>
+      <li>Shanghai ≈47m TEU versus Ningbo-Zhoushan ≈35m TEU is a 12m TEU gap that favours Shanghai for dense schedule-sensitive flows.</li>
+      <li>Ningbo-Zhoushan counters with world #1 total cargo tonnage and ≈18 m draft versus Shanghai’s ≈15.5 m at Yangshan.</li>
+      <li>Zhejiang small commodities, hardware, bulk and ultra-large-vessel cargo fit Ningbo-Zhoushan; YRD electronics, machinery and time-sensitive project cargo fit Shanghai.</li>
+      <li>No freight rate, transit or certification number is invented here — the profiles do not publish them, so quote the lane and name the terminal before booking.</li>
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>The Author's Take</h2>
+    <p><strong>Position:</strong> I would not send time-sensitive YRD project cargo to Ningbo-Zhoushan to chase a marginal origin saving, because Shanghai’s profile gives it the denser direct Gulf schedule. For Zhejiang-origin or heavy/deep-draft cargo, I would not default to Shanghai either — the inland haul and ≈18 m draft make Ningbo-Zhoushan the structurally better fit.</p>
+    <ul>
+      <li>Shanghai throughput minus Ningbo-Zhoushan throughput is 47 − 35 = 12m TEU, but that only measures container scale, not your inland leg.</li>
+      <li>Draft gap is 18 − 15.5 = 2.5 m, which can decide vessel-size and heavy-cargo feasibility.</li>
+      <li>The port profiles publish no rate or transit figures, so the final choice must follow a live factory-to-terminal quote and a confirmed direct/transshipped sailing.</li>
+    </ul>
+    <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness & monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. It draws on
+      the Shanghai port profile (updated {shanghaiUpdated}) and the Ningbo-Zhoushan port profile
+      (updated {ningboUpdated}). Throughput, draft and hinterland rows remain HIGH confidence because
+      they come directly from those profiles; interpretive schedule and cost rows stay LOW or MEDIUM
+      until a carrier or terminal source confirms the booking-level values.
+    </p>
+    <p>
+      If a port profile is refreshed with new throughput, terminal or draft data, this comparison is
+      updated and the confidence badges are adjusted. For live rates, cut-offs and sailing availability,
+      use the carrier or forwarder quote rather than this page.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in Shanghai or Ningbo-Zhoushan origin quote"
+      text="Tell us the factory location, commodity, container or CBM and Gulf destination, and we will connect you with providers who can quote the correct inland leg, ocean service and terminal handling together."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Explore related pages</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Shanghai port profile"
+        description="World's busiest container port: Yangshan vs Waigaoqiao, throughput, hinterland and Gulf sailing context."
+        href="/ports/shanghai/"
+      />
+      <Card
+        title="Ningbo-Zhoushan port profile"
+        description="World #1 by total cargo tonnage, ≈18 m draft and the Zhejiang-origin case for Gulf freight."
+        href="/ports/ningbo-zhoushan/"
+      />
+      <Card
+        title="China to GCC routes"
+        description="Compare the Shanghai and Ningbo-Zhoushan Gulf lanes across the route directory."
+        href="/routes/"
+      />
+      <Card
+        title="Shanghai → Jebel Ali route"
+        description="The densest China-to-GCC lane with carrier, transit and risk context."
+        href="/routes/shanghai-jebel-ali/"
+      />
+      <Card
+        title="Ningbo-Zhoushan → Jebel Ali route"
+        description="The Zhejiang-origin alternative into the UAE’s main re-export gateway."
+        href="/routes/ningbo-zhoushan-jebel-ali/"
+      />
+      <Card
+        title="Ports & terminals directory"
+        description="Full China origin and GCC destination port index."
+        href="/ports/"
+      />
+    </div>
+  </section>
+</BaseLayout>

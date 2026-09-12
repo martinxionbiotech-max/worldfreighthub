@@ -1,0 +1,722 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { gccPorts } from '../../data/gcc-ports';
+
+const pageUrl = `${SITE_URL}/middleeast/jebel-ali-vs-khalifa-port/`;
+const jebelAli = gccPorts.find((item) => item.slug === 'jebel-ali');
+const khalifa = gccPorts.find((item) => item.slug === 'khalifa-port-abu-dhabi');
+const jebelAliCode = jebelAli?.unlocode ?? '—';
+const khalifaCode = khalifa?.unlocode ?? '—';
+const jebelAliUpdated = jebelAli?.updated ?? 'not published';
+const khalifaUpdated = khalifa?.updated ?? 'not published';
+
+const portSources = sourcesByIds(['dp-world', 'abu-dhabi-ports']);
+
+const comparisonRows = [
+  {
+    parameter: 'Port role',
+    jebelAli: 'Middle East’s flagship port and re-export hub',
+    khalifa: 'Abu Dhabi’s deep-water, semi-automated flagship',
+    note: 'One is a regional distribution engine; the other is an Abu Dhabi capacity play',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Container scale',
+    jebelAli: '≈ 14.5m TEU (2023)',
+    khalifa: 'Design capacity ≈ 9m+ TEU (post-expansion)',
+    note: 'Not identical metrics — throughput versus design capacity',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Max draft',
+    jebelAli: '≈ 17 m',
+    khalifa: '≈ 18 m (among the deepest in the Gulf)',
+    note: 'Khalifa has the deeper draft in the profiles',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Terminal / automation',
+    jebelAli: 'JAFZA (Jebel Ali Free Zone)',
+    khalifa: 'Semi-automated terminal',
+    note: 'Compare zone function and automation, not terminal count',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Industrial / free zone',
+    jebelAli: 'JAFZA — duty-deferred consolidation and re-export',
+    khalifa: 'KIZAD — energy, metals, logistics and light industry',
+    note: 'JAFZA is distribution-led; KIZAD is industrial-led',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Hinterland',
+    jebelAli: 'Dubai and the wider GCC re-export region',
+    khalifa: 'Abu Dhabi emirate and the KIZAD industrial zone',
+    note: 'The final destination and onward-leg logic decide the gate',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Operator',
+    jebelAli: jebelAli?.operator ?? 'Not published',
+    khalifa: khalifa?.operator ?? 'Not published',
+    note: 'Different port groups operate the two facilities',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    jebelAli: jebelAliCode,
+    khalifa: khalifaCode,
+    note: 'Use the correct code on the bill of lading',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Congestion / schedule posture',
+    jebelAli: 'Lowest-friction entry point and re-export hub',
+    khalifa: 'Newer, deeper and generally less congested',
+    note: 'Khalifa is the capacity alternative when Jebel Ali is crowded',
+    confidence: 'MEDIUM',
+  },
+];
+
+const decisionRows = [
+  {
+    cargo: 'GCC re-export, consolidation and consumer goods',
+    bestPort: 'Jebel Ali',
+    why: 'Jebel Ali is the region’s re-export engine, backed by JAFZA duty-deferred flexibility',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Dubai and wider UAE distribution',
+    bestPort: 'Jebel Ali',
+    why: 'The profile positions Jebel Ali as the lowest-friction UAE entry point',
+    confidence: 'MEDIUM',
+  },
+  {
+    cargo: 'Cargo with a non-UAE final destination (Saudi, Qatar, Kuwait, etc.)',
+    bestPort: 'Jebel Ali first leg',
+    why: 'The profile says most China-to-GCC cargo lands at Jebel Ali and re-exports onward by feeder or truck',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Abu Dhabi local market',
+    bestPort: 'Khalifa Port',
+    why: 'Khalifa’s hinterland is the Abu Dhabi emirate, cutting the final inland leg',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Industrial, heavy or project cargo',
+    bestPort: 'Khalifa Port',
+    why: 'Khalifa has the deeper draft and anchors the KIZAD industrial zone',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Assembly, storage or distribution inside KIZAD',
+    bestPort: 'Khalifa Port + KIZAD',
+    why: 'KIZAD is attractive for importers doing UAE-based assembly or distribution',
+    confidence: 'MEDIUM',
+  },
+  {
+    cargo: 'Shippers who find Jebel Ali expensive or congested',
+    bestPort: 'Khalifa Port',
+    why: 'The profile calls Khalifa a newer, deeper and less congested alternative',
+    confidence: 'MEDIUM',
+  },
+];
+
+const facilityRows = [
+  {
+    factor: 'Container scale',
+    jebelAli: '≈ 14.5m TEU (2023)',
+    khalifa: 'Design capacity ≈ 9m+ TEU (post-expansion)',
+    note: 'Jebel Ali publishes throughput; Khalifa publishes capacity',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Max draft',
+    jebelAli: '≈ 17 m',
+    khalifa: '≈ 18 m (among the deepest in the Gulf)',
+    note: 'Khalifa is the deeper-water option in the profiles',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Automation / terminal',
+    jebelAli: 'JAFZA free-zone hub',
+    khalifa: 'Semi-automated terminal',
+    note: 'Automation is highlighted only in the Khalifa profile',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Free / industrial zone',
+    jebelAli: 'JAFZA — duty deferral and re-export flexibility',
+    khalifa: 'KIZAD — energy, metals, logistics and light industry',
+    note: 'Choose the zone that matches the business model',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Operator',
+    jebelAli: jebelAli?.operator ?? 'Not published',
+    khalifa: khalifa?.operator ?? 'Not published',
+    note: 'Different operator groups serve the two UAE facilities',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Hinterland',
+    jebelAli: jebelAli?.hinterland ?? 'Not published',
+    khalifa: khalifa?.hinterland ?? 'Not published',
+    note: 'The deciding factor for most destination-port choices',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Congestion / capacity posture',
+    jebelAli: 'Re-export hub and lowest-friction entry point',
+    khalifa: 'Newer, deeper and less congested capacity play',
+    note: 'Confirm terminal congestion and free time before booking',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Destination THC / port charges',
+    jebelAli: 'Not published in port profile',
+    khalifa: 'Not published in port profile',
+    note: 'Request the terminal fee schedule at booking',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Free-zone / storage handling',
+    jebelAli: 'JAFZA allows duty-deferred consolidation and re-export',
+    khalifa: 'KIZAD suits assembly, storage and distribution',
+    note: 'The zone model changes cash-flow and customs timing',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Congestion / space',
+    jebelAli: 'Regional hub with the largest throughput',
+    khalifa: 'Generally less congested per the profile',
+    note: 'Congestion is qualitative in the port profiles',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Project / heavy-cargo fit',
+    jebelAli: 'Not specifically highlighted',
+    khalifa: 'Strong for project cargo and heavy industry',
+    note: 'Khalifa’s deeper draft and industrial zone are the structural edge',
+    confidence: 'HIGH',
+  },
+  {
+    item: 'Onward leg for non-UAE destinations',
+    jebelAli: 'Add the feeder or truck leg onward from the hub',
+    khalifa: 'Best when the final buyer is in Abu Dhabi',
+    note: 'Price the full destination, not just the ocean freight',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Freight rate / transit time',
+    jebelAli: 'Not published in port profile',
+    khalifa: 'Not published in port profile',
+    note: 'No rate or transit numbers are invented on this page',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which UAE port should I choose right now: Jebel Ali or Khalifa Port?',
+    a: 'Choose by business model and final destination. Jebel Ali is the Middle East re-export and consumer-goods hub backed by JAFZA; Khalifa Port is the Abu Dhabi deep-water and KIZAD industrial option. Re-export/consumer flows lean Jebel Ali, while project cargo, heavy industry and Abu Dhabi-local delivery lean Khalifa.',
+  },
+  {
+    q: 'Is Khalifa Port a real alternative to Jebel Ali?',
+    a: 'Yes. The port profile describes Khalifa Port as newer, deeper and generally less congested, and notes its KIZAD zone is attractive for importers doing assembly, storage or distribution in the UAE. For heavy or project cargo it often wins on draft and space.',
+  },
+  {
+    q: 'Which port is deeper?',
+    a: 'Khalifa Port, at ≈ 18 m versus Jebel Ali’s ≈ 17 m. The Khalifa profile describes it as among the deepest in the Gulf, which matters for project cargo and heavy industry.',
+  },
+  {
+    q: 'Which port should I use for GCC re-export?',
+    a: 'Jebel Ali. Its profile describes it as the region’s re-export engine: cargo often lands at Jebel Ali and is re-shipped onward to Saudi Arabia, Qatar, Kuwait and beyond, with JAFZA providing duty-deferred consolidation.',
+  },
+  {
+    q: 'Which port is better for project cargo?',
+    a: 'Khalifa Port. The profile says it is newer, deeper and less congested, and that for heavy or project cargo it often wins on draft and space. Confirm heavy-lift and laydown capacity with AD Ports Group before booking.',
+  },
+  {
+    q: 'Who operates Jebel Ali and Khalifa Port?',
+    a: 'Jebel Ali is operated by DP World, while Khalifa Port is operated by AD Ports Group. The Khalifa terminal is semi-automated and has expanded capacity toward 9m+ TEU.',
+  },
+  {
+    q: 'Is one port cheaper than the other?',
+    a: 'The port profiles do not publish freight rates or terminal fees, so no price comparison is made here. The structural difference is congestion and onward-leg logic: Khalifa is the less congested capacity play, while Jebel Ali adds an onward feeder/truck leg for non-UAE destinations.',
+  },
+  {
+    q: 'What should I confirm before choosing a UAE destination port?',
+    a: 'Confirm the final consignee location, free zone versus mainland customs treatment, onward feeder or truck leg for non-UAE cargo, cut-offs and terminal congestion, and a live all-in quote. The port profiles do not publish rate or transit figures.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Jebel Ali vs Khalifa Port — Which UAE Gateway Should Your Gulf Freight Use? (September 2026)',
+      description:
+        'Jebel Ali vs Khalifa Port destination comparison for China-to-GCC freight: re-export hub vs Abu Dhabi industrial gateway, draft, hinterland, free zones and a cargo-based decision framework.',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Jebel Ali',
+      url: `${SITE_URL}/ports/jebel-ali/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dubai',
+        addressCountry: 'AE',
+      },
+      description:
+        'Jebel Ali is the Middle East’s largest container port and re-export hub, backed by the JAFZA free zone and serving Dubai and the wider GCC.',
+    },
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Khalifa Port Abu Dhabi',
+      url: `${SITE_URL}/ports/khalifa-port-abu-dhabi/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Abu Dhabi',
+        addressCountry: 'AE',
+      },
+      description:
+        'Khalifa Port Abu Dhabi is the UAE’s deep-water, semi-automated industrial gateway and the anchor of the KIZAD industrial zone.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Jebel Ali vs Khalifa Port — Which UAE Gateway Should Your Gulf Freight Use? (September 2026)"
+  description="Jebel Ali vs Khalifa Port destination comparison for China-to-GCC freight: re-export hub vs Abu Dhabi industrial gateway, draft, hinterland, free zones and a cargo-based decision framework."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Jebel Ali vs Khalifa Port' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Jebel Ali vs Khalifa Port: which UAE gateway should your Gulf freight use?</h1>
+      <p class="lead">
+        A UAE destination-port decision for China-to-GCC freight. Jebel Ali is the Middle East’s
+        re-export and consumer-goods hub backed by JAFZA; Khalifa Port is Abu Dhabi’s deep-water,
+        semi-automated industrial gateway anchored by KIZAD. Re-export and consumer flows lean Jebel
+        Ali; project cargo, heavy industry and Abu Dhabi-local delivery lean Khalifa.
+      </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> Choose by the cargo’s next move. Jebel Ali is the regional
+            distribution engine — ≈14.5m TEU, JAFZA duty deferral and the hub through which most
+            China-to-GCC cargo re-exports onward. Khalifa Port is the capacity and industrial play —
+            ≈18 m draft versus Jebel Ali’s ≈17 m, semi-automated, less congested and anchored by the
+            KIZAD industrial zone. Re-export/consumer goods and Dubai distribution → Jebel Ali; project
+            cargo, heavy industry or Abu Dhabi delivery → Khalifa Port.
+          </p>
+        </blockquote>
+      </section>
+
+      <p class="small muted">
+        Confidence badges separate direct port-profile facts from interpretive routing guidance. No
+        freight rate, transit-time or certification numbers are invented on this page; those items are
+        marked LOW where the port profiles do not publish them.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Jebel Ali throughput</span>
+          <span class="fact-value">≈ 14.5m TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Khalifa capacity</span>
+          <span class="fact-value">≈ 9m+ TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali draft</span>
+          <span class="fact-value">≈ 17 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Khalifa draft</span>
+          <span class="fact-value">≈ 18 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Jebel Ali zone</span>
+          <span class="fact-value">JAFZA <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Khalifa zone</span>
+          <span class="fact-value">KIZAD <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why the Jebel Ali vs Khalifa Port decision matters</h2>
+    <p>
+      Jebel Ali and Khalifa Port are both UAE gateways, but they point at different business models.
+      Jebel Ali’s profile describes it as the Middle East’s re-export engine: cargo lands at Jebel Ali
+      and is re-shipped onward to Saudi Arabia, Qatar, Kuwait and beyond, often held duty-deferred in
+      JAFZA. Khalifa Port’s profile describes it as the capacity play — newer, deeper, less congested
+      and anchored by the KIZAD industrial zone where importers set up assembly, storage or distribution.
+    </p>
+    <p>
+      That means the decision is not simply “the bigger port”. It is a choice between a distribution
+      hub with a possible onward leg and an industrial gateway closer to Abu Dhabi. For a non-UAE final
+      buyer, Jebel Ali is often only the first leg. For heavy or project cargo, or for an Abu Dhabi
+      consignee, Khalifa Port is frequently the structurally better fit.
+    </p>
+    <p>
+      The data on this page comes from the existing Jebel Ali and Khalifa Port port profiles (updated
+      {jebelAliUpdated} and {khalifaUpdated} respectively). Where the profiles do not publish a value —
+      freight rates, terminal fees, transit windows — the page says so instead of filling the gap with
+      estimates.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Jebel Ali vs Khalifa Port at a glance</h2>
+      <p>
+        Use this table as the orientation before the cargo-specific framework below. The rows that
+        matter most are port role, free/industrial zone, hinterland and congestion posture; note that
+        the two published capacity figures are not identical metrics.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="Side-by-side comparison from the Jebel Ali and Khalifa Port profiles. Verify terminal details, free-zone treatment and onward legs before booking."
+      />
+      <SourceList sources={portSources} title="Sources — Jebel Ali & Khalifa Port profiles" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Re-export versus industrial routing posture</h2>
+    <p>
+      Jebel Ali is not just a destination — the profile calls it the region’s distribution engine. A
+      large share of China-to-GCC cargo actually lands at Jebel Ali and re-exports onward by feeder or
+      truck. That makes it the lowest-friction entry point, but it also means a Jebel Ali arrival is
+      often only the first leg: if the final buyer is in Riyadh or Doha, the onward leg must be priced,
+      not just the ocean freight.
+    </p>
+    <p>
+      Khalifa Port is the Abu Dhabi-side capacity and industrial answer. Its profile says it is newer,
+      deeper and generally less congested, and that KIZAD is attractive for importers doing assembly,
+      storage or distribution in the UAE. For project cargo and heavy industry, the deeper draft and
+      industrial-zone adjacency are the operational edge.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose Jebel Ali when...">
+        <ul>
+          <li>The cargo is GCC re-export, consolidation or consumer goods.</li>
+          <li>You need JAFZA duty-deferred storage before onward distribution.</li>
+          <li>The final buyer is in Dubai or will be fed onward from Dubai.</li>
+          <li>You are pricing a non-UAE destination through the region’s re-export hub.</li>
+        </ul>
+      </Card>
+      <Card title="Choose Khalifa Port instead when...">
+        <ul>
+          <li>The cargo is project, heavy or industrial.</li>
+          <li>The final buyer is in Abu Dhabi emirate.</li>
+          <li>You want KIZAD for assembly, storage or distribution.</li>
+          <li>Jebel Ali congestion is a concern and the deeper draft matters.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The cargo decision framework: which UAE port for which cargo</h2>
+      <p>
+        This is the core of the page. Instead of asking “which UAE port is better”, ask “what happens
+        after discharge?” The table below converts that into a routing rule, and the sub-sections that
+        follow explain the two main cargo families.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'cargo', label: 'Cargo / destination profile' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Destination routing heuristics from the port profiles, not guaranteed carrier schedules. Confirm the inland leg and onward distribution before choosing."
+      />
+      <SourceList sources={portSources} title="Sources — Jebel Ali vs Khalifa Port cargo routing" />
+
+      <h3 class="mt-3">Re-export, consolidation and consumer goods → Jebel Ali</h3>
+      <p>
+        Jebel Ali combines the region’s largest container throughput with JAFZA, so goods can be held
+        duty-deferred, consolidated and re-exported without paying UAE duty until they enter the final
+        destination market. That is why so much regional distribution runs through it. If your cargo is
+        moving onward to Saudi Arabia, Qatar, Kuwait or beyond, treat Jebel Ali as the first leg and
+        price the onward feeder or truck.
+      </p>
+
+      <h3>Industrial, project and Abu Dhabi-local cargo → Khalifa Port</h3>
+      <p>
+        Khalifa Port is the capacity play in the UAE. It is newer, deeper and less congested than Jebel
+        Ali, and it anchors the KIZAD industrial zone where many manufacturers set up regional assembly
+        or distribution. For project cargo, heavy industry or an Abu Dhabi consignee, the deeper draft,
+        space and industrial-zone adjacency usually matter more than the container throughput gap.
+      </p>
+
+      <h3 class="mt-3">Common mistakes that push cargo to the wrong UAE gate</h3>
+      <ul>
+        <li>Choosing Jebel Ali for everything without pricing the onward leg to a non-UAE final buyer.</li>
+        <li>Ignoring Khalifa Port when Jebel Ali is congested or the cargo is project/heavy.</li>
+        <li>Comparing Jebel Ali throughput (≈14.5m TEU) with Khalifa design capacity (≈9m+ TEU) as if they were the same metric.</li>
+        <li>Choosing the port before deciding free zone versus mainland customs treatment.</li>
+        <li>Forgetting to name the final destination and free-zone or KIZAD handover point on the booking.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Facilities and hinterland compared</h2>
+    <p>
+      The profiles do not enumerate berth counts or terminal-by-terminal operator detail, but they do
+      publish the capacity, draft, zone function, operator and hinterland that separate a re-export hub
+      from an industrial gateway. Use the table below as the operational orientation and confirm the
+      current terminal and free-zone details before booking.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'jebelAli', label: 'Jebel Ali' },
+        { key: 'khalifa', label: 'Khalifa Port' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility and hinterland orientation from the port profiles, not a terminal directory. Confirm operator, berth and free-zone details before booking."
+    />
+    <SourceList sources={portSources} title="Sources — Jebel Ali & Khalifa Port facilities and hinterland" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost differences: what the port profiles do and do not publish</h2>
+      <p>
+        The profiles do not publish freight rates, terminal fees, THC or transit times, so this page
+        does not invent a “cheaper port”. The structural cost differences in the data are congestion,
+        free-zone treatment and the onward leg. Jebel Ali’s hub role means a non-UAE destination adds a
+        feeder or truck leg; Khalifa Port’s industrial-zone positioning makes it the deeper, less
+        congested fit for project and heavy cargo.
+      </p>
+      <p>
+        Compare quotes on the same scope: ocean freight to the UAE gate, free zone or mainland customs
+        treatment, terminal handling and final delivery. A quote ending at Jebel Ali is not comparable
+        with a Khalifa Port quote that includes the Abu Dhabi inland leg, and neither is comparable until
+        the final consignee and customs regime are named.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'jebelAli', label: 'Jebel Ali' },
+          { key: 'khalifa', label: 'Khalifa Port' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only structural cost drivers are described. Quantified fees, freight and transit are LOW confidence because the port profiles do not publish them."
+      />
+      <SourceList sources={portSources} title="Sources — Jebel Ali vs Khalifa Port cost context" />
+
+      <div class="note mt-2">
+        <strong>Onward-leg discipline:</strong> if the final buyer is not in the UAE, the Jebel Ali
+        arrival is only the first leg. The port profile explicitly says to price the onward feeder or
+        truck leg, not just the ocean freight.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Free zones, customs treatment and booking notes</h2>
+    <p>
+      Both ports are UAE seaports, so the destination-country regime is the same, but the free-zone
+      model changes the practical flow. Jebel Ali’s JAFZA allows goods to be stored, consolidated and
+      re-exported without paying UAE duty, which is why so much regional distribution runs through it.
+      Khalifa Port’s KIZAD is oriented toward energy, metals, logistics and light industry, making it
+      the natural choice for industrial assembly, storage or distribution in Abu Dhabi.
+    </p>
+    <p>
+      The profiles do not publish a port-specific certification requirement, and none is invented here.
+      Before booking, confirm whether the consignee clears through a free zone or mainland, the exact
+      UN/LOCODE on the bill of lading, and whether the cargo will remain in the UAE or move onward. That
+      determines duty deferral, the correct handover point and the onward leg.
+    </p>
+    <SourceList sources={portSources} title="Sources — UAE destination-port booking context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      <li>Jebel Ali is the Middle East re-export and consumer-goods hub backed by JAFZA; Khalifa Port is Abu Dhabi’s deep-water industrial gateway backed by KIZAD.</li>
+      <li>Jebel Ali ≈14.5m TEU is a throughput figure, while Khalifa’s ≈9m+ TEU is a design capacity — do not compare them as identical metrics.</li>
+      <li>Khalifa has the deeper draft, ≈18 m versus ≈17 m, and the profile’s less-congested, project-cargo positioning.</li>
+      <li>For non-UAE destinations, Jebel Ali is often only the first leg — price the onward feeder or truck, not just the ocean freight.</li>
+      <li>No freight rate, transit or certification number is invented here — confirm free zone versus mainland treatment and quote the full destination before booking.</li>
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>The Author's Take</h2>
+    <p><strong>Position:</strong> I would not send Abu Dhabi-local or project cargo to Jebel Ali by default, and I would not send pure re-export consumer goods to Khalifa Port by default. Jebel Ali’s edge is JAFZA distribution and regional reach; Khalifa Port’s edge is draft, space and KIZAD industrial fit.</p>
+    <ul>
+      <li>Draft gap is 18 − 17 = 1 m, but for heavy or project cargo the profile says Khalifa often wins on draft and space.</li>
+      <li>Jebel Ali ≈14.5m TEU versus Khalifa design capacity ≈9m+ TEU is a scale signal, not a like-for-like cost comparison.</li>
+      <li>The Jebel Ali profile warns that an arrival there is often only the first leg for non-UAE final buyers, so the onward cost must be added.</li>
+    </ul>
+    <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness & monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. It draws on
+      the Jebel Ali port profile (updated {jebelAliUpdated}) and the Khalifa Port profile (updated
+      {khalifaUpdated}). Throughput, draft and hinterland rows remain HIGH confidence because they come
+      directly from those profiles; interpretive congestion and cost rows stay LOW or MEDIUM until a
+      terminal or forwarder source confirms the booking-level values.
+    </p>
+    <p>
+      If a port profile is refreshed with new throughput, terminal, draft or free-zone data, this
+      comparison is updated and the confidence badges are adjusted. For live rates, free-zone treatment
+      and terminal congestion, use the forwarder or port authority quote rather than this page.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in Jebel Ali or Khalifa Port destination quote"
+      text="Tell us the origin, commodity, container or CBM and final UAE or GCC destination, and we will connect you with providers who can quote ocean freight, free zone or mainland treatment and the correct onward leg together."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Explore related pages</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Jebel Ali port profile"
+        description="Middle East re-export hub: ≈14.5m TEU, JAFZA, draft and onward-leg guidance."
+        href="/ports/jebel-ali/"
+      />
+      <Card
+        title="Khalifa Port profile"
+        description="Abu Dhabi deep-water gateway: ≈18 m draft, semi-automation and the KIZAD industrial zone."
+        href="/ports/khalifa-port-abu-dhabi/"
+      />
+      <Card
+        title="China to GCC routes"
+        description="Compare the China-to-GCC lane directory and the Jebel Ali route context."
+        href="/routes/"
+      />
+      <Card
+        title="Shanghai → Jebel Ali route"
+        description="The densest China-to-GCC lane into the UAE’s main re-export gateway."
+        href="/routes/shanghai-jebel-ali/"
+      />
+      <Card
+        title="Shipping from China to UAE"
+        description="UAE route pillar: FCL/LCL/air rates, Jebel Ali/Khalifa/Sharjah routing and the sea/air decision."
+        href="/middleeast/shipping-from-china-to-uae/"
+      />
+      <Card
+        title="Ports & terminals directory"
+        description="Full China origin and GCC destination port index."
+        href="/ports/"
+      />
+    </div>
+  </section>
+</BaseLayout>

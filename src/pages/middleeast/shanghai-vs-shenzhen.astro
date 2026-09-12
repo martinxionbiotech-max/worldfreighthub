@@ -1,0 +1,690 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sourcesByIds } from '../../data/sources';
+import { chinaPorts } from '../../data/china-ports';
+
+const pageUrl = `${SITE_URL}/middleeast/shanghai-vs-shenzhen/`;
+const shanghai = chinaPorts.find((item) => item.slug === 'shanghai');
+const shenzhen = chinaPorts.find((item) => item.slug === 'shenzhen');
+const shanghaiCode = shanghai?.unlocode ?? '—';
+const shenzhenCode = shenzhen?.unlocode ?? '—';
+const shanghaiUpdated = shanghai?.updated ?? 'not published';
+const shenzhenUpdated = shenzhen?.updated ?? 'not published';
+
+const portSources = sourcesByIds(['sipg', 'shenzhen-port-group']);
+
+const comparisonRows = [
+  {
+    parameter: 'Origin region',
+    shanghai: 'Yangtze River Delta — East China',
+    shenzhen: 'Pearl River Delta — South China',
+    note: 'This is an origin-region decision before it is a port decision',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Container throughput',
+    shanghai: '≈ 47m TEU (2023)',
+    shenzhen: '≈ 30m TEU (2023)',
+    note: 'Shanghai is the world’s busiest container port; Shenzhen is the busiest single gateway in the PRD',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Key terminals',
+    shanghai: 'Yangshan deep-water, Waigaoqiao',
+    shenzhen: 'Yantian, Shekou, Chiwan',
+    note: 'Both names hide a terminal choice that changes cut-off and routing',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Max draft',
+    shanghai: '≈ 15.5 m (Yangshan)',
+    shenzhen: '≈ 16 m (Yantian)',
+    note: 'Close on draft; terminal fit matters more than the 0.5 m gap',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'UN/LOCODE',
+    shanghai: shanghaiCode,
+    shenzhen: shenzhenCode,
+    note: 'Use the correct code on the bill of lading',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Primary hinterland',
+    shanghai: 'YRD manufacturing: electronics, machinery, textiles and consumer goods',
+    shenzhen: 'PRD manufacturing: electronics, appliances, furniture and fast-turnaround consumer goods',
+    note: 'Match the load port to the factory cluster',
+    confidence: 'HIGH',
+  },
+  {
+    parameter: 'Direct Gulf sailings',
+    shanghai: 'Port profile: all major carriers offer direct Shanghai–Jebel Ali sailings',
+    shenzhen: 'Port profile: Yantian has the deepest draft and the most direct ocean services for Gulf FCL',
+    note: 'Shanghai is the dense East China default; Shenzhen is the natural South China origin',
+    confidence: 'MEDIUM',
+  },
+];
+
+const decisionRows = [
+  {
+    cargo: 'Yangtze River Delta electronics, machinery, textiles and consumer goods',
+    bestPort: 'Shanghai',
+    why: 'Shanghai’s hinterland is the YRD manufacturing heartland that dominates China-to-GCC exports',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Pearl River Delta electronics, appliances, furniture and consumer goods',
+    bestPort: 'Shenzhen',
+    why: 'Shenzhen’s hinterland is the PRD, the fastest-turnaround consumer-goods supply chain in China',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Time-sensitive cargo needing the densest Gulf schedule',
+    bestPort: 'Shanghai',
+    why: 'Shanghai is the natural consolidation point with the most frequent Gulf sailings in the profile',
+    confidence: 'MEDIUM',
+  },
+  {
+    cargo: 'PRD consumer electronics or cross-border moves with Hong Kong',
+    bestPort: 'Shenzhen (Shekou)',
+    why: 'Shekou serves electronics and cross-border traffic to/from Hong Kong',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'South China full-container loads',
+    bestPort: 'Shenzhen (Yantian)',
+    why: 'Yantian is the deep-water workhorse for Gulf-bound FCL with the most direct ocean services',
+    confidence: 'HIGH',
+  },
+  {
+    cargo: 'Cargo from northern or central China outside the PRD',
+    bestPort: 'Shanghai',
+    why: 'Sending non-PRD cargo south to Shenzhen adds an unnecessary long inland haul',
+    confidence: 'MEDIUM',
+  },
+];
+
+const facilityRows = [
+  {
+    factor: 'Container throughput',
+    shanghai: '≈ 47m TEU (2023)',
+    shenzhen: '≈ 30m TEU (2023)',
+    note: 'Shanghai is larger; both are major export gateways',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Key terminals',
+    shanghai: 'Yangshan deep-water, Waigaoqiao',
+    shenzhen: 'Yantian, Shekou, Chiwan',
+    note: 'Name the exact terminal to avoid routing surprises',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Max draft',
+    shanghai: '≈ 15.5 m (Yangshan)',
+    shenzhen: '≈ 16 m (Yantian)',
+    note: 'Both accept large ocean-going vessels',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Operator',
+    shanghai: shanghai?.operator ?? 'Not published',
+    shenzhen: shenzhen?.operator ?? 'Not published',
+    note: 'Both are port-authority profiles from the data layer',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Hinterland',
+    shanghai: shanghai?.hinterland ?? 'Not published',
+    shenzhen: shenzhen?.hinterland ?? 'Not published',
+    note: 'The deciding factor for most China-origin choices',
+    confidence: 'HIGH',
+  },
+  {
+    factor: 'Gulf FCL routing',
+    shanghai: 'Densest direct Gulf sailings in the profile',
+    shenzhen: 'Yantian is the standard FCL terminal with the most direct ocean services',
+    note: 'Confirm direct-versus-transshipped service before booking',
+    confidence: 'MEDIUM',
+  },
+];
+
+const costRows = [
+  {
+    item: 'Port loading / THC charges',
+    shanghai: 'Not published in port profile',
+    shenzhen: 'Not published in port profile',
+    note: 'Request the terminal fee schedule at booking',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Inland trucking to the load port',
+    shanghai: 'Shorter for YRD / East China factories',
+    shenzhen: 'Shorter for PRD / South China factories',
+    note: 'The inland haul is the main cost difference',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Direct Gulf sailing density',
+    shanghai: 'Most frequent Gulf sailings in the profile',
+    shenzhen: 'Yantian has the most direct ocean services for Gulf FCL',
+    note: 'Schedule density is qualitative in the port profiles',
+    confidence: 'MEDIUM',
+  },
+  {
+    item: 'Freight rate / transit time',
+    shanghai: 'Not published in port profile',
+    shenzhen: 'Not published in port profile',
+    note: 'No rate or transit numbers are invented on this page',
+    confidence: 'LOW',
+  },
+  {
+    item: 'Origin documentation / compliance',
+    shanghai: 'Same China export regime',
+    shenzhen: 'Same China export regime',
+    note: 'The origin port does not change Chinese export formalities',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Which port should I choose right now: Shanghai or Shenzhen?',
+    a: 'Choose by where the factory is. Shanghai serves the Yangtze River Delta in East China, while Shenzhen serves the Pearl River Delta in South China. East China goods load at Shanghai; South China goods load at Shenzhen — do not haul PRD cargo to Shanghai or YRD cargo to Shenzhen.',
+  },
+  {
+    q: 'Is Shenzhen faster to the Gulf than Shanghai?',
+    a: 'The Shenzhen profile says it is roughly comparable, and that being further south can shave a day or two versus a Shanghai loading on the same route. The bigger variable is the carrier service and whether it transships — confirm the actual sailing rather than choosing on geography alone.',
+  },
+  {
+    q: 'Which port is better for electronics?',
+    a: 'It depends on the electronics cluster. Pearl River Delta consumer electronics and cross-border Hong Kong flows fit Shenzhen, especially Shekou; Yangtze River Delta electronics fit Shanghai. Match the port to the factory, not the product label alone.',
+  },
+  {
+    q: 'Which Shanghai terminal should I use for Gulf freight?',
+    a: 'Yangshan is the deep-water terminal built for ultra-large vessels, while Waigaoqiao sits closer to the city and YRD factories but takes smaller ships. Name the intended terminal on the booking because it affects cut-off times and feeder connections.',
+  },
+  {
+    q: 'Which Shenzhen terminal should I use for Gulf freight?',
+    a: 'Yantian is the standard choice for full-container loads — it has the deepest draft and the most direct ocean services. Shekou is better for electronics and cargo needing fast cross-border moves with Hong Kong.',
+  },
+  {
+    q: 'Should I truck South China cargo to Shanghai to save money?',
+    a: 'Usually not. The route from a PRD factory to Shenzhen is much shorter than the haul to Shanghai. A small ocean-rate difference is rarely worth the added inland trucking, time and risk of a missed cut-off.',
+  },
+  {
+    q: 'Should I truck East China cargo to Shenzhen?',
+    a: 'Usually not for the same reason. Yangtze River Delta factories sit inside Shanghai’s hinterland, so sending that cargo south to Shenzhen adds an unnecessary inland leg before the ocean voyage.',
+  },
+  {
+    q: 'Is Shanghai or Shenzhen cheaper?',
+    a: 'The port profiles do not publish freight rates or terminal fees, so this page does not invent a price comparison. The structural difference is the inland leg to the nearest gateway — compare factory-to-terminal all-in quotes for both options.',
+  },
+];
+
+const organization = {
+  '@id': `${SITE_URL}/#organization`,
+  name: 'WorldFreightHub',
+  url: SITE_URL,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${SITE_URL}/favicon.svg`,
+  },
+};
+
+const schema = [
+  {
+    type: 'Article',
+    data: {
+      headline: 'Shanghai vs Shenzhen — Choose Your China Origin Port by Factory Region (September 2026)',
+      description:
+        'Shanghai vs Shenzhen origin-port comparison for China-to-GCC freight: Yangtze River Delta vs Pearl River Delta, terminal routing, draft and an origin-region decision framework.',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      inLanguage: 'en',
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': pageUrl,
+      },
+      author: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub',
+        url: SITE_URL,
+      },
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      image: `${SITE_URL}/og.png`,
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+  {
+    type: 'Organization',
+    data: organization,
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Shanghai',
+      url: `${SITE_URL}/ports/shanghai/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Shanghai',
+        addressCountry: 'CN',
+      },
+      description:
+        'Shanghai is the world’s busiest container port and the default Yangtze River Delta loading hub for Gulf freight.',
+    },
+  },
+  {
+    type: 'Place',
+    data: {
+      name: 'Shenzhen',
+      url: `${SITE_URL}/ports/shenzhen/`,
+      additionalType: 'Seaport',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Shenzhen',
+        addressCountry: 'CN',
+      },
+      description:
+        'Shenzhen is the Pearl River Delta deep-water gateway, with Yantian for Gulf FCL and Shekou for electronics and Hong Kong cross-border flows.',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shanghai vs Shenzhen — Choose Your China Origin Port by Factory Region (September 2026)"
+  description="Shanghai vs Shenzhen origin-port comparison for China-to-GCC freight: Yangtze River Delta vs Pearl River Delta, terminal routing, draft and an origin-region decision framework."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Shanghai vs Shenzhen' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shanghai vs Shenzhen: choose by factory region, not by port name</h1>
+      <p class="lead">
+        A China-origin decision for Gulf freight. Shanghai serves the Yangtze River Delta in East China,
+        while Shenzhen serves the Pearl River Delta in South China. The port is not the real choice —
+        the factory location is. East China goods load at Shanghai; South China goods load at Shenzhen.
+      </p>
+
+      <section class="section container">
+        <blockquote class="tldr">
+          <p>
+            <strong>TL;DR:</strong> This is an origin-region decision before it is a port decision.
+            Shanghai is the Yangtze River Delta gateway — ≈47m TEU and the densest direct Gulf schedule
+            for East China electronics, machinery and textiles. Shenzhen is the Pearl River Delta
+            gateway — ≈30m TEU, with Yantian as the deep-water FCL terminal and Shekou for electronics
+            and Hong Kong cross-border flows. Do not truck PRD cargo north to Shanghai or YRD cargo
+            south to Shenzhen to chase a small ocean-rate difference; the added inland haul usually
+            cancels it.
+          </p>
+        </blockquote>
+      </section>
+
+      <p class="small muted">
+        Confidence badges separate direct port-profile facts from interpretive routing guidance. No
+        freight rate, transit-time or certification numbers are invented on this page; those items are
+        marked LOW where the port profiles do not publish them.
+      </p>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Shanghai throughput</span>
+          <span class="fact-value">≈ 47m TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shenzhen throughput</span>
+          <span class="fact-value">≈ 30m TEU <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai draft</span>
+          <span class="fact-value">≈ 15.5 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shenzhen draft</span>
+          <span class="fact-value">≈ 16 m <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shanghai hinterland</span>
+          <span class="fact-value">Yangtze River Delta <ConfidenceBadge level="HIGH" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Shenzhen hinterland</span>
+          <span class="fact-value">Pearl River Delta <ConfidenceBadge level="HIGH" /></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Why the Shanghai vs Shenzhen decision matters</h2>
+    <p>
+      Shanghai and Shenzhen are two of China’s most important export gateways, but they do not compete
+      for the same factory base. Shanghai’s hinterland is the Yangtze River Delta — electronics,
+      machinery, textiles and consumer goods. Shenzhen’s hinterland is the Pearl River Delta —
+      electronics, appliances, furniture and the fastest-turnaround consumer-goods supply chain in
+      China. The wrong choice is not just a slower schedule; it is an extra inland trucking leg before
+      the container ever reaches the sea.
+    </p>
+    <p>
+      Both profiles also warn that the headline port name hides a terminal decision. Shanghai means
+      Yangshan versus Waigaoqiao; Shenzhen means Yantian versus Shekou versus Chiwan. Naming only
+      “Shanghai” or “Shenzhen” on the purchase order can put the container in the wrong terminal and
+      cause a missed sailing. The correct decision therefore has two layers: first pick the region,
+      then pin down the terminal.
+    </p>
+    <p>
+      The data on this page comes from the existing Shanghai and Shenzhen port profiles (updated
+      {shanghaiUpdated} and {shenzhenUpdated} respectively). Where the profiles do not publish a value —
+      freight rates, terminal fees, transit windows — the page says so instead of filling the gap with
+      estimates.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Shanghai vs Shenzhen at a glance</h2>
+      <p>
+        Use this table as the orientation before the origin-region framework below. The rows that
+        matter most are hinterland, terminals and manufacturing cluster; throughput and draft are close
+        enough that they rarely override the factory location.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'parameter', label: 'Parameter' },
+          { key: 'shanghai', label: 'Shanghai' },
+          { key: 'shenzhen', label: 'Shenzhen' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={comparisonRows}
+        caption="Side-by-side comparison from the Shanghai and Shenzhen port profiles. Verify terminal names, cut-offs and sailing availability with the carrier before booking."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai & Shenzhen port profiles" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Direct Gulf sailings and terminal routing</h2>
+    <p>
+      The Shanghai profile says all major carriers offer direct Shanghai–Jebel Ali sailings, and several
+      call Dammam, Hamad and Jeddah directly. That is the East China schedule advantage. The Shenzhen
+      profile says Yantian has the deepest draft and the most direct ocean services for Gulf full-container
+      loads, while Shekou is the electronics and Hong Kong cross-border hub. The Shenzhen profile also
+      notes that being further south can shave a day or two versus a Shanghai loading on the same route —
+      but the bigger variable is the carrier service and whether it transships.
+    </p>
+    <p>
+      In practice, the sailing question is secondary to the factory question. Once you know whether the
+      goods are East China or South China, you should compare the nearest gateway’s direct services and
+      name the specific terminal, not compare the two regions as if they were interchangeable.
+    </p>
+
+    <div class="grid grid--2 mt-2">
+      <Card title="Choose Shanghai when...">
+        <ul>
+          <li>The factory is in Jiangsu, Shanghai, Zhejiang or the northern YRD.</li>
+          <li>The goods are YRD electronics, machinery, textiles or consumer goods.</li>
+          <li>Time-sensitive cargo needs the densest direct Gulf schedule.</li>
+          <li>You can specify Yangshan versus Waigaoqiao on the booking.</li>
+        </ul>
+      </Card>
+      <Card title="Choose Shenzhen instead when...">
+        <ul>
+          <li>The factory is in the Pearl River Delta or wider Guangdong.</li>
+          <li>The goods are PRD electronics, appliances or fast-turnaround consumer goods.</li>
+          <li>You need Yantian deep-water FCL or Shekou/Hong Kong cross-border routing.</li>
+          <li>You can specify Yantian, Shekou or Chiwan on the booking.</li>
+        </ul>
+      </Card>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The origin-region decision framework</h2>
+      <p>
+        This is the core of the page. The port profiles make the rule simple: match the load port to the
+        factory cluster. The table below turns that into routing decisions, and the sub-sections explain
+        the two main cargo families.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'cargo', label: 'Cargo / origin profile' },
+          { key: 'bestPort', label: 'Best-fit port' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Origin routing heuristics from the port profiles, not guaranteed carrier schedules. Confirm the inland leg and sailing availability before choosing."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai vs Shenzhen origin-region routing" />
+
+      <h3 class="mt-3">Yangtze River Delta cargo → Shanghai</h3>
+      <p>
+        Shanghai’s hinterland is the YRD manufacturing heartland of electronics, machinery, textiles and
+        consumer goods. If the supplier is in Jiangsu, Shanghai or Zhejiang, loading at Shanghai keeps
+        the inland leg short and puts the cargo on the region’s densest direct Gulf schedule. The
+        terminal detail matters: Yangshan for ultra-large vessels and Waigaoqiao for factories closer to
+        the city.
+      </p>
+
+      <h3>Pearl River Delta cargo → Shenzhen</h3>
+      <p>
+        Shenzhen’s hinterland is the PRD — electronics, appliances, furniture and fast-turnaround
+        consumer goods. Yantian is the deep-water FCL workhorse for Gulf-bound containers, while Shekou
+        suits electronics and cargo moving across the border with Hong Kong. For most PRD shipments,
+        Shenzhen is the nearest efficient gateway, and sending the cargo north to Shanghai adds cost and
+        time without a corresponding benefit.
+      </p>
+
+      <h3 class="mt-3">Common mistakes that push cargo to the wrong origin gate</h3>
+      <ul>
+        <li>Choosing a port by headline name instead of by factory location.</li>
+        <li>Trucking Pearl River Delta goods to Shanghai or YRD goods to Shenzhen for a small rate gap.</li>
+        <li>Writing only “Shanghai” or “Shenzhen” on the PO and letting the wrong terminal be selected.</li>
+        <li>Assuming a southern port is always faster without checking the actual carrier service.</li>
+        <li>Comparing a direct Shanghai sailing against a transshipped Shenzhen service as if they were equal.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Facilities and hinterland compared</h2>
+    <p>
+      The profiles do not enumerate berth counts or terminal-by-terminal operator detail, but they do
+      publish the terminal split, throughput, draft and hinterland that decide the origin choice. The
+      real difference is not a large infrastructure gap; it is the direction each port’s hinterland
+      points.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'factor', label: 'Factor' },
+        { key: 'shanghai', label: 'Shanghai' },
+        { key: 'shenzhen', label: 'Shenzhen' },
+        { key: 'note', label: 'Planning note' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={facilityRows}
+      caption="Facility and hinterland orientation from the port profiles, not a terminal directory. Confirm operator, berth and terminal details before booking."
+    />
+    <SourceList sources={portSources} title="Sources — Shanghai & Shenzhen facilities and hinterland" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Cost differences: what the port profiles do and do not publish</h2>
+      <p>
+        The profiles do not publish freight rates, transit times, THC or terminal fees, so this page
+        does not invent a “cheaper port”. The only cost-shaped difference in the data is structural: the
+        inland haul to the nearest gateway. A PRD factory shipped through Shenzhen avoids the long haul
+        to Shanghai; a YRD factory shipped through Shanghai avoids the long haul to Shenzhen.
+      </p>
+      <p>
+        Compare quotes on the same scope: factory to terminal, direct-versus-transshipped ocean leg and
+        terminal handling. The inland trucking difference usually dominates any small ocean-rate spread,
+        which is why the port should follow the factory region rather than a headline rate.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'item', label: 'Cost component' },
+          { key: 'shanghai', label: 'Shanghai' },
+          { key: 'shenzhen', label: 'Shenzhen' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={costRows}
+        caption="Only structural cost drivers are described. Quantified fees, freight and transit are LOW confidence because the port profiles do not publish them."
+      />
+      <SourceList sources={portSources} title="Sources — Shanghai & Shenzhen cost context" />
+
+      <div class="note mt-2">
+        <strong>Rate and fee discipline:</strong> do not accept a “Shenzhen is always cheaper” or
+        “Shanghai is always faster” claim without a live factory-to-terminal quote. The port profiles
+        support the origin-region logic above, but booking-level numbers must come from the carrier or
+        forwarder.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Origin compliance and booking notes</h2>
+    <p>
+      Both ports are China origin seaports, so the choice between them does not change Chinese export
+      formalities or destination-country import compliance. The port profiles do not publish a
+      port-specific certification requirement, and none is invented here. The booking-level issues are
+      operational: name the exact terminal, use the correct UN/LOCODE, confirm cut-off times and keep
+      the bill of lading consistent with the intended Gulf routing.
+    </p>
+    <p>
+      For Shanghai, confirm Yangshan versus Waigaoqiao. For Shenzhen, the profile warns that “Shenzhen”
+      is really three ports under one name — Yantian, Shekou and Chiwan — and that importers who only
+      specify “Shenzhen” can be routed to the wrong terminal and miss a sailing. Always pin down the
+      terminal before booking.
+    </p>
+    <SourceList sources={portSources} title="Sources — China origin-port booking context" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>8. Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Key takeaways</h2>
+    <ol>
+      <li>Shanghai serves the Yangtze River Delta; Shenzhen serves the Pearl River Delta — the factory region, not the port name, should decide the routing.</li>
+      <li>Shanghai is the larger container gateway at ≈47m TEU versus Shenzhen’s ≈30m TEU, but Shenzhen is the natural gateway for PRD electronics and consumer goods.</li>
+      <li>Both names hide a terminal decision: Shanghai = Yangshan/Waigaoqiao, Shenzhen = Yantian/Shekou/Chiwan.</li>
+      <li>For Gulf FCL, Yantian is the Shenzhen workhorse; for electronics and Hong Kong cross-border flows, Shekou is the fit.</li>
+      <li>No freight rate, transit or certification number is invented here — compare factory-to-terminal quotes and name the exact terminal before booking.</li>
+    </ol>
+  </section>
+
+  <section class="section container">
+    <h2>The Author's Take</h2>
+    <p><strong>Position:</strong> I would not choose Shanghai or Shenzhen on ocean rate alone. A PRD factory should load Shenzhen, and a YRD factory should load Shanghai, because the inland haul is the part of the cost that is certain in the port profiles — the freight and transit figures are not published.</p>
+    <ul>
+      <li>Shanghai throughput minus Shenzhen throughput is 47 − 30 = 17m TEU, but that only measures national gateway scale, not your factory’s nearest terminal.</li>
+      <li>The Shenzhen profile says its southern location can shave a day or two versus Shanghai on the same route, but the carrier service and transshipment are the larger variables.</li>
+      <li>The terminal names — Yangshan, Waigaoqiao, Yantian, Shekou, Chiwan — change cut-offs and routing more than the headline city names do.</li>
+    </ul>
+    <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
+  </section>
+
+  <section class="section container">
+    <h2>9. Data freshness & monthly update cadence</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. It draws on
+      the Shanghai port profile (updated {shanghaiUpdated}) and the Shenzhen port profile (updated
+      {shenzhenUpdated}). Throughput, draft and hinterland rows remain HIGH confidence because they come
+      directly from those profiles; interpretive schedule and cost rows stay LOW or MEDIUM until a
+      carrier or terminal source confirms the booking-level values.
+    </p>
+    <p>
+      If a port profile is refreshed with new throughput, terminal or draft data, this comparison is
+      updated and the confidence badges are adjusted. For live rates, cut-offs and sailing availability,
+      use the carrier or forwarder quote rather than this page.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an all-in Shanghai or Shenzhen origin quote"
+      text="Tell us the factory location, commodity, container or CBM and Gulf destination, and we will connect you with providers who can quote the correct inland leg, ocean service and terminal handling together."
+    />
+  </section>
+
+  <section class="section container">
+    <h2>Explore related pages</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Shanghai port profile"
+        description="Yangtze River Delta gateway: Yangshan vs Waigaoqiao, throughput, hinterland and Gulf sailing context."
+        href="/ports/shanghai/"
+      />
+      <Card
+        title="Shenzhen port profile"
+        description="Pearl River Delta gateway: Yantian, Shekou and Chiwan routing for Gulf FCL and electronics."
+        href="/ports/shenzhen/"
+      />
+      <Card
+        title="China to GCC routes"
+        description="Compare the Shanghai and Shenzhen Gulf lanes across the route directory."
+        href="/routes/"
+      />
+      <Card
+        title="Shanghai → Jebel Ali route"
+        description="The densest China-to-GCC lane with carrier, transit and risk context."
+        href="/routes/shanghai-jebel-ali/"
+      />
+      <Card
+        title="Shenzhen → Jebel Ali route"
+        description="The Pearl River Delta origin lane into the UAE’s main re-export gateway."
+        href="/routes/shenzhen-jebel-ali/"
+      />
+      <Card
+        title="Ports & terminals directory"
+        description="Full China origin and GCC destination port index."
+        href="/ports/"
+      />
+    </div>
+  </section>
+</BaseLayout>

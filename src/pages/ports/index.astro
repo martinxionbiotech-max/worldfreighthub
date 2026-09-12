@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
+import Card from '../../components/Card.astro';
 import { gccPorts } from '../../data/gcc-ports';
 import { chinaPorts } from '../../data/china-ports';
 import { SITE_URL } from '../../site';
@@ -125,6 +126,32 @@ const schema = [
       rows={gccRows}
       caption="GCC destination ports — verify with the relevant authority before relying on these details."
     />
+  </section>
+
+  <section class="section container">
+    <h2>Port comparisons</h2>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Jeddah vs Dammam"
+        description="Which Saudi port should your China freight use? Red Sea vs Arabian Gulf, transit, cost and the hinterland decision framework."
+        href="/middleeast/jeddah-vs-dammam/"
+      />
+      <Card
+        title="Shanghai vs Ningbo-Zhoushan"
+        description="East China origin decision: densest Gulf sailings versus deeper draft and Zhejiang bulk/container capacity."
+        href="/middleeast/shanghai-vs-ningbo/"
+      />
+      <Card
+        title="Shanghai vs Shenzhen"
+        description="Choose by factory region: Yangtze River Delta versus Pearl River Delta and the terminal routing behind each."
+        href="/middleeast/shanghai-vs-shenzhen/"
+      />
+      <Card
+        title="Jebel Ali vs Khalifa Port"
+        description="UAE destination decision: Dubai re-export/JAFZA hub versus Abu Dhabi deep-water KIZAD industrial gateway."
+        href="/middleeast/jebel-ali-vs-khalifa-port/"
+      />
+    </div>
   </section>
 
   <section class="section container">
