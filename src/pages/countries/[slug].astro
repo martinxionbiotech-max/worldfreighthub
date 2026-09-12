@@ -7,6 +7,9 @@ import Cta from '../../components/Cta.astro';
 import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import { gccCountries } from '../../data/gcc-countries';
+import { chinaPorts } from '../../data/china-ports';
+import { methods } from '../../data/methods';
+import { directoryProviders } from '../../data/directory';
 import { routes } from '../../data/routes';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
 import { getPortBySlug, portName } from '../../data/lookup';
@@ -26,6 +29,10 @@ const countryPorts = country.ports
   .filter((port) => port !== undefined);
 
 const countryRoutes = routes.filter((route) => route.country === country.slug);
+
+const countryProviderCount = directoryProviders.filter((provider) =>
+  provider.serviceCountries.includes(country.slug),
+).length;
 
 const countrySources = sourcesByIds(countrySourceIds[country.slug] ?? []);
 
@@ -175,6 +182,94 @@ const schema = [
     ) : (
       <p class="muted">No routes published for this country yet.</p>
     )}
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>China origin ports</h2>
+      <p class="muted">
+        These are the principal Chinese loading ports for the GCC corridor. The
+        right gateway depends on where your cargo originates — East China,
+        South China or North China.
+      </p>
+      <div class="grid grid--3 mt-2">
+        {chinaPorts.map((port) => (
+          <Card
+            title={port.name}
+            description={port.hinterland}
+            href={`/ports/${port.slug}/`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Shipping methods to {country.name}</h2>
+    <div class="grid grid--3 mt-2">
+      {methods.map((method) => (
+        <Card
+          title={method.name}
+          description={method.summary}
+          href={`/methods/${method.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Freight providers serving {country.name}</h2>
+      {countryProviderCount > 0 ? (
+        <>
+          <p>
+            <strong>{countryProviderCount}</strong> source-documented
+            provider{countryProviderCount === 1 ? '' : 's'} list {country.name}
+            {' '}as a service destination.
+          </p>
+          <a class="btn btn-secondary mt-2" href="/directory/">
+            Browse the directory
+          </a>
+        </>
+      ) : (
+        <>
+          <p>No providers currently list {country.name}.</p>
+          <a class="btn btn-secondary mt-2" href="/directory/">
+            Browse the full directory
+          </a>
+        </>
+      )}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Planning tools</h2>
+    <Card
+      title="Freight tools & calculators"
+      description="Use the CBM, container loading and volumetric weight calculators before requesting a quote."
+      href="/tools/"
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Evidence &amp; sources</h2>
+      <p>
+        See the evidence records behind this country's duty, VAT and port data.
+      </p>
+      <div class="grid grid--2 mt-2">
+        <Card
+          title="Regulatory evidence"
+          description="Source-to-record trail for duty, VAT and compliance figures."
+          href="/evidence/regulatory/"
+        />
+        <Card
+          title="Port evidence"
+          description="Source mapping for all China and GCC port profiles."
+          href="/evidence/ports/"
+        />
+      </div>
+    </div>
   </section>
 
   <section class="section container">
