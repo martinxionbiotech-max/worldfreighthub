@@ -348,6 +348,33 @@ code {
   color: #a83232;
 }
 
+.volatility-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.volatility--high {
+  background: #fdecec;
+  color: #a83232;
+}
+
+.volatility--medium {
+  background: #eef2f8;
+  color: #5b6b82;
+}
+
+.volatility--low {
+  background: #e7f6ec;
+  color: #146c2e;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -1074,4 +1101,3 @@ html[dir="rtl"] ul {
   border-color: var(--amber-400);
   color: #fff;
 }
-

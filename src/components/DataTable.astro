@@ -1,11 +1,12 @@
 ---
 import ConfidenceBadge from './ConfidenceBadge.astro';
+import VolatilityBadge from './VolatilityBadge.astro';
 import type { Locale } from '../i18n/ui';
 
 export interface Column {
   key: string;
   label: string;
-  type?: 'text' | 'confidence' | 'amount' | 'number' | 'link';
+  type?: 'text' | 'confidence' | 'volatility' | 'amount' | 'number' | 'link';
 }
 
 interface Props {
@@ -37,6 +38,8 @@ const { columns, rows, caption, locale = 'en' } = Astro.props;
               <td>
                 {col.type === 'confidence' ? (
                   <ConfidenceBadge level={value} locale={locale} />
+                ) : col.type === 'volatility' ? (
+                  <VolatilityBadge level={value} />
                 ) : col.type === 'amount' ? (
                   typeof value === 'number' && value > 0 ? (
                     `$${value.toFixed(2)}`

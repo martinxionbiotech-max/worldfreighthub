@@ -8,6 +8,7 @@ interface OriginProfile {
 
 interface DestProfile {
   note: string;
+  volatility: 'HIGH' | 'MEDIUM' | 'LOW';
   routing: string;
   transitNote: string;
   costRows: RouteCostRow[];
@@ -36,6 +37,7 @@ const originProfiles: Record<string, OriginProfile> = {
 const destProfiles: Record<string, DestProfile> = {
   'jeddah': {
     note: "Jeddah is Saudi Arabia's Red Sea gateway and its busiest port, serving the western and central Kingdom.",
+    volatility: 'HIGH',
     routing: "Red Sea routing means no Strait of Hormuz exposure — a plus when Gulf tensions spike.",
     transitNote:
       'Direct sailings are common, with some services transshipping via Singapore or Colombo. Red Sea routing avoids the Strait of Hormuz.',
@@ -53,6 +55,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'dammam': {
     note: "Dammam is Saudi Arabia's Gulf gateway, serving the Eastern Province and Riyadh via road and rail links inland.",
+    volatility: 'HIGH',
     routing: "Gulf routing passes through the Strait of Hormuz, the corridor most exposed to geopolitical risk.",
     transitNote:
       'Mostly transshipped via Singapore or Colombo; direct Gulf calls are less frequent than to Jeddah. Strait of Hormuz transit is the key risk variable.',
@@ -70,6 +73,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'jebel-ali': {
     note: "Jebel Ali is the largest port in the Middle East and the UAE's re-export hub, with a vast free zone.",
+    volatility: 'MEDIUM',
     routing: "the highest-frequency corridor on the China–GCC lane, with the most carrier options.",
     transitNote:
       'The densest schedule on the lane — the most direct calls and the most carrier choices, though some services still transship via Singapore.',
@@ -87,6 +91,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'hamad': {
     note: "Hamad Port is Qatar's sole commercial gateway, built to handle the country's post-blockade self-sufficiency push.",
+    volatility: 'MEDIUM',
     routing: "a single-gateway market — all Qatar-bound container cargo clears through Hamad.",
     transitNote:
       'Fewer sailings than the UAE or Saudi lanes; transshipment via Singapore or a regional hub is common. Schedule windows are wider.',
@@ -104,6 +109,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'shuwaikh': {
     note: "Shuwaikh is Kuwait's main commercial port, handling general and containerised cargo near Kuwait City.",
+    volatility: 'MEDIUM',
     routing: "a lower-frequency lane than the UAE or Saudi, so schedule windows are wider.",
     transitNote:
       'A low-frequency lane; most services transship via Singapore or a regional hub. Expect wider schedule windows and more routing variability.',
@@ -121,6 +127,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'sohar': {
     note: "Sohar is Oman's primary northern gateway and a fast-growing container hub with a deep-water port.",
+    volatility: 'MEDIUM',
     routing: "often less congested than Jebel Ali or Jeddah, which can mean faster clearance.",
     transitNote:
       'A growing lane with improving direct calls; less congestion than the bigger hubs. Still transits the Strait of Hormuz via the Gulf of Oman approach.',
@@ -138,6 +145,7 @@ const destProfiles: Record<string, DestProfile> = {
   },
   'khalifa-bin-salman': {
     note: "Khalifa bin Salman Port is Bahrain's main gateway, linked to Saudi's Eastern Province by the King Fahd Causeway.",
+    volatility: 'MEDIUM',
     routing: "a strategic alternate entry for the Dammam and Riyadh markets.",
     transitNote:
       'Moderate frequency, typically transshipped via a regional hub. The King Fahd Causeway truck bridge adds an overland leg into Saudi Arabia.',
@@ -254,6 +262,7 @@ export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
       originPort: origin,
       destPort: dest.port,
       country: dest.country,
+      volatility: destProfile.volatility,
       transitDays: { typical: dest.typical, range: [15, 30] as [number, number] },
       confidence: 'LOW' as const,
       note: 'estimate — verify with the relevant carrier before relying on this figure',

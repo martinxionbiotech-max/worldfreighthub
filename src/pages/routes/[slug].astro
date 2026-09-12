@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import VolatilityBadge from '../../components/VolatilityBadge.astro';
 import DataTable from '../../components/DataTable.astro';
 import SourceList from '../../components/SourceList.astro';
 import Cta from '../../components/Cta.astro';
@@ -123,6 +124,10 @@ const schema = [
         <span class="fact-label">Freight cost</span>
         <span class="fact-value">{costSummary}</span>
       </div>
+      <div class="fact">
+        <span class="fact-label">Route volatility</span>
+        <span class="fact-value"><VolatilityBadge level={route.volatility} /></span>
+      </div>
       {destCountry && (
         <div class="fact">
           <span class="fact-label">Import duty</span>
@@ -140,6 +145,8 @@ const schema = [
       <ConfidenceBadge level={route.confidence} /> Indicative ranges only — not a
       live quote. Last reviewed: {route.updated}. Duty/VAT from {destCountry ? destCountry.name : route.country} customs sources; freight costs shift weekly
       with fuel, season and geopolitical risk. Confirm a current quote before booking.
+      Volatility reflects how much cost and transit time vary with geopolitical
+      and seasonal conditions — it is not a quality judgement.
     </p>
   </section>
 

@@ -21,6 +21,7 @@ const rows = routes.map((route) => ({
   destination: portName(route.destPort),
   country: { href: `/countries/${route.country}/`, label: countryName(route.country) },
   transit: `${route.transitDays.typical} days`,
+  volatility: route.volatility,
   confidence: route.confidence,
 }));
 
@@ -100,6 +101,7 @@ const schema = [
         { key: 'destination', label: 'Destination' },
         { key: 'country', label: 'Country', type: 'link' },
         { key: 'transit', label: 'Typical transit' },
+        { key: 'volatility', label: 'Volatility', type: 'volatility' },
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={rows}

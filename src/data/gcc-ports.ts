@@ -3,6 +3,15 @@ import type { Port } from './types';
 export const gccPorts: Port[] = [
   {
     slug: 'jeddah',
+    decisionScore: {
+      score: 3.3,
+      factors: [
+        { label: 'Frequency', value: 4 },
+        { label: 'Resilience', value: 2 },
+        { label: 'Access', value: 4 },
+      ],
+      note: 'Red Sea routing volatility lowers Resilience.',
+    },
     confidence: 'HIGH',
     name: 'Jeddah Islamic Port',
     country: 'Saudi Arabia',
@@ -47,6 +56,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'dammam',
+    decisionScore: {
+      score: 3.3,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 2 },
+        { label: 'Access', value: 5 },
+      ],
+      note: 'Hormuz exposure lowers Resilience; strongest inland reach to Riyadh.',
+    },
     confidence: 'HIGH',
     name: 'King Abdulaziz Port Dammam',
     country: 'Saudi Arabia',
@@ -87,6 +105,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'riyadh-dry-port',
+    decisionScore: {
+      score: 2.7,
+      factors: [
+        { label: 'Frequency', value: 2 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Inland dry port; depends on Dammam feed.',
+    },
     confidence: 'HIGH',
     name: 'Riyadh Dry Port',
     country: 'Saudi Arabia',
@@ -127,6 +154,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'jebel-ali',
+    decisionScore: {
+      score: 4.0,
+      factors: [
+        { label: 'Frequency', value: 5 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 4 },
+      ],
+      note: 'Highest carrier density on the corridor.',
+    },
     confidence: 'HIGH',
     name: 'Jebel Ali',
     country: 'United Arab Emirates',
@@ -167,6 +203,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'khalifa-port-abu-dhabi',
+    decisionScore: {
+      score: 3.3,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 4 },
+      ],
+      note: 'KIZAD industrial hinterland.',
+    },
     confidence: 'HIGH',
     name: 'Khalifa Port Abu Dhabi',
     country: 'United Arab Emirates',
@@ -207,6 +252,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'port-khalid',
+    decisionScore: {
+      score: 3.0,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Sharjah gateway; secondary to Jebel Ali.',
+    },
     confidence: 'HIGH',
     name: 'Sharjah / Port Khalid',
     country: 'United Arab Emirates',
@@ -247,6 +301,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'hamad',
+    decisionScore: {
+      score: 3.0,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Single-gateway market.',
+    },
     confidence: 'HIGH',
     name: 'Hamad Port',
     country: 'Qatar',
@@ -287,6 +350,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'shuwaikh',
+    decisionScore: {
+      score: 2.7,
+      factors: [
+        { label: 'Frequency', value: 2 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Lower-frequency lane.',
+    },
     confidence: 'HIGH',
     name: 'Shuwaikh',
     country: 'Kuwait',
@@ -327,6 +399,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'shuaiba',
+    decisionScore: {
+      score: 2.7,
+      factors: [
+        { label: 'Frequency', value: 2 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Southern industrial zone.',
+    },
     confidence: 'HIGH',
     name: 'Shuaiba',
     country: 'Kuwait',
@@ -367,6 +448,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'sohar',
+    decisionScore: {
+      score: 3.3,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 4 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Less congested than Jebel Ali/Jeddah.',
+    },
     confidence: 'HIGH',
     name: 'Sohar',
     country: 'Oman',
@@ -407,6 +497,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'salalah',
+    decisionScore: {
+      score: 3.0,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 3 },
+      ],
+      note: 'Southern deep-water transshipment hub.',
+    },
     confidence: 'HIGH',
     name: 'Salalah',
     country: 'Oman',
@@ -447,6 +546,15 @@ export const gccPorts: Port[] = [
   },
   {
     slug: 'khalifa-bin-salman',
+    decisionScore: {
+      score: 3.3,
+      factors: [
+        { label: 'Frequency', value: 3 },
+        { label: 'Resilience', value: 3 },
+        { label: 'Access', value: 4 },
+      ],
+      note: 'King Fahd Causeway reach into Saudi.',
+    },
     confidence: 'HIGH',
     name: 'Khalifa bin Salman',
     country: 'Bahrain',

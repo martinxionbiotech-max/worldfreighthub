@@ -124,6 +124,33 @@ const schema = [
     </p>
   </section>
 
+  {port.decisionScore && (
+    <section class="section section--alt">
+      <div class="container">
+        <h2>Port decision score</h2>
+        <p class="lead">
+          <strong>{port.decisionScore.score.toFixed(1)} / 5</strong>
+        </p>
+        <div class="fact-grid mt-2">
+          {port.decisionScore.factors.map((factor) => (
+            <div class="fact">
+              <span class="fact-label">{factor.label}</span>
+              <span class="fact-value">{factor.value} / 5</span>
+            </div>
+          ))}
+        </div>
+        <p class="mt-2"><strong>Note:</strong> {port.decisionScore.note}</p>
+        <p class="muted mt-2">
+          Decision Score = mean of three 1–5 factors — schedule Frequency
+          (direct-sailing density), Resilience (congestion + geopolitical risk
+          tolerance), and Access (hinterland reach). Editorial assessment from
+          documented port data, not a live ranking or endorsement.{' '}
+          <a href="/methodology/">See methodology</a>.
+        </p>
+      </div>
+    </section>
+  )}
+
   <section class="section container">
     <h2>Hinterland</h2>
     <p>{port.hinterland}</p>

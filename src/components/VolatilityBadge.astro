@@ -1,0 +1,11 @@
+---
+type Volatility = 'HIGH' | 'MEDIUM' | 'LOW';
+
+interface Props {
+  level: Volatility;
+}
+
+const { level } = Astro.props;
+---
+
+<span class={`volatility-badge volatility--${level.toLowerCase()}`}>{level}</span>

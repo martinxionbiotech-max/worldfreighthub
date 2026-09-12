@@ -60,6 +60,11 @@ export interface Port {
   insight: string;
   keyTakeaways: string[];
   faqs: FaqItem[];
+  decisionScore?: {
+    score: number;
+    factors: { label: string; value: number }[];
+    note: string;
+  };
   updated: string;
 }
 
@@ -75,6 +80,7 @@ export interface Route {
   originPort: string;
   destPort: string;
   country: string;
+  volatility: 'HIGH' | 'MEDIUM' | 'LOW';
   transitDays: { typical: number; range: [number, number] };
   confidence: Confidence;
   note?: string;
