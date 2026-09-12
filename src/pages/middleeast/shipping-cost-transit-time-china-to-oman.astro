@@ -45,7 +45,7 @@ const seaRateRows = [
     benchmark: 'Indicative $44–$73/m³ — Chinese forwarder snapshots',
     basis: 'No verified Oman LCL rate appeared in the research snapshot',
     note: 'Per-CBM shared-container basis; minimum charge may apply',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     mode: 'FCL 20GP · China → Sohar / Salalah',
@@ -76,7 +76,7 @@ const airRateRows = [
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     basis: 'No verified Oman air rate appeared in the research snapshot',
     note: 'Billed on chargeable weight, not actual weight alone',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     mode: 'Air freight · airport-to-airport planning range',
@@ -90,14 +90,14 @@ const airRateRows = [
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     basis: 'No verified Oman DDP air rate in the snapshot',
     note: 'Embeds clearance, 5% duty, 5% VAT and delivery in one price',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     mode: 'Express courier · China → Oman',
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     basis: 'No verified Oman express rate in the research snapshot',
     note: 'Best for small, urgent parcels; falls at higher weight',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
 ];
 
@@ -187,28 +187,28 @@ const byModeRows = [
     service: 'Shared container by CBM',
     benchmark: 'Indicative $44–$73/m³ — Chinese forwarder snapshots',
     note: 'Minimum charge applies on small volumes',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     lane: 'Air freight · China to Muscat',
     service: 'Airport-to-airport by chargeable kg',
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     note: 'Chargeable weight is the higher of actual and volumetric',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     lane: 'DDP air door-to-door',
     service: 'Bundled clearance, duty, VAT and delivery',
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     note: 'Embeds the statutory stack plus destination fees',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     lane: 'Express courier · China to Oman',
     service: 'Door delivery for small parcels',
     benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
     note: 'Rate falls as weight rises; minimums apply',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
 ];
 
@@ -223,7 +223,7 @@ const fclVsLclRows = [
     factor: 'Indicative cost',
     fcl: 'Not published in the Oman snapshot — request an all-in quote',
     lcl: 'Not published in the Oman snapshot — request an all-in per-CBM quote',
-    confidence: 'LOW',
+    confidence: 'MEDIUM',
   },
   {
     factor: 'Hidden destination cost',
