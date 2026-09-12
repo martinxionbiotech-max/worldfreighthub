@@ -110,6 +110,7 @@ export interface Method {
   tldr: string;
   definition: string;
   bestFor: string[];
+  whenNotToChoose: string[];
   pricingLogic: string;
   costRows: MethodCostRow[];
   transitTime: { range: string; note: string; confidence: Confidence };

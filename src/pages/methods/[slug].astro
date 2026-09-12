@@ -106,6 +106,15 @@ const schema = [
   </section>
 
   <section class="section container">
+    <h2>When NOT to choose {shortName}</h2>
+    <ul>
+      {method.whenNotToChoose.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section container">
     <h2>How {shortName} pricing works</h2>
     <p>{method.pricingLogic}</p>
   </section>

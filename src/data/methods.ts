@@ -16,6 +16,11 @@ export const methods: Method[] = [
       'High-value or fragile goods that should not be consolidated with other cargo.',
       'Scheduled, repeat shipments where a predictable door-to-door flow matters.',
     ],
+    whenNotToChoose: [
+      'Cargo well under one container load — you pay for empty space',
+      'Time-critical shipments better suited to air freight',
+      'Low-value cargo where the per-box rate exceeds the cargo value',
+    ],
     pricingLogic:
       'FCL is priced per container, not per cubic metre. The ocean freight is a flat rate for the box, and you add origin and destination terminal handling (OTHC/DTHC), bunker and documentation fees on top. The per-unit cost falls as you fill the box — which is the whole point.',
     costRows: [
@@ -107,6 +112,11 @@ export const methods: Method[] = [
       'Cargo that is light but bulky, where per-CBM pricing beats per-kilo alternatives.',
       'Importers who value flexibility over the lowest possible per-unit cost.',
     ],
+    whenNotToChoose: [
+      'Cargo large enough to fill most of a container — FCL becomes cheaper per unit',
+      'Fragile or high-value cargo that tolerates repeated handling poorly',
+      'Cargo with fixed delivery dates — LCL has more handling and schedule variability',
+    ],
     pricingLogic:
       'LCL is priced per CBM, usually with a 1 CBM minimum. On top of the ocean freight you pay CFS (container freight station) charges at both ends for consolidation and de-consolidation. The all-in per-CBM rate is higher than FCL per-CBM — you are buying convenience, not volume efficiency.',
     costRows: [
@@ -189,6 +199,11 @@ export const methods: Method[] = [
       'High-value goods where insurance and holding costs make speed worth the premium.',
       'Light, dense or perishable cargo with a short shelf life.',
       'Urgent replenishment, spare parts, and seasonal stock-outs.',
+    ],
+    whenNotToChoose: [
+      'Heavy, low-value cargo where the per-kg premium erases the margin',
+      'Cargo with no time pressure — sea freight is far cheaper per unit',
+      'Very large or outsize cargo that exceeds airfreight dimensional limits',
     ],
     pricingLogic:
       'Air freight is priced per kilogram of chargeable weight. Chargeable weight is the higher of gross weight and volumetric weight, where volumetric weight = length × width × height (cm) ÷ 6000. A light but bulky box is charged on its volume, not its scale weight — that is the single biggest surprise for first-time air shippers.',
@@ -273,6 +288,11 @@ export const methods: Method[] = [
       'Bulk or containerised goods that suit block-train consolidation.',
       'A cost-speed compromise between air freight and sea freight.',
     ],
+    whenNotToChoose: [
+      'Cargo to the Arabian Gulf ports — rail terminates north of the GCC, so sea is the default for Gulf destinations',
+      'Urgent shipments — rail is slower than air and less mature than sea lanes',
+      'Small LCL volumes where consolidation costs dominate',
+    ],
     pricingLogic:
       'Rail is usually priced per container (like FCL) or per CBM for consolidated loads. Rates sit between sea and air — closer to sea for full containers. The economics depend heavily on the corridor and how much of the journey is rail versus road bridging.',
     costRows: [
@@ -356,6 +376,11 @@ export const methods: Method[] = [
       'Sellers who already have a destination agent and want to control the full journey.',
       'Shipments where the buyer has no importer of record in the destination country.',
     ],
+    whenNotToChoose: [
+      'Buyers who already have a local importer-of-record or want to control clearance themselves',
+      'Markets where the seller cannot legally act as importer of record',
+      'Low-value shipments where the DDP premium exceeds the convenience value',
+    ],
     pricingLogic:
       'DDP is a single all-in price, not a freight rate. It bundles ocean or air freight, both ends of clearance, import duty and VAT, and final delivery. The seller calculates the landed cost — freight + insurance + duty + VAT + clearance + delivery — and quotes one number. The risk sits entirely with the seller.',
     costRows: [
@@ -437,6 +462,11 @@ export const methods: Method[] = [
       'Urgent shipments where a 3–7 day door-to-door service is required.',
       'Single low-value-per-weight items where freight is not the dominant cost.',
       'When simplicity and tracking matter more than the freight bill.',
+    ],
+    whenNotToChoose: [
+      'Cargo beyond a few kilograms — the per-kg cost is prohibitive',
+      'Non-urgent freight that can consolidate into air or sea',
+      'Restricted commodities that express networks will not carry',
     ],
     pricingLogic:
       'Express is priced per kilogram of chargeable weight, typically with a higher volumetric divisor (÷ 5000) than air freight (÷ 6000) — so bulky light parcels cost relatively more. You pay a base plus per-kg rate, and door-to-door handling and clearance are bundled in.',

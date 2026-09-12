@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import SourceList from '../../components/SourceList.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { gccCountries } from '../../data/gcc-countries';
+import { SITE_NAME, SITE_URL } from '../../site';
+import type { Source } from '../../data/types';
+
+const pageUrl = `${SITE_URL}/middleeast/china-to-gcc-landed-cost/`;
+const exampleCif = 10000;
+
+const landedCostRows = gccCountries.map((country) => {
+  const dutyPercent = Number.parseFloat(country.dutyRate) || 5;
+  const vatPercent = country.vatRate ?? 0;
+  const dutyMultiplier = 1 + dutyPercent / 100;
+  const vatMultiplier = 1 + vatPercent / 100;
+  const multiplier = dutyMultiplier * vatMultiplier;
+  const landedCost = exampleCif * multiplier;
+  const multiplierLabel = `×${multiplier.toFixed(4).replace(/0+$/, '').replace(/\.$/, '')}`;
+  const upliftLabel = `${((multiplier - 1) * 100).toFixed(2)}% above CIF`;
+
+  return {
+    country: country.name,
+    duty: `${dutyPercent}% on CIF`,
+    vat: country.vatRate === null ? '0% (no VAT)' : `${vatPercent}%`,
+    multiplier: multiplierLabel,
+    uplift: upliftLabel,
+    landedCost: `$${landedCost.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`,
+    confidence: 'MEDIUM',
+  };
+});
+
+const saudiRow = landedCostRows.find((row) => row.country === 'Saudi Arabia');
+
+const faqs = [
+  {
+    q: 'What is the China-to-GCC landed cost formula?',
+    a: 'For a planning estimate, use CIF × (1 + duty rate) × (1 + VAT rate). At the GCC baseline of 5% duty, that means CIF × 1.05 × (1 + VAT rate). This assumes duty is charged on CIF and VAT is charged on the duty-inclusive amount. The actual taxable base and rate can vary by country and HS code.',
+  },
+  {
+    q: 'Which GCC country has the highest landed-cost multiplier?',
+    a: 'Saudi Arabia at the baseline rates: CIF × 1.05 × 1.15 = ×1.2075. On a $10,000 CIF shipment that is $12,075 before destination handling, clearance and delivery fees.',
+  },
+  {
+    q: 'Which GCC countries currently have the lowest landed-cost multiplier?',
+    a: 'Qatar and Kuwait, where the 5% duty applies but VAT is not implemented. The baseline multiplier is CIF × 1.05 × 1.0 = ×1.05, so $10,000 CIF becomes $10,500 before other destination charges.',
+  },
+  {
+    q: 'Does the multiplier include freight, insurance, clearance and delivery?',
+    a: 'No. It only estimates the statutory duty and VAT uplift on an already-known CIF value. You still need to add destination handling, clearance, SABER/SASO where required, inland delivery, and any demurrage or detention.',
+  },
+  {
+    q: 'Should I use DDP or clear the goods myself?',
+    a: 'Use DDP when the buyer wants one delivered price and you have a reliable destination agent and importer-of-record setup. Clear yourself when the buyer already has a local importer of record, wants to control clearance, or when the DDP premium is greater than the convenience it buys.',
+  },
+];
+
+const countryDataSource: Source = {
+  id: 'wfh-gcc-landed-cost-country-data',
+  name: 'WorldFreightHub GCC country data — duty and VAT profiles used for the multiplier table',
+  url: `${SITE_URL}/countries/`,
+  type: 'organization',
+};
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      name: 'China to GCC Landed Cost: Duty + VAT Multiplier by Country',
+      url: pageUrl,
+      description:
+        'Plan China-to-GCC landed cost with the six-country duty and VAT multiplier: Saudi Arabia ×1.2075, UAE ×1.1025, Qatar and Kuwait ×1.05, Oman ×1.1025, and Bahrain ×1.155.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'China to GCC landed cost planning',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="China to GCC Landed Cost: Duty + VAT Multiplier by Country"
+  description="China-to-GCC landed cost decision page: CIF × duty × VAT multipliers for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain, with a $10,000 CIF worked example."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'China to GCC landed cost' },
+        ]}
+      />
+      <span class="badge badge--amber">Estimated · Confidence MEDIUM · Not a quote</span>
+      <h1>China to GCC landed cost: duty + VAT multiplier by country</h1>
+      <p class="lead">
+        The first landed-cost question is not the freight rate — it is which GCC country will clear
+        the goods. Start with CIF, add the country duty and VAT multiplier, then add destination fees.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> landed cost ≈ CIF × (1 + duty%) × (1 + VAT%). On the GCC 5% CIF
+          duty baseline, Saudi Arabia's 15% VAT gives the largest multiplier at ×1.2075 — a
+          $10,000 CIF shipment clears at $12,075 before destination fees. The UAE and Oman are
+          ×1.1025 ($11,025), Bahrain is ×1.155 ($11,550), and Qatar and Kuwait are ×1.05 ($10,500)
+          because they do not currently charge VAT.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Formula</span>
+          <span class="fact-value">CIF × (1 + duty) × (1 + VAT)</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Highest multiplier</span>
+          <span class="fact-value">Saudi Arabia ×1.2075 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Lowest multiplier</span>
+          <span class="fact-value">Qatar / Kuwait ×1.05 <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Example CIF</span>
+          <span class="fact-value">$10,000.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. The planning formula, answered first</h2>
+    <p>
+      For planning, use <strong>CIF × (1 + duty%) × (1 + VAT%)</strong>. The duty is applied first,
+      then VAT is applied to the duty-inclusive amount. The result is the statutory duty + VAT
+      uplift — not the final invoice.
+    </p>
+    <p>
+      <strong>Saudi Arabia worked example:</strong> $10,000 CIF × 1.05 (5% duty) = $10,500, then
+      $10,500 × 1.15 (15% VAT) = <strong>$12,075</strong>. The shorthand multiplier is
+      <strong>×1.2075</strong>.
+    </p>
+    <p class="muted">
+      This multiplier is correct when duty is charged on CIF and VAT is charged on CIF + duty. VAT
+      bases can vary by country and transaction, so treat the figure as a planning estimate, not a
+      customs assessment.
+    </p>
+  </section>
+
+  <section class="section container">
+    <h2>2. Six-country duty + VAT multiplier table</h2>
+    <DataTable
+      columns={[
+        { key: 'country', label: 'Country' },
+        { key: 'duty', label: 'Duty' },
+        { key: 'vat', label: 'VAT' },
+        { key: 'multiplier', label: 'Multiplier' },
+        { key: 'uplift', label: 'CIF uplift' },
+        { key: 'landedCost', label: '$10,000 CIF' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={landedCostRows}
+      caption="Planning multipliers calculated as CIF × (1 + duty) × (1 + VAT) from the GCC country data."
+    />
+    <p class="small muted mt-2">
+      <strong>Footnote:</strong> the multiplier assumes duty applies to CIF and VAT applies to CIF +
+      duty. VAT taxable bases can differ by country, commodity and importer status; some countries may
+      assess VAT on a different base or have special schemes. This table is an estimated planning aid,
+      not a quote. Confirm the final calculation with the destination customs authority or a licensed
+      broker.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>3. The same $10,000 CIF shipment, six ways</h2>
+      <p>
+        The statutory spread is the point. The same goods, same CIF and same HS-code baseline clear at
+        six different amounts before you add a single destination handling fee.
+      </p>
+      <ul>
+        {landedCostRows.map((row) => (
+          <li>
+            <strong>{row.country}:</strong> {row.duty} duty and {row.vat} VAT → {row.multiplier} →
+            {row.landedCost}.
+          </li>
+        ))}
+      </ul>
+      <p class="muted">
+        {saudiRow && (
+          <>
+            On the same $10,000 CIF base, Saudi Arabia clears at {saudiRow.landedCost} and Qatar/Kuwait
+            clear at $10,500.00 — a $1,575.00 statutory difference before destination fees.
+          </>
+        )}
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>4. Country-level duty and VAT notes</h2>
+    <div class="grid grid--2 mt-2">
+      {gccCountries.map((country) => (
+        <Card title={`${country.name} — ${country.dutyRate}`}>
+          <p>
+            <strong>Duty:</strong> {country.dutyRate}. {country.dutyNote}
+          </p>
+          <p>
+            <strong>VAT:</strong> {country.vatNote}
+          </p>
+        </Card>
+      ))}
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. DDP, self-clearance, and the two windows that matter</h2>
+    <div class="grid grid--2">
+      <div>
+        <h3>Choose DDP when</h3>
+        <ul>
+          <li>The buyer wants one delivered price and does not want to touch customs.</li>
+          <li>You already have a destination agent that can act as importer of record.</li>
+          <li>Clearance complexity — Saudi SABER/SASO, for example — is worth bundling into the quote.</li>
+        </ul>
+        <p class="mt-2">
+          <a class="btn btn-secondary" href="/methods/ddp/">DDP method guide</a>
+        </p>
+      </div>
+      <div>
+        <h3>Clear it yourself when</h3>
+        <ul>
+          <li>The buyer has a local importer of record or wants control of the clearance.</li>
+          <li>You can get exact landed-cost quotes and compare destination fees item by item.</li>
+          <li>The seller cannot legally act as importer of record in the destination market.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="mt-3">The two planning windows</h3>
+    <ul>
+      <li>
+        <strong>Qatar 0% VAT window:</strong> Qatar currently adds only the 5% duty (×1.05). Its
+        country data flags that VAT is expected at roughly 5% after the May 2026 e-invoicing law, so
+        forward pricing should not assume 0% VAT lasts forever.
+      </li>
+      <li>
+        <strong>Saudi Arabia 15% VAT:</strong> Saudi Arabia produces the largest baseline multiplier
+        in the GCC at ×1.2075. The tax spread is fixed; the avoidable cost is usually SABER/SASO work
+        not being completed before arrival.
+      </li>
+    </ul>
+  </section>
+
+  <section class="section container">
+    <h2>6. Related tools and country pages</h2>
+    <div class="grid grid--3 mt-2">
+      <Card
+        title="Freight cost calculator"
+        description="Model freight, duty, VAT and destination charges for the China-to-GCC corridor."
+        href="/tools/freight-cost-calculator/"
+      />
+      <Card
+        title="DDP shipping method"
+        description="What Delivered Duty Paid includes and when the seller should take landed-cost risk."
+        href="/methods/ddp/"
+      />
+      {gccCountries.map((country) => (
+        <Card
+          title={country.name}
+          description={`Duty, VAT and clearance profile for ${country.name}.`}
+          href={`/countries/${country.slug}/`}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Frequently asked questions</h2>
+      <FaqBlock items={faqs} />
+    </div>
+  </section>
+
+  <section class="section container">
+    <SourceList sources={[countryDataSource]} title="Sources" />
+    <p class="small muted">
+      <strong>Estimate boundary:</strong> this page is a planning aid built from the published
+      WorldFreightHub GCC country data. It is not a binding landed-cost quote. Duty, VAT and taxable
+      bases must be confirmed with the destination customs authority or a licensed broker for your
+      exact HS code and transaction.
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
