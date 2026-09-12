@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { rates } from '../../data/rates';
+import { routes } from '../../data/routes';
+import { portName } from '../../data/lookup';
+
+const rateRows = rates.map((rate) => {
+  const route = routes.find((item) => item.slug === rate.route);
+  const routeLabel = route
+    ? `${portName(route.originPort)} → ${portName(route.destPort)}`
+    : rate.route;
+
+  return {
+    route: routeLabel,
+    container: rate.container,
+    amount: rate.amount,
+    sourceType: 'Withheld',
+    confidence: rate.confidence,
+    lastReviewed: rate.lastUpdated,
+    note: rate.note,
+  };
+});
+
+const uniqueDestinations = [...new Map(routes.map((route) => [route.destPort, route])).values()];
+
+const rangeRows = uniqueDestinations.map((route) => ({
+  destination: { href: `/ports/${route.destPort}/`, label: portName(route.destPort) },
+  fcl20: route.costRows.find((row) => row.label === '20ft FCL')?.range ?? '—',
+  fcl40: route.costRows.find((row) => row.label === '40ft FCL')?.range ?? '—',
+  lcl: route.costRows.find((row) => row.label === 'LCL (per CBM)')?.range ?? '—',
+  confidence: route.costRows[0]?.confidence ?? 'UNKNOWN',
+  volatility: 'HIGH',
+}));
+---
+
+<BaseLayout
+  title="Freight Rate Evidence"
+  description="Why WorldFreightHub publishes no live freight rates: all current rate slots are placeholders, and the published cost ranges are indicative estimates labelled for volatility."
+  canonical={`${SITE_URL}/evidence/freight-rates/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Freight Rates' }]} />
+      <h1>Freight rate evidence</h1>
+      <p class="lead">
+        WorldFreightHub does not publish unverified real-time freight rates.
+        Current rate slots are placeholders; cost ranges are indicative only.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {rates.length} current rate slots have
+          <strong> amount = 0</strong> and are withheld pending secondary
+          verification. The site publishes {uniqueDestinations.length} indicative
+          destination cost profiles from <code>routes.ts</code>, not live quotes.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Current rate slots are placeholders</h2>
+    <DataTable
+      columns={[
+        { key: 'route', label: 'Route' },
+        { key: 'container', label: 'Container' },
+        { key: 'amount', label: 'Published amount', type: 'amount' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+        { key: 'note', label: 'Note' },
+      ]}
+      rows={rateRows}
+      caption="amount = 0 means the slot is intentionally not published. No external rate source is claimed."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Indicative cost ranges</h2>
+      <p>
+        The ranges below come from the existing route data in
+        <code>src/data/routes.ts</code>. They are planning ranges, not
+        commitments.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'destination', label: 'Destination', type: 'link' },
+          { key: 'fcl20', label: '20ft FCL' },
+          { key: 'fcl40', label: '40ft FCL' },
+          { key: 'lcl', label: 'LCL (per CBM)' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+          { key: 'volatility', label: 'Volatility' },
+        ]}
+        rows={rangeRows}
+        caption="Indicative ranges only. Rates move with fuel, season, capacity and geopolitical risk."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Why freight rates are LOW confidence</h2>
+    <p>
+      Freight prices are highly volatile: fuel, seasonal demand, vessel
+      capacity and Gulf/Red Sea security all change the number between
+      collection and publication. A rate without a current secondary
+      verification is therefore kept as <strong>LOW</strong> and unpublished
+      rather than presented as a live price.
+    </p>
+    <p>
+      <a class="btn btn-secondary" href="/get-quote/">
+        Get a firm, shipment-specific quote
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

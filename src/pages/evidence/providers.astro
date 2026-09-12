@@ -1,0 +1,142 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { directoryProviders } from '../../data/directory';
+
+const providerTotal = directoryProviders.length;
+const ownWebsiteCount = directoryProviders.filter((provider) => provider.sourceType === 'own-website').length;
+const directoryCount = directoryProviders.filter((provider) => provider.sourceType === 'directory').length;
+const lastReviewed = [...new Set(directoryProviders.map((provider) => provider.lastVerified))].join(', ');
+
+const providerRows = [
+  {
+    claim: `${providerTotal} providers are listed in the directory`,
+    source: 'src/data/directory.ts — provider own websites and third-party directory records',
+    sourceType: 'Source-documented',
+    sourceUrl: { href: `${SITE_URL}/directory/`, label: `${SITE_URL}/directory/` },
+    confidence: 'MEDIUM',
+    lastReviewed,
+    notes: 'Current data maps to LEVEL 2 SOURCE VERIFIED.',
+  },
+  {
+    claim: `${ownWebsiteCount} providers are documented by their own website`,
+    source: 'Provider own-website records',
+    sourceType: 'own-website',
+    sourceUrl: { href: `${SITE_URL}/directory/`, label: `${SITE_URL}/directory/` },
+    confidence: 'MEDIUM',
+    lastReviewed,
+    notes: 'Own-website support is source documentation, not independent verification.',
+  },
+  {
+    claim: `${directoryCount} providers are documented by a third-party directory`,
+    source: 'Third-party directory listings',
+    sourceType: 'directory',
+    sourceUrl: { href: `${SITE_URL}/directory/`, label: `${SITE_URL}/directory/` },
+    confidence: 'MEDIUM',
+    lastReviewed,
+    notes: 'Directory support is source documentation, not independent verification.',
+  },
+];
+
+const levelRows = [
+  {
+    level: 'LEVEL 1 LISTED',
+    meaning: 'The provider appears in a list, but identity and claims are not yet source-checked.',
+    currentStatus: 'Below the current baseline',
+  },
+  {
+    level: 'LEVEL 2 SOURCE VERIFIED',
+    meaning: 'Business identity, website and published service claims are checked against a documented source.',
+    currentStatus: 'Current data maps here',
+  },
+  {
+    level: 'LEVEL 3 INDEPENDENTLY VERIFIED',
+    meaning: 'The provider is checked beyond self-published or directory material, through independent evidence.',
+    currentStatus: 'Not claimed for current data',
+  },
+  {
+    level: 'LEVEL 4 PROVIDER CONFIRMED',
+    meaning: 'The provider has confirmed its own listing, with self-reported material still labelled.',
+    currentStatus: 'Not claimed for current data',
+  },
+];
+---
+
+<BaseLayout
+  title="Provider Evidence"
+  description="Evidence summary for the 103-provider WorldFreightHub directory: source-documented counts, the LEVEL 2 source-verified baseline, and the four-level verification model."
+  canonical={`${SITE_URL}/evidence/providers/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Providers' }]} />
+      <h1>Provider evidence</h1>
+      <p class="lead">
+        The directory is source-documented, not independently verified. Here
+        is what that distinction means.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {providerTotal} providers are
+          source-documented — {ownWebsiteCount} against own websites and
+          {directoryCount} against third-party directory records. This is
+          <strong> LEVEL 2 SOURCE VERIFIED</strong>, not independent
+          verification.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Directory evidence records</h2>
+    <DataTable
+      columns={[
+        { key: 'claim', label: 'Claim' },
+        { key: 'source', label: 'Source' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'sourceUrl', label: 'Source URL', type: 'link' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+        { key: 'notes', label: 'Notes' },
+      ]}
+      rows={providerRows}
+      caption="Source-documented means checked against an own website or third-party directory. It is not independent verification."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Source-documented &ne; independently verified</h2>
+      <p>
+        A listing is source-documented when its identity, website and published
+        service claims can be checked against a recorded source. That does not
+        certify licences, registry entries or government registration.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/provider-verification-policy/">
+          Read the provider verification policy
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Four-level verification model</h2>
+    <DataTable
+      columns={[
+        { key: 'level', label: 'Level' },
+        { key: 'meaning', label: 'Meaning' },
+        { key: 'currentStatus', label: 'Current status' },
+      ]}
+      rows={levelRows}
+      caption="Current WorldFreightHub directory data maps to LEVEL 2 SOURCE VERIFIED."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

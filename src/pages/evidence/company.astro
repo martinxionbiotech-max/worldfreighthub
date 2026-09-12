@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL, ORGANIZATION } from '../../site';
+
+const fullAddress = [
+  ORGANIZATION.address.streetAddress,
+  ORGANIZATION.address.addressLocality,
+  ORGANIZATION.address.addressRegion,
+  ORGANIZATION.address.addressCountry,
+].join(', ');
+
+const companyRows = [
+  {
+    claim: 'Operates WorldFreightHub',
+    source: 'YIWU DINGWEI TRADING COMPANY — first-party declaration',
+    sourceType: 'Primary',
+    sourceUrl: { href: `${SITE_URL}/about/`, label: `${SITE_URL}/about/` },
+    confidence: 'HIGH',
+    lastReviewed: 'First-party declaration',
+  },
+  {
+    claim: 'Founded in 2025',
+    source: 'YIWU DINGWEI TRADING COMPANY — first-party declaration',
+    sourceType: 'Primary',
+    sourceUrl: { href: `${SITE_URL}/about/`, label: `${SITE_URL}/about/` },
+    confidence: 'HIGH',
+    lastReviewed: 'First-party declaration',
+  },
+  {
+    claim: `Registered address: ${fullAddress}`,
+    source: 'YIWU DINGWEI TRADING COMPANY — first-party declaration',
+    sourceType: 'Primary',
+    sourceUrl: { href: `${SITE_URL}/about/`, label: `${SITE_URL}/about/` },
+    confidence: 'HIGH',
+    lastReviewed: 'First-party declaration',
+  },
+  {
+    claim: `Unified Social Credit Code: ${ORGANIZATION.identifier.value} (masked)`,
+    source: 'YIWU DINGWEI TRADING COMPANY — first-party declaration',
+    sourceType: 'Primary',
+    sourceUrl: { href: `${SITE_URL}/about/`, label: `${SITE_URL}/about/` },
+    confidence: 'HIGH',
+    lastReviewed: 'First-party declaration',
+  },
+];
+
+const schema = [
+  {
+    type: 'Organization',
+    data: {
+      name: ORGANIZATION.name,
+      url: ORGANIZATION.url,
+      legalName: ORGANIZATION.legalName,
+      foundingDate: ORGANIZATION.foundingDate,
+      address: {
+        '@type': 'PostalAddress',
+        ...ORGANIZATION.address,
+      },
+      identifier: {
+        '@type': 'PropertyValue',
+        ...ORGANIZATION.identifier,
+      },
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Company Evidence"
+  description="First-party company evidence for YIWU DINGWEI TRADING COMPANY, the operator of WorldFreightHub — name, founding year, Yiwu address and masked unified social credit code."
+  canonical={`${SITE_URL}/evidence/company/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Company' }]} />
+      <h1>Company evidence</h1>
+      <p class="lead">
+        First-party facts only — no additional company claims are asserted
+        beyond the operating entity record.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> WorldFreightHub is operated by
+          <strong> {ORGANIZATION.legalName}</strong>, established in Yiwu,
+          Zhejiang, China in {ORGANIZATION.foundingDate}. The four records
+          below are first-party declarations, not independent verifications.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Company evidence records</h2>
+    <DataTable
+      columns={[
+        { key: 'claim', label: 'Claim' },
+        { key: 'source', label: 'Source' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'sourceUrl', label: 'Source URL', type: 'link' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+      ]}
+      rows={companyRows}
+      caption="First-party means the operator's own declaration. HIGH confidence reflects first-party provenance, not independent verification."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Registered details as published</h2>
+      <div class="fact-grid">
+        <div class="fact">
+          <strong>Legal name</strong>
+          <p>{ORGANIZATION.legalName}</p>
+        </div>
+        <div class="fact">
+          <strong>Founded</strong>
+          <p>{ORGANIZATION.foundingDate}</p>
+        </div>
+        <div class="fact">
+          <strong>Address</strong>
+          <p>{fullAddress}</p>
+        </div>
+        <div class="fact">
+          <strong>Credit code</strong>
+          <p>{ORGANIZATION.identifier.value}</p>
+        </div>
+      </div>
+      <p>
+        The unified social credit code is published in masked form only. It is
+        not completed here, and no other registration, licence or shareholder
+        details are asserted.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>What this record does not claim</h2>
+    <ul>
+      <li>It does not claim official registry verification.</li>
+      <li>It does not claim the masked credit code is complete.</li>
+      <li>It does not add employee counts, revenue, certifications or similar company facts.</li>
+    </ul>
+    <p>
+      <a class="btn btn-secondary" href="/about/">
+        Read the about page
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

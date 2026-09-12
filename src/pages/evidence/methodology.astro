@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+
+const confidenceRows = [
+  {
+    level: 'HIGH',
+    rule: 'Confirmed against a primary source.',
+    example: 'A VAT rate published by a national tax authority.',
+  },
+  {
+    level: 'MEDIUM',
+    rule: 'Corroborated by multiple secondary sources, or a primary source that is a snapshot rather than a live figure.',
+    example: 'A freight-rate range assembled from several carrier references.',
+  },
+  {
+    level: 'LOW',
+    rule: 'An unverified estimate with no published primary source.',
+    example: 'A terminal free-time allowance that varies and is not publicly posted.',
+  },
+  {
+    level: 'UNKNOWN',
+    rule: 'Insufficient evidence to classify; no confidence judgement is made.',
+    example: 'A fact not yet checked against any documented source.',
+  },
+];
+
+const methodRows = [
+  {
+    claim: 'Confidence system uses HIGH, MEDIUM, LOW and UNKNOWN.',
+    source: 'WorldFreightHub methodology',
+    sourceType: 'Primary',
+    confidence: 'HIGH',
+    lastReviewed: 'Policy as published',
+  },
+  {
+    claim: 'Workflow is collect, label, cross-check, then publish or withhold.',
+    source: 'WorldFreightHub methodology',
+    sourceType: 'Primary',
+    confidence: 'HIGH',
+    lastReviewed: 'Policy as published',
+  },
+  {
+    claim: 'No figure is fabricated to fill a source gap.',
+    source: 'WorldFreightHub methodology',
+    sourceType: 'Primary',
+    confidence: 'HIGH',
+    lastReviewed: 'Policy as published',
+  },
+];
+---
+
+<BaseLayout
+  title="Methodology Evidence"
+  description="How WorldFreightHub assigns HIGH, MEDIUM, LOW and UNKNOWN confidence labels, and how the collect-label-cross-check-publish-or-withhold workflow keeps data traceable."
+  canonical={`${SITE_URL}/evidence/methodology/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Methodology' }]} />
+      <h1>Methodology evidence</h1>
+      <p class="lead">
+        The confidence system and verification workflow that every other
+        evidence page relies on.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Every figure carries one of four confidence
+          tiers — <strong>HIGH</strong>, <strong>MEDIUM</strong>,
+          <strong> LOW</strong> or <strong>UNKNOWN</strong>. A fact moves
+          through collect &rarr; label &rarr; cross-check &rarr;
+          publish-or-withhold, so unsourced figures are withheld rather than
+          invented.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Confidence system</h2>
+    <DataTable
+      columns={[
+        { key: 'level', label: 'Level', type: 'confidence' },
+        { key: 'rule', label: 'How it is assigned' },
+        { key: 'example', label: 'Example' },
+      ]}
+      rows={confidenceRows}
+      caption="Confidence describes evidence strength, not popularity or editorial preference."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4-step workflow</h2>
+      <ol>
+        <li>
+          <strong>Collect.</strong> Pull the fact from the highest-quality
+          available source and record that source.
+        </li>
+        <li>
+          <strong>Label.</strong> Assign HIGH, MEDIUM, LOW or UNKNOWN based on
+          how the fact was sourced.
+        </li>
+        <li>
+          <strong>Cross-check.</strong> Upgrade when an independent primary
+          source corroborates; otherwise keep the estimate label.
+        </li>
+        <li>
+          <strong>Publish or withhold.</strong> Publish only when sourced or
+          clearly labelled. If neither is possible, withhold the figure.
+        </li>
+      </ol>
+      <p>
+        The full definitions, source hierarchy and rate-specific caveats live
+        on the methodology page.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/methodology/">
+          Read the full methodology
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Methodology evidence records</h2>
+    <DataTable
+      columns={[
+        { key: 'claim', label: 'Claim' },
+        { key: 'source', label: 'Source' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+      ]}
+      rows={methodRows}
+      caption="These are internal policy records. 'Policy as published' means the page itself is the controlling document."
+    />
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

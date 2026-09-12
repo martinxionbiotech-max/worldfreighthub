@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { gccCountries } from '../../data/gcc-countries';
+import { gccPorts } from '../../data/gcc-ports';
+import { chinaPorts } from '../../data/china-ports';
+import { directoryProviders } from '../../data/directory';
+import { rates } from '../../data/rates';
+import { sources } from '../../data/sources';
+
+const categories = [
+  {
+    title: 'Company',
+    href: '/evidence/company/',
+    description: 'First-party facts about the operating entity, with no extra claims.',
+  },
+  {
+    title: 'Methodology',
+    href: '/evidence/methodology/',
+    description: 'How HIGH, MEDIUM, LOW and UNKNOWN confidence labels are assigned.',
+  },
+  {
+    title: 'Data Sources',
+    href: '/evidence/data-sources/',
+    description: 'The complete 14-source registry used across the site.',
+  },
+  {
+    title: 'Regulatory',
+    href: '/evidence/regulatory/',
+    description: 'Government-sourced duty and VAT records for six GCC markets.',
+  },
+  {
+    title: 'Ports',
+    href: '/evidence/ports/',
+    description: 'Source mapping and review dates for all 19 port profiles.',
+  },
+  {
+    title: 'Freight Rates',
+    href: '/evidence/freight-rates/',
+    description: 'Why current rates are placeholders and how indicative ranges are labelled.',
+  },
+  {
+    title: 'Providers',
+    href: '/evidence/providers/',
+    description: 'The 103-provider directory and its LEVEL 2 source-verified baseline.',
+  },
+];
+
+const fieldRows = [
+  { field: 'Claim', meaning: 'The exact fact or figure being asserted.' },
+  { field: 'Source', meaning: 'The named authority, registry or first-party record behind the claim.' },
+  { field: 'Source type', meaning: 'Primary, government, port authority, industry, organization or directory record.' },
+  { field: 'Source URL', meaning: 'The fixed URL from the approved source registry, or an internal first-party page.' },
+  { field: 'Source date', meaning: 'When the source was published, where the source records one.' },
+  { field: 'Checked date', meaning: 'When the claim was last reviewed against its documented source.' },
+  { field: 'Confidence', meaning: 'HIGH, MEDIUM, LOW or UNKNOWN, using the methodology definitions.' },
+  { field: 'Volatility', meaning: 'How quickly the underlying figure can change after publication.' },
+  { field: 'Reviewer', meaning: 'The internal desk or policy owner for the record type.' },
+  { field: 'Notes', meaning: 'Caveats, masking decisions, or reasons a figure is withheld.' },
+];
+
+const portCount = gccPorts.length + chinaPorts.length;
+
+const schema = [
+  {
+    type: 'CollectionPage',
+    data: {
+      name: 'WorldFreightHub Evidence Center',
+      description: 'The data provenance hub for WorldFreightHub — every important data point is traceable to a source, source type, confidence label and review date.',
+      url: `${SITE_URL}/evidence/`,
+      hasPart: categories.map((category) => ({
+        '@type': 'WebPage',
+        name: `${category.title} evidence`,
+        url: `${SITE_URL}${category.href}`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Evidence Center"
+  description="WorldFreightHub's data provenance hub — every important data point (taxes, ports, rates and providers) is traceable to a source, source type, confidence label and review date."
+  canonical={`${SITE_URL}/evidence/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center' }]} />
+      <h1>Evidence Center</h1>
+      <p class="lead">
+        WorldFreightHub's data provenance hub — every important data point is
+        traceable to a source, source type, confidence level and review date.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> The evidence center makes provenance explicit
+          across {sources.length} approved sources, {gccCountries.length} regulatory
+          records, {portCount} port profiles, {rates.length} freight-rate placeholders
+          and {directoryProviders.length} provider records. No figure is published
+          without a documented source or an honest confidence label.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Evidence categories</h2>
+    <div class="grid grid--3">
+      {categories.map((category) => (
+        <a class="card" href={category.href}>
+          <h3>{category.title}</h3>
+          <p>{category.description}</p>
+          <span class="card-link">View evidence &rarr;</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Standard evidence fields</h2>
+      <p>
+        Each evidence record describes the fact, where it came from and how
+        confident we are in it.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'field', label: 'Field' },
+          { key: 'meaning', label: 'What it records' },
+        ]}
+        rows={fieldRows}
+        caption="The full record shape used by the evidence pages. Individual pages expose the fields available in their source data."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>How to read an evidence record</h2>
+    <ul>
+      <li>
+        <strong>HIGH</strong> means a primary authority or first-party record
+        supports the claim.
+      </li>
+      <li>
+        <strong>MEDIUM</strong> means the claim is documented, but not
+        independently verified.
+      </li>
+      <li>
+        <strong>LOW</strong> means the figure is an estimate or placeholder and
+        must be verified before relying on it.
+      </li>
+      <li>
+        <strong>UNKNOWN</strong> means evidence is insufficient to make a
+        judgement, so no confidence claim is made.
+      </li>
+    </ul>
+    <p>
+      <a class="btn btn-secondary" href="/methodology/">
+        Read the full methodology
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

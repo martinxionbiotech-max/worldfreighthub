@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { gccPorts } from '../../data/gcc-ports';
+import { chinaPorts } from '../../data/china-ports';
+import { portSourceIds, sourcesByIds } from '../../data/sources';
+
+const allPorts = [...gccPorts, ...chinaPorts];
+
+const portRows = allPorts.map((port) => {
+  const source = sourcesByIds(portSourceIds[port.slug] ?? [])[0];
+
+  return {
+    port: { href: `/ports/${port.slug}/`, label: port.name },
+    country: port.country,
+    source: source
+      ? { href: source.url, label: source.name }
+      : { href: '', label: 'Source not mapped' },
+    sourceType: source?.type ?? '—',
+    confidence: port.confidence,
+    lastReviewed: port.updated,
+  };
+});
+
+const highCount = allPorts.filter((port) => port.confidence === 'HIGH').length;
+const mediumCount = allPorts.filter((port) => port.confidence === 'MEDIUM').length;
+const otherCount = allPorts.length - highCount - mediumCount;
+---
+
+<BaseLayout
+  title="Port Evidence"
+  description="Source mapping, confidence and review dates for all 19 China-to-GCC port profiles — every port is linked through the approved portSourceIds registry."
+  canonical={`${SITE_URL}/evidence/ports/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Ports' }]} />
+      <h1>Port evidence</h1>
+      <p class="lead">
+        Every port profile is mapped to an approved source and carries its own
+        confidence and last-reviewed date.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {allPorts.length} port profiles are
+          evidence-mapped — {gccPorts.length} GCC ports and {chinaPorts.length} China
+          ports. The current labels are {highCount} HIGH, {mediumCount} MEDIUM
+          and {otherCount} other/unknown.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Port source mapping</h2>
+    <DataTable
+      columns={[
+        { key: 'port', label: 'Port', type: 'link' },
+        { key: 'country', label: 'Country' },
+        { key: 'source', label: 'Source', type: 'link' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+      ]}
+      rows={portRows}
+      caption="Source assignment comes from portSourceIds in src/data/sources.ts. GCC profiles come from gcc-ports.ts; China profiles come from china-ports.ts."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>What the mapping means</h2>
+      <p>
+        Each source is one of the approved registry entries. Port-authority
+        sources are used where the authority publishes the port profile; the
+        World Bank organization source is used where the approved
+        port-authority source is not defined for a China gateway.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/ports/">
+          Browse the port profiles
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

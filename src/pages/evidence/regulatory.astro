@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { gccCountries } from '../../data/gcc-countries';
+import { countrySourceIds, sourcesByIds } from '../../data/sources';
+
+const regulatoryRows = gccCountries.map((country) => {
+  const source =
+    sourcesByIds(countrySourceIds[country.slug] ?? []).find((item) => item.type === 'government') ??
+    sourcesByIds(countrySourceIds[country.slug] ?? [])[0];
+
+  const vat = country.vatRate === null ? '0%' : `${country.vatRate}%`;
+
+  return {
+    claim: `${country.name} VAT = ${vat}; duty = ${country.dutyRate}`,
+    source: source
+      ? { href: source.url, label: source.name }
+      : { href: '', label: 'Source not mapped' },
+    sourceUrl: source?.url ?? '—',
+    sourceType: source?.type ?? 'government',
+    confidence: 'HIGH',
+    lastReviewed: country.updated,
+    notes: `VAT: ${country.vatNote} Duty: ${country.dutyNote}`,
+  };
+});
+
+const zeroVatCount = gccCountries.filter((country) => country.vatRate === null).length;
+const positiveVatCount = gccCountries.length - zeroVatCount;
+---
+
+<BaseLayout
+  title="Regulatory Evidence"
+  description="Government-sourced VAT and import duty evidence for Saudi Arabia, UAE, Qatar, Kuwait, Oman and Bahrain — each record linked to the relevant customs or tax authority."
+  canonical={`${SITE_URL}/evidence/regulatory/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Regulatory' }]} />
+      <h1>Regulatory evidence</h1>
+      <p class="lead">
+        Duty and VAT records for the six GCC destination markets, sourced from
+        national customs and tax authorities.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {gccCountries.length} government-sourced
+          regulatory records cover {positiveVatCount} markets with positive VAT
+          and {zeroVatCount} markets currently at 0% VAT. Base duty is 5% of CIF
+          value across the six records, with category-specific exceptions noted
+          in the data.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Government-sourced duty &amp; VAT records</h2>
+    <DataTable
+      columns={[
+        { key: 'claim', label: 'Claim' },
+        { key: 'source', label: 'Source', type: 'link' },
+        { key: 'sourceUrl', label: 'Source URL' },
+        { key: 'sourceType', label: 'Source type' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        { key: 'lastReviewed', label: 'Last reviewed' },
+        { key: 'notes', label: 'Notes' },
+      ]}
+      rows={regulatoryRows}
+      caption="Qatar and Kuwait have no implemented VAT today, so their current VAT is shown as 0% and the note preserves the policy status."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Why these are HIGH confidence</h2>
+      <p>
+        These records come from national government sources in the approved
+        registry — for example, ZATCA for Saudi Arabia and the respective
+        customs authorities for the other GCC markets. Government provenance is
+        the strongest evidence type on the site.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/countries/">
+          Compare the country data
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

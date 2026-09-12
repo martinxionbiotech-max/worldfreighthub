@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { sources } from '../../data/sources';
+import type { Source } from '../../data/types';
+
+const groupOrder: Source['type'][] = ['government', 'port-authority', 'industry', 'organization'];
+
+const groupLabels: Record<Source['type'], string> = {
+  government: 'Government',
+  'port-authority': 'Port authority',
+  industry: 'Industry',
+  organization: 'Organization',
+};
+
+const sourceGroups = groupOrder.map((type) => ({
+  type,
+  label: groupLabels[type],
+  rows: sources
+    .filter((source) => source.type === type)
+    .map((source) => ({
+      name: { href: source.url, label: source.name },
+      type: source.type,
+      url: source.url,
+    })),
+}));
+
+const typeCounts = groupOrder.map((type) => ({
+  type: groupLabels[type],
+  count: sources.filter((source) => source.type === type).length,
+}));
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'WorldFreightHub approved source registry',
+      description: 'The 14 fixed source URLs permitted for external provenance claims across WorldFreightHub.',
+      url: `${SITE_URL}/evidence/data-sources/`,
+      distribution: sources.map((source) => ({
+        '@type': 'DataDownload',
+        name: source.name,
+        contentUrl: source.url,
+        encodingFormat: 'text/html',
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Data Source Evidence"
+  description="The complete WorldFreightHub source registry: 14 fixed government, port-authority, industry and organization URLs used for data provenance."
+  canonical={`${SITE_URL}/evidence/data-sources/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Data Sources' }]} />
+      <h1>Data source evidence</h1>
+      <p class="lead">
+        The approved source registry — every external provenance URL used on
+        WorldFreightHub is listed here.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {sources.length} fixed source URLs are
+          approved: {typeCounts.map((item) => `${item.count} ${item.type.toLowerCase()}`).join(', ')}.
+          No page may cite an external provenance URL outside this registry.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    {sourceGroups.map((group) => (
+      <div>
+        <h2>{group.label}</h2>
+        <DataTable
+          columns={[
+            { key: 'name', label: 'Source', type: 'link' },
+            { key: 'type', label: 'Type' },
+            { key: 'url', label: 'URL' },
+          ]}
+          rows={group.rows}
+          caption={`${group.rows.length} ${group.label.toLowerCase()} source${group.rows.length === 1 ? '' : 's'}.`}
+        />
+      </div>
+    ))}
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Why a fixed source registry matters</h2>
+      <p>
+        A fixed registry prevents source drift and fabricated URLs. First-party
+        company information and internal policy pages are the only additional
+        provenance records allowed; all other external URLs must match one of
+        these {sources.length} entries.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/evidence/">
+          Back to Evidence Center
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
