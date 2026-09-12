@@ -149,6 +149,38 @@ const schema = [
     <p class="mt-2"><strong>Destination:</strong> {route.destNote}</p>
   </section>
 
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Route intelligence</h2>
+      <div class="grid grid--2 mt-2">
+        <div>
+          <h3>Key chokepoints</h3>
+          <ul>
+            {route.chokepoints.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h3>Geopolitical risks</h3>
+          <ul>
+            {route.risks.map((r) => <li>{r}</li>)}
+          </ul>
+        </div>
+      </div>
+      <div class="grid grid--2 mt-2">
+        <div>
+          <h3>Cargo fit</h3>
+          <ul>
+            {route.cargoFit.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h3>Best-fit decision</h3>
+          <p>{route.bestFit}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section container">
     <h2>Transit time</h2>
     <p class="lead">

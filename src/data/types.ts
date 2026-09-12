@@ -81,6 +81,10 @@ export interface Route {
   insight: string;
   faqs: FaqItem[];
   keyTakeaways: string[];
+  chokepoints: string[];
+  risks: string[];
+  cargoFit: string[];
+  bestFit: string;
 }
 
 export interface MethodFaq {

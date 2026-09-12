@@ -12,6 +12,10 @@ interface DestProfile {
   transitNote: string;
   costRows: RouteCostRow[];
   insight: string;
+  chokepoints: string[];
+  risks: string[];
+  cargoFit: string[];
+  bestFit: string;
 }
 
 const originProfiles: Record<string, OriginProfile> = {
@@ -35,6 +39,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "Red Sea routing means no Strait of Hormuz exposure — a plus when Gulf tensions spike.",
     transitNote:
       'Direct sailings are common, with some services transshipping via Singapore or Colombo. Red Sea routing avoids the Strait of Hormuz.',
+    chokepoints: ['Strait of Malacca', 'Bab el-Mandeb (Red Sea)'],
+    risks: ['Red Sea security disruption — Houthi attacks since late 2023', 'Cape of Good Hope rerouting inflates transit and cost'],
+    cargoFit: ['Western and central Saudi markets', 'Construction materials and general cargo', 'FCL and LCL heavy cargo'],
+    bestFit: 'Best for western and central Saudi Arabia when Red Sea routing is confirmed with the carrier. Choose Dammam instead when Gulf-side risk is the smaller of the two.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $6,200', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$1,900 – $8,100', confidence: 'MEDIUM' },
@@ -48,6 +56,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "Gulf routing passes through the Strait of Hormuz, the corridor most exposed to geopolitical risk.",
     transitNote:
       'Mostly transshipped via Singapore or Colombo; direct Gulf calls are less frequent than to Jeddah. Strait of Hormuz transit is the key risk variable.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz'],
+    risks: ['Strait of Hormuz geopolitical exposure', 'War-risk premium volatility'],
+    cargoFit: ['Eastern Province and Riyadh via inland rail/road', 'Industrial and energy-related cargo', 'FCL and LCL heavy cargo'],
+    bestFit: 'Best for the Eastern Province and Riyadh. Accept the Hormuz risk premium and build a buffer into landed cost rather than pricing to the calm-period rate.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $6,200', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$1,900 – $8,100', confidence: 'MEDIUM' },
@@ -61,6 +73,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "the highest-frequency corridor on the China–GCC lane, with the most carrier options.",
     transitNote:
       'The densest schedule on the lane — the most direct calls and the most carrier choices, though some services still transship via Singapore.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz'],
+    risks: ['Strait of Hormuz geopolitical exposure'],
+    cargoFit: ['UAE re-export and free-zone cargo', 'Consumer goods and electronics', 'FCL and LCL, all cargo types'],
+    bestFit: 'Best price and schedule frequency on the corridor. Use carrier competition to negotiate, and treat the Hormuz risk as a separate line item.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $3,250', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$2,200 – $3,950', confidence: 'MEDIUM' },
@@ -74,6 +90,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "a single-gateway market — all Qatar-bound container cargo clears through Hamad.",
     transitNote:
       'Fewer sailings than the UAE or Saudi lanes; transshipment via Singapore or a regional hub is common. Schedule windows are wider.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz'],
+    risks: ['Single-gateway market — all Qatar cargo clears through Hamad', 'Thinner schedule with common transshipment'],
+    cargoFit: ['Qatar-bound consumer and project cargo', 'FCL and LCL general cargo'],
+    bestFit: 'Best for Qatar when the 0% VAT advantage outweighs the slower, less flexible lane. Price the tax saving and the schedule together.',
     costRows: [
       { label: '20ft FCL', range: '$1,700 – $2,500', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$2,500 – $3,600', confidence: 'MEDIUM' },
@@ -87,6 +107,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "a lower-frequency lane than the UAE or Saudi, so schedule windows are wider.",
     transitNote:
       'A low-frequency lane; most services transship via Singapore or a regional hub. Expect wider schedule windows and more routing variability.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz'],
+    risks: ['Low-frequency lane with wider schedule windows', 'Heavier documentation'],
+    cargoFit: ['Kuwait-bound general and project cargo', 'FCL and LCL heavy cargo'],
+    bestFit: 'Best for Kuwait when the 0% VAT justifies the slower lane. Budget for time and paperwork, not just the tax saving.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $2,500', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$2,200 – $3,600', confidence: 'MEDIUM' },
@@ -100,6 +124,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "often less congested than Jebel Ali or Jeddah, which can mean faster clearance.",
     transitNote:
       'A growing lane with improving direct calls; less congestion than the bigger hubs. Still transits the Strait of Hormuz via the Gulf of Oman approach.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz (Gulf of Oman approach)'],
+    risks: ['Strait of Hormuz exposure', 'Lower carrier density than Jebel Ali'],
+    cargoFit: ['Northern Oman and parts of the UAE market', 'Congestion-sensitive cargo', 'FCL and LCL general cargo'],
+    bestFit: 'Best for northern Oman and for congestion arbitrage in peak season, when Sohar can clear faster than Jebel Ali or Jeddah.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $2,600', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$2,200 – $3,800', confidence: 'MEDIUM' },
@@ -113,6 +141,10 @@ const destProfiles: Record<string, DestProfile> = {
     routing: "a strategic alternate entry for the Dammam and Riyadh markets.",
     transitNote:
       'Moderate frequency, typically transshipped via a regional hub. The King Fahd Causeway truck bridge adds an overland leg into Saudi Arabia.',
+    chokepoints: ['Strait of Malacca', 'Strait of Hormuz', 'King Fahd Causeway (overland to Saudi)'],
+    risks: ['10% VAT — GCC second-highest', 'Overland causeway leg adds time'],
+    cargoFit: ['Eastern Saudi via the King Fahd Causeway', 'Alternate entry for the Dammam and Riyadh markets', 'FCL and LCL general cargo'],
+    bestFit: 'Best as an alternate entry for Dammam/Riyadh when Jeddah is congested or Red Sea risk is elevated — trading a bit of VAT for schedule certainty.',
     costRows: [
       { label: '20ft FCL', range: '$1,500 – $2,500', confidence: 'MEDIUM' },
       { label: '40ft FCL', range: '$2,200 – $3,600', confidence: 'MEDIUM' },
@@ -231,6 +263,10 @@ export const routes: Route[] = Object.keys(originProfiles).flatMap((origin) =>
       transitNote: destProfile.transitNote,
       costRows: destProfile.costRows,
       insight: destProfile.insight,
+      chokepoints: destProfile.chokepoints,
+      risks: destProfile.risks,
+      cargoFit: destProfile.cargoFit,
+      bestFit: destProfile.bestFit,
       faqs: buildFaqs(originName, destName, dest.typical, [15, 30], destProfile.routing, destProfile.insight, destProfile.costRows),
       keyTakeaways: buildKeyTakeaways(
         originName,
