@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ConfidenceBadge from '../../components/ConfidenceBadge.astro';
+import Cta from '../../components/Cta.astro';
+import { intelligenceItems } from '../../data/intelligence';
+import { routes } from '../../data/routes';
+import { countryName, portName } from '../../data/lookup';
+import { SITE_URL } from '../../site';
+
+const items = intelligenceItems.map((item) => ({
+  ...item,
+  routeLinks: item.affectedRoutes.map((slug) => {
+    const route = routes.find((r) => r.slug === slug);
+    return {
+      slug,
+      label: route ? `${portName(route.originPort)} → ${portName(route.destPort)}` : slug,
+      href: route ? `/routes/${slug}/` : undefined,
+    };
+  }),
+  countryLinks: item.affectedCountries.map((slug) => ({
+    slug,
+    label: countryName(slug),
+    href: `/countries/${slug}/`,
+  })),
+}));
+
+const schema = [
+  {
+    type: 'ItemList',
+    data: {
+      name: 'Freight Intelligence — China to GCC',
+      description:
+        'Sourced, actionable freight-intelligence records for the China-to-GCC corridor, covering what changed, why it matters, affected routes and countries, evidence, date, confidence and potential commercial impact.',
+      itemListElement: intelligenceItems.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.title,
+        url: `${SITE_URL}/intelligence/#${item.slug}`,
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Freight Intelligence — China to GCC"
+  description="Sourced China-to-GCC freight intelligence: what changed, why it matters, affected routes and countries, evidence, date, confidence and commercial impact."
+  canonical={`${SITE_URL}/intelligence/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Intelligence' }]} />
+      <h1>Freight Intelligence — China to GCC</h1>
+      <p class="lead">
+        This is the Freight Intelligence layer, not a general logistics news
+        feed. Every record covers what changed, why it matters, which routes
+        and countries are affected, the evidence, the date, a confidence level,
+        and the potential commercial impact.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> On the same China→Jeddah lane, Red Sea direct
+          versus Cape rerouting can materially widen the quote range; Saudi
+          Arabia&rsquo;s 15% VAT turns a $10,000 CIF value into $12,075
+          duty-inclusive VAT before local charges.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Current intelligence records</h2>
+    <div class="grid">
+      {items.map((item) => (
+        <article class="card intelligence-card" id={item.slug}>
+          <div class="intel-head">
+            <h2>{item.title}</h2>
+            <ConfidenceBadge level={item.confidence} />
+          </div>
+
+          <dl class="intel-fields">
+            <div>
+              <dt>What changed</dt>
+              <dd>{item.whatChanged}</dd>
+            </div>
+            <div>
+              <dt>Why it matters</dt>
+              <dd>{item.whyItMatters}</dd>
+            </div>
+            <div>
+              <dt>Which routes affected</dt>
+              <dd>
+                {item.routeLinks.length > 0 ? (
+                  <ul class="intel-list">
+                    {item.routeLinks.map((route) => (
+                      <li>
+                        {route.href ? <a href={route.href}>{route.label}</a> : <span>{route.label}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span class="muted">No route specified.</span>
+                )}
+              </dd>
+            </div>
+            <div>
+              <dt>Which countries affected</dt>
+              <dd>
+                <ul class="intel-list">
+                  {item.countryLinks.map((country) => (
+                    <li>
+                      <a href={country.href}>{country.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Evidence</dt>
+              <dd>
+                <p>{item.evidence}</p>
+                {item.sourceName && (
+                  <p class="muted small">
+                    Source: <strong>{item.sourceName}</strong>
+                  </p>
+                )}
+              </dd>
+            </div>
+            <div>
+              <dt>Date</dt>
+              <dd>
+                <time datetime={item.date}>{item.date}</time>
+                <span class="muted small"> · Updated {item.updated}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Confidence</dt>
+              <dd>
+                <ConfidenceBadge level={item.confidence} />
+              </dd>
+            </div>
+            <div>
+              <dt>Potential commercial impact</dt>
+              <dd>{item.commercialImpact}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>How to use this layer</h2>
+      <p>
+        Intelligence records are decision support, not quotes or guarantees.
+        They turn a documented corridor change into a commercial question: ask
+        the carrier about Red Sea versus Cape routing, confirm the Qatar VAT
+        timetable with a local agent, or recalculate Saudi landed cost before
+        filing.
+      </p>
+      <p class="muted small">
+        Every record is grounded in the site&rsquo;s structured data layer and
+        its approved source registry. Confirm current figures with the relevant
+        carrier, forwarder or customs authority before executing a shipment.
+      </p>
+      <p>
+        <a class="btn btn-secondary" href="/evidence/">View the evidence center</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>
+
+<style>
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intelligence-card {
+    padding: 1.6rem;
+  }
+
+  .intel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .intel-head h2 {
+    font-size: 1.25rem;
+    line-height: 1.35;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .intel-fields {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+  }
+
+  .intel-fields div {
+    border-top: 1px solid var(--line);
+    padding-top: 0.75rem;
+  }
+
+  .intel-fields dt {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+
+  .intel-fields dd {
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .intel-fields dd p {
+    margin-bottom: 0.5rem;
+  }
+
+  .intel-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .intel-list li {
+    margin-bottom: 0.2rem;
+  }
+</style>
