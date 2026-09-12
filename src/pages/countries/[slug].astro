@@ -273,6 +273,34 @@ const schema = [
   </section>
 
   <section class="section container">
+    <h2>Country intelligence</h2>
+    <div class="grid grid--2 mt-2">
+      <div>
+        <h3>Typical cargo</h3>
+        <ul>{country.typicalCargo.map((c) => <li>{c}</li>)}</ul>
+      </div>
+      <div>
+        <h3>Import risks</h3>
+        <ul>{country.importRisks.map((r) => <li>{r}</li>)}</ul>
+      </div>
+    </div>
+    <div class="grid grid--2 mt-2">
+      <div>
+        <h3>Best port</h3>
+        <p>{country.bestPort}</p>
+      </div>
+      <div>
+        <h3>Inland logistics</h3>
+        <p>{country.inlandLogistics}</p>
+      </div>
+    </div>
+    <div class="mt-2">
+      <h3>Decision guide</h3>
+      <p>{country.decisionGuide}</p>
+    </div>
+  </section>
+
+  <section class="section container">
     <h2>What most guides skip</h2>
     <p>{country.insight}</p>
   </section>

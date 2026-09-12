@@ -55,6 +55,23 @@ export const gccCountries: Country[] = [
         a: 'A SAR 1,000 de minimis applies to personal/courier parcels, but VAT is still due with no exemption. Commercial cargo does not benefit from this threshold.',
       },
     ],
+    typicalCargo: [
+      'Construction materials and machinery',
+      'Industrial equipment',
+      'Consumer goods',
+      'Agricultural and food products — tariff-sensitive since June 2026',
+    ],
+    importRisks: [
+      'SABER/SASO conformity — non-compliant goods are held at clearance',
+      '15% VAT plus duty raises landed cost roughly 20%+ over invoice value',
+      'Red Sea routing volatility on Jeddah lanes',
+    ],
+    bestPort:
+      'Dammam for the Eastern Province and Riyadh; Jeddah for western and central Saudi Arabia — choose by final delivery region and the prevailing Red Sea vs Hormuz risk.',
+    inlandLogistics:
+      'Jeddah feeds the western and central Kingdom by road; Dammam connects to Riyadh via SAR rail and road through the Eastern Province.',
+    decisionGuide:
+      'Split Saudi Arabia by region: western/central cargo routes via Jeddah when Red Sea routing is confirmed, eastern/Riyadh cargo via Dammam. Budget 5% duty plus 15% VAT on CIF, and clear SABER/SASO certificates before sailing.',
   },
   {
     slug: 'united-arab-emirates',
@@ -109,6 +126,22 @@ export const gccCountries: Country[] = [
         a: 'Yes, an AED 1,000 threshold for personal parcels, though VAT may still apply. Commercial cargo does not use this threshold.',
       },
     ],
+    typicalCargo: [
+      'Consumer goods and electronics',
+      'Re-export and free-zone cargo',
+      'General merchandise',
+    ],
+    importRisks: [
+      '5% VAT plus import duty that varies by HS code',
+      'Free-zone vs mainland clearance rules differ',
+      'Strait of Hormuz geopolitical exposure',
+    ],
+    bestPort:
+      'Jebel Ali for re-export, consumer goods and the highest schedule frequency; Khalifa Port for Abu Dhabi and KIZAD industrial/project cargo.',
+    inlandLogistics:
+      'Jebel Ali feeds Dubai and the northern emirates; Khalifa Port plus KIZAD serves Abu Dhabi and links onward to Saudi Arabia by road.',
+    decisionGuide:
+      'The UAE is the corridor\'s highest-frequency, lowest-spread market. Use Jebel Ali for re-export and consumer goods; use Khalifa for Abu Dhabi or industrial project cargo. Model 5% VAT plus roughly 5% duty on CIF.',
   },
   {
     slug: 'qatar',
@@ -163,6 +196,21 @@ export const gccCountries: Country[] = [
         a: 'No widely confirmed de minimis threshold is published. Confirm with the General Authority of Customs before shipping low-value goods, as commercial cargo is generally dutiable regardless of value.',
       },
     ],
+    typicalCargo: [
+      'Project and construction cargo',
+      'Consumer goods',
+      'General merchandise',
+    ],
+    importRisks: [
+      'Single-gateway market — all cargo clears through Hamad',
+      'Thinner schedule with common transshipment',
+      'VAT introduction expected (~5%) after the May 2026 e-invoicing law',
+    ],
+    bestPort: 'Hamad Port — Qatar\'s only commercial gateway.',
+    inlandLogistics:
+      'Hamad Port serves Doha and the whole country directly; no inland rail dependency.',
+    decisionGuide:
+      'Qatar is single-gateway and currently 0% VAT — a genuine landed-cost edge. Accept the thinner schedule and budget for the ~5% VAT that the e-invoicing law signals is coming.',
   },
   {
     slug: 'kuwait',
@@ -217,6 +265,22 @@ export const gccCountries: Country[] = [
         a: 'Shuwaikh and Shuaiba are the main commercial ports. Shuwaikh handles general and containerised cargo closer to Kuwait City; Shuaiba handles larger industrial and bulk volumes.',
       },
     ],
+    typicalCargo: [
+      'General cargo',
+      'Project and construction materials',
+      'Heavy equipment',
+    ],
+    importRisks: [
+      'Low-frequency lane — wider schedule windows',
+      'Heavier documentation',
+      'Strait of Hormuz geopolitical exposure',
+    ],
+    bestPort:
+      'Shuwaikh for general/commercial cargo near Kuwait City; Shuaiba for the southern industrial zone.',
+    inlandLogistics:
+      'Shuwaikh sits near Kuwait City; Shuaiba serves the southern industrial area. Road-only inland — no rail network.',
+    decisionGuide:
+      'Kuwait\'s 0% VAT is offset by a slower, paperwork-heavy lane. Budget for time and documentation, not just the tax saving.',
   },
   {
     slug: 'oman',
@@ -271,6 +335,21 @@ export const gccCountries: Country[] = [
         a: 'Sohar is the primary container gateway for the northern Oman and GCC market, while Salalah serves transshipment and southern Oman. Most China-to-Oman container cargo clears through Sohar.',
       },
     ],
+    typicalCargo: [
+      'General cargo',
+      'Congestion-sensitive cargo',
+      'Northern Oman and parts of the UAE market',
+    ],
+    importRisks: [
+      'Lower carrier density than Jebel Ali',
+      'Strait of Hormuz exposure via the Gulf of Oman approach',
+    ],
+    bestPort:
+      'Sohar for the north and Muscat; Salalah for the southern/transshipment market.',
+    inlandLogistics:
+      'Sohar serves northern Oman and Muscat; Salalah is the southern deep-water transshipment hub.',
+    decisionGuide:
+      'Oman is the congestion-arbitrage play: Sohar clears faster than Jebel Ali or Jeddah in peak season. Model 5% VAT. Best for northern Oman or time-sensitive cargo in peak season.',
   },
   {
     slug: 'bahrain',
@@ -325,5 +404,19 @@ export const gccCountries: Country[] = [
         a: 'Bahrain routes cargo to Saudi\u2019s Eastern Province over the King Fahd Causeway, which can be faster and cheaper than a congested Jeddah call when the destination is Dammam or Riyadh \u2014 despite Bahrain\u2019s 10% VAT.',
       },
     ],
+    typicalCargo: [
+      'General cargo',
+      'Eastern Saudi via the King Fahd Causeway',
+      'Alternate entry for the Dammam and Riyadh markets',
+    ],
+    importRisks: [
+      '10% VAT — the GCC\'s second-highest',
+      'Overland causeway leg adds time',
+    ],
+    bestPort: 'Khalifa bin Salman Port — Bahrain\'s main gateway.',
+    inlandLogistics:
+      'The King Fahd Causeway links Bahrain to Saudi Arabia\'s Eastern Province by truck — a strategic alternate entry for Dammam and Riyadh.',
+    decisionGuide:
+      'Bahrain is an alternate entry for eastern Saudi Arabia when Jeddah is congested or Red Sea risk is elevated. 10% VAT is the trade-off for schedule certainty via the causeway.',
   },
 ];

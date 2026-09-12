@@ -30,6 +30,11 @@ export interface Country {
   compliance: string[];
   clearanceProcess: string[];
   insight: string;
+  typicalCargo: string[];
+  importRisks: string[];
+  bestPort: string;
+  inlandLogistics: string;
+  decisionGuide: string;
   keyTakeaways: string[];
   faqs: FaqItem[];
 }
