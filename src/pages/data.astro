@@ -7,6 +7,7 @@ import { gccCountries } from '../data/gcc-countries';
 import { methods } from '../data/methods';
 import { routes } from '../data/routes';
 import { portName } from '../data/lookup';
+import { countrySourceIds, sourcesByIds } from '../data/sources';
 import { SITE_URL } from '../site';
 
 const dutyRows = gccCountries.map((c) => ({
@@ -31,6 +32,13 @@ const routeTransitRows = routes
     confidence: r.confidence,
   }));
 
+function countrySourceName(countrySlug: string): string {
+  const countrySources = sourcesByIds(countrySourceIds[countrySlug] ?? []);
+  const source =
+    countrySources.find((item) => item.type === 'government') ?? countrySources[0];
+  return source?.name ?? 'national customs authority';
+}
+
 const schema = [
   {
     type: 'Dataset',
@@ -39,6 +47,40 @@ const schema = [
       description:
         'Indicative import duty, VAT, freight cost ranges and transit times for the China-to-GCC corridor, assembled from the WorldFreightHub data layer.',
       url: `${SITE_URL}/data/`,
+      variableMeasured: [
+        ...gccCountries.map((c) => ({
+          '@type': 'PropertyValue',
+          name: `${c.name} import duty`,
+          value: c.dutyRate,
+          unitText: 'CIF value',
+          description: `${c.dutyNote} Confidence: HIGH. Source: ${countrySourceName(c.slug)}. Last reviewed: ${c.updated}.`,
+        })),
+        ...gccCountries.map((c) => ({
+          '@type': 'PropertyValue',
+          name: `${c.name} VAT`,
+          value: c.vatRate === null ? 'None' : `${c.vatRate}%`,
+          unitText: 'percent',
+          description: `${c.vatNote} Confidence: HIGH. Source: ${countrySourceName(c.slug)}. Last reviewed: ${c.updated}.`,
+        })),
+        ...routes
+          .filter((r) => r.transitDays && r.transitDays.typical)
+          .map((r) => ({
+            '@type': 'PropertyValue',
+            name: `${portName(r.originPort)} to ${portName(r.destPort)} transit time`,
+            value: `${r.transitDays.typical}`,
+            unitText: 'days',
+            description: `Range ${r.transitDays.range[0]}–${r.transitDays.range[1]} days. Confidence: ${r.confidence}. Last reviewed: ${r.updated}.`,
+          })),
+        ...methods.flatMap((m) =>
+          m.costRows.map((row) => ({
+            '@type': 'PropertyValue',
+            name: `${m.name} — ${row.label}`,
+            value: row.range,
+            unitText: 'indicative range',
+            description: `Confidence: ${row.confidence}. Indicative only — not a live quote.`,
+          })),
+        ),
+      ],
     },
   },
 ];
