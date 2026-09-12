@@ -61,6 +61,7 @@ const verificationLevelExplanations: Record<VerificationLevel, string> = {
 
 const tableColumns = [
   { key: 'listingStatus', label: 'Listing status' },
+  { key: 'headquarters', label: 'Headquarters (country)' },
   { key: 'verificationLevel', label: 'Verification level' },
   { key: 'serviceCountries', label: 'Service countries' },
   { key: 'methods', label: 'Methods' },
@@ -73,6 +74,7 @@ const tableColumns = [
 const tableRows = [
   {
     listingStatus: 'Listed · source-documented',
+    headquarters: provider.hqCountry,
     verificationLevel: verificationLevelLabel,
     serviceCountries: provider.serviceCountries.map(countryName).join(', '),
     methods: provider.methods.join(', '),
@@ -204,6 +206,11 @@ const schema = [
         government licence, certification, recommendation, endorsement or
         reliability guarantee.{' '}
         <a href="/provider-verification-policy/">See the provider verification policy.</a>
+      </p>
+      <p>
+        Commodity or cargo specialisation is not published for individual
+        listings — the directory records source-documented identity and
+        service scope, not cargo fit.
       </p>
       <p>
         Listing-level confidence is not assigned to individual providers;
