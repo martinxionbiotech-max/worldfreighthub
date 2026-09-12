@@ -8,24 +8,16 @@ import { directoryProviders } from '../../data/directory';
 import {
   VERIFICATION_LEVEL_LABELS,
   verificationLevelForSourceType,
-  type VerificationLevel,
 } from '../../data/types';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
 
-const totalProviders = directoryProviders.length;
-const levelCounts: Record<VerificationLevel, number> = {
-  LEVEL_1_LISTED: 0,
-  LEVEL_2_SOURCE_VERIFIED: 0,
-  LEVEL_3_INDEPENDENTLY_VERIFIED: 0,
-  LEVEL_4_PROVIDER_CONFIRMED: 0,
-};
-
-directoryProviders.forEach((provider) => {
-  levelCounts[verificationLevelForSourceType(provider.sourceType)] += 1;
-});
-
-const level1Count = levelCounts.LEVEL_1_LISTED;
-const level2Count = levelCounts.LEVEL_2_SOURCE_VERIFIED;
+const total = directoryProviders.length;
+const verified = directoryProviders.filter((p) => p.verification === 'verified').length;
+const unverified = directoryProviders.filter((p) => p.verification === 'unverified').length;
+const claimed = directoryProviders.filter((p) => p.verification === 'claimed').length;
+const sponsored = directoryProviders.filter((p) => p.verification === 'sponsored').length;
+const level2Count = directoryProviders.filter((p) => p.sourceType === 'own-website').length;
+const level1Count = directoryProviders.filter((p) => p.sourceType === 'directory').length;
 
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
@@ -77,15 +69,15 @@ const providerGroups = providerCountrySlugs
 const faqs = [
   {
     q: 'Is it free to be listed?',
-    a: `A standard listing costs $0: all ${totalProviders} current entries are editorial listings, with no paid placement required to be considered. Paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.`,
+    a: `A standard listing costs $0: all ${total} current entries are editorial listings, with no paid placement required to be considered. Paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.`,
   },
   {
     q: 'How do you source-check providers?',
-    a: `All ${totalProviders} listed providers are source-documented: ${level2Count} at LEVEL 2 SOURCE VERIFIED and ${level1Count} at LEVEL 1 LISTED. Identity, website and published service claims have each been checked against the provider's own website or a third-party directory. None has been independently verified.`,
+    a: `All ${total} listed providers are source-documented: ${level2Count} at LEVEL 2 SOURCE VERIFIED and ${level1Count} at LEVEL 1 LISTED. Identity, website and published service claims have each been checked against the provider's own website or a third-party directory. None has been independently verified.`,
   },
   {
     q: 'What do the LEVEL 1-4 labels mean?',
-    a: `LEVEL 1 LISTED means a third-party directory or marketplace record documents the provider. LEVEL 2 SOURCE VERIFIED means core identity, website and published service claims were checked against the provider's own website. LEVEL 3 INDEPENDENTLY VERIFIED and LEVEL 4 PROVIDER CONFIRMED currently have 0 providers. A higher level is stronger source documentation; none of these levels is a recommendation or endorsement.`,
+    a: `LEVEL 1 LISTED means a third-party directory or marketplace record documents the provider. LEVEL 2 SOURCE VERIFIED means core identity, website and published service claims were checked against the provider's own website. LEVEL 3 INDEPENDENTLY VERIFIED and LEVEL 4 PROVIDER CONFIRMED currently have 0 providers. A higher level is stronger source documentation; none of these levels is a government licence, certification, recommendation or endorsement.`,
   },
   {
     q: 'Can a business claim its listing?',
@@ -101,7 +93,7 @@ const faqs = [
   },
   {
     q: 'Why are there so few listings right now?',
-    a: `We publish ${totalProviders} entries because that is how many have a documented research source and have completed source documentation. Source-documented is not the same as independently verified, and we do not pad the directory with unconfirmed businesses.`,
+    a: `We publish ${total} entries because that is how many have a documented research source and have completed source documentation. Source-documented is not the same as independently verified, and we do not pad the directory with unconfirmed businesses.`,
   },
   {
     q: 'How do you decide who to list?',
@@ -167,15 +159,43 @@ const schema = [
       </p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> The directory lists {totalProviders} providers,
+          <strong>TL;DR:</strong> The directory lists {total} providers,
           all source-documented: {level2Count} at LEVEL 2 SOURCE VERIFIED (own
           website) and {level1Count} at LEVEL 1 LISTED (third-party directory).
           0 are independently verified and 0 are provider-confirmed. With 0 paid
           placements currently listed, no provider bought its way into the
           directory — the badge reflects source documentation, not marketing
-          copy, recommendation or endorsement.
+          copy, government licence, certification, recommendation or endorsement.
         </p>
       </blockquote>
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Total</span>
+          <span class="fact-value">{total}</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Verified (source-documented)</span>
+          <span class="fact-value">{verified} &rarr; LEVEL 2: {level2Count} &middot; LEVEL 1: {level1Count}</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Unverified</span>
+          <span class="fact-value">{unverified}</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Claimed</span>
+          <span class="fact-value">{claimed}</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Sponsored</span>
+          <span class="fact-value">{sponsored}</span>
+        </div>
+      </div>
+      <p class="note mt-2">
+        <strong>'Verified'</strong> means the listing completed source documentation
+        against the provider&rsquo;s own website or a third-party directory — it is NOT
+        a government licence, certification, endorsement or reliability guarantee.{' '}
+        <a href="/provider-verification-policy/">See the provider verification policy.</a>
+      </p>
     </div>
   </div>
 
@@ -184,8 +204,9 @@ const schema = [
     <p class="lead">
       Every listing carries a LEVEL 1-4 badge showing how its source
       documentation was established. Source-documented does not mean
-      independently verified, recommended, endorsed, best, cheapest, or
-      guaranteed.
+      independently verified, government-licensed, certified, recommended,
+      endorsed, best, cheapest, or guaranteed.{' '}
+      <a href="/provider-verification-policy/">See the provider verification policy.</a>
     </p>
     <div class="grid grid--2 mt-2">
       {verificationLevels.map((item) => (
@@ -193,7 +214,7 @@ const schema = [
       ))}
     </div>
     <div class="note mt-3">
-      <strong>Directory status:</strong> {totalProviders} providers are listed —
+      <strong>Directory status:</strong> {total} providers are listed —
       {level2Count} at {VERIFICATION_LEVEL_LABELS.LEVEL_2_SOURCE_VERIFIED} and
       {level1Count} at {VERIFICATION_LEVEL_LABELS.LEVEL_1_LISTED}. 0 providers
       are LEVEL 3 INDEPENDENTLY VERIFIED and 0 are LEVEL 4 PROVIDER CONFIRMED.
