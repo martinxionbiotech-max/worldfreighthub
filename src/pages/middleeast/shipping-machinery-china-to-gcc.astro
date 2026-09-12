@@ -1,0 +1,367 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-machinery-china-to-gcc/`;
+
+const methodRows = [
+  {
+    scenario: 'Standard machines in normal dry containers',
+    method: 'Sea FCL',
+    why: 'Heavy and dense; a dedicated 20ft/40ft container minimises handling and gives the best cost per tonne',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Over-height, over-width or very heavy machines',
+    method: 'Open Top or Flat Rack',
+    why: 'Cargo cannot fit through standard container doors or exceeds normal box limits',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Urgent spare parts or small high-value components',
+    method: 'Air freight',
+    why: 'Speed justifies the premium when a machine is down and production is stopped',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Small parts or samples below a full box',
+    method: 'Sea LCL',
+    why: 'Avoids paying for a full container, but adds handling and consolidation time',
+    confidence: 'LOW',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'Saudi SASO/SABER conformity for regulated machinery',
+    purpose: 'Products within Saudi scope need a valid PC and shipment SC before arrival',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'CE marking or equivalent technical standard evidence',
+    purpose: 'Supports product conformity and clarifies the machine safety baseline to the buyer and authority',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'ISPM 15 treated wood packaging',
+    purpose: 'Wooden crates, pallets and dunnage must be heat-treated or fumigated and stamped',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Correct HS classification and full technical documents',
+    purpose: 'Duty, SABER scope and clearance all depend on classifying the machine correctly',
+    confidence: 'MEDIUM',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Booking a standard FCL for an over-gauge machine',
+    consequence: 'Cargo cannot be loaded at origin or requires a costly rebooking to Open Top/Flat Rack',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Ignoring the inland leg to Riyadh or another interior site',
+    consequence: 'The port discharge price looks cheap, but the final trucking/rail leg is added late',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Using untreated wood crates or pallets',
+    consequence: 'Packaging is rejected or held at destination for non-compliance with ISPM 15',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Assuming every machine is SABER-exempt without checking scope',
+    consequence: 'Saudi clearance stalls because the PC/SC was never obtained before arrival',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'The machine fits a standard container and is already crated',
+    action: 'Price a sea FCL 20ft/40ft quote and plan destination trucking before arrival',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Dimensions exceed normal container door or box limits',
+    action: 'Collect exact dimensions and weight first, then request Open Top/Flat Rack pricing and lashing requirements',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The destination is Riyadh or another inland site',
+    action: 'Compare Dammam plus inland transport against a door-to-door DDP alternative before choosing the discharge port',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The shipment is a small urgent spare part',
+    action: 'Check chargeable weight and air freight cost against the downtime value of the machine',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the best shipping method for machinery from China to the GCC?',
+    a: 'Most production machines go by sea FCL because they are heavy and benefit from a dedicated container. Over-height, over-width or very heavy units use Open Top or Flat Rack, while urgent small spare parts use air freight.',
+  },
+  {
+    q: 'Does machinery shipped to Saudi Arabia need SABER?',
+    a: 'It depends on whether the specific machine falls under the regulated SABER/SASO scope. Check the product scope against the official SABER platform before ordering, and obtain the PC and SC on the correct timeline if it is regulated.',
+  },
+  {
+    q: 'What is ISPM 15 and why does it matter for machinery?',
+    a: 'ISPM 15 is the international standard for treated wood packaging. Wooden crates, pallets and dunnage need approved treatment and a visible stamp to reduce pest risk and avoid rejection or treatment at the destination.',
+  },
+  {
+    q: 'How should I plan delivery to Riyadh or another inland destination?',
+    a: 'Treat the port discharge and the inland leg as one cost chain. Dammam is a common gateway for Riyadh, with road or rail transfer; ask for the combined port-to-door price instead of evaluating the ocean quote in isolation.',
+  },
+  {
+    q: 'When should machinery go by air freight?',
+    a: 'Air is normally reserved for urgent spare parts, replacement components or small high-value items where downtime is more expensive than the air premium. Full machines are rarely economical by air.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Machinery from China to GCC: FCL, Open Top, Flat Rack & SASO Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship machinery from China to the GCC: FCL versus Open Top/Flat Rack, air for spare parts, Saudi SASO/SABER compliance, ISPM 15 wood packaging and inland delivery planning for Riyadh and other interior sites.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Machinery shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Machinery from China to GCC: FCL, Open Top, Flat Rack & SASO Guide (2026)"
+  description="How to ship machinery from China to the GCC: FCL versus Open Top/Flat Rack, air for spare parts, Saudi SASO/SABER compliance, ISPM 15 wood packaging and inland delivery planning for Riyadh and other interior sites."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Machinery China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping machinery from China to the GCC</h1>
+      <p class="lead">
+        Machinery is heavy, dense and often over-gauge, so the default is sea FCL — with Open Top or
+        Flat Rack equipment when the dimensions exceed a standard box. Saudi Arabia adds a SABER/SASO
+        compliance gate for regulated machines, and inland destinations such as Riyadh make the final
+        trucking or rail leg part of the routing decision rather than an afterthought.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Start from the machine's physical envelope, not the quote. A standard
+          crated machine fits a 20ft/40ft FCL; an over-height or over-width unit needs Open Top or Flat
+          Rack; a small urgent spare part flies. For Saudi machinery, check SABER scope and ISPM 15
+          wood treatment before the box is loaded, then price the inland leg together with the ocean
+          leg.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Default mode</span>
+          <span class="fact-value">Sea FCL for complete machines</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Over-gauge option</span>
+          <span class="fact-value">Open Top / Flat Rack</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi gate</span>
+          <span class="fact-value">SASO/SABER for regulated machines</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Wood packaging</span>
+          <span class="fact-value">ISPM 15 treatment + stamp</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: fit the method to the machine's dimensions</h2>
+    <p>
+      The first filter is whether the machine can enter a standard container door and sit within the
+      box's weight and height limits. Standard production machines go by FCL. If the machine is
+      over-height, over-width or too heavy for a normal dry box, quote Open Top or Flat Rack before
+      the origin trucking is booked. Air freight is the exception path: use it for small urgent spare
+      parts, not complete machines.
+    </p>
+    <p>
+      For Saudi Arabia, the transport method and the product-compliance method are separate. A machine
+      can be mechanically easy to ship but still fail clearance if the required SABER/SASO certificate
+      or ISPM 15 wood stamp is missing.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        Use the physical and commercial characteristics below to choose the method. Over-gauge cargo
+        is always a special-equipment conversation, not a normal FCL booking.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Machinery method selection is guidance based on the cargo envelope and urgency; confirm loading feasibility with the carrier."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      Compliance has two layers: product conformity and packaging. Saudi SABER/SASO is the product
+      layer, while ISPM 15 handles the wooden crate, pallet or dunnage around the machine.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Compliance inputs for machinery shipments. SABER/SASO applicability must be confirmed against the official scope for the specific machine."
+    />
+    <div class="note mt-2">
+      <strong>Do not guess SABER scope:</strong> if the machine is regulated, the shipment conformity
+      certificate must be in hand before arrival in Saudi Arabia. Confirm early with the platform or a
+      qualified conformity body.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        Machinery costs are driven by weight, cube, special equipment and the inland destination. The
+        ocean rate is only one line: Open Top/Flat Rack attracts special-equipment charges, and heavy
+        units may need lashing, permits or route surveys. The Riyadh inland leg can be a large share
+        of the door cost even when the port-to-port sea rate looks low.
+      </p>
+      <ul>
+        <li>Compare complete machines on an FCL quote plus destination trucking, not port-to-port alone.</li>
+        <li>Over-gauge cargo needs an all-in special-equipment quote with lashing, permits and any origin/destination handling.</li>
+        <li>Small spare parts by air should be compared on chargeable weight plus clearance, not actual weight.</li>
+        <li>Use the <a href="/middleeast/china-to-gcc-landed-cost/">landed cost model</a> to add duty, VAT and destination fees.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Machinery-specific errors that routinely add cost or delay on the China-to-GCC lane."
+    />
+    <p class="mt-2">
+      The two most expensive errors are both upstream: booking the wrong equipment type and treating
+      the destination as “just the port.” Correct both before the cargo leaves the factory.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for machinery from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="FCL shipping"
+          description="20ft/40ft container planning, load limits and the demurrage risk for full-container machinery."
+          href="/methods/fcl/"
+        />
+        <Card
+          title="Saudi Arabia country profile"
+          description="Duty, VAT, SABER/SASO and the Jeddah versus Dammam routing context."
+          href="/countries/saudi-arabia/"
+        />
+        <Card
+          title="China to GCC landed cost"
+          description="Add destination duty, VAT, clearance and last-mile to the machinery freight quote."
+          href="/middleeast/china-to-gcc-landed-cost/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an over-gauge or FCL machinery quote"
+      text="Tell us the machine dimensions, weight, HS code, destination and whether the cargo is crated so we can quote the right box or special equipment."
+    />
+  </section>
+</BaseLayout>

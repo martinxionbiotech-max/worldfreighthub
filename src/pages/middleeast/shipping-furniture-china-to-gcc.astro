@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-furniture-china-to-gcc/`;
+
+const methodRows = [
+  {
+    scenario: 'Complete furniture sets or large retail orders',
+    method: 'Sea FCL',
+    why: 'The flat per-box rate is spread across a high CBM load; the box also protects furniture from extra handling',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Single pieces, samples or small replenishment orders',
+    method: 'Sea LCL',
+    why: 'Pays only for the space used, but more handling and consolidation time',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'High-end custom furniture or a critical showroom item',
+    method: 'Air freight',
+    why: 'Rarely used; only when speed outweighs a heavy chargeable-weight penalty',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Mixed furniture orders near the FCL/LCL crossover',
+    method: 'Compare FCL vs LCL on the same CBM',
+    why: 'Furniture is volumetric, so the break-even is driven by CBM rather than scale weight',
+    confidence: 'MEDIUM',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'ISPM 15 treated wood packaging',
+    purpose: 'Pallets, crates and any solid wood packaging must be treated and stamped',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Saudi SABER/SASO for regulated furniture',
+    purpose: 'Furniture within scope needs the PC and shipment SC clearance chain',
+    confidence: 'LOW',
+  },
+  {
+    requirement: 'Correct product description and HS classification',
+    purpose: 'Material, use and construction affect duty and any conformity scope',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Certificate of origin and commercial invoice',
+    purpose: 'Standard import documentation for clearance and valuation',
+    confidence: 'HIGH',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Pricing air or LCL on actual weight instead of volume',
+    consequence: 'Furniture is light but bulky, so volumetric/chargeable weight makes the quote much higher than expected',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Poor packaging or no corner protection',
+    consequence: 'Handling damage, claims and customer rejection after a long ocean leg',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Shipping untreated wood pallets or crates',
+    consequence: 'Destination rejection or treatment required under ISPM 15',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Choosing LCL for a shipment that is already near a full container',
+    consequence: 'Extra handling costs and damage risk when FCL would have been cheaper per CBM',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'The order is a complete set or fills most of a 20ft/40ft',
+    action: 'Calculate CBM and load plan for FCL; protect corners and mark heavy/stack limits',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The shipment is a few pieces below the crossover',
+    action: 'Use LCL but strengthen packaging for consolidation and de-consolidation handling',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The furniture contains solid wood or wooden packaging',
+    action: 'Confirm ISPM 15 treatment and stamps before loading',
+    confidence: 'HIGH',
+  },
+  {
+    trigger: 'The destination is Saudi Arabia',
+    action: 'Check SABER furniture scope and obtain the PC/SC on time if regulated',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Should furniture from China to the GCC go by FCL or LCL?',
+    a: 'Complete sets and large retail orders usually go by FCL; single pieces and small replenishment orders go by LCL. Because furniture is volumetric, compare both on the same CBM and use the FCL/LCL crossover rather than scale weight.',
+  },
+  {
+    q: 'Why is furniture shipping so volume-sensitive?',
+    a: 'Furniture occupies a large cube relative to its weight. Ocean LCL is priced per CBM and air freight uses chargeable weight, so a light but bulky item bills on space, not scale weight.',
+  },
+  {
+    q: 'Does wooden furniture need fumigation for the GCC?',
+    a: 'Solid wood packaging material such as pallets, crates and dunnage must meet ISPM 15 treatment and marking. The requirement applies to the packaging; the furniture itself may also be subject to destination phytosanitary or conformity checks, so confirm the exact commodity rules.',
+  },
+  {
+    q: 'Do furniture shipments to Saudi Arabia need SABER?',
+    a: 'Furniture can fall under the regulated SABER/SASO scope depending on the product. Check the exact scope before shipping and obtain the PC before shipment and SC before arrival if required.',
+  },
+  {
+    q: 'Can furniture go by air freight?',
+    a: 'Only in exceptional cases, such as a high-value showroom piece or an urgent replacement. Most furniture is too volumetric for air and becomes very expensive on chargeable weight.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Furniture from China to GCC: FCL, LCL, CBM & ISPM 15 Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship furniture from China to the GCC: FCL versus LCL by CBM, volumetric pricing, packaging protection, ISPM 15 wood treatment, Saudi SABER furniture scope and the mode decision guide.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Furniture shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Furniture from China to GCC: FCL, LCL, CBM & ISPM 15 Guide (2026)"
+  description="How to ship furniture from China to the GCC: FCL versus LCL by CBM, volumetric pricing, packaging protection, ISPM 15 wood treatment, Saudi SABER furniture scope and the mode decision guide."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Furniture China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping furniture from China to the GCC</h1>
+      <p class="lead">
+        Furniture is big and light, so the shipment is priced on volume more than weight. Complete sets
+        and large orders go by sea FCL, single pieces and replenishment orders go by LCL, and air is a
+        rare exception for high-end or urgent items. Packaging protection and ISPM 15 wood treatment
+        matter as much as the mode.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Measure the CBM first. Full furniture sets fit the economics of FCL;
+          a few pieces fit LCL; almost no furniture should fly unless speed is essential. Then protect
+          the load with real corner and surface packaging, and make sure every wood pallet or crate
+          carries the ISPM 15 stamp before it reaches the port.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Complete sets</span>
+          <span class="fact-value">Sea FCL</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Single pieces</span>
+          <span class="fact-value">Sea LCL</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Key cost driver</span>
+          <span class="fact-value">CBM / volumetric</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Wood packaging</span>
+          <span class="fact-value">ISPM 15</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: furniture is a CBM problem</h2>
+    <p>
+      Furniture rarely hits a weight limit before it hits a space limit. That makes CBM the first
+      number to calculate and the first number to protect. Full sets and large retail orders use FCL
+      because the dedicated container reduces handling; smaller orders use LCL and accept the
+      consolidation risk in exchange for paying only for the space they use.
+    </p>
+    <p>
+      Packaging is the second decision. Furniture that is boxed for a domestic warehouse is often
+      under-packaged for an ocean consolidation or a GCC trucking leg. Corner guards, edge protection,
+      interior bracing and moisture barriers are not extras — they are the difference between a clean
+      delivery and a damage claim.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        Start with CBM, then compare the mode on that same volume basis. The table shows the default
+        by order profile.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Furniture method selection is driven by CBM and order profile; final choice depends on packaging, destination and service needs."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      The main physical compliance issue is wood packaging; the main market issue is Saudi product
+      conformity. Keep them separate in your checklist.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Furniture compliance inputs. SABER applicability is product-specific and must be confirmed with the official scope."
+    />
+    <div class="note mt-2">
+      <strong>Wood packaging is easier to fix at origin than at destination.</strong> Rejection,
+      treatment or hold at the GCC port is more expensive than ordering ISPM 15-compliant pallets and
+      crates from the start.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        Furniture cost is dominated by CBM, packaging and handling risk. FCL looks expensive as a flat
+        box rate but often wins on per-CBM once the order is large; LCL looks cheaper for a few pieces
+        but includes CFS and handling fees at both ends. Air is usually the wrong tool for volume
+        furniture because chargeable weight punishes bulky cargo.
+      </p>
+      <ul>
+        <li>Use the <a href="/tools/cbm-calculator/">CBM calculator</a> before comparing FCL and LCL.</li>
+        <li>Ask for the FCL rate and the LCL all-in rate on the identical CBM.</li>
+        <li>Build packaging cost into the product quote, not after damage occurs.</li>
+        <li>Add destination duty, VAT and last-mile on top of the freight quote.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Furniture-specific mistakes that inflate cost or cause damage and rejection."
+    />
+    <p class="mt-2">
+      Furniture failures are usually visible failures: damaged corners, broken glass or wood packaging
+      stopped at the border. Over-package the test shipment, then optimise cost once the route is proven.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for furniture from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="CBM calculator"
+          description="Calculate furniture volume before choosing FCL, LCL or air."
+          href="/tools/cbm-calculator/"
+        />
+        <Card
+          title="FCL shipping"
+          description="Full-container planning and why complete furniture sets default to FCL."
+          href="/methods/fcl/"
+        />
+        <Card
+          title="FCL vs LCL from China to GCC"
+          description="The corridor-wide full-container versus less-than-container decision guide."
+          href="/middleeast/fcl-vs-lcl/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a furniture freight quote"
+      text="Tell us the item list, carton dimensions, total CBM, destination and packaging plan so we can compare FCL and LCL on the same volume."
+    />
+  </section>
+</BaseLayout>

@@ -1,0 +1,376 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { gccCountries } from '../../data/gcc-countries';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-food-china-to-gcc/`;
+
+const saudi = gccCountries.find((country) => country.slug === 'saudi-arabia');
+const saudiDutyNote = saudi?.dutyNote ?? 'Confirm current Saudi agricultural and food tariff rates with ZATCA before pricing.';
+
+const methodRows = [
+  {
+    scenario: 'Shelf-stable dry food at volume',
+    method: 'Sea FCL',
+    why: 'Lowest cost per unit for stable goods that can tolerate the longer transit',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Smaller dry-food orders or market testing',
+    method: 'Sea LCL',
+    why: 'Pays only for used space, though handling and transit time increase',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Chilled or frozen products',
+    method: 'Reefer container / cold chain',
+    why: 'Temperature control is mandatory; the cold chain must be unbroken from origin to destination',
+    confidence: 'HIGH',
+  },
+  {
+    scenario: 'Urgent samples or short-shelf-life items',
+    method: 'Air freight',
+    why: 'Speed protects shelf life, but air adds cost and still requires food compliance documents',
+    confidence: 'MEDIUM',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'Saudi SABER/SASO and food authority requirements',
+    purpose: 'Food products are heavily regulated; confirm registration, conformity and importer requirements before shipment',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Halal certification',
+    purpose: 'Many GCC food imports require halal assurance from a recognised certification body',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Arabic labelling and ingredient/expiry data',
+    purpose: 'Labels must meet the destination language and food-information rules or the goods can be held',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Certificate of origin and health/sanitary documents',
+    purpose: 'Standard clearance evidence plus any product-specific health certificates',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Saudi agricultural tariff review',
+    purpose: saudiDutyNote,
+    confidence: 'MEDIUM',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Assuming a generic halal logo is enough',
+    consequence: 'The certifying body or standard is not recognised at destination and the product is rejected',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Using an English-only or non-compliant label',
+    consequence: 'Destination label checks fail and the consignment is held for relabelling or return',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Pricing food on the old tariff without checking the current rate',
+    consequence: 'The landed cost is understated when Saudi agricultural/food tariffs have moved to a higher bracket',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Allowing a temperature break in the cold chain',
+    consequence: 'Reefer cargo is rejected on inspection or suffers quality loss',
+    confidence: 'HIGH',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'The product is shelf-stable and the order is large',
+    action: 'Book sea FCL and lock compliance documents before the shipment is produced',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The product requires chilled or frozen handling',
+    action: 'Build a reefer plan with temperature set point, pre-cooling, data logging and destination inspection',
+    confidence: 'HIGH',
+  },
+  {
+    trigger: 'The destination is Saudi Arabia',
+    action: 'Confirm the current food tariff, SABER/SASO scope, halal and label requirements in one checklist',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Shelf life is short or the shipment is a sample',
+    action: 'Use air only if the compliance paperwork can still be completed before arrival',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is the hardest part of shipping food from China to the GCC?',
+    a: 'Compliance, not transport. Food often needs destination product registration or conformity, halal assurance, correct Arabic labelling and product-specific health documents. A cargo that is easy to move by sea can still fail the destination gate.',
+  },
+  {
+    q: 'Does food shipped to Saudi Arabia need SABER and halal?',
+    a: 'Saudi food imports sit inside a strict regulatory framework. SABER/SASO is the product-conformity platform, while halal requirements are handled separately by the relevant food-authority and certification rules. Confirm both for the exact product and importer.',
+  },
+  {
+    q: 'How do Saudi agricultural tariffs affect food landed cost?',
+    a: saudiDutyNote,
+  },
+  {
+    q: 'When should food go by reefer instead of a standard container?',
+    a: 'Use a reefer for chilled or frozen products, and for any shelf-stable product that requires a controlled temperature. The cold chain must be maintained from origin through port handling to final delivery.',
+  },
+  {
+    q: 'Can food be shipped by air from China to the GCC?',
+    a: 'Yes for urgent samples, high-value or short-shelf-life items, but air speed does not remove halal, labelling or registration requirements. Complete the destination compliance work before arrival.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Food from China to GCC: SABER, Halal, Labels & Saudi Tariff Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship food from China to the GCC: dry FCL/LCL, reefer cold chain, air for urgent stock, Saudi SABER and halal requirements, Arabic labelling and the June 2026 Saudi agricultural tariff review.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Food shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Food from China to GCC: SABER, Halal, Labels & Saudi Tariff Guide (2026)"
+  description="How to ship food from China to the GCC: dry FCL/LCL, reefer cold chain, air for urgent stock, Saudi SABER and halal requirements, Arabic labelling and the June 2026 Saudi agricultural tariff review."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Food China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping food from China to the GCC</h1>
+      <p class="lead">
+        Food is the highest-compliance category on the corridor. The freight method matters, but the
+        real gates are product conformity, halal assurance, Arabic labelling and destination food
+        authority rules. Saudi Arabia adds a cost layer from the 2026 agricultural and food tariff
+        review, which makes landed-cost planning more important than shopping for the cheapest ocean
+        rate.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Solve compliance before freight: dry goods go by sea FCL/LCL,
+          chilled or frozen goods go by reefer, and urgent short-shelf-life stock flies. For Saudi
+          food, the landed-cost question is not just the carrier rate — {saudiDutyNote.toLowerCase()}
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Dry food</span>
+          <span class="fact-value">Sea FCL / LCL</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Chilled / frozen</span>
+          <span class="fact-value">Reefer cold chain</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi gate</span>
+          <span class="fact-value">SABER + halal + labels</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Tariff watch</span>
+          <span class="fact-value">Saudi 2026 agricultural review</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: food is a compliance-first shipment</h2>
+    <p>
+      The shipping method is the easy part. Dry, shelf-stable food uses sea FCL or LCL; temperature-
+      controlled food uses reefer containers; urgent or short-shelf-life stock may use air. The hard
+      part is clearing the destination rules: registration or conformity, halal certification,
+      Arabic labelling and any product-specific sanitary documentation.
+    </p>
+    <p>
+      For Saudi Arabia, the June 2026 agricultural tariff review changes the arithmetic for many food
+      lines. The existing WorldFreightHub country data says: <strong>{saudiDutyNote}</strong> That
+      means a low freight quote can still produce a high landed cost if the tariff is priced from an
+      old assumption.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        Match the method to the temperature and shelf-life profile. A standard dry container is
+        unsuitable for chilled or frozen product; a reefer is overkill and overpriced for stable dry
+        goods.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Food method selection by temperature and shelf-life profile; compliance requirements apply regardless of mode."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      Food compliance is layered. One certificate rarely covers everything; treat registration,
+      halal, labelling and tariff as separate checklist items.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Food compliance inputs for China-to-GCC shipments. Confirm exact requirements for the product, destination and importer."
+    />
+    <div class="note mt-2">
+      <strong>Do not ship the food first and fix the paperwork later.</strong> Unlike general cargo,
+      a rejected food consignment can involve relabelling, re-export or destruction — all more
+      expensive than completing the destination checks before sailing.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        Food cost is driven by certification, tariff, temperature and shelf life. The ocean rate can
+        be the smallest line. Certification and registration are fixed product-setup costs; the tariff
+        is a percentage uplift; reefer adds a premium for power, monitoring and temperature-controlled
+        handling; air adds speed but not compliance relief.
+      </p>
+      <ul>
+        <li>Model the tariff from the current Saudi rate, not a previous shipment.</li>
+        <li>Quote reefer as an all-in cold-chain price, including power, monitoring and destination plug-in.</li>
+        <li>Count halal, registration, testing and label changes as product costs before the freight quote.</li>
+        <li>Use the <a href="/middleeast/china-to-gcc-landed-cost/">landed cost model</a> to add duty, VAT and destination fees.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Food-specific errors that cause rejection, extra cost or quality loss."
+    />
+    <p class="mt-2">
+      The highest-cost errors are invisible until the goods arrive: the wrong halal body, the wrong
+      label, the old tariff assumption. Verify all three before production, not after discharge.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for food from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="SASO & SABER certification"
+          description="PC vs SC and the before-arrival rule for regulated Saudi products."
+          href="/middleeast/saso-saber-certification/"
+        />
+        <Card
+          title="Saudi Arabia country profile"
+          description="Duty, VAT, SABER/SASO and the agricultural tariff note from the GCC country data."
+          href="/countries/saudi-arabia/"
+        />
+        <Card
+          title="China to GCC landed cost"
+          description="Add duty, VAT, clearance and last-mile after the food compliance costs."
+          href="/middleeast/china-to-gcc-landed-cost/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a food logistics quote"
+      text="Tell us the product, shelf life, temperature requirement, destination, certification status and volume so we can quote the right dry, reefer or air plan."
+    />
+  </section>
+</BaseLayout>

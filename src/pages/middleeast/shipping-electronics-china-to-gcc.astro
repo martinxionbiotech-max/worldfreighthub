@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-electronics-china-to-gcc/`;
+
+const methodRows = [
+  {
+    scenario: 'Small high-value electronics or launch stock',
+    method: 'Air freight',
+    why: 'Speed matches the inventory cost and price volatility of high-value goods; watch chargeable weight',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Production volumes or stable replenishment',
+    method: 'Sea FCL',
+    why: 'Lowest cost per unit once the box is reasonably full; electronics are dense enough to load efficiently',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Medium volume below a full container',
+    method: 'Sea LCL',
+    why: 'Pays for used space only, but adds handling, consolidation and schedule risk',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Lithium-battery products',
+    method: 'Sea FCL/LCL or restricted air',
+    why: 'The battery content may make the shipment Class 9 dangerous goods regardless of the electronics value',
+    confidence: 'HIGH',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'Saudi SABER/SASO for regulated electronics',
+    purpose: 'Electrical and electronic products within scope need the PC and SC clearance chain',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'G-mark / Gulf low-voltage conformity where applicable',
+    purpose: 'GCC technical conformity for low-voltage electrical equipment under the Gulf scheme',
+    confidence: 'LOW',
+  },
+  {
+    requirement: 'Certificate of origin',
+    purpose: 'Supports preferential duty treatment or import filing requirements where applicable',
+    confidence: 'MEDIUM',
+  },
+  {
+    requirement: 'Lithium-battery documentation where batteries are present',
+    purpose: 'UN 38.3, MSDS/SDS and DG declaration apply even when the battery is installed in the device',
+    confidence: 'HIGH',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Quoting air on actual weight instead of chargeable weight',
+    consequence: 'A bulky lightweight carton bills much heavier than the scale weight and the landed cost misses budget',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Leaving SABER certification until after the goods sail',
+    consequence: 'Saudi clearance fails because the shipment certificate was not obtained before arrival',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Underestimating duty, VAT and compliance fees',
+    consequence: 'The product is profitable on the freight quote but not on the all-in landed cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Using a generic HS code for a complex electronics SKU',
+    consequence: 'Wrong duty rate, possible compliance scope confusion and clearance questions',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'High value density, small cube and an urgent launch date',
+    action: 'Calculate chargeable weight first, then compare air freight against the stockout cost',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Steady production volume that fills most of a container',
+    action: 'Book sea FCL and confirm the SABER PC/SC or G-mark work before the sailing',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Mixed SKUs with some lithium-battery products',
+    action: 'Split the DG question from the general-cargo question; declare battery products separately where required',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Saudi Arabia destination',
+    action: 'Make SABER scope and SC-before-arrival timing the first compliance checkpoint',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Should electronics from China to the GCC go by air or sea?',
+    a: 'Use air for small high-value items or launch stock where speed is valuable; use sea FCL for production volume, and sea LCL for medium volume below a full box. Air freight is charged on volumetric or chargeable weight, so bulky electronics can cost more than the scale weight suggests.',
+  },
+  {
+    q: 'Do electronics shipped to Saudi Arabia need SABER?',
+    a: 'Regulated electrical and electronic products generally fall within SABER/SASO scope. Confirm the exact product scope before ordering and obtain the PC before shipment and the SC before cargo arrival if the product is regulated.',
+  },
+  {
+    q: 'What is the G-mark for Gulf electronics?',
+    a: 'The G-mark is the Gulf conformity mark for low-voltage electrical equipment under the GCC scheme. It is product conformity, separate from customs duty and VAT, and does not replace Saudi SABER/SASO where that also applies.',
+  },
+  {
+    q: 'Why is chargeable weight so important for electronics air freight?',
+    a: 'Airlines bill the greater of gross weight and volumetric weight. Packaging with lots of air or protective foam makes the volumetric weight exceed the actual weight, so the per-kg rate is applied to a larger billable figure.',
+  },
+  {
+    q: 'Are electronics with lithium batteries dangerous goods?',
+    a: 'Yes. If the product contains or is packed with lithium batteries, the relevant UN number and dangerous-goods rules can apply even though the item is a finished electronic device. Check UN 3481 and carrier requirements before quoting general-cargo air freight.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Electronics from China to GCC: Air, Sea FCL/LCL, SABER & G-Mark Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship electronics from China to the GCC: air versus sea FCL/LCL, chargeable weight traps, Saudi SABER/SASO compliance, G-mark low-voltage conformity, certificate of origin and lithium-battery documentation.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Electronics shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Electronics from China to GCC: Air, Sea FCL/LCL, SABER & G-Mark Guide (2026)"
+  description="How to ship electronics from China to the GCC: air versus sea FCL/LCL, chargeable weight traps, Saudi SABER/SASO compliance, G-mark low-voltage conformity, certificate of origin and lithium-battery documentation."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Electronics China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping electronics from China to the GCC</h1>
+      <p class="lead">
+        Electronics are high-value and time-sensitive, which pushes small launch volumes toward air and
+        production volumes toward sea FCL. But the mode decision is only half the task: Saudi
+        electronics may need SABER/SASO conformity, Gulf low-voltage products may need the G-mark, and
+        lithium-battery products carry a separate dangerous-goods layer.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Start with chargeable weight for air, not actual weight — a bulky
+          light carton can bill 20–30% heavier than its scale weight. Then decide the volume: small
+          high-value stock flies, full production runs go FCL, and mid-volumes go LCL. Before any
+          Saudi shipment, resolve SABER scope and the SC-before-arrival rule so the product does not
+          clear the transport gate and fail the compliance gate.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Small high-value</span>
+          <span class="fact-value">Air freight</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Production volume</span>
+          <span class="fact-value">Sea FCL</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Saudi gate</span>
+          <span class="fact-value">SABER/SASO</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Gulf low-voltage</span>
+          <span class="fact-value">G-mark where applicable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: match the mode to value density and volume</h2>
+    <p>
+      Small high-value electronics generally go by air when the value of speed exceeds the freight
+      premium. Large production shipments go by sea FCL for the lowest cost per unit, while medium
+      volumes below a full container use LCL. The catch is that electronics are often bulky relative
+      to weight, so air quotes must be built on chargeable weight, not the scale.
+    </p>
+    <p>
+      Compliance is destination-specific: Saudi Arabia's SABER/SASO system is the main gate, the Gulf
+      G-mark can apply to low-voltage electrical equipment, and a certificate of origin is a standard
+      import document. If the product contains lithium batteries, dangerous-goods rules may override
+      the “general electronics” plan.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        The table separates the mode decision from the compliance decision. A lithium-battery product
+        still needs the correct method plus DG paperwork.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Electronics method selection is illustrative; final mode choice depends on cube, weight, destination and battery content."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      Conformity and documentation are not optional extras for electronics. They can block clearance
+      even when the goods are otherwise perfectly shipped.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Electronics compliance inputs. Confirm SABER and G-mark applicability for the exact product and destination."
+    />
+    <div class="note mt-2">
+      <strong>SABER is a timeline requirement, not a destination fix:</strong> the shipment
+      conformity certificate must be obtained before arrival for regulated Saudi-bound products.
+      Build it into the pre-sailing checklist.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        The electronics cost stack is sensitive to chargeable weight, product conformity and tax. Air
+        freight looks simple on a per-kg headline, but the chargeable weight and surcharges change the
+        real figure. Sea FCL rewards volume, while LCL trades a higher per-CBM cost for flexibility.
+      </p>
+      <ul>
+        <li>Use the <a href="/tools/volumetric-weight-calculator/">volumetric weight calculator</a> before comparing air quotes.</li>
+        <li>Add destination duty and VAT after the freight quote; Saudi's tax stack is the largest in the GCC.</li>
+        <li>Treat certification and testing as product-setup costs, not per-kilo freight costs.</li>
+        <li>If batteries are present, add a DG handling/acceptance line to the quote.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Electronics-specific errors that inflate cost or block clearance."
+    />
+    <p class="mt-2">
+      The most common failure is treating electronics as a pure freight problem. In practice, the
+      landed cost and the compliance timeline usually matter more than the carrier rate.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for electronics from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="Air freight China to GCC"
+          description="Chargeable versus volumetric weight and the air decision framework."
+          href="/methods/air-freight/"
+        />
+        <Card
+          title="Volumetric weight calculator"
+          description="Convert carton dimensions into air chargeable kilograms before you compare quotes."
+          href="/tools/volumetric-weight-calculator/"
+        />
+        <Card
+          title="SASO & SABER certification"
+          description="PC vs SC, the step-by-step flow and the before-arrival rule for Saudi products."
+          href="/middleeast/saso-saber-certification/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get an electronics freight quote"
+      text="Tell us the HS code, carton dimensions, weight, battery content and destination so we can compare chargeable weight and compliance requirements on one basis."
+    />
+  </section>
+</BaseLayout>

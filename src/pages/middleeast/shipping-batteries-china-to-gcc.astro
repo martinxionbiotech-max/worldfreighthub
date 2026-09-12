@@ -1,0 +1,385 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-batteries-china-to-gcc/`;
+
+const methodRows = [
+  {
+    scenario: 'Battery cells, packs or modules at production volume',
+    method: 'Sea FCL — dangerous goods container',
+    why: 'Most carriers accept DG cargo in a dedicated or segregated box; unit cost falls as the container fills',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Mixed battery products or part-container volumes',
+    method: 'Sea LCL — only with a DG-accepting consolidator',
+    why: 'Cheaper than FCL below a full box, but acceptance is more restricted than general LCL',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Samples or urgent small quantities',
+    method: 'Air freight — DG-capable carrier only',
+    why: 'Fastest, but limited by state of charge, packaging instruction and airline acceptance',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Finished electronics with batteries installed',
+    method: 'Sea FCL/LCL or Air under the relevant packing instruction',
+    why: 'UN 3481 contained-in-equipment rules still require testing and paperwork, even when the battery is built in',
+    confidence: 'MEDIUM',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'UN 38.3 test report / summary',
+    purpose: 'Proves the cell or battery passed the UN Manual of Tests and Criteria transport tests',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'MSDS / SDS',
+    purpose: 'Documents classification, composition, hazards and emergency response',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Dangerous goods declaration',
+    purpose: 'Formally declares the Class 9 hazard, UN number and packing group to the carrier',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Class 9 label, UN number and handling marks',
+    purpose: 'Communicates the hazard on packages, and battery or equipment marks where applicable',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Packaging to the applicable packing instruction',
+    purpose: 'Prevents short-circuit, movement and damage; packaging must be approved for the transport mode',
+    confidence: 'MEDIUM',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Declaring lithium batteries as general cargo',
+    consequence: 'Fines, cargo rejection or seizure; carrier and customs risk — the most expensive single error',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Ignoring air state-of-charge and packing limits',
+    consequence: 'Airline refusal at origin even when the shipment was already booked',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Mixing batteries with general cargo in the same undeclared consignment',
+    consequence: 'Loss of DG segregation and a shipment that no compliant carrier will accept as booked',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Shipping with an outdated or missing test report',
+    consequence: 'Documents rejected during carrier or destination screening and clearance stalls',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'Large battery order or production run',
+    action: 'Plan sea FCL on a DG booking first; build compliance documents before container availability is checked',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Urgent sample under the carrier air limit',
+    action: 'Confirm airline DG acceptance, state-of-charge cap and packaging before paying for the booking',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'Mixed SKUs including batteries and non-battery goods',
+    action: 'Ask whether the battery portion must be split from general cargo or can travel segregated in the same unit',
+    confidence: 'LOW',
+  },
+  {
+    trigger: 'Saudi Arabia destination',
+    action: 'Add SABER/SASO screening if the finished product containing the battery is regulated',
+    confidence: 'LOW',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Are lithium batteries Class 9 dangerous goods from China to the GCC?',
+    a: 'Yes. Lithium-ion batteries are UN 3480 when shipped as cells or batteries alone and UN 3481 when contained in or packed with equipment. Lithium-metal equivalents are UN 3090 and UN 3091. They are Class 9 dangerous goods and require a dangerous-goods declaration, not general-cargo paperwork.',
+  },
+  {
+    q: 'What documents do I need to ship lithium batteries to Saudi Arabia or the UAE?',
+    a: 'The transport package is UN 38.3 testing evidence, an MSDS/SDS, a dangerous-goods declaration, and the correct labels and packaging. For a Saudi-bound finished product that falls under SABER/SASO scope, the product conformity paperwork is separate from the battery transport documentation.',
+  },
+  {
+    q: 'Can lithium batteries go by air from China to the GCC?',
+    a: 'Only under a DG-capable carrier/forwarder and the applicable IATA packing instruction. Airlines commonly restrict state of charge, package size, weight and whether batteries travel alone or installed in equipment. Confirm the specific airline acceptance rules before booking.',
+  },
+  {
+    q: 'Should large battery shipments go by sea instead of air?',
+    a: 'Usually yes. Bulk cells, packs and modules are heavy, regulated and air-restricted, so a sea FCL DG booking is the standard route. Air is mainly for urgent small quantities that fit the carrier restrictions.',
+  },
+  {
+    q: 'Does SABER replace the lithium-battery dangerous goods declaration?',
+    a: 'No. SABER/SASO is Saudi product-conformity clearance; the dangerous-goods declaration is transport safety documentation. A regulated product may need both.',
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Batteries from China to GCC: UN 3480/3481, UN38.3 & DG Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship lithium batteries from China to the GCC: UN 3480/3481 Class 9 classification, UN38.3 and MSDS requirements, air state-of-charge limits, sea FCL/LCL DG options, common errors and the mode decision guide.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Lithium battery shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Batteries from China to GCC: UN 3480/3481, UN38.3 & DG Guide (2026)"
+  description="How to ship lithium batteries from China to the GCC: UN 3480/3481 Class 9 classification, UN38.3 and MSDS requirements, air state-of-charge limits, sea FCL/LCL DG options, common errors and the mode decision guide."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Batteries China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping batteries from China to the GCC</h1>
+      <p class="lead">
+        Lithium batteries are Class 9 dangerous goods: UN 3480 for standalone lithium-ion cells or
+        batteries, UN 3481 when contained in or packed with equipment, and UN 3090/3091 for the
+        lithium-metal equivalents. The GCC route is legal and routine, but only when the UN 38.3 test
+        evidence, MSDS/SDS, dangerous-goods declaration, labels and packaging are in place before the
+        booking.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Choose the mode after the hazard is declared, not before. Bulk
+          cells and packs usually go by sea FCL/LCL on a dangerous-goods booking; small urgent samples
+          may go by air only through a DG-capable carrier that accepts the specific UN number and
+          state-of-charge condition. Missing the Class 9 declaration is the classic failure — it turns
+          a compliant battery shipment into undeclared dangerous goods, with fines, refusal or seizure.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Primary UN numbers</span>
+          <span class="fact-value">UN 3480 / UN 3481 (lithium-ion)</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Hazard class</span>
+          <span class="fact-value">Class 9</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Core paperwork</span>
+          <span class="fact-value">UN 38.3 + MSDS/SDS + DG declaration</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Bulk default</span>
+          <span class="fact-value">Sea FCL/LCL on a DG booking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: declare the hazard first, then pick the mode</h2>
+    <p>
+      Lithium batteries are not ordinary electronics cargo. The shipment is Class 9 dangerous goods,
+      and every subsequent decision — carrier, container type, packaging, route and cost — is
+      downstream from that classification. For GCC imports, the practical default is sea freight for
+      production volumes and air freight only for a small quantity that meets the carrier's
+      lithium-battery acceptance conditions.
+    </p>
+    <p>
+      The Saudi or UAE destination does not remove the transport rules. Saudi product-conformity steps
+      such as SABER/SASO may also apply to the finished product containing the battery; those are
+      separate from the dangerous-goods transport declaration.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        The table starts from the battery scenario, not from a generic freight quote. DG acceptance,
+        packing instruction and carrier policy usually determine the method before price does.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Method choice is illustrative guidance, not a carrier acceptance guarantee. Confirm DG booking terms with the specific forwarder and carrier."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      Treat this as a five-part package. A test report alone is not enough; the declaration, marking,
+      labelling and packaging must all match the same UN number and mode.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Core lithium-battery transport requirements. Specific packing instructions and carrier limits vary by mode and airline."
+    />
+
+    <div class="note mt-2">
+      <strong>No invented numbers:</strong> this page intentionally does not state a specific UN 38.3
+      fee, SABER certificate number or carrier rate. Obtain the test summary, SDS and an itemised DG
+      freight quote for your exact battery model and quantity.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        Battery freight costs behave differently from general cargo. Expect a dangerous-goods premium
+        or segregated slot, more documentation handling, and fewer carriers willing to quote. On sea
+        freight the base box sits inside the existing corridor ranges, but the DG acceptance and
+        packaging costs are added on top; on air the chargeable weight and lithium restrictions can
+        make a light package much more expensive than it looks.
+      </p>
+      <ul>
+        <li>Sea FCL is the volume play — compare a DG 20ft/40ft quote against the published corridor bracket, not a general-cargo rate.</li>
+        <li>Sea LCL is convenient below a full box, but only consolidators who accept lithium can quote it.</li>
+        <li>Air is the speed option, not the savings option — the airline lithium limits constrain what can fly at all.</li>
+        <li>Destination duties, VAT and any SABER/SASO product steps still apply to the battery-containing goods.</li>
+      </ul>
+      <p>
+        Use the
+        <a href="/middleeast/china-to-gcc-landed-cost/">China to GCC landed cost model</a> after the
+        freight quote so duty, VAT and destination fees are not left out.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Common lithium-battery shipping errors from a China-to-GCC planning perspective."
+    />
+    <p class="mt-2">
+      The failure pattern is almost always the same: someone books “batteries” as ordinary goods to
+      get a lower rate, then the shipment is stopped at origin screening, airline acceptance or
+      destination inspection. Declare first, quote second.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <p>
+        Use the trigger, not the freight quote, as the first filter. If the shipment is lithium, the
+        first question is whether the carrier will accept the exact UN number and packaging.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for battery shipments from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="Air freight China to GCC"
+          description="Chargeable weight, the 6,000 divisor and why lithium acceptance is a carrier-specific question."
+          href="/methods/air-freight/"
+        />
+        <Card
+          title="FCL shipping"
+          description="Full-container planning, demurrage risk and why bulk battery volumes default to a DG FCL booking."
+          href="/methods/fcl/"
+        />
+        <Card
+          title="China to GCC landed cost"
+          description="Add destination duty, VAT, clearance and last-mile after the DG freight quote."
+          href="/middleeast/china-to-gcc-landed-cost/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a dangerous-goods battery quote"
+      text="Tell us the UN number, battery type, quantity, state of charge, packaging and destination so we can route this as declared Class 9 cargo rather than general freight."
+    />
+  </section>
+</BaseLayout>

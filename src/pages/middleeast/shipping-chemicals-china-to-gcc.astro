@@ -1,0 +1,371 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import FaqBlock from '../../components/FaqBlock.astro';
+import Card from '../../components/Card.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_NAME, SITE_URL } from '../../site';
+
+const pageUrl = `${SITE_URL}/middleeast/shipping-chemicals-china-to-gcc/`;
+
+const methodRows = [
+  {
+    scenario: 'Dangerous chemicals in production volume',
+    method: 'Sea FCL on a dangerous-goods booking',
+    why: 'DG containers, segregation and carrier acceptance make sea the standard route for Class 3, 6, 8 and similar cargo',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Non-dangerous chemicals',
+    method: 'Sea FCL or LCL as general cargo',
+    why: 'A correct classification may allow normal freight, but the SDS and technical sheet must support the non-DG call',
+    confidence: 'MEDIUM',
+  },
+  {
+    scenario: 'Small urgent DG samples',
+    method: 'Air freight only with DG-capable carrier',
+    why: 'Fast, but heavily restricted by quantity, packaging and airline policy',
+    confidence: 'LOW',
+  },
+  {
+    scenario: 'Destination port with DG restrictions',
+    method: 'Confirm acceptance before booking any method',
+    why: 'The destination terminal must be able to receive and handle the class, UN number and packaging group',
+    confidence: 'HIGH',
+  },
+];
+
+const complianceRows = [
+  {
+    requirement: 'Current MSDS / SDS',
+    purpose: 'The SDS is the classification and emergency-response backbone for the shipment',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'GHS labels and hazard communication',
+    purpose: 'Packages must carry the correct pictograms, signal word, hazard and precautionary statements',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Class, UN number and proper shipping name',
+    purpose: 'Every DG shipment must be declared under the correct hazard class and UN entry',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Dangerous-goods declaration and packaging approval',
+    purpose: 'The carrier needs a formal DG declaration and packaging that meets the applicable packing instruction',
+    confidence: 'HIGH',
+  },
+  {
+    requirement: 'Destination port DG acceptance confirmation',
+    purpose: 'Some GCC terminals or carriers restrict specific classes, so the route must be validated in advance',
+    confidence: 'MEDIUM',
+  },
+];
+
+const mistakeRows = [
+  {
+    mistake: 'Declaring dangerous chemicals as general cargo',
+    consequence: 'The shipment is stopped, rejected or penalised as undeclared dangerous goods',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Ignoring destination-port DG restrictions',
+    consequence: 'The cargo cannot be discharged or handled at the chosen GCC terminal',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Using an outdated or incomplete SDS',
+    consequence: 'Carrier and customs screening reject the documentation package',
+    confidence: 'MEDIUM',
+  },
+  {
+    mistake: 'Mixing incompatible classes or treating all chemicals as one DG family',
+    consequence: 'Segregation rules are broken and the carrier refuses the load',
+    confidence: 'LOW',
+  },
+];
+
+const decisionRows = [
+  {
+    trigger: 'The SDS classifies the product as dangerous goods',
+    action: 'Build the quote from the UN number and class, then confirm the destination port accepts that class',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The product is non-dangerous and well documented',
+    action: 'Quote normal sea FCL/LCL and keep the SDS available for screening',
+    confidence: 'MEDIUM',
+  },
+  {
+    trigger: 'The order is a small urgent DG sample',
+    action: 'Ask a DG-capable air forwarder whether the quantity, packaging and route are acceptable before booking',
+    confidence: 'LOW',
+  },
+  {
+    trigger: 'The consignee has no DG handling capability',
+    action: 'Route through a terminal and trucking provider that can handle the specific class to the final site',
+    confidence: 'MEDIUM',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Are chemicals from China to the GCC always dangerous goods?',
+    a: 'No. The SDS and classification determine whether a product is dangerous goods. Flammable, toxic and corrosive products are common DG classes, but many non-hazardous chemicals can move as general cargo when properly documented.',
+  },
+  {
+    q: 'What documents are required for dangerous chemicals?',
+    a: 'A current MSDS/SDS, correct GHS labels, the proper shipping name with UN number and class, a dangerous-goods declaration, and packaging that meets the applicable packing instruction. The destination terminal must also accept the class.',
+  },
+  {
+    q: 'Can dangerous chemicals go by air from China to the GCC?',
+    a: 'Only in limited quantities and only through a DG-capable carrier. Air acceptance depends on the UN number, class, packaging instruction and airline policy, so confirm before booking.',
+  },
+  {
+    q: 'Why is destination port acceptance important for chemicals?',
+    a: 'A carrier or terminal may accept the chemical at origin but not be able to discharge or handle that class at the destination. Validate the full origin-to-destination route before the booking is confirmed.',
+  },
+  {
+    q: 'How do I avoid misclassifying a chemical shipment?',
+    a: "Use the supplier's current SDS, confirm the proper shipping name and UN number, and ask a DG-trained forwarder to review the classification. When in doubt, declare and verify rather than treating it as general cargo.",
+  },
+];
+
+const schema = [
+  {
+    type: 'WebPage',
+    data: {
+      '@id': pageUrl,
+      name: 'Shipping Chemicals from China to GCC: MSDS, DG Class, UN Number & Port Guide (2026)',
+      url: pageUrl,
+      description:
+        'How to ship chemicals from China to the GCC: dangerous-goods classification, MSDS/SDS and GHS labels, sea FCL/LCL DG options, restricted air samples, destination port acceptance and common declaration errors.',
+      inLanguage: 'en',
+      datePublished: '2026-09-12',
+      dateModified: '2026-09-12',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'Thing',
+        name: 'Chemical shipping from China to GCC',
+      },
+    },
+  },
+  {
+    type: 'FAQPage',
+    data: {
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.a,
+        },
+      })),
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Shipping Chemicals from China to GCC: MSDS, DG Class, UN Number & Port Guide (2026)"
+  description="How to ship chemicals from China to the GCC: dangerous-goods classification, MSDS/SDS and GHS labels, sea FCL/LCL DG options, restricted air samples, destination port acceptance and common declaration errors."
+  canonical={pageUrl}
+  ogType="article"
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb
+        items={[
+          { label: 'Middle East', href: '/middleeast/' },
+          { label: 'Chemicals China to GCC' },
+        ]}
+      />
+      <span class="badge badge--amber">September 2026 updated</span>
+      <h1>Shipping chemicals from China to the GCC</h1>
+      <p class="lead">
+        Many chemicals are dangerous goods — Class 3 flammable liquids, Class 6 toxic substances,
+        Class 8 corrosives and others — so the shipment starts with the SDS, UN number and hazard
+        class. Dangerous chemicals usually go by sea on a DG booking; non-dangerous chemicals may move
+        as general cargo; small urgent DG samples fly only under strict carrier limits. The
+        destination port's ability to handle the class must be confirmed before booking.
+      </p>
+
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> Classify first, then route. A current MSDS/SDS gives the UN number
+          and hazard class; the class determines whether the shipment is general cargo or DG. If DG,
+          book a sea dangerous-goods container and confirm the destination port accepts that class. The
+          most expensive mistake is calling a hazardous chemical “general cargo” to save a few dollars.
+        </p>
+      </blockquote>
+
+      <div class="fact-grid mt-3">
+        <div class="fact">
+          <span class="fact-label">Classification source</span>
+          <span class="fact-value">MSDS / SDS</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Common DG classes</span>
+          <span class="fact-value">Class 3 / 6 / 8 and others</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Bulk DG route</span>
+          <span class="fact-value">Sea FCL DG booking</span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Route gate</span>
+          <span class="fact-value">Destination DG acceptance</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Direct answer: classify from the SDS, then choose the route</h2>
+    <p>
+      The chemical's SDS is the source of truth. It gives the proper shipping name, UN number, hazard
+      class and packaging requirements. If the product is dangerous goods, sea freight on a DG booking
+      is the default for volume; if it is non-dangerous and properly documented, normal FCL/LCL can
+      work. Air is a limited exception for small urgent samples.
+    </p>
+    <p>
+      The route must be checked end-to-end. Origin acceptance is not enough: the carrier, transshipment
+      hub and destination terminal all need to accept the specific class and packaging group.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>2. Transport method selection</h2>
+      <p>
+        Start with the classification. A non-DG chemical follows general-cargo economics; a DG
+        chemical follows carrier acceptance and segregation rules.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'method', label: 'Best method' },
+          { key: 'why', label: 'Why' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={methodRows}
+        caption="Chemical method selection depends on classification and destination handling. Confirm DG acceptance with the carrier and terminal."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>3. Compliance requirements</h2>
+    <p>
+      The chemical package is documentation, labelling, declaration and routing. Missing one layer can
+      stop the shipment even when the other four are correct.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'requirement', label: 'Requirement' },
+        { key: 'purpose', label: 'Why it matters' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={complianceRows}
+      caption="Core chemical shipping requirements. Exact packaging and segregation depend on the UN number and class."
+    />
+    <div class="note mt-2">
+      <strong>SDS currency matters:</strong> screening can reject a document that is outdated,
+      incomplete or inconsistent with the product on the invoice. Use the supplier's current SDS and
+      keep it aligned with the actual shipped composition.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Cost characteristics</h2>
+      <p>
+        DG chemicals carry a higher freight and handling cost than general cargo because of the
+        dangerous-goods booking, packaging, segregation and documentation work. The destination port
+        can also add special handling or restrict the class, which reduces routing options. Non-DG
+        chemicals follow normal FCL/LCL economics.
+      </p>
+      <ul>
+        <li>Get a DG quote built from the UN number and class, not a generic “chemicals” rate.</li>
+        <li>Ask for origin and destination DG handling, not only the ocean freight line.</li>
+        <li>Check <a href="/ports/">GCC ports</a> against the carrier's accepted-class list before locking the route.</li>
+        <li>Add destination duty, VAT and clearance with the <a href="/middleeast/china-to-gcc-landed-cost/">landed cost model</a>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Common mistakes</h2>
+    <DataTable
+      columns={[
+        { key: 'mistake', label: 'Mistake' },
+        { key: 'consequence', label: 'What usually happens' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={mistakeRows}
+      caption="Chemical-specific errors that block the shipment or increase cost."
+    />
+    <p class="mt-2">
+      Chemical failures are usually declaration failures: wrong class, missing UN number, outdated SDS
+      or a destination that was never confirmed to accept the cargo. Fix those before the booking, not
+      at the terminal.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Decision guide</h2>
+      <DataTable
+        columns={[
+          { key: 'trigger', label: 'If...' },
+          { key: 'action', label: 'Then...' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={decisionRows}
+        caption="Decision guide for chemicals from China to the GCC."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. Frequently asked questions</h2>
+    <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Related guides</h2>
+      <div class="grid grid--3 mt-2">
+        <Card
+          title="FCL shipping"
+          description="Full-container planning for DG chemicals and general-cargo volume."
+          href="/methods/fcl/"
+        />
+        <Card
+          title="GCC ports"
+          description="Check destination terminals before confirming a chemical route."
+          href="/ports/"
+        />
+        <Card
+          title="China to GCC landed cost"
+          description="Add duty, VAT, clearance and destination handling to the DG freight quote."
+          href="/middleeast/china-to-gcc-landed-cost/"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <Cta
+      title="Get a dangerous-goods chemical quote"
+      text="Tell us the UN number, class, quantity, packaging, origin, destination and a current SDS so we can validate the route before quoting."
+    />
+  </section>
+</BaseLayout>
