@@ -137,3 +137,20 @@ export interface FreightRate {
   lastUpdated: string;
   note: string;
 }
+
+export type VerificationLevel =
+  | 'LEVEL_1_LISTED'
+  | 'LEVEL_2_SOURCE_VERIFIED'
+  | 'LEVEL_3_INDEPENDENTLY_VERIFIED'
+  | 'LEVEL_4_PROVIDER_CONFIRMED';
+
+export function verificationLevelForSourceType(sourceType: 'own-website' | 'directory'): VerificationLevel {
+  return sourceType === 'own-website' ? 'LEVEL_2_SOURCE_VERIFIED' : 'LEVEL_1_LISTED';
+}
+
+export const VERIFICATION_LEVEL_LABELS: Record<VerificationLevel, string> = {
+  LEVEL_1_LISTED: 'LEVEL 1 · LISTED',
+  LEVEL_2_SOURCE_VERIFIED: 'LEVEL 2 · SOURCE VERIFIED',
+  LEVEL_3_INDEPENDENTLY_VERIFIED: 'LEVEL 3 · INDEPENDENTLY VERIFIED',
+  LEVEL_4_PROVIDER_CONFIRMED: 'LEVEL 4 · PROVIDER CONFIRMED',
+};

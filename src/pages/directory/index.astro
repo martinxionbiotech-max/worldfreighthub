@@ -5,11 +5,27 @@ import Card from '../../components/Card.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { directoryProviders } from '../../data/directory';
+import {
+  VERIFICATION_LEVEL_LABELS,
+  verificationLevelForSourceType,
+  type VerificationLevel,
+} from '../../data/types';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
 
 const totalProviders = directoryProviders.length;
-const verifiedProviders = directoryProviders.filter((provider) => provider.verification === 'verified').length;
-const verifiedPct = Math.round((verifiedProviders / totalProviders) * 100);
+const levelCounts: Record<VerificationLevel, number> = {
+  LEVEL_1_LISTED: 0,
+  LEVEL_2_SOURCE_VERIFIED: 0,
+  LEVEL_3_INDEPENDENTLY_VERIFIED: 0,
+  LEVEL_4_PROVIDER_CONFIRMED: 0,
+};
+
+directoryProviders.forEach((provider) => {
+  levelCounts[verificationLevelForSourceType(provider.sourceType)] += 1;
+});
+
+const level1Count = levelCounts.LEVEL_1_LISTED;
+const level2Count = levelCounts.LEVEL_2_SOURCE_VERIFIED;
 
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
@@ -23,22 +39,26 @@ const countryLabels: Record<string, string> = {
 
 const countryName = (slug: string) => countryLabels[slug] ?? slug;
 
-const verificationStatuses = [
+const verificationLevels = [
   {
-    status: 'Verified',
-    description: 'Business identity, website and published claims checked against a documented source — the provider\u2019s own website or an independent third-party directory. Direct contact details are reached via the provider\u2019s website or the Get Quote form.',
+    title: VERIFICATION_LEVEL_LABELS.LEVEL_1_LISTED,
+    description:
+      'The provider is documented in a third-party directory or marketplace record. This establishes a listing source, but core identity, website and service claims have not yet been confirmed directly against the provider\u2019s own website.',
   },
   {
-    status: 'Unverified',
-    description: 'Found in research, business identity not yet independently audited.',
+    title: VERIFICATION_LEVEL_LABELS.LEVEL_2_SOURCE_VERIFIED,
+    description:
+      'Core identity, website, service area and published claims were checked against the provider\u2019s own website. This is source verification only, not independent or government verification.',
   },
   {
-    status: 'Claimed',
-    description: 'Business confirmed its own listing.',
+    title: VERIFICATION_LEVEL_LABELS.LEVEL_3_INDEPENDENTLY_VERIFIED,
+    description:
+      'Core facts were cross-checked against at least two independent sources. Currently 0 providers have reached this level.',
   },
   {
-    status: 'Sponsored',
-    description: 'Paid placement, always labelled. Currently none.',
+    title: VERIFICATION_LEVEL_LABELS.LEVEL_4_PROVIDER_CONFIRMED,
+    description:
+      'The provider has confirmed the listing and supplied supporting documentation. Currently 0 providers have reached this level.',
   },
 ];
 
@@ -57,19 +77,19 @@ const providerGroups = providerCountrySlugs
 const faqs = [
   {
     q: 'Is it free to be listed?',
-    a: 'A standard listing costs $0: all {totalProviders} current entries are editorial listings, with no paid placement required to be considered. Paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.',
+    a: `A standard listing costs $0: all ${totalProviders} current entries are editorial listings, with no paid placement required to be considered. Paid placements, if ever introduced, would be clearly labelled and separated from editorial listings.`,
   },
   {
-    q: 'How do you verify providers?',
-    a: 'All {totalProviders} listed providers have been verified against a documented source — identity, website and published service claims have each been checked against the provider\u2019s own website or an independent third-party directory. No detail is published as verified until it has been independently confirmed.',
+    q: 'How do you source-check providers?',
+    a: `All ${totalProviders} listed providers are source-documented: ${level2Count} at LEVEL 2 SOURCE VERIFIED and ${level1Count} at LEVEL 1 LISTED. Identity, website and published service claims have each been checked against the provider's own website or a third-party directory. None has been independently verified.`,
   },
   {
-    q: 'What does "verified" mean?',
-    a: 'Verified means the provider\u2019s identity, website and published service claims have each been checked against a documented source — the provider\u2019s own website or an independent third-party directory. Contact details are not published on the listing — reach the provider through its website or the Get Quote form.',
+    q: 'What do the LEVEL 1-4 labels mean?',
+    a: `LEVEL 1 LISTED means a third-party directory or marketplace record documents the provider. LEVEL 2 SOURCE VERIFIED means core identity, website and published service claims were checked against the provider's own website. LEVEL 3 INDEPENDENTLY VERIFIED and LEVEL 4 PROVIDER CONFIRMED currently have 0 providers. A higher level is stronger source documentation; none of these levels is a recommendation or endorsement.`,
   },
   {
     q: 'Can a business claim its listing?',
-    a: 'A business can claim 1 listing at a time and supply supporting information. Claimed listings are marked as such, and any self-reported material remains labelled until independently verified.',
+    a: 'A business can claim 1 listing at a time and supply supporting information. Claimed listings are marked as such. Currently 0 listings are provider-confirmed, and any self-reported material remains labelled as unverified until the provider supplies corroborating documentation.',
   },
   {
     q: 'Do you accept paid placements?',
@@ -81,11 +101,11 @@ const faqs = [
   },
   {
     q: 'Why are there so few listings right now?',
-    a: 'We publish {totalProviders} entries because that is how many have a documented research source and have completed identity verification. We confirm each business against a documented source — its own website or an independent third-party directory rather than padding the directory with unconfirmed businesses.',
+    a: `We publish ${totalProviders} entries because that is how many have a documented research source and have completed source documentation. Source-documented is not the same as independently verified, and we do not pad the directory with unconfirmed businesses.`,
   },
   {
     q: 'How do you decide who to list?',
-    a: 'A provider is listed only when it has at least 1 documentable research source on the China-to-GCC freight corridor. We do not rank by payment, and we prefer slower, source-backed listings over volume.',
+    a: 'A provider is listed only when it has at least 1 documentable research source on the China-to-GCC freight corridor. We do not rank by payment, and we prefer slower, source-documented listings over volume.',
   },
   {
     q: 'How do I contact a listed provider?',
@@ -132,7 +152,7 @@ const schema = [
 
 <BaseLayout
   title="Freight Provider Directory — China to GCC"
-  description="A no-paid-rankings, verification-first directory of freight forwarders and customs brokers on the China to GCC corridor."
+  description="A no-paid-rankings, source-documented directory of freight forwarders and customs brokers on the China to GCC corridor."
   canonical={`${SITE_URL}/directory/`}
   ogType="website"
   schema={schema}
@@ -142,32 +162,43 @@ const schema = [
       <Breadcrumb items={[{ label: 'Directory' }]} />
       <h1>Freight provider directory</h1>
       <p class="lead">
-        A no-paid-rankings, verification-first directory of freight forwarders
+        A no-paid-rankings, source-documented directory of freight forwarders
         and customs brokers on the China to GCC corridor.
       </p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> The directory lists {totalProviders} providers, all {verifiedProviders} source-documented at a {verifiedPct}% rate. With 0 paid placements currently listed, no provider bought its way into the directory — the status badge reflects source documentation (own website or third-party directory), not marketing copy.
+          <strong>TL;DR:</strong> The directory lists {totalProviders} providers,
+          all source-documented: {level2Count} at LEVEL 2 SOURCE VERIFIED (own
+          website) and {level1Count} at LEVEL 1 LISTED (third-party directory).
+          0 are independently verified and 0 are provider-confirmed. With 0 paid
+          placements currently listed, no provider bought its way into the
+          directory — the badge reflects source documentation, not marketing
+          copy, recommendation or endorsement.
         </p>
       </blockquote>
     </div>
   </div>
 
   <section class="section container">
-    <h2>Verification status</h2>
+    <h2>Verification levels</h2>
     <p class="lead">
-      Every listing carries a status so you know how much independent
-      confirmation sits behind it.
+      Every listing carries a LEVEL 1-4 badge showing how its source
+      documentation was established. Source-documented does not mean
+      independently verified, recommended, endorsed, best, cheapest, or
+      guaranteed.
     </p>
     <div class="grid grid--2 mt-2">
-      {verificationStatuses.map((item) => (
-        <Card title={item.status} description={item.description} />
+      {verificationLevels.map((item) => (
+        <Card title={item.title} description={item.description} />
       ))}
     </div>
     <div class="note mt-3">
-      <strong>Directory status:</strong> {totalProviders} providers are listed — all {verifiedProviders} verified against a
-      documented source (own website or third-party directory). Every entry is backed by a documented research
-      source; we never fabricate entries or contact details.
+      <strong>Directory status:</strong> {totalProviders} providers are listed —
+      {level2Count} at {VERIFICATION_LEVEL_LABELS.LEVEL_2_SOURCE_VERIFIED} and
+      {level1Count} at {VERIFICATION_LEVEL_LABELS.LEVEL_1_LISTED}. 0 providers
+      are LEVEL 3 INDEPENDENTLY VERIFIED and 0 are LEVEL 4 PROVIDER CONFIRMED.
+      Every entry is backed by a documented research source; we never fabricate
+      entries or contact details.
     </div>
   </section>
 
@@ -191,7 +222,9 @@ const schema = [
             {group.providers.map((provider) => (
               <div>
                 <p class="mb-1">
-                  <span class="badge badge--amber">{provider.verification}</span>
+                  <span class="badge badge--amber">
+                    {VERIFICATION_LEVEL_LABELS[verificationLevelForSourceType(provider.sourceType)]}
+                  </span>
                 </p>
                 <Card
                   title={provider.name}
@@ -206,7 +239,8 @@ const schema = [
 
       <p class="muted small">
         Directory data last reviewed September 2026. Service-country groupings
-        reflect each provider's self-reported scope unless otherwise noted.
+        reflect each provider's documented source scope; they are not
+        independently checked.
       </p>
     </div>
   </section>
@@ -217,6 +251,6 @@ const schema = [
   </section>
 
   <section class="section container">
-    <Cta />
+    <Cta text="Tell us about your shipment and we will connect you with source-documented providers on the China–GCC corridor." />
   </section>
 </BaseLayout>

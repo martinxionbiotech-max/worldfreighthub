@@ -6,6 +6,11 @@ import DataTable from '../../components/DataTable.astro';
 import FaqBlock from '../../components/FaqBlock.astro';
 import Cta from '../../components/Cta.astro';
 import { directoryProviders, type DirectoryProvider } from '../../data/directory';
+import {
+  VERIFICATION_LEVEL_LABELS,
+  verificationLevelForSourceType,
+  type VerificationLevel,
+} from '../../data/types';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
 
 export function getStaticPaths() {
@@ -17,11 +22,11 @@ export function getStaticPaths() {
 
 const { provider } = Astro.props as { provider: DirectoryProvider };
 
-const totalProviders = directoryProviders.length;
-const verifiedProviders = directoryProviders.filter((item) => item.verification === 'verified').length;
 const serviceCountryCount = provider.serviceCountries.length;
 const methodCount = provider.methods.length;
 const claimCount = provider.selfReportedClaims?.length ?? 0;
+const verificationLevel = verificationLevelForSourceType(provider.sourceType);
+const verificationLevelLabel = VERIFICATION_LEVEL_LABELS[verificationLevel];
 
 const countryLabels: Record<string, string> = {
   'saudi-arabia': 'Saudi Arabia',
@@ -35,45 +40,59 @@ const countryLabels: Record<string, string> = {
 const countryName = (slug: string) => countryLabels[slug] ?? slug;
 
 const verificationExplanations: Record<DirectoryProvider['verification'], string> = {
-  verified: 'Business identity and claims have been independently confirmed by WorldFreightHub. Contact details are available via the provider\u2019s website or our Get Quote form.',
+  verified:
+    'source-documented — business identity and published claims were checked against the provider\u2019s own website or a third-party directory. This is not an independent verification.',
   unverified:
-    'This provider was found in research, but its identity, contact details and service claims have not yet been independently confirmed.',
-  claimed: 'The business has confirmed its own listing; self-reported details remain labelled until independently verified.',
+    'This provider was found in research, but its identity, contact details and service claims have not yet been source-documented.',
+  claimed: 'The business has confirmed its own listing; self-reported details remain labelled until corroborating documentation is supplied.',
   sponsored: 'This is a paid placement, always labelled as sponsored.',
 };
 
+const verificationLevelExplanations: Record<VerificationLevel, string> = {
+  LEVEL_1_LISTED:
+    'The provider is documented in a third-party directory or marketplace record. Core identity, website and service claims have not yet been confirmed directly against the provider\u2019s own website. This is not an independent verification.',
+  LEVEL_2_SOURCE_VERIFIED:
+    'Core identity, website, service area and published claims were checked against the provider\u2019s own website. This is source verification only; no independent or government verification has been completed.',
+  LEVEL_3_INDEPENDENTLY_VERIFIED:
+    'Core facts were cross-checked against at least two independent sources. Currently 0 providers have reached this level.',
+  LEVEL_4_PROVIDER_CONFIRMED:
+    'The provider has confirmed the listing and supplied supporting documentation. Currently 0 providers have reached this level.',
+};
+
 const tableColumns = [
+  { key: 'listingStatus', label: 'Listing status' },
+  { key: 'verificationLevel', label: 'Verification level' },
   { key: 'serviceCountries', label: 'Service countries' },
   { key: 'methods', label: 'Methods' },
   { key: 'platformFocus', label: 'Platform focus' },
-  { key: 'verification', label: 'Verification' },
-  { key: 'lastVerified', label: 'Last verified' },
   { key: 'source', label: 'Source', type: 'link' as const },
   { key: 'sourceType', label: 'Source type' },
+  { key: 'lastReviewed', label: 'Last reviewed' },
 ];
 
 const tableRows = [
   {
+    listingStatus: 'Listed · source-documented',
+    verificationLevel: verificationLevelLabel,
     serviceCountries: provider.serviceCountries.map(countryName).join(', '),
     methods: provider.methods.join(', '),
     platformFocus:
       provider.platformFocus && provider.platformFocus.length > 0
         ? provider.platformFocus.join(', ')
         : 'Not stated',
-    verification: provider.verification,
-    lastVerified: provider.lastVerified,
     source: {
       href: provider.source,
       label: provider.sourceName,
     },
     sourceType: provider.sourceType === 'own-website' ? 'Own website' : 'Directory listing',
+    lastReviewed: provider.lastVerified,
   },
 ];
 
 const faqs = [
   {
-    q: 'How does WorldFreightHub verify a freight forwarder?',
-    a: 'Verification requires 3 independent checks — business identity, published service claims and website — confirmed against a documented source — the provider\u2019s own website or an independent third-party directory. Every listing on this directory has completed these checks.',
+    q: 'How does WorldFreightHub source-check a freight forwarder?',
+    a: 'Source documentation requires documented-source checks — business identity, published service claims and website, checked against the provider\u2019s own website or a third-party directory. Every listing on this directory has completed these checks. This is not an independent verification.',
   },
   {
     q: 'How should I choose a freight forwarder for China-to-GCC shipping?',
@@ -136,7 +155,7 @@ const schema = [
       <p class="muted">{provider.description}</p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> This profile is {provider.verification}, with {serviceCountryCount} service countries and {methodCount} freight methods recorded from its source. {claimCount} self-reported claims are published only as claims, and direct phone/email details are not published on the listing — reach the provider through their website or our Get Quote form.
+          <strong>TL;DR:</strong> This profile is {verificationLevelLabel}, with {serviceCountryCount} service countries and {methodCount} freight methods recorded from its source. {claimCount} self-reported claims are published only as claims, and direct phone/email details are not published on the listing — reach the provider through their website or our Get Quote form.
         </p>
       </blockquote>
     </div>
@@ -145,8 +164,12 @@ const schema = [
   <section class="section container">
     <div class="fact-grid">
       <div class="fact">
-        <span class="fact-label">Verification status</span>
-        <span class="fact-value">{provider.verification}</span>
+        <span class="fact-label">Listing status</span>
+        <span class="fact-value">Listed · source-documented</span>
+      </div>
+      <div class="fact">
+        <span class="fact-label">Verification level</span>
+        <span class="fact-value">{verificationLevelLabel}</span>
       </div>
       <div class="fact">
         <span class="fact-label">Headquarters</span>
@@ -154,8 +177,10 @@ const schema = [
       </div>
     </div>
     <div class="note mt-3">
-      <strong>What this status means:</strong>{' '}
-      {verificationExplanations[provider.verification]}
+      <strong>Listing status:</strong> {verificationExplanations[provider.verification]}
+    </div>
+    <div class="note mt-2">
+      <strong>What this level means:</strong> {verificationLevelExplanations[verificationLevel]}
     </div>
   </section>
 
@@ -164,8 +189,35 @@ const schema = [
     <DataTable
       columns={tableColumns}
       rows={tableRows}
-      caption="Service scope and claims reflect the published source and are independently verified before publication."
+      caption="Service scope and claims reflect the published source and are source-documented before publication."
     />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Known limitations</h2>
+      <p>
+        Source documentation confirms that this listing was found in, and
+        checked against, its stated source. It does not verify licences,
+        accreditations, certifications, insurance, financial standing,
+        operational reliability or current contact accuracy, and it is not a
+        recommendation or endorsement.
+      </p>
+      {verificationLevel === 'LEVEL_1_LISTED' ? (
+        <p>
+          This listing is LEVEL 1 LISTED: the source is a third-party
+          directory record, and core identity, website and service claims
+          have not yet been confirmed directly against the provider&rsquo;s
+          own website.
+        </p>
+      ) : (
+        <p>
+          This listing is LEVEL 2 SOURCE VERIFIED: core identity, website and
+          service claims were checked against the provider&rsquo;s own
+          website. No independent cross-check has been completed.
+        </p>
+      )}
+    </div>
   </section>
 
   <section class="section section--alt">
@@ -190,15 +242,15 @@ const schema = [
   <section class="section container">
     <h2>Contact & verification</h2>
     <div class="note">
-      <strong>Business identity verified.</strong>{' '}
+      <strong>Business identity source-documented.</strong>{' '}
       {provider.contactNote}
     </div>
     <p>
-      WorldFreightHub has independently confirmed this provider\u2019s identity, website,
-      service area and published claims against the source of record. Direct contact
-      details (phone / email) are not published on the listing; reach the provider
-      through their website or via our Get Quote form, which routes your request
-      without adding any fee.
+      WorldFreightHub has source-documented this provider&rsquo;s identity,
+      website, service area and published claims against the source of record.
+      Direct contact details (phone / email) are not published on the listing;
+      reach the provider through their website or via our Get Quote form,
+      which routes your request without adding any fee.
     </p>
     <p class="mt-2">
       <a class="btn btn-secondary" href="/contact/">
@@ -215,6 +267,6 @@ const schema = [
   </section>
 
   <section class="section container">
-    <Cta />
+    <Cta text="Tell us about your shipment and we will connect you with source-documented providers on the China–GCC corridor." />
   </section>
 </BaseLayout>
