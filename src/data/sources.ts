@@ -36,6 +36,8 @@ export function sourcesByIds(ids: string[]): Source[] {
 }
 
 export const sources: Source[] = [
+  { id: 'basenton', name: 'Basenton Logistics — China→GCC freight rate snapshots (zh-cn)', url: 'https://zh-cn.basenton.com/', type: 'industry' },
+  { id: 'tonlexing', name: 'Tonlexing — China→GCC container cost reference (zh-cn)', url: 'https://www.tonlexing.com/', type: 'industry' },
   {
     id: 'mawani',
     name: 'Mawani — Saudi Ports Authority',
