@@ -30,74 +30,141 @@ const wfhMethodology: Source = {
   url: `${SITE_URL}/methodology/`,
   type: 'organization',
 };
+const junqingOman: Source = {
+  id: 'junqing-oman',
+  name: 'Junqing — China→Oman shipping price and transit guide (aggregated rate tables; LOW confidence, verify at booking)',
+  url: 'https://www.sz-junqing.com/news/shipping-price-and-time-from-china-to-oman.html',
+  type: 'industry',
+};
+const soharFreezone: Source = {
+  id: 'sohar-freezone',
+  name: 'SOHAR Port and Freezone — official port and free zone site (SIPC joint venture with the Port of Rotterdam)',
+  url: 'https://www.soharportandfreezone.com/',
+  type: 'port-authority',
+};
+const psqMuscat: Source = {
+  id: 'psq-muscat',
+  name: 'Shipco Oman — port services summary: Port Sultan Qaboos (Muscat) caters mainly to cruise liners; commercial cargo shifted to Sohar',
+  url: 'https://www.shipco-oman.com/ports-served.html',
+  type: 'industry',
+};
+const psqWiki: Source = {
+  id: 'psq-muscat-wiki',
+  name: 'Port Sultan Qaboos — commercial operations ended in 2014; transformation into a cruise ship port (port history)',
+  url: 'https://en.wikipedia.org/wiki/Port_Sultan_Qaboos',
+  type: 'organization',
+};
 
 const omanCustomsSources = sourcesByIds(['oman-customs']);
-const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
 const omanPortSources: Source[] = [...omanCustomsSources, wfhMethodology];
-const rateSources: Source[] = [wfhRouteData, wfhMethodology];
+const rateSources: Source[] = [junqingOman, wfhRouteData, wfhMethodology];
 const taxSources: Source[] = [...omanCustomsSources, wfhMethodology];
-const transitSources: Source[] = [wfhRouteData, wfhMethodology];
-const costSources: Source[] = [...taxSources, wfhRouteData];
+const gatewaySources: Source[] = [soharFreezone, psqMuscat, psqWiki, wfhMethodology];
+const costSources: Source[] = [...taxSources, wfhRouteData, junqingOman];
 
-const seaRateRows = [
+const fclRateRows = [
   {
-    mode: 'LCL ocean · China → Sohar / Salalah',
-    benchmark: 'Indicative $44–$73/m³ — Chinese forwarder snapshots',
-    basis: 'No verified Oman LCL rate appeared in the research snapshot',
-    note: 'Per-CBM shared-container basis; minimum charge may apply',
-    confidence: 'MEDIUM',
-  },
-  {
-    mode: 'FCL 20GP · China → Sohar / Salalah',
-    benchmark: 'Not published — request an all-in quote',
-    basis: 'No verified Oman 20GP rate appeared in the research snapshot',
-    note: 'Priced per container; differs by line and season',
+    ref: 'r-501',
+    lane: 'Shanghai → Sohar',
+    size: '20GP',
+    benchmark: '$1,750–$2,500',
+    basis: 'Junqing aggregated tables (2024–2026). Platform cross-checks come in at $6,758–$7,744 all-in indicative (Sep 2026) — basis differs, so do not mix the two.',
     confidence: 'LOW',
   },
   {
-    mode: 'FCL 40GP / 40HQ · China → Sohar / Salalah',
-    benchmark: 'Not published — request an all-in quote',
-    basis: 'No verified Oman 40GP/40HQ rate appeared in the research snapshot',
-    note: '40ft is usually the volume benchmark for established importers',
+    ref: 'r-502',
+    lane: 'Shanghai → Sohar',
+    size: '40GP / 40HQ',
+    benchmark: '$2,110–$3,680',
+    basis: 'Same source; door-to-door platform quotes run $9.5k–$12.5k, which shows how much terminal handling, clearance and delivery can add.',
     confidence: 'LOW',
   },
   {
-    mode: 'FCL · China → Sohar / Salalah project/oversized cargo',
-    benchmark: 'Not published — request a project-specific quote',
-    basis: 'No verified project cargo rate in the snapshot',
-    note: 'Project freight requires lift, laydown and route clearance checks',
+    ref: 'r-503',
+    lane: 'Ningbo-Zhoushan → Sohar',
+    size: '20GP',
+    benchmark: '$1,950–$2,550',
+    basis: 'Source quotes an 18–28 day window on this origin. Aggregated rows, not a dated quote sheet.',
+    confidence: 'LOW',
+  },
+  {
+    ref: 'r-504',
+    lane: 'Ningbo-Zhoushan → Sohar',
+    size: '40GP / 40HQ',
+    benchmark: '$2,160–$3,630',
+    basis: 'Aggregated rows from the same source; verify with the carrier before you model a budget from it.',
     confidence: 'LOW',
   },
 ];
 
-const airRateRows = [
+const lclAirRows = [
   {
-    mode: 'Air freight · China → Oman market bracket',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    basis: 'No verified Oman air rate appeared in the research snapshot',
-    note: 'Billed on chargeable weight, not actual weight alone',
-    confidence: 'MEDIUM',
-  },
-  {
-    mode: 'Air freight · airport-to-airport planning range',
-    benchmark: 'Not published — request a quote',
-    basis: 'Planning range for direct airport-to-airport moves to Muscat',
-    note: 'Varies with chargeable weight, airport pair and season',
+    ref: 'r-505',
+    mode: 'LCL · China → Sohar (per CBM)',
+    benchmark: '$110–$190',
+    basis: 'Ningbo origin $102–$183; Shenzhen $105–$180. Source quotes a 25–35 day LCL window — slower than FCL because consolidation adds handling.',
     confidence: 'LOW',
   },
   {
-    mode: 'DDP air door-to-door',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    basis: 'No verified Oman DDP air rate in the snapshot',
-    note: 'Embeds clearance, 5% duty, 5% VAT and delivery in one price',
-    confidence: 'MEDIUM',
+    ref: 'r-506',
+    mode: 'Air · China → Muscat (per kg)',
+    benchmark: '$2.40–$3.50',
+    basis: 'Tiered: 45–99 kg $3.10–$3.50; 100–299 kg $2.70–$3.10; 300 kg+ $2.40–$3.20. Door-to-door adds roughly $1.50–$3.00/kg on top.',
+    confidence: 'LOW',
+  },
+];
+
+const rateReadRows = [
+  {
+    question: 'What basis is the number?',
+    answer: 'Port-to-port rows price the ocean or air leg only. All-in rows (Cogoport, DDP door-to-door) bundle origin charges, THC, clearance, duty/VAT and delivery — that is why the all-in column runs multiples above the port-to-port table.',
+    confidence: 'LOW',
   },
   {
-    mode: 'Express courier · China → Oman',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    basis: 'No verified Oman express rate in the research snapshot',
-    note: 'Best for small, urgent parcels; falls at higher weight',
-    confidence: 'MEDIUM',
+    question: 'How old is the number?',
+    answer: 'The Oman rows are aggregated from 2024–2026 tables, not a dated cut-off sheet. Gulf lanes moved sharply through 2026, so treat every row as a floor estimate rather than a current market print.',
+    confidence: 'LOW',
+  },
+  {
+    question: 'Who verified it?',
+    answer: 'One origin-ranked source (Junqing) carries these rows; they sit at LOW confidence until a second independent, dated source appears. Use them to plan, not to promise.',
+    confidence: 'LOW',
+  },
+  {
+    question: 'What is missing entirely?',
+    answer: 'Salalah-specific rates, project-cargo rates, insurance and every destination fee. Those stay “request a quote” on this page rather than being filled with neighbouring-lane numbers.',
+    confidence: 'LOW',
+  },
+];
+
+const uaeCompareRows = [
+  {
+    segment: '20ft FCL',
+    oman: '$1,750–$2,500 (Junqing, LOW)',
+    uae: '$4,118–$6,311 (SCFI + forwarder guide, HIGH)',
+    reading: 'Not comparable across confidence levels and vintage — the ordering is UNKNOWN. Quote both lanes on the same basis before drawing a conclusion.',
+    confidence: 'LOW',
+  },
+  {
+    segment: '40ft FCL',
+    oman: '$2,110–$3,680 (Junqing, LOW)',
+    uae: '$5,860–$8,204 (forwarder guide, MEDIUM)',
+    reading: 'Same caveat. The gap in confidence tiers, not the gap in dollars, is what the table actually shows.',
+    confidence: 'LOW',
+  },
+  {
+    segment: 'LCL floor',
+    oman: '$110/CBM (LOW)',
+    uae: '$30/CBM base bracket (MEDIUM)',
+    reading: 'The one comparison the floors can carry: about 3.7×. Thin consolidation volume is the most plausible driver; treat as indicative.',
+    confidence: 'LOW',
+  },
+  {
+    segment: 'Air benchmark',
+    oman: '$2.40–$3.50/kg (Junqing, LOW)',
+    uae: '$4.00–$8.00/kg (market, MEDIUM)',
+    reading: 'The Oman tiers look cheaper, but they rest on a single aggregated source. Unconfirmed; ask for dated per-kg quotes.',
+    confidence: 'LOW',
   },
 ];
 
@@ -112,14 +179,14 @@ const cifRows = [
   {
     layer: 'Freight (sea or air)',
     calc: 'Carrier / forwarder quote',
-    amount: 'See rate tables',
-    note: 'Ocean or air line item',
+    amount: 'See the rate card above',
+    note: 'Freight is part of the duty base, so it is not a tax-free line',
     confidence: 'LOW',
   },
   {
     layer: 'Insurance',
     calc: 'Insurer or forwarder quote',
-    amount: 'Not published in snapshot',
+    amount: 'Not published in the snapshot',
     note: 'Usually a small percentage of cargo value',
     confidence: 'LOW',
   },
@@ -127,7 +194,7 @@ const cifRows = [
     layer: 'CIF value',
     calc: 'Cost + insurance + freight',
     amount: '$10,000.00 illustrative',
-    note: 'Illustrative round figure; replace with your CIF',
+    note: 'Illustrative round figure; replace it with your CIF',
     confidence: 'LOW',
   },
   {
@@ -148,7 +215,7 @@ const cifRows = [
     layer: 'VAT',
     calc: 'Duty-inclusive base × 5%',
     amount: '$525.00',
-    note: 'Oman VAT at 5%',
+    note: 'Oman VAT at 5% — charged on $10,500, not on $10,000',
     confidence: 'MEDIUM',
   },
   {
@@ -161,7 +228,7 @@ const cifRows = [
   {
     layer: 'Destination fees',
     calc: 'THC + docs + clearance/Bayan + inland + demurrage/detention',
-    amount: 'Not published — request schedule',
+    amount: 'Not published — request the schedule',
     note: 'Added on top of the statutory stack',
     confidence: 'LOW',
   },
@@ -174,40 +241,37 @@ const cifRows = [
   },
 ];
 
-const byModeRows = [
+const stackCompareRows = [
   {
-    lane: 'Sea FCL · China to Sohar / Salalah',
-    service: 'Full container 20GP / 40GP / 40HQ',
-    benchmark: 'Not published — request an all-in container quote',
-    note: 'Use your exact container size and destination',
-    confidence: 'LOW',
-  },
-  {
-    lane: 'Sea LCL · China to Sohar / Salalah',
-    service: 'Shared container by CBM',
-    benchmark: 'Indicative $44–$73/m³ — Chinese forwarder snapshots',
-    note: 'Minimum charge applies on small volumes',
+    destination: 'Oman',
+    multiplier: '×1.1025',
+    working: '$10,000 × 1.05 × 1.05',
+    landed: '$11,025',
+    note: '5% duty, then 5% VAT on the duty-inclusive base',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'Air freight · China to Muscat',
-    service: 'Airport-to-airport by chargeable kg',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    note: 'Chargeable weight is the higher of actual and volumetric',
+    destination: 'UAE',
+    multiplier: '×1.1025',
+    working: '$10,000 × 1.05 × 1.05',
+    landed: '$11,025',
+    note: 'Identical structure to Oman — the tax is not a differentiator',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'DDP air door-to-door',
-    service: 'Bundled clearance, duty, VAT and delivery',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    note: 'Embeds the statutory stack plus destination fees',
+    destination: 'Saudi Arabia',
+    multiplier: '×1.2075',
+    working: '$10,000 × 1.05 × 1.15',
+    landed: '$12,075',
+    note: '15% VAT layer on top of duty',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'Express courier · China to Oman',
-    service: 'Door delivery for small parcels',
-    benchmark: 'Indicative $4.8–$8.4/kg air freight — Chinese forwarder snapshots',
-    note: 'Rate falls as weight rises; minimums apply',
+    destination: 'Qatar / Kuwait',
+    multiplier: '×1.05',
+    working: '$10,000 × 1.05',
+    landed: '$10,500',
+    note: 'No general VAT on imports in the current framework',
     confidence: 'MEDIUM',
   },
 ];
@@ -220,10 +284,16 @@ const fclVsLclRows = [
     confidence: 'LOW',
   },
   {
-    factor: 'Indicative cost',
-    fcl: 'Not published in the Oman snapshot — request an all-in quote',
-    lcl: 'Not published in the Oman snapshot — request an all-in per-CBM quote',
-    confidence: 'MEDIUM',
+    factor: 'Published Oman benchmark',
+    fcl: '$1,750–$2,500 (20GP); $2,110–$3,680 (40GP/40HQ)',
+    lcl: '$110–$190/CBM',
+    confidence: 'LOW',
+  },
+  {
+    factor: 'Typical transit',
+    fcl: '18–28 days from Ningbo; lane typical 19 days',
+    lcl: '25–35 days — consolidation adds handling days',
+    confidence: 'LOW',
   },
   {
     factor: 'Hidden destination cost',
@@ -232,60 +302,9 @@ const fclVsLclRows = [
     confidence: 'LOW',
   },
   {
-    factor: 'Speed and handling',
-    fcl: 'Simpler sealed move, usually faster to release',
-    lcl: 'Adds consolidation and deconsolidation handling',
-    confidence: 'LOW',
-  },
-  {
     factor: 'Planning rule',
     fcl: 'Stronger as cargo approaches a meaningful share of a box',
     lcl: 'Stronger for small, low-volume shipments',
-    confidence: 'LOW',
-  },
-];
-
-const nodeRows = [
-  {
-    node: 'Shanghai',
-    role: 'Top China container origin; 55.06M TEU (2025)',
-    note: 'Origin terminal and export documentation',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Ningbo-Zhoushan',
-    role: '#3 container port; 43M TEU (2025)',
-    note: 'Alternative East China origin',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Shenzhen (Yantian / Shekou)',
-    role: 'South China gateway',
-    note: 'Throughput not stated in research snapshot',
-    confidence: 'LOW',
-  },
-  {
-    node: 'Guangzhou',
-    role: 'South China origin named in China→GCC freight guides',
-    note: 'Throughput not stated in research snapshot',
-    confidence: 'LOW',
-  },
-  {
-    node: 'Sohar',
-    role: 'Northern Oman container/industrial gateway with adjacent free zone',
-    note: 'UN/LOCODE ' + soharUnlocode + '; use on the bill of lading',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Salalah',
-    role: 'Southern Oman deep-water transshipment hub on the Arabian Sea',
-    note: 'UN/LOCODE ' + salalahUnlocode + '; confirm before booking',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Muscat airport',
-    role: 'Air gateway for Oman air freight',
-    note: 'Airport-to-airport service for time-critical cargo',
     confidence: 'LOW',
   },
 ];
@@ -338,51 +357,51 @@ const factorRows = [
 const faqs = [
   {
     q: 'How much does shipping cost from China to Oman?',
-    a: 'Oman-specific rates are not published, so the only defensible cost anchors are the corridor-wide LCL $20–$180/CBM and 20ft FCL $1,500–$6,200 brackets plus Oman\u2019s ×1.1025 statutory stack. Request an all-in quote for FCL, LCL, air or DDP from a forwarder, itemised by freight, surcharges, THC, clearance, 5% duty, 5% VAT and delivery. Rates vary by carrier, season, cargo and surcharge, so confirm before booking.',
+    a: 'WHFI v1 (September 2026) publishes China→Oman benchmark rows, all LOW confidence: 20ft FCL $1,750–$2,500 to Sohar, 40ft $2,110–$3,680, LCL $110–$190/CBM and air $2.40–$3.50/kg. These are aggregated planning ranges, not quotes. On top of freight, Oman adds a ×1.1025 statutory stack (5% duty + 5% VAT), so a $10,000 CIF lands at $11,025 before destination fees. Verify every figure with a forwarder before booking.',
   },
   {
-    q: 'How long does it take to ship from China to Oman?',
-    a: 'WorldFreightHub route data records a typical 19 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Sohar (LOW confidence). No verified Salalah-specific or Oman air transit is published in the snapshot. All figures are indicative — verify with your carrier before relying on them.',
+    q: 'How long does shipping from China to Oman take?',
+    a: 'The route-data baseline is a typical 19 days to Sohar with a 15–30 day window (LOW confidence). The Ningbo origin row quotes 18–28 days, and LCL runs 25–35 days because consolidation adds handling. No verified Salalah-specific or China→Oman air transit figure is published in the snapshot — treat every window as indicative and confirm with the carrier.',
   },
   {
-    q: 'Why is the China-to-Oman corridor cost-sensitive?',
-    a: 'Oman\u2019s 19-day Sohar window runs 2 days faster than the UAE\u2019s 21-day Jebel Ali, yet the snapshot publishes no Oman freight rate, so pricing falls to the corridor\u2019s $20–$180/CBM and $1,500–$6,200 brackets. Its two-coast geography (Sohar north, Salalah south) also means a port-choice mistake can add significant inland distance and cost on top of the ocean rate.',
+    q: 'Are China→Oman freight rates published anywhere?',
+    a: 'Not as live quotes. The WHFI v1 rate card on this page carries six LOW-confidence rows from aggregated forwarder tables (r-501 to r-506). Platform cross-checks on the same lane run $6,758–$7,744 all-in indicative, and door-to-door quotes run $9.5k–$12.5k — the spread is mostly basis, not market disagreement. Treat published rows as floors and ask for a dated port-to-port quote.',
   },
   {
     q: 'How is the Oman landed cost calculated?',
-    a: 'On a $10,000 CIF, Oman\u2019s baseline statutory landed cost is $11,025 — 5% duty ($500) then 5% VAT on the duty-inclusive base ($525) — because the stack is CIF × 1.05 × 1.05. Add destination THC, documentation, Bayan clearance, inland trucking and any demurrage/detention on top of that.',
+    a: 'On a $10,000 CIF, Oman’s baseline statutory landed cost is $11,025: 5% duty ($500) then 5% VAT on the duty-inclusive base ($525), because the stack is CIF × 1.05 × 1.05. Destination THC, documentation, Bayan clearance, inland trucking and any demurrage or detention are added on top of that. Request those fees itemised.',
   },
   {
-    q: 'Does the 5% duty and 5% VAT apply to freight and insurance?',
-    a: 'Yes — because the base is CIF, every $1 of freight or insurance adds 10.25 cents of statutory cost (5 cents duty plus 5.25 cents VAT on the duty-inclusive base). VAT is applied on CIF + duty, so a higher freight rate raises both the duty and the VAT.',
+    q: 'Does Oman charge VAT on freight and insurance?',
+    a: 'Yes. Because the duty base is CIF — cost, insurance and freight — every $1 of freight or insurance adds 10.25 cents of statutory cost (5 cents duty plus 5.25 cents VAT on the duty-inclusive base). A higher freight rate therefore raises both the duty and the VAT, even though neither line looks like a freight tax at first glance.',
   },
   {
     q: 'What hidden fees should I expect on an Oman shipment?',
-    a: 'Oman\u2019s only quantified statutory lines are 5% duty and 5% VAT (×1.1025) — every destination fee amount was not published, so budget the fee stack as an unknown add-on. Expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bayan processing, conformity/certification if applicable, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
+    a: 'Oman’s only quantified statutory lines are 5% duty and 5% VAT (×1.1025). Every destination fee amount is unpublished, so budget the fee stack as an unknown add-on: origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Bayan processing, conformity or certification if applicable, inspection if selected, inland transport, cargo insurance if elected, and demurrage or detention after free time. Ask for an itemised schedule.',
   },
   {
     q: 'What is the cheapest way to ship from China to Oman?',
-    a: 'Below ~15 CBM, LCL\u2019s $20–$180/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL at $1,500–$6,200 becomes cheaper per CBM. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'On the published rows, the FCL/LCL crossover sits in a 9–23 CBM band ($1,750–$2,500 per box against $110–$190 per CBM). Below the band, LCL’s per-unit pricing usually wins; above it, the flat container rate becomes cheaper per CBM. Sea freight gives the lowest unit cost only if you include all destination fees — air is rarely the cheapest option and is justified by speed, value density or urgency, not the headline rate.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Oman?',
-    a: 'The ~15 CBM crossover is the decision rule: below it, LCL\u2019s $20–$180/CBM usually wins; above it, FCL\u2019s flat $1,500–$6,200 container rate becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. The research snapshot published no Oman FCL or LCL rate, so request both all-in quotes and compare the full landed cost.',
+    a: 'Run the crossover arithmetic, then decide: $1,750 ÷ $190 ≈ 9 CBM at the cheap end of LCL, and $2,500 ÷ $110 ≈ 23 CBM at the expensive end. The band is wide because both inputs are LOW-confidence aggregates, so request FCL and LCL all-in quotes at the same destination and compare the full landed cost. LCL also adds consolidation, minimum charges and more destination handling.',
   },
   {
-    q: 'Does Oman charge VAT on top of import duty?',
-    a: 'Yes — Oman stacks 5% VAT on the duty-inclusive base, so the statutory total is ×1.1025, or $11,025 on a $10,000 CIF. This differs from Qatar and Kuwait, which have no general VAT. Verify the current Oman position with the tax authority before finalising a quote.',
+    q: 'Is Oman’s tax cheaper than the UAE’s?',
+    a: 'No — it is identical. Oman’s statutory stack and the UAE’s both compound 5% duty with 5% VAT to ×1.1025, so a $10,000 CIF lands at $11,025 in either market: a $0 tax difference. The real Oman-vs-UAE differences show up in the freight lane (sailings, consolidation volume, port choice), not in the tax code. Saudi Arabia is the expensive comparison at ×1.2075 ($12,075).',
   },
   {
-    q: 'How can I reduce the landed cost on the China-to-Oman route?',
-    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s $20–$180/CBM per-unit pricing into a flat $1,500–$6,200 container spread across your volume. Also confirm the correct port (Sohar vs Salalah) before booking; compare FCL and LCL all-in quotes; classify the HS code correctly before quoting; screen restricted goods early; file the Bayan declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    q: 'Which Omani port should be used in the quote?',
+    a: 'Sohar (OMSOH) is the container gateway for Muscat and northern Oman. Salalah (OMSLL) serves southern Oman demand and transshipment relays. Note that Muscat city itself has no commercial container seaport any more — Port Sultan Qaboos shifted to cruise operations and cargo moved to Sohar, so a quote naming “Muscat port” for discharge is really a sea-plus-truck move. State the exact discharge point on the bill of lading.',
   },
   {
-    q: 'Which port should be used in the landed-cost quote?',
-    a: 'Use Sohar (OMSOH) for containerised sea freight bound for Muscat and northern Oman. Use Salalah (OMSLL) for southern Oman demand or a transshipment relay. Both UN/LOCODEs are in the WorldFreightHub port data, but a quote should state the exact discharge point so the inland leg is priced correctly.',
+    q: 'Can I ship containers directly to Muscat city?',
+    a: 'Not by sea. Mina Sultan Qaboos ceased commercial operations in 2014 and now caters mainly to cruise liners, with commercial cargo shifted to Sohar. A Muscat-city delivery is a Sohar discharge plus an inland truck leg; urgent, light cargo can also fly into Muscat airport (MCT). If a forwarder quotes “Muscat port” for a container, ask where the box actually discharges.',
   },
   {
     q: 'How should I quote transit time from China to Oman?',
-    a: 'Quote 19 days port-to-port to Sohar, then add discharge, Bayan clearance, 5% duty/VAT payment, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
+    a: 'Quote 19 days port-to-port to Sohar as the baseline, then add discharge, Bayan clearance, 5% duty/VAT payment, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise — on Oman’s thin lanes the gap between the two can run a week or more.',
   },
 ];
 
@@ -400,11 +419,11 @@ const schema = [
   {
     type: 'Article',
     data: {
-      headline: 'Shipping Cost & Transit Time from China to Oman: Complete Landed Cost Breakdown (September 2026)',
+      headline: 'Shipping Cost & Transit Time from China to Oman: Rates, Sohar vs Muscat and the ×1.1025 Stack (September 2026)',
       description:
-        'Shipping cost and transit time from China to Oman explained: Shanghai/Ningbo/Shenzhen to Sohar typical 19 days, 5% duty and 5% VAT, and the CIF × 1.1025 landed-cost formula.',
+        'China-to-Oman shipping cost and transit time: WHFI v1 rate benchmarks, the ×1.1025 duty + VAT stack shared with the UAE, Sohar vs Muscat gateway logic, and the FCL/LCL crossover band.',
       datePublished: '2026-09-01',
-      dateModified: '2026-09-01',
+      dateModified: '2026-09-16',
       inLanguage: 'en',
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -442,8 +461,8 @@ const schema = [
 ---
 
 <BaseLayout
-  title="Shipping Cost & Transit Time from China to Oman: Complete Landed Cost Breakdown (September 2026)"
-  description="Shipping cost and transit time from China to Oman: Shanghai/Ningbo/Shenzhen to Sohar typical 19 days, 5% duty and 5% VAT, and the CIF × 1.1025 landed-cost formula."
+  title="Shipping Cost & Transit Time from China to Oman: Rates, Sohar vs Muscat and the ×1.1025 Stack (September 2026)"
+  description="China-to-Oman shipping cost and transit time: WHFI v1 rate benchmarks, the ×1.1025 duty + VAT stack shared with the UAE, Sohar vs Muscat gateway logic, and the FCL/LCL crossover band."
   canonical={pageUrl}
   ogType="article"
   schema={schema}
@@ -457,33 +476,33 @@ const schema = [
         ]}
       />
       <span class="badge badge--amber">September 2026 updated</span>
-      <h1>Shipping cost &amp; transit time from China to Oman: the complete landed-cost breakdown</h1>
+      <h1>Shipping cost &amp; transit time from China to Oman: rates, Sohar vs Muscat, and the ×1.1025 stack</h1>
       <p class="lead">
-        The headline freight rate is only the first line. This page separates China-to-Oman ocean and
-        air freight from THC, documentation, Bayan clearance, inland transport and the 5% duty + 5%
-        VAT stack, then shows how the layers compound into a true landed cost — while keeping the
-        typical 19-day Sohar transit window in view.
+        For years the honest answer on Oman freight was “no published rate — request a quote”. That
+        changed this month: WHFI v1 added the first China→Oman benchmark rows, all LOW confidence.
+        This page puts those numbers next to the part that decides your invoice either way — the
+        ×1.1025 statutory stack, the Sohar-vs-Muscat gateway question, and the FCL/LCL crossover,
+        which on Oman’s thin lane arrives earlier than most importers expect.
       </p>
 
       <section class="section container">
         <blockquote class="tldr">
           <p>
-            <strong>TL;DR:</strong> Oman clears at the same &times;1.1025 as the UAE (5% duty + 5%
-            VAT), so a $10,000 CIF lands at $11,025 before destination fees — the tax is not the
-            differentiator. At the corridor-wide brackets of LCL $20&ndash;$180/CBM and 20ft FCL
-            $1,500&ndash;$6,200, the FCL/LCL crossover sits near 15 CBM, but no Oman-specific rate is
-            published to tighten that range. Its 19-day Sohar window (15&ndash;30 range) is 2 days
-            faster than the UAE's 21-day Jebel Ali, so the value is Sohar's less-congested clearance
-            — a congestion/risk trade, not a tax trade.
+            <strong>TL;DR:</strong> Oman clears at ×1.1025 (5% duty + 5% VAT) — the same multiplier
+            as the UAE, so tax decides nothing between those two. What decides is the lane: WHFI v1
+            benchmarks 20ft FCL at $1,750&ndash;$2,500, LCL at $110&ndash;$190/CBM and air at
+            $2.40&ndash;$3.50/kg (all LOW), while the LCL floor sits roughly 3.7× above the UAE’s
+            published base bracket. And Muscat has no container seaport any more — Port Sultan
+            Qaboos moved to cruise duty in 2014 and cargo shifted to Sohar, so “delivery to Muscat”
+            is a Sohar discharge plus a truck leg.
           </p>
         </blockquote>
       </section>
 
       <p class="small muted">
-        Confidence badges separate verified rules from indicative planning notes. Oman freight rates
-        were not published in the verified snapshot, so every rate is shown as “request a quote”.
-        Treat every LOW-confidence figure as indicative, and verify with your carrier before relying
-        on it.
+        Confidence badges separate verified rules from indicative planning notes. The 5% duty and 5%
+        VAT lines are verified; every freight number on this page is a LOW-confidence aggregate —
+        treat it as a floor, and verify with your carrier before relying on it.
       </p>
 
       <div class="fact-grid mt-3">
@@ -504,353 +523,556 @@ const schema = [
           <span class="fact-value">Typical 19 days <ConfidenceBadge level="LOW" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">Main ports</span>
-          <span class="fact-value">Sohar / Salalah <ConfidenceBadge level="HIGH" /></span>
+          <span class="fact-label">Container gateway</span>
+          <span class="fact-value">Sohar (OMSOH) <ConfidenceBadge level="HIGH" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">Freight rates</span>
-          <span class="fact-value">Request quote <ConfidenceBadge level="LOW" /></span>
+          <span class="fact-label">LCL benchmark</span>
+          <span class="fact-value">$110–$190/CBM <ConfidenceBadge level="LOW" /></span>
         </div>
       </div>
     </div>
   </div>
 
   <section class="section container">
-    <h2>1. What “shipping cost from China to Oman” actually includes</h2>
+    <h2>1. Anatomy of a China-to-Oman quote: freight, the statutory stack, and destination fees</h2>
     <p>
-      “Shipping cost from China to Oman” is usually quoted as a single freight line, but the amount
-      you actually pay is the sum of three groups. <strong>Group one</strong> is the international
-      move: ocean freight for FCL/LCL or air freight by chargeable weight. <strong>Group two</strong>
-      is the statutory stack: 5% customs duty on the CIF value, then 5% VAT on the duty-inclusive
-      base. <strong>Group three</strong> is the destination fee stack: THC, documentation, customs
-      brokerage, Bayan processing, inland transport and, if free time is exceeded, demurrage or
-      detention.
+      A “shipping cost from China to Oman” quote is really three cost groups stacked on one another.
+      <strong>Group one</strong> is the international move: ocean freight for FCL or LCL, or air
+      freight billed on chargeable weight. <strong>Group two</strong> is the statutory stack — 5%
+      customs duty on the CIF value, then 5% VAT on the duty-inclusive base, a compound worth
+      ×1.1025. <strong>Group three</strong> is the destination fee stack: terminal handling,
+      documentation, customs brokerage, Bayan processing, inland transport and, if free time is
+      missed, demurrage or detention.
     </p>
     <p>
-      The common mistake is to compare only group one. Two quotes can look identical on the ocean
-      rate and differ materially once THC, Bayan and inland delivery are included. Oman’s two-coast
-      geography makes that comparison more important, not less: a Muscat-bound consignment routed to
-      Salalah (or vice versa) carries a materially different inland bill.
+      Most comparisons stop at group one, and on most lanes that is merely incomplete. On Oman it
+      can flip a decision. The country is one of the few GCC markets where the port question is
+      genuinely open — Sohar in the north, Salalah in the south, and a capital whose old port no
+      longer takes commercial box ships at all. A Muscat-bound consignment routed to the wrong
+      coast carries a materially different inland bill, and no ocean rate table will show it.
     </p>
     <p>
-      This page keeps that structure explicit. Every table separates the freight benchmark from the
-      statutory stack and the unquantified destination fees, so you can see which line a provider is
-      actually quoting — and which ones are still missing.
+      This page keeps the three groups separate on purpose. Every table below states its basis: the
+      freight benchmarks are port-to-port planning ranges; the statutory layer is arithmetic you
+      can verify; the destination layer stays “request the schedule” until a terminal or broker
+      gives us a number. If a quote mixes the layers without saying so, that is the first thing to
+      challenge.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>2. Indicative freight benchmarks from China to Oman</h2>
+      <h2>2. WHFI v1 rate card: what China→Oman freight benchmarks at</h2>
       <p>
-        Freight rates move weekly with capacity, fuel, peak season and routing, and the research
-        snapshot published <strong>no Oman FCL, LCL, air or express figure</strong>. Rather than back
-        into a number from a neighbouring corridor, every rate below is shown as “request an all-in
-        quote” and labelled LOW confidence.
+        Until this September, every public snapshot we keep carried the same line for Oman: no
+        verified rate, request a quote. WHFI v1 — the WorldFreightHub Freight Index — now holds six
+        China→Oman rows, all LOW confidence, sourced to a single aggregated forwarder table set
+        (Junqing). That upgrade is useful, but read the label before the number: these rows are
+        planning anchors built from 2024–2026 tables, not dated quotes from this month’s market.
+        Gulf lanes have moved violently through 2026, so treat each range as a floor estimate.
       </p>
 
-      <h3>Sea freight</h3>
+      <h3>FCL benchmarks by origin and size</h3>
       <DataTable
         columns={[
-          { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'ref', label: 'Ref' },
+          { key: 'lane', label: 'Lane' },
+          { key: 'size', label: 'Size' },
+          { key: 'benchmark', label: 'Indicative range' },
+          { key: 'basis', label: 'Basis note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={seaRateRows}
-        caption="Indicative market snapshots, not carrier quotes. Oman sea freight lines were not published in the research snapshot — request an all-in quote."
+        rows={fclRateRows}
+        caption="Port-to-port planning ranges, not quotes. Ref IDs map to the WHFI v1 rate register (r-501 to r-506). All rows LOW confidence — verify at booking."
       />
-      <SourceList sources={rateSources} title="Sources — sea freight rates" />
+      <SourceList sources={rateSources} title="Sources — FCL benchmarks" />
 
-      <h3 class="mt-3">Air and express freight</h3>
+      <h3 class="mt-3">LCL and air benchmarks</h3>
       <DataTable
         columns={[
+          { key: 'ref', label: 'Ref' },
           { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'benchmark', label: 'Indicative range' },
+          { key: 'basis', label: 'Basis note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={airRateRows}
-        caption="Air figures are LOW confidence and vary with chargeable weight, urgency and route. Verify with a forwarder."
+        rows={lclAirRows}
+        caption="LCL and air rows are LOW confidence and vary with volume bracket, season and routing. Verify with a forwarder."
       />
-      <SourceList sources={rateSources} title="Sources — air & express rates" />
+      <SourceList sources={rateSources} title="Sources — LCL & air benchmarks" />
+
+      <h3 class="mt-3">Four questions to ask before you use any of these numbers</h3>
+      <DataTable
+        columns={[
+          { key: 'question', label: 'Question' },
+          { key: 'answer', label: 'Why it matters on this lane' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={rateReadRows}
+        caption="Read the basis first. The same lane can look 3× different depending on what a number includes."
+      />
 
       <div class="note mt-2">
-        <strong>Headline rate vs landed cost:</strong> the freight line is only one component.
-        Surcharges, origin charges, destination THC, Bayan, the 5% duty and the 5% VAT all sit on top,
-        so request an all-in itemised quote for a realistic comparison.
+        <strong>Basis, not conspiracy:</strong> the port-to-port rows above sit far below the
+        platform “all-in” quotes because they exclude origin charges, THC, clearance, duty/VAT and
+        delivery. If a quote comes in at several times the band, check what it bundles before
+        concluding the market moved.
       </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>3. The landed-cost formula: build CIF, then add duty and 5% VAT</h2>
+    <h2>3. Sohar vs Muscat: where containerised cargo actually lands</h2>
     <p>
-      Oman duty is calculated on CIF, so the first step is to build the CIF value correctly. CIF
-      means cost of goods plus insurance plus freight. The second step is to add the baseline 5%
-      customs duty on that CIF value, then 5% VAT on the duty-inclusive base. That gives the baseline
-      statutory stack <code>CIF × 1.05 × 1.05 = CIF × 1.1025</code>.
+      Here is the fact that reorganises every Oman logistics plan: <strong>Muscat has no commercial
+      container seaport</strong>. Port Sultan Qaboos — Mina Qaboos, the country’s traditional
+      gateway in Muttrah — ceased commercial operations in 2014 and was transformed into a cruise
+      ship port; commercial cargo moved to Sohar, with Muscat road congestion cited as one reason
+      for the shift. The port services summaries are blunt about it: from 2014 the port caters
+      mainly to cruise liners and commercial activity sits in Sohar.
+    </p>
+    <p>
+      So the real gateway map is a three-way choice, not a two-port split:
+    </p>
+    <ul>
+      <li>
+        <strong>Sohar ({soharUnlocode})</strong> — the northern container gateway and the default discharge
+        point for Muscat, Al Batinah and the northern interior. It sits outside the Strait of
+        Hormuz on the Gulf of Oman, which is why it keeps appearing in crisis-routing plans.
+      </li>
+      <li>
+        <strong>Salalah ({salalahUnlocode})</strong> — the deep-water southern hub on the Arabian Sea, best for
+        Dhofar demand and for transshipment relays rather than for a Muscat delivery.
+      </li>
+      <li>
+        <strong>Muscat airport (MCT)</strong> — the air option for urgent, light or high-value
+        cargo into the capital region.
+      </li>
+    </ul>
+    <p>
+      The practical decision logic is straightforward once you know the map. Cargo destined for
+      Muscat city, Sohar’s industrial belt or anywhere in northern Oman lands at Sohar and trucks
+      inland. Cargo for the southern governorates lands at Salalah — routing it through Sohar means
+      crossing the country by road. And a quote that names “Muscat port” for a container should
+      trigger a question, because what it usually means is a Sohar discharge plus a truck leg that
+      someone may or may not have priced. The full port comparison lives in the
+      <a href="/middleeast/oman-ports/">Oman ports guide</a>; for the cost side, the rule of thumb
+      is to pin the discharge port on the bill of lading before rates are locked.
+    </p>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. Inside Sohar Port &amp; Free Zone, Oman’s industrial gateway</h2>
+      <p>
+        Sohar is not a generic box port with a shed next door. The SOHAR Port and Freezone complex
+        is managed by the Sohar Industrial Port Company, a 50:50 joint venture between the
+        Sultanate of Oman and the Port of Rotterdam, and it pairs a deep-water industrial port with
+        an adjacent free zone built around refineries, smelters, metals and logistics parks. The
+        container terminal (OICT) runs under a Hutchison-linked joint venture. Rotterdam DNA shows
+        in the model: the port was designed around industrial clusters, not just throughput.
+      </p>
+      <p>
+        For importers, three consequences matter more than the org chart:
+      </p>
+      <ol>
+        <li>
+          <strong>Heavy and industrial cargo fits here.</strong> Project equipment, steel,
+          machinery and construction inputs are Sohar’s second nature; discharge and handling
+          capabilities are built for them in a way that a consumer-goods terminal is not.
+        </li>
+        <li>
+          <strong>The free zone changes your options — pending confirmation.</strong> Free zones
+          can offer storage, processing and re-export arrangements that mainland import does not.
+          The specific treatment your goods qualify for is not published as a schedule we can
+          verify, so confirm it with the operator or your broker rather than assuming a package.
+        </li>
+        <li>
+          <strong>Resilience is part of the pitch.</strong> Sohar faces the Gulf of Oman outside
+          the Strait of Hormuz, so vessels can call without transiting the chokepoint — a
+          structural argument that has become concrete during the 2026 Hormuz disruption, when
+          cargo for other Gulf markets was re-routed through Omani ports and moved overland.
+        </li>
+      </ol>
+      <p>
+        The counterweight is density. Sohar is a less-congested, faster-clearing alternative to
+        Jebel Ali and Jeddah — that is its verified congestion edge — but it also runs on fewer
+        sailings and a thinner carrier roster, which is exactly where small-market friction
+        concentrates: schedule windows, minimum charges and less negotiating tension between
+        lines.
+      </p>
+      <SourceList sources={gatewaySources} title="Sources — Sohar & Muscat gateway facts" />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. The small-market premium: Oman’s rate floors against the UAE’s</h2>
+    <p>
+      The obvious question for a Gulf importer is “how much more does Oman cost than the UAE?”.
+      The honest answer takes two tables, because the published numbers do not sit on the same
+      shelf. Here is the comparison as the data actually supports it:
     </p>
 
-    <h3>Step 1 — Build the CIF value</h3>
     <DataTable
       columns={[
-        { key: 'layer', label: 'Cost layer' },
-        { key: 'calc', label: 'How to obtain it' },
-        { key: 'amount', label: 'Indicative amount' },
-        { key: 'note', label: 'Planning note' },
+        { key: 'segment', label: 'Segment' },
+        { key: 'oman', label: 'Oman (source, confidence)' },
+        { key: 'uae', label: 'UAE (source, confidence)' },
+        { key: 'reading', label: 'What the comparison can carry' },
+        { key: 'confidence', label: 'Row confidence', type: 'confidence' },
+      ]}
+      rows={uaeCompareRows}
+      caption="Cross-source comparison. Confidence levels differ by row — treat every reading as indicative, not as a measured premium."
+    />
+    <SourceList sources={[...rateSources, ...sourcesByIds(['tonlexing'])]} title="Sources — Oman vs UAE comparison" />
+
+    <p class="mt-2">
+      Two things follow from that table. First, the <strong>FCL comparison cannot settle the
+      question</strong>: Oman’s rows are LOW-confidence aggregates from one source family, while
+      the UAE’s headline comes from a spot index including surcharges. Publishing a “premium” from
+      that pairing would be manufacturing a conclusion the data cannot carry — so we don’t. If you
+      need FCL parity or premium, force two quotes onto the same basis (same box, same origin,
+      same week, port-to-port) and compare those.
+    </p>
+    <p>
+      Second, where floors <em>are</em> comparable, the small-market signal is real. Oman’s LCL
+      floor of $110/CBM sits about 3.7× above the UAE’s $30 base bracket, and 5.5× above the
+      corridor-wide $20 floor. Thin consolidation volume is the most plausible driver: fewer
+      boxes to pool, less frequent consolidations, higher minimum charges. The same friction shows
+      up in transit — the LCL window is 25–35 days against 18–28 for FCL — and in carrier density,
+      where Sohar runs a thinner roster than Jebel Ali by any route-data measure.
+    </p>
+    <div class="note mt-2">
+      <strong>How to price it:</strong> model Oman as “UAE-class tax + small-market friction”.
+      Budget from the LOW rows, but hold the budget loosely — the platform cross-check on the same
+      lane ($6,758–$7,744 all-in indicative, September 2026) shows how much the basis can move the
+      number before the market does. Two dated quotes beat one benchmark.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Building the CIF value Oman Customs assesses</h2>
+      <p>
+        Oman duty is calculated on CIF, so the first step in any landed-cost model is assembling a
+        defensible CIF value: cost of goods plus insurance plus freight. Freight is not a tax-free
+        line — it is part of the base that duty, and then VAT, are charged on. The second step is
+        the statutory arithmetic: 5% duty on CIF, then 5% VAT on the duty-inclusive base, which
+        compounds to <code>CIF × 1.05 × 1.05 = CIF × 1.1025</code>.
+      </p>
+
+      <h3>Step 1 — Assemble the CIF value</h3>
+      <DataTable
+        columns={[
+          { key: 'layer', label: 'Cost layer' },
+          { key: 'calc', label: 'How to obtain it' },
+          { key: 'amount', label: 'Indicative amount' },
+          { key: 'note', label: 'Planning note' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={cifRows}
+        caption="CIF 10,000 USD is an illustrative round figure only. Replace it with your actual declared value, freight and insurance."
+      />
+      <SourceList sources={taxSources} title="Sources — CIF and landed-cost layers" />
+
+      <h3 class="mt-3">Step 2 — Duty, VAT, then the fees that follow</h3>
+      <p>
+        For a USD 10,000 CIF shipment, the 5% duty is USD 500, bringing the duty-inclusive base to
+        USD 10,500. VAT at 5% applies to that base — not to the original $10,000 — so it lands at
+        USD 525 and the statutory total is USD 11,025. Destination fees (THC, documentation, Bayan
+        clearance, inland transport, possible demurrage or detention) sit on top and are not
+        quantified in any public snapshot; request them itemised.
+      </p>
+      <p>
+        One discipline note before the arithmetic below: under-declaring the CIF value is not a
+        saving. The value must reflect cost, insurance and freight; an artificial invoice invites
+        revaluation, penalties and delay, and any correction flows through both the duty and the
+        VAT layer. On a 1.1025 stack, a $2,000 revaluation is $205 of duty and VAT you were going
+        to pay eventually anyway — with interest, in the worst sense of the word.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. The ×1.1025 arithmetic on a $10,000 CIF — and the $25 compounding effect</h2>
+    <p>
+      The stack is short enough to do in your head, which is exactly why it is worth doing before
+      accepting anyone’s “about 10%” hand-wave:
+    </p>
+    <ol>
+      <li>Duty: $10,000 × 5% = <strong>$500</strong>.</li>
+      <li>Duty-inclusive base: $10,000 + $500 = <strong>$10,500</strong>.</li>
+      <li>VAT: $10,500 × 5% = <strong>$525</strong>.</li>
+      <li>Statutory landed cost: <strong>$11,025</strong> — and the effective multiplier is 1.1025.</li>
+    </ol>
+    <p>
+      The $25 question: why is VAT $525 and not the $500 a naive “5% plus 5%” reading implies?
+      Because the second 5% is charged on the duty-inclusive base. The duty itself becomes taxable
+      value. That is the compounding effect — small on a $10,000 consignment, but it scales
+      linearly with declared value, and it is the kind of line that separates a quote that was
+      actually calculated from one that was estimated.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'destination', label: 'Destination' },
+        { key: 'multiplier', label: 'Statutory multiplier' },
+        { key: 'working', label: 'Working' },
+        { key: 'landed', label: 'Landed statutory cost' },
+        { key: 'note', label: 'Note' },
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={cifRows}
-      caption="CIF 10,000 USD is an illustrative round figure only. Replace it with your actual declared value, freight and insurance."
+      rows={stackCompareRows}
+      caption="Same $10,000 CIF across four GCC destinations. Qatar and Kuwait currently have no general VAT on imports."
     />
-    <SourceList sources={taxSources} title="Sources — CIF and landed-cost layers" />
-
-    <h3 class="mt-3">Step 2 — Duty, 5% VAT, then destination fees</h3>
-    <p>
-      For a USD 10,000 CIF shipment, the 5% duty is USD 500 (→ USD 10,500), then 5% VAT is USD 525,
-      giving a statutory landed cost of USD 11,025. Destination fees — THC, documentation, Bayan
-      clearance, inland transport and possible demurrage or detention — are added on top and were not
-      quantified in the research snapshot, so request them itemised.
-    </p>
+    <SourceList sources={[...taxSources, ...sourcesByIds(['qatar-customs', 'kuwait-customs'])]} title="Sources — GCC statutory comparison" />
 
     <div class="grid grid--2 mt-2">
       <Card title="The formula in one line">
         <p class="lead">
-          <strong>CIF × (1 + duty rate) × (1 + VAT rate)</strong>
+          <strong>CIF × 1.05 × 1.05 = CIF × 1.1025</strong>
         </p>
         <p>
-          Baseline: CIF × 1.05 × 1.05. Add operational fees on top of that statutory figure.
+          Duty first, VAT on the duty-inclusive base. Add operational fees on top of that
+          statutory figure.
         </p>
       </Card>
-      <Card title="Why Oman is not a Qatar/Kuwait copy">
+      <Card title="Why the tax is not the story">
         <p>
-          Qatar and Kuwait stop at CIF × 1.05 (no general VAT). Oman compounds 5% duty with 5% VAT to
-          reach CIF × 1.1025 — the same shape as the UAE. The statutory stack is a duty-plus-VAT
-          compound, not a duty-only position.
+          Oman and the UAE land on the same ×1.1025 — a $0 difference on $10,000 CIF. Saudi Arabia
+          is $1,050 heavier; Qatar and Kuwait are $525 lighter. Between Oman and the UAE, every
+          cost difference you will actually experience comes from the freight lane, not the tax
+          code.
         </p>
       </Card>
-    </div>
-
-    <div class="note mt-2">
-      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
-      and freight. An unrealistically low invoice value invites revaluation, penalties and delay — and
-      any correction flows through both the 5% duty and the 5% VAT layer.
     </div>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>4. Cost and time by mode and port</h2>
+      <h2>8. FCL vs LCL to Sohar: a crossover band, not a fixed 15 CBM</h2>
       <p>
-        Oman’s port choice has two real options — Sohar for the north and Salalah for the south — and
-        the mode decision is FCL versus LCL for ocean and air versus express for time-critical cargo.
-        Because Oman rates and most transit figures are not published, the table below records the
-        lanes and keeps the numbers as “request a quote”.
+        Most GCC cost pages repeat a “crossover at about 15 CBM” rule. On Oman’s published rows,
+        that rule deserves an asterisk, because both of its inputs are now quantified — and both
+        are LOW confidence, which widens the answer into a band rather than a point.
       </p>
 
       <DataTable
         columns={[
-          { key: 'lane', label: 'Lane' },
-          { key: 'service', label: 'Service' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'factor', label: 'Factor' },
+          { key: 'fcl', label: 'FCL' },
+          { key: 'lcl', label: 'LCL' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={byModeRows}
-        caption="Indicative mode/lane benchmarks. Oman rates were not published in the snapshot — request an all-in quote."
+        rows={fclVsLclRows}
+        caption="FCL and LCL comparison on the WHFI v1 rows; all inputs LOW confidence."
       />
-      <SourceList sources={[...rateSources, wfhRouteData]} title="Sources — cost and time by mode" />
+      <SourceList sources={rateSources} title="Sources — FCL vs LCL inputs" />
+
+      <h3 class="mt-3">The crossover arithmetic, shown honestly</h3>
+      <p>
+        The crossover is where per-CBM pricing overtakes the flat box rate: crossover CBM = FCL
+        rate ÷ LCL rate. With Oman’s rows:
+      </p>
+      <ul>
+        <li>Cheapest box against the most expensive LCL: $1,750 ÷ $190 ≈ <strong>9.2 CBM</strong>.</li>
+        <li>Most expensive box against the cheapest LCL: $2,500 ÷ $110 ≈ <strong>22.7 CBM</strong>.</li>
+      </ul>
+      <p>
+        So the honest statement is a <strong>9–23 CBM crossover band</strong>. Below roughly
+        9 CBM, LCL’s per-unit pricing wins on any reading of the rows. Above roughly 23 CBM, the
+        container is winning on any reading. In between, the answer depends on which quotes you
+        actually get — and if you habitually act at “15 CBM”, you are using the midpoint of a band
+        that could be wrong in either direction. Two structural notes push the practical decision
+        earlier than the midpoint: LCL carries a minimum charge on small volumes, and it adds CFS
+        handling and the slower 25–35 day window. Neither appears in the flat arithmetic above.
+      </p>
+      <div class="note mt-2">
+        <strong>Oman’s small-market twist:</strong> because consolidation volume is thinner than
+        Dubai’s, a small shipment may sit longer for consolidation or carry a higher minimum
+        charge. Before choosing LCL, request the CFS cutoff, the minimum CBM and the next
+        consolidation sailing date. The corridor-wide crossover logic is covered in more depth in
+        the <a href="/middleeast/fcl-vs-lcl/">FCL vs LCL guide</a>.
+      </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>5. FCL vs LCL: the cost crossover</h2>
+    <h2>9. Air freight to Muscat: reading the published tiers</h2>
     <p>
-      The Oman market’s smaller volume makes the FCL/LCL crossover particularly important. LCL is
-      easy for small consignments, but the per-CBM rate, minimum charge and extra CFS handling can
-      make it more expensive per unit as volume grows. FCL becomes stronger once the shipment
-      approaches a meaningful share of a container.
+      WHFI v1 also added the first China→Oman air rows (via Junqing, LOW confidence): a
+      $2.40–$3.50/kg band with visible weight tiers — 45–99 kg at $3.10–$3.50, 100–299 kg at
+      $2.70–$3.10, and 300 kg+ at $2.40–$3.20. Door-to-door service adds roughly $1.50–$3.00/kg
+      on top, which is the line most first-time air shippers forget when comparing against a DDP
+      quote.
     </p>
-
-    <DataTable
-      columns={[
-        { key: 'factor', label: 'Factor' },
-        { key: 'fcl', label: 'FCL' },
-        { key: 'lcl', label: 'LCL' },
-        { key: 'confidence', label: 'Confidence', type: 'confidence' },
-      ]}
-      rows={fclVsLclRows}
-      caption="FCL and LCL comparison is directional; neither Oman rate is quantified in the snapshot."
-    />
-    <SourceList sources={rateSources} title="Sources — FCL vs LCL" />
-
-    <div class="note mt-2">
-      <strong>Oman small-market effect:</strong> because LCL consolidation volume is lower than
-      Dubai, a small shipment may sit longer for consolidation or carry a higher minimum charge.
-      Request the CFS cutoff, minimum CBM and next consolidation sailing before choosing LCL.
-    </div>
+    <p>
+      Air is billed on chargeable weight — the higher of actual and volumetric weight — and the
+      volumetric convention in air freight is gentler than courier: roughly 1 CBM per 167 kg
+      (the ÷6000 divisor). A 2 CBM shipment therefore bills around 333 kg even if it physically
+      weighs far less. At the published tiers, that is about $800–$1,070 at the 300 kg+ level
+      before door-to-door adders. The number is not automatically disqualifying — it is simply
+      five to six times a sea quote's ballpark, so it has to buy something: speed, stock-out
+      avoidance, or security for high-value goods.
+    </p>
+    <p>
+      Two cautions. These tiers come from a single aggregated source, so treat them as structure
+      (weight bands move the rate) more than as current market levels. And express courier
+      pricing behaves differently again — falling sharply at higher weights, with minimums that
+      bite small parcels. If your shipment is under about 50 kg, compare courier and consolidated
+      air before assuming either wins; the <a href="/middleeast/air-freight-from-china-to-oman/">Oman air freight
+      guide</a> lays out the full mode decision.
+    </p>
+    <SourceList sources={rateSources} title="Sources — air freight" />
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>6. Ports and handlers in the cost chain</h2>
+      <h2>10. What else moves the rate: surcharges, season, and free-time discipline</h2>
       <p>
-        Each node in the China-to-Oman chain adds a cost and a potential delay. The table below
-        orients the origin and destination nodes; the destination fees themselves must be obtained
-        from the carrier, terminal and broker.
+        Below the headline rate sits a layer of surcharges and operational levers that decides as
+        much of your invoice as the base number does. The table keeps the recurring ones explicit;
+        none of the amounts are published in the snapshot, so each is a request-the-schedule item
+        rather than a figure to plug in.
       </p>
 
       <DataTable
         columns={[
-          { key: 'node', label: 'Node' },
-          { key: 'role', label: 'Role' },
+          { key: 'factor', label: 'Factor' },
+          { key: 'effect', label: 'Effect on cost or time' },
           { key: 'note', label: 'Planning note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={nodeRows}
-        caption="Port/node orientation. China throughput figures and Oman UN/LOCODEs are HIGH confidence; destination operational details are LOW and route-specific."
+        rows={factorRows}
+        caption="Operational context. Only 5% duty and 5% VAT are verified — unquantified fees stay LOW confidence and require a fee schedule."
       />
-      <SourceList sources={[...chinaPortSources, ...omanPortSources]} title="Sources — ports & handlers" />
+      <SourceList sources={costSources} title="Sources — cost & transit factors" />
+
+      <h3 class="mt-3">Demurrage and detention</h3>
+      <p>
+        <strong>Demurrage</strong> is charged by the terminal when an imported container sits
+        inside the port beyond the free time allowed after discharge. <strong>Detention</strong> is
+        charged by the ocean carrier when the box stays outside the port beyond its free time
+        after collection. Both clocks are per-day, both differ by line and terminal, and neither
+        schedule is published in the snapshot — request both before booking. The way to stay off
+        both meters is unglamorous: file the Bayan declaration before the vessel arrives, keep HS
+        codes and documents ready, screen restricted goods early, and book trucking before the
+        container is discharged.
+      </p>
+
+      <h3 class="mt-3">Cost discipline for a two-coast corridor</h3>
+      <ul>
+        <li>Confirm the discharge port (Sohar vs Salalah) before the bill of lading is cut — and remember “Muscat” is a truck destination, not a sea one.</li>
+        <li>Consolidate smaller orders into fewer, fuller FCL moves once volume crosses the 9–23 CBM band.</li>
+        <li>Compare FCL and LCL all-in quotes at the same destination point, on the same week.</li>
+        <li>Classify the HS code and screen restricted goods before booking.</li>
+        <li>Request the Bayan declaration before vessel arrival to protect free time.</li>
+        <li>Negotiate the destination fee schedule, not just the headline freight rate.</li>
+      </ul>
     </div>
   </section>
 
   <section class="section container">
-    <h2>7. Cost factors, hidden fees and transit pressure points</h2>
+    <h2>11. Clearance mechanics: Bayan, documents, and the Omani conformity screen</h2>
     <p>
-      Oman’s freight bill is shaped by the same surcharges and seasonal swings as the wider GCC
-      corridor, but the two-coast port map adds a routing risk that a single-gateway market does not
-      carry. The table below keeps those factors explicit.
-    </p>
-
-    <DataTable
-      columns={[
-        { key: 'factor', label: 'Factor' },
-        { key: 'effect', label: 'Effect on cost or time' },
-        { key: 'note', label: 'Planning note' },
-        { key: 'confidence', label: 'Confidence', type: 'confidence' },
-      ]}
-      rows={factorRows}
-      caption="Cost factors are operational context. Only 5% duty and 5% VAT are verified — unquantified fees are LOW confidence and require a fee schedule."
-    />
-    <SourceList sources={costSources} title="Sources — cost & transit factors" />
-
-    <h3 class="mt-3">Demurrage and detention</h3>
-    <p>
-      <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
-      the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged by
-      the ocean carrier when the container stays outside the port beyond the free time allowed after
-      collection. Free-time allowances and per-day rates differ by line and terminal and were not
-      published in the research snapshot, so always request the fee schedule before booking.
+      Oman’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common
+      External Tariff, with <strong>5% VAT</strong> on the duty-inclusive base — the ×1.1025
+      stack. Higher lines exist for specific goods (cement, some paints and polyurethane, alcohol)
+      and basic foods and GCC-origin goods can qualify for duty-free treatment. The HS code is
+      therefore the first cost decision, and it is made before quoting, not after.
     </p>
     <p>
-      The practical way to avoid both is to finish clearance before the vessel arrives: file the
-      Bayan declaration early, keep the HS code and documents ready, screen restricted goods, and
-      book trucking before the container is discharged.
+      The clearance sequence runs through <strong>Bayan</strong>, Oman’s electronic declaration
+      system:
     </p>
-
-    <h3 class="mt-3">Cost optimisation on a two-port corridor</h3>
-    <ul>
-      <li>Confirm the correct discharge port (Sohar vs Salalah) before the bill of lading is cut.</li>
-      <li>Consolidate smaller orders into fewer, fuller FCL moves when possible.</li>
-      <li>Compare the FCL and LCL all-in quotes at the same destination point.</li>
-      <li>Classify the HS code and screen restricted goods before booking.</li>
-      <li>Request the Bayan declaration before the vessel arrives.</li>
-      <li>Book last-mile trucking before discharge to protect free time.</li>
-      <li>Negotiate the destination fee schedule, not just the headline freight rate.</li>
-    </ul>
-  </section>
-
-  <section class="section section--alt">
-    <div class="container">
-      <h2>8. Compliance points that change the bill</h2>
-
-      <h3>Tax and duty</h3>
-      <p>
-        Oman’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common External
-        Tariff, with <strong>5% VAT</strong> on the duty-inclusive base. The baseline statutory landed
-        cost for most goods is <code>CIF × 1.05 × 1.05 = CIF × 1.1025</code>. Specific goods can still
-        carry different duty lines or VAT treatment (zero-rating or exemptions), so the HS code
-        remains the first cost decision.
-      </p>
-
-      <h3>Bayan and the clearance order</h3>
-      <ol>
-        <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
-        <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
-        <li>Prepare the commercial invoice, packing list, bill of lading or air waybill and certificate of origin.</li>
-        <li>File the <strong>Bayan</strong> electronic declaration through Oman Customs.</li>
-        <li>Pay the assessed 5% duty and 5% VAT, pass inspection if selected, and release the cargo.</li>
-      </ol>
-
-      <h3>Documents and classification</h3>
-      <p>
-        Standard documents are the commercial invoice, bill of lading or air waybill, packing list
-        and certificate of origin, plus any product-specific permits for restricted goods. Certificate
-        of origin requirements can differ for GCC-origin versus non-GCC goods. Classify goods with the
-        correct <strong>HS code</strong> before quoting, because duty, VAT treatment and permit
-        requirements all depend on it. Note that <strong>ISF</strong> is a United States requirement
-        and does not apply to Oman; Oman’s advance-filing step is the Bayan declaration.
-      </p>
-
-      <h3>Conformity: Oman has its own regime, not SABER/SASO</h3>
-      <p>
-        SABER and SASO are Saudi-only conformity systems and do not apply to Oman. Oman uses its own
-        standards and conformity regime, which may require product-specific certification for certain
-        goods. Those specifics are not published in the verified snapshot — confirm the applicable
-        Oman process for your product before arrival.
-      </p>
-
-      <SourceList sources={taxSources} title="Sources — Oman customs, tax & ports" />
-    </div>
+    <ol>
+      <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
+      <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
+      <li>Prepare the commercial invoice, packing list, bill of lading or air waybill, and certificate of origin.</li>
+      <li>File the <strong>Bayan</strong> declaration through Oman Customs.</li>
+      <li>Pay the assessed 5% duty and 5% VAT, pass inspection if selected, and take delivery.</li>
+    </ol>
+    <p>
+      Two clarifications that save real money in confused quotes. First, <strong>ISF is a United
+      States requirement</strong> and has nothing to do with Oman — the advance-filing step here
+      is the Bayan declaration. Second, <strong>SABER and SASO are Saudi systems</strong> and do
+      not apply to Oman either; Oman runs its own standards and conformity regime, under which
+      certain products need certification before arrival. The specifics for a given product are
+      not published in our snapshot — confirm the applicable process with Oman Customs or your
+      broker ahead of shipping.
+    </p>
+    <SourceList sources={[...taxSources, ...omanPortSources]} title="Sources — Oman customs & conformity" />
   </section>
 
   <section class="section container">
-    <h2>9. Frequently asked questions</h2>
+    <h2>12. Frequently asked questions</h2>
     <FaqBlock items={faqs} />
   </section>
 
   <section class="section container">
     <h2>Key takeaways</h2>
     <ol>
-      <li>Compound stack: 1.05 × 1.05 = 1.1025, so $10,000 CIF lands at $11,025; the 5% VAT is charged on $10,500, so VAT is $525, not $500 — the duty-inclusive base adds $25.</li>
-      <li>UAE parity: Oman’s 1.1025 equals the UAE’s 1.1025, a $0 tax difference on $10,000 CIF, so Sohar’s edge is congestion and clearance timing, not duty/VAT.</li>
-      <li>Transit exposure: 30 − 15 = 15 days between fast and slow ends, while the 19-day Sohar typical gives only 4 days to the fast end and 11 days of slow-end risk — plan for 11 extra days, not 2.</li>
-      <li>Crossover: 15 CBM × $180 top LCL = $2,700 versus the $1,500 20ft floor, so above 15 CBM FCL can be $1,200 cheaper at the extremes.</li>
-      <li>Rate spread: $6,200 ÷ $1,500 = 4.13× across the 20ft corridor, and Oman’s own rate is not published — the lane can sit anywhere in that 4.13× band, so request a quote rather than back-filling from the corridor.</li>
+      <li>Tax parity is exact: Oman’s ×1.1025 (5% duty, then 5% VAT on the $10,500 base) matches the UAE to the cent — $11,025 on $10,000 CIF, with $25 of it born from compounding; Saudi Arabia is $1,050 heavier and Qatar/Kuwait $525 lighter.</li>
+      <li>The first published Oman lane rows are LOW confidence: 20ft FCL $1,750–$2,500, 40ft $2,110–$3,680, LCL $110–$190/CBM, air $2.40–$3.50/kg — planning floors, not quotes.</li>
+      <li>The small-market signal is clearest at the LCL floor: $110 ÷ $30 (UAE base) ≈ 3.7×; against the corridor-wide $20 floor it is 5.5×. FCL ordering between Oman and the UAE stays UNKNOWN across the available sources.</li>
+      <li>The crossover is a band, not a number: $1,750–$2,500 ÷ $110–$190 = roughly 9–23 CBM, so FCL logic arrives earlier than the usual 15 CBM habit on this lane.</li>
+      <li>Muscat has no container seaport: commercial cargo moved to Sohar (Port Sultan Qaboos now caters mainly to cruise liners), so confirm OMSOH or OMSLL on the bill of lading and price the inland leg.</li>
     </ol>
   </section>
 
   <section class="section container">
     <h2>The Author's Take</h2>
-    <p><strong>Position:</strong> In my view, Oman's "same as UAE" ×1.1025 is not the decision: on $10,000 CIF it lands at $11,025, but the 15–30-day Sohar window leaves 11 days of slow-end risk beyond the 19-day headline, so I would model 30 days, not 19.</p>
-    <ul><li>1.05 × 1.05 = 1.1025; VAT is $525 on the $10,500 duty-inclusive base, $25 more than a naive 5% + 5% would give.</li><li>The 15-day transit spread splits as 19 − 15 = 4 days of fast-side margin and 30 − 19 = 11 days of slow-side exposure.</li><li>The corridor's 20ft band is $6,200 ÷ $1,500 = 4.13×, but Oman's own rate is unpublished, so the lane can sit anywhere in that range.</li></ul>
+    <p><strong>Position:</strong> In my view, “same ×1.1025 as the UAE” is exactly the line that gets Oman mis-priced — the tax is identical to the cent, but the published LCL floor runs about 3.7× the UAE’s and the FCL rows cannot even be compared across confidence levels, so I price Oman as a friction lane and refuse to book it on tax logic.</p>
+    <ul><li>$110 ÷ $30 ≈ 3.7× at the LCL floor — the one comparison the floors can carry without a confidence mismatch.</li><li>Oman’s FCL rows are LOW-confidence aggregates; the UAE’s are HIGH-confidence spot. The ordering is UNKNOWN, so force two quotes onto one basis before believing any premium or discount story.</li><li>The crossover band runs 9–23 CBM ($1,750–$2,500 ÷ $110–$190) — wide enough that a fixed 15 CBM habit cannot decide it, so quote both inside the band.</li></ul>
     <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
   </section>
 
   <section class="section container">
-    <h2>10. Data freshness &amp; monthly update cadence</h2>
+    <h2>Data freshness, corrections, and related Oman guides</h2>
     <p>
       This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
-      statutory lines (5% duty, 5% VAT and the CIF × 1.1025 stack) are re-checked against Oman Customs,
-      the Oman tax authority and the shared GCC framework; the Sohar transit figure is re-checked
-      against the WorldFreightHub route data each month.
+      statutory lines (5% duty, 5% VAT, the ×1.1025 stack) are re-checked against Oman Customs and
+      the shared GCC framework; the WHFI v1 rate rows (r-501 to r-506) are re-checked monthly and
+      will be raised above LOW confidence as soon as a second dated source or a carrier-confirmed
+      level appears. The Sohar-versus-Muscat gateway facts are re-verified against port services
+      summaries and operator pages each cycle.
     </p>
     <p>
-      If a destination fee amount, demurrage/detention schedule, FCL/LCL/air rate, Salalah transit or
-      a conformity requirement becomes available from a carrier, terminal, Oman port authority or
-      Oman Customs, the table is updated, the confidence badge is raised, and the modified date in the
-      page metadata is changed. Until then, unquantified Oman fees stay LOW confidence with a
-      request-the-schedule note rather than being filled with estimates.
+      If a destination fee amount, demurrage/detention schedule, Salalah-specific rate or Oman
+      conformity requirement becomes available from a carrier, terminal or authority, the table
+      is updated, the confidence badge is raised, and the modified date in the page metadata
+      changes. Until then, unquantified Oman fees stay LOW with a request-the-schedule note rather
+      than being filled with estimates.
     </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Ports, terminals and the Oman gateway map"
+        description="Sohar vs Salalah routing, hinterland coverage and the two-coast decision in full."
+        href="/middleeast/oman-ports/"
+      />
+      <Card
+        title="Shipping from China to Oman (route pillar)"
+        description="The complete Oman corridor: origins, modes, compliance and the Sohar window."
+        href="/middleeast/shipping-from-china-to-oman/"
+      />
+      <Card
+        title="Air freight from China to Oman"
+        description="Chargeable-weight arithmetic, airport pairs and when air into MCT pays off."
+        href="/middleeast/air-freight-from-china-to-oman/"
+      />
+      <Card
+        title="FCL vs LCL China to GCC"
+        description="The corridor-wide crossover logic and why the 15 CBM habit bends on small-market lanes."
+        href="/middleeast/fcl-vs-lcl/"
+      />
+    </div>
   </section>
 
   <section class="section container">
     <Cta
       title="Get an itemised China to Oman landed-cost quote"
-      text="Tell us your HS code, CIF value, commodity, container or CBM and final Oman destination, and we will connect you with providers who can itemise freight, Bayan clearance, 5% duty, 5% VAT and delivery."
+      text="Tell us your HS code, CIF value, commodity, container or CBM and final Oman destination — and whether your cargo is bound for Muscat, Sohar or the south — and we will connect you with providers who can itemise freight, Bayan clearance, 5% duty, 5% VAT and delivery."
     />
   </section>
 </BaseLayout>

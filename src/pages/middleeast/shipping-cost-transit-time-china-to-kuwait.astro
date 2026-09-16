@@ -10,6 +10,7 @@ import Cta from '../../components/Cta.astro';
 import { SITE_URL } from '../../site';
 import { sourcesByIds } from '../../data/sources';
 import { gccPorts } from '../../data/gcc-ports';
+import { rates } from '../../data/rates';
 import type { Source } from '../../data/types';
 
 const pageUrl = `${SITE_URL}/middleeast/shipping-cost-transit-time-china-to-kuwait/`;
@@ -20,85 +21,114 @@ const shuwaikhUnlocode = shuwaikhPort?.unlocode ?? '—';
 const shuaibaUnlocode = shuaibaPort?.unlocode ?? '—';
 
 const wfhRouteData: Source = {
-  id: 'wfh-kuwait-route-data',
+  id: 'wfh-kuwait-cost-route-data',
   name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Shuwaikh (typical 24 days, range 15–30; LOW confidence estimate)',
   url: `${SITE_URL}/routes/`,
   type: 'industry',
 };
 const wfhMethodology: Source = {
-  id: 'wfh-kuwait-methodology',
+  id: 'wfh-kuwait-cost-methodology',
   name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
   url: `${SITE_URL}/methodology/`,
   type: 'organization',
 };
+const tonlexingKuwait: Source = {
+  id: 'tonlexing-kuwait',
+  name: 'Tonlexing — China→Kuwait container shipping cost guide (June 2026)',
+  url: 'https://www.tonlexing.com/20ft-40ft-container-shipping-costs-from-china-to-kuwait/',
+  type: 'industry',
+};
+const pwcKuwait: Source = {
+  id: 'pwc-kuwait-tax',
+  name: 'PwC Worldwide Tax Summaries — Kuwait: other taxes (VAT status; 5% GCC tariff on CIF; reviewed July 2026)',
+  url: 'https://taxsummaries.pwc.com/kuwait/corporate/other-taxes',
+  type: 'organization',
+};
+const mytaxmanGcc: Source = {
+  id: 'mytaxman-gcc-vat',
+  name: 'MyTaxMan — GCC countries and VAT: 2026 rates and rules (Kuwait: no VAT law passed as of April 2026)',
+  url: 'https://mytaxman.ae/gcc-countries-and-vat',
+  type: 'organization',
+};
+const kintsugiKuwait: Source = {
+  id: 'kintsugi-kuwait-vat',
+  name: 'Kintsugi — Kuwait VAT guide 2026: no VAT in force, none expected before 2028',
+  url: 'https://trykintsugi.com/sales-tax-guides/middle-east/kuwait',
+  type: 'organization',
+};
+const kpaShuwaikh: Source = {
+  id: 'kpa-shuwaikh',
+  name: 'Kuwait Ports Authority — Shuwaikh Port (2024 statistics: 613,093 TEU; 21 berths)',
+  url: 'https://www.kpa.gov.kw/en/shuwaikh-port',
+  type: 'port-authority',
+};
+const kpaShuaiba: Source = {
+  id: 'kpa-shuaiba',
+  name: 'Kuwait Ports Authority — Shuaiba Port (2024 statistics: 282,870 TEU; 20 berths)',
+  url: 'https://www.kpa.gov.kw/en/shuaiba-port',
+  type: 'port-authority',
+};
+const freightAmigoPorts: Source = {
+  id: 'freightamigo-kuwait-ports',
+  name: 'FreightAmigo — Kuwait ports guide: Shuwaikh and Shuaiba compared (berths, depths, cargo fit)',
+  url: 'https://www.freightamigo.com/en/blog/logistics/kuwait-port-name-a-complete-guide-to-shuwaikh-and-shuaiba-ports',
+  type: 'industry',
+};
 
 const kuwaitCustomsSources = sourcesByIds(['kuwait-customs']);
-const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
-const rateSources: Source[] = [wfhRouteData, wfhMethodology];
-const taxSources: Source[] = [...kuwaitCustomsSources, wfhMethodology];
-const transitSources: Source[] = [wfhRouteData];
+const rateSources: Source[] = [tonlexingKuwait, wfhRouteData, wfhMethodology];
+const taxSources: Source[] = [pwcKuwait, mytaxmanGcc, kintsugiKuwait, ...kuwaitCustomsSources];
+const transitSources: Source[] = [wfhRouteData, tonlexingKuwait];
 const modeSources: Source[] = [wfhRouteData, wfhMethodology];
-const costSources: Source[] = [...kuwaitCustomsSources, wfhMethodology, wfhRouteData];
-const nodeSources: Source[] = [...chinaPortSources, ...kuwaitCustomsSources, wfhMethodology];
+const portSources: Source[] = [kpaShuwaikh, kpaShuaiba, freightAmigoPorts, wfhMethodology];
+const costSources: Source[] = [...taxSources, wfhMethodology, wfhRouteData];
 
-const seaRateRows = [
-  {
-    mode: 'LCL ocean · China → Shuwaikh / Shuaiba',
-    benchmark: 'Not published in verified snapshot — request an all-in per-CBM quote',
-    basis: 'No verified Kuwait LCL rate appears in the research snapshot',
-    note: 'Per-CBM shared-container basis; minimum charge may apply',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'FCL 20GP · China → Shuwaikh / Shuaiba',
-    benchmark: 'Not published in verified snapshot — request an all-in container quote',
-    basis: 'No verified Kuwait 20GP rate appears in the research snapshot',
-    note: 'Priced per container; differs by line and season',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'FCL 40GP / 40HQ · China → Shuwaikh / Shuaiba',
-    benchmark: 'Not published in verified snapshot — request an all-in container quote',
-    basis: 'No verified Kuwait 40GP/40HQ rate appears in the research snapshot',
-    note: '40ft is usually the volume benchmark for established importers',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'FCL · China → Kuwait project/oversized cargo',
-    benchmark: 'Not published in verified snapshot — request a project-specific quote',
-    basis: 'No verified Kuwait project cargo rate appears in the snapshot',
-    note: 'Project freight requires lift, laydown and route clearance checks',
-    confidence: 'LOW',
-  },
-];
+const usd = (value: number) => `$${value.toLocaleString('en-US')}`;
+const rateRange = (amountLow: number | undefined, amountHigh: number | undefined, amount: number) =>
+  amountLow && amountHigh ? `${usd(amountLow)}–${usd(amountHigh)}` : usd(amount);
 
-const airRateRows = [
+const kwRates = rates.filter((rate) => rate.route.includes('shuwaikh'));
+const sh20 = kwRates.find((rate) => rate.id === 'r-401');
+const sh40 = kwRates.find((rate) => rate.id === 'r-402');
+const sz20 = kwRates.find((rate) => rate.id === 'r-403');
+const sz40 = kwRates.find((rate) => rate.id === 'r-404');
+const kwLcl = kwRates.find((rate) => rate.id === 'r-405');
+
+const rateSheetRows = [
   {
-    mode: 'Air freight · China → Kuwait market bracket',
-    benchmark: 'Not published in verified snapshot — request an all-in per-kg quote',
-    basis: 'No verified Kuwait air pricing appears in the research snapshot',
-    note: 'Billed on chargeable weight, not actual weight alone',
-    confidence: 'LOW',
+    lane: 'FCL 20GP · Shanghai → Shuwaikh',
+    benchmark: sh20 ? `${rateRange(sh20.amountLow, sh20.amountHigh, sh20.amount)} (Jun 2026 sheet)` : 'Not published',
+    read: 'Paired with a 22–38 day transit in the source. The 20ft band is the one to test first against your LCL alternative.',
+    confidence: 'MEDIUM',
   },
   {
-    mode: 'Air freight · airport-to-airport planning range',
-    benchmark: 'Not published in verified snapshot — request a routing quote',
-    basis: 'Planning range for direct airport-to-airport moves',
-    note: 'Varies with chargeable weight, airport pair and season',
-    confidence: 'LOW',
+    lane: 'FCL 40GP / 40HQ · Shanghai → Shuwaikh',
+    benchmark: sh40 ? `${rateRange(sh40.amountLow, sh40.amountHigh, sh40.amount)} (Jun 2026 sheet)` : 'Not published',
+    read: 'The source quotes 40HQ lane-wide at $2,400–$4,800; 40ft is the benchmark size for established importers.',
+    confidence: 'MEDIUM',
   },
   {
-    mode: 'DDP air door-to-door',
-    benchmark: 'Not published in verified snapshot — request a per-kg quote',
-    basis: 'No verified Kuwait DDP air rate appears in the snapshot',
-    note: 'Embeds clearance, duty and delivery in one price',
-    confidence: 'LOW',
+    lane: 'FCL 20GP · Shenzhen → Shuwaikh',
+    benchmark: sz20 ? `${rateRange(sz20.amountLow, sz20.amountHigh, sz20.amount)} (Jun 2026 sheet)` : 'Not published',
+    read: 'South-China sheet paired with 20–35 days; a July-2026 cross-check quote sat at $2,250 per 20ft.',
+    confidence: 'MEDIUM',
   },
   {
-    mode: 'Express courier · China → Kuwait',
-    benchmark: 'Not published in verified snapshot — request a per-kg quote',
-    basis: 'No verified Kuwait express rate appears in the research snapshot',
-    note: 'Best for small, urgent parcels; falls at higher weight',
+    lane: 'FCL 40GP / 40HQ · Shenzhen → Shuwaikh',
+    benchmark: sz40 ? `${rateRange(sz40.amountLow, sz40.amountHigh, sz40.amount)} (Jun 2026 sheet)` : 'Not published',
+    read: 'South-China 40ft band; the two origin sheets differ by less than you would expect, so pick on service, not geography.',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'LCL · per CBM',
+    benchmark: kwLcl ? `${rateRange(kwLcl.amountLow, kwLcl.amountHigh, kwLcl.amount)} (Jun 2026 sheet)` : 'Not published',
+    read: 'Paired with 25–45 days. Regional guides quote up to $80–$150/CBM — confirm whether a quote is base freight or all-in.',
+    confidence: 'MEDIUM',
+  },
+  {
+    lane: 'Corridor reference brackets · all modes',
+    benchmark: 'LCL $20–$180/CBM; 20ft $1,500–$6,200 (corridor-wide research)',
+    read: 'Wider all-GCC brackets kept as sanity bounds only. If a quote falls outside them, the basis is probably different — not the market.',
     confidence: 'LOW',
   },
 ];
@@ -107,29 +137,29 @@ const transitRows = [
   {
     lane: 'Shanghai → Shuwaikh',
     mode: 'Sea port-to-port',
-    transit: 'Typical 24 days (15–30 day range)',
-    basis: 'WorldFreightHub route data — verify with carrier',
+    transit: 'Typical 24 days (15–30 range); carrier sheet pairs 22–38 days',
+    basis: 'WorldFreightHub route data; Tonlexing Jun-2026 sheet',
     confidence: 'LOW',
   },
   {
     lane: 'Ningbo-Zhoushan → Shuwaikh',
     mode: 'Sea port-to-port',
-    transit: 'Typical 24 days (15–30 day range)',
+    transit: 'Typical 24 days (15–30 range)',
     basis: 'WorldFreightHub route data — verify with carrier',
     confidence: 'LOW',
   },
   {
-    lane: 'Shenzhen (Yantian / Shekou) → Shuwaikh',
+    lane: 'Shenzhen → Shuwaikh',
     mode: 'Sea port-to-port',
-    transit: 'Typical 24 days (15–30 day range)',
-    basis: 'WorldFreightHub route data — verify with carrier',
+    transit: 'Typical 24 days (15–30 range); carrier sheet pairs 20–35 days',
+    basis: 'WorldFreightHub route data; Tonlexing Jun-2026 sheet',
     confidence: 'LOW',
   },
   {
     lane: 'China → Shuaiba',
     mode: 'Sea port-to-port',
-    transit: 'Not published in verified snapshot — request carrier transit',
-    basis: 'No verified Shuaiba-specific sea transit in the snapshot',
+    transit: 'Not published — request carrier transit for the industrial port',
+    basis: 'No Shuaiba-specific sea transit in the verified snapshot',
     confidence: 'LOW',
   },
   {
@@ -142,8 +172,8 @@ const transitRows = [
   {
     lane: 'China → Kuwait door',
     mode: 'Door-to-door after sea or air',
-    transit: 'Not published in verified snapshot — request door quote',
-    basis: 'Adds discharge, Kuwait clearance, inspection and last-mile trucking',
+    transit: 'Not published — add discharge, Kuwait clearance, inspection and last-mile trucking',
+    basis: 'No door-to-door figure in the verified snapshot',
     confidence: 'LOW',
   },
 ];
@@ -159,7 +189,7 @@ const cifRows = [
   {
     layer: 'Freight (sea or air)',
     calc: 'Carrier / forwarder quote',
-    amount: 'See rate tables',
+    amount: 'See the rate sheet',
     note: 'Ocean or air line item',
     confidence: 'LOW',
   },
@@ -186,16 +216,16 @@ const cifRows = [
   },
   {
     layer: 'General VAT',
-    calc: 'No general VAT on imports',
+    calc: 'No general VAT in force',
     amount: '$0.00',
-    note: 'Kuwait has no general import VAT in the current framework',
+    note: 'Kuwait signed the GCC framework but has not implemented VAT — no confirmed timeline',
     confidence: 'MEDIUM',
   },
   {
     layer: 'Statutory landed cost',
     calc: 'CIF × 1.05',
     amount: '$10,500.00',
-    note: '= 1.05 × CIF at the baseline duty rate',
+    note: '= 1.05 × CIF at the baseline duty rate — the border stops here',
     confidence: 'MEDIUM',
   },
   {
@@ -214,124 +244,119 @@ const cifRows = [
   },
 ];
 
-const byModeRows = [
+const portCompareRows = [
   {
-    lane: 'Sea FCL · China to Shuwaikh / Shuaiba',
-    service: 'Full container 20GP / 40GP / 40HQ',
-    benchmark: 'Not published — request an all-in container quote',
-    note: 'Use the typical 24-day Shuwaikh sea window as a transit placeholder',
-    confidence: 'LOW',
-  },
-  {
-    lane: 'Sea LCL · China to Shuwaikh / Shuaiba',
-    service: 'Shared container by CBM',
-    benchmark: 'Indicative $45–$78/m³ — Chinese forwarder snapshots',
-    note: 'Adds consolidation/deconsolidation and minimum-charge risk',
+    dimension: 'Role',
+    shuwaikh: 'Kuwait’s main commercial port — containers, general cargo and consumer goods for the capital',
+    shuaiba: 'Kuwait’s industrial port — heavy equipment, raw materials, chemicals and petrochemical traffic',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'Air freight · China to Kuwait',
-    service: 'Airport-to-airport by chargeable kg',
-    benchmark: 'Indicative $4.6–$8.2/kg air freight — Chinese forwarder snapshots',
-    note: 'Chargeable weight is the higher of actual and volumetric',
+    dimension: 'Location',
+    shuwaikh: 'Shuwaikh Industrial Area, adjacent to Kuwait City (north)',
+    shuaiba: 'Al Ahmadi Governorate, roughly 45 km south of the capital',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'DDP air door-to-door',
-    service: 'Bundled clearance, duty and delivery',
-    benchmark: 'Indicative $4.6–$8.2/kg air freight — Chinese forwarder snapshots',
-    note: 'Embeds the statutory stack plus destination fees',
+    dimension: 'Berths',
+    shuwaikh: '21 berths (KPA)',
+    shuaiba: '20 berths (KPA)',
+    confidence: 'HIGH',
+  },
+  {
+    dimension: 'Approximate berth depths',
+    shuwaikh: 'About 6.7–10 m — shallower water',
+    shuaiba: 'About 10–14 m — deeper water for larger industrial tonnage',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'Express courier · China to Kuwait',
-    service: 'Door delivery for small parcels',
-    benchmark: 'Indicative $4.6–$8.2/kg air freight — Chinese forwarder snapshots',
-    note: 'Rate falls as weight rises; minimums apply',
+    dimension: 'Containers handled (2024)',
+    shuwaikh: '613,093 TEU across 1,419 vessel calls',
+    shuaiba: '282,870 TEU across 2,908 vessel calls',
+    confidence: 'HIGH',
+  },
+  {
+    dimension: 'Cargo fit',
+    shuwaikh: 'Retail, consumer, general and project-linked cargo for the capital market',
+    shuaiba: 'Industrial, chemical, bulk and project-heavy cargo for the southern belt',
+    confidence: 'MEDIUM',
+  },
+  {
+    dimension: 'Planning note',
+    shuwaikh: 'Congestion is a known constraint — build buffer into schedules and trucking',
+    shuaiba: 'Deeper berths; pick it when the cargo and consignee sit in the industrial south',
     confidence: 'MEDIUM',
   },
 ];
 
-const fclVsLclRows = [
+const crossoverRows = [
   {
-    factor: 'Pricing unit',
-    fcl: 'Per container (20GP / 40GP / 40HQ)',
-    lcl: 'Per CBM, with a minimum charge on small volumes',
-    confidence: 'LOW',
+    scenario: 'Corridor rule (legacy reference)',
+    arithmetic: '15 CBM × $180 top corridor LCL = $2,700 vs a $1,500 20ft floor',
+    breakeven: 'Box wins by $1,200 at 15 CBM',
+    read: 'The widely quoted ~15 CBM breakpoint works when the box is cheap and the LCL rate is at the corridor’s high end.',
   },
   {
-    factor: 'Indicative cost',
-    fcl: 'Not published in the Kuwait snapshot — request an all-in quote',
-    lcl: 'Not published in the Kuwait snapshot — request an all-in per-CBM quote',
-    confidence: 'MEDIUM',
+    scenario: 'Kuwait top LCL vs 20ft floor',
+    arithmetic: '$75 × volume vs $1,500',
+    breakeven: '$1,500 ÷ $75 = 20.0 CBM',
+    read: 'With the Jun-2026 Kuwait LCL top rate, the practical breakpoint shifts up to 20 CBM.',
   },
   {
-    factor: 'Hidden destination cost',
-    fcl: 'THC, port charges, demurrage/detention if free time is missed',
-    lcl: 'THC, CFS deconsolidation, minimum charge, storage after free time',
-    confidence: 'LOW',
+    scenario: 'Kuwait top LCL vs 20ft high',
+    arithmetic: '$75 × volume vs $2,900',
+    breakeven: '$2,900 ÷ $75 = 38.7 CBM',
+    read: 'If the box prices at the top of its band, LCL stays competitive to nearly 39 CBM — more than a 20ft holds.',
   },
   {
-    factor: 'Speed and handling',
-    fcl: 'Simpler sealed move, usually faster to release',
-    lcl: 'Adds consolidation and deconsolidation handling',
-    confidence: 'LOW',
+    scenario: 'Kuwait low LCL vs 20ft floor',
+    arithmetic: '$35 × volume vs $1,500',
+    breakeven: '$1,500 ÷ $35 = 42.9 CBM',
+    read: 'At the low LCL bracket the box only wins past 42.9 CBM — beyond a 20ft’s usable volume.',
   },
   {
-    factor: 'Planning rule',
-    fcl: 'Stronger as cargo approaches a meaningful share of a box',
-    lcl: 'Stronger for small, low-volume shipments',
-    confidence: 'LOW',
+    scenario: 'Full-box reality check',
+    arithmetic: '20ft ≈ 33 CBM usable; 40ft ≈ 67 CBM usable',
+    breakeven: '33 CBM × $75 = $2,475 LCL vs a $1,500–$2,900 box',
+    read: 'A full 20ft of LCL at the top rate overlaps the box band — the box decision turns on your actual quote pair.',
+  },
+  {
+    scenario: '40ft vs top LCL',
+    arithmetic: '$75 × volume vs $2,200–$4,400',
+    breakeven: '$2,200 ÷ $75 = 29.3 CBM to $4,400 ÷ $75 = 58.7 CBM',
+    read: 'A 40ft generally wins past roughly 30–59 CBM at top LCL rates, depending on the box price.',
   },
 ];
 
-const nodeRows = [
+const bookingRows = [
   {
-    node: 'Shanghai (CNSHA)',
-    role: 'Top China container origin; 55.06M TEU (2025)',
-    note: 'Origin terminal and export documentation',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Ningbo-Zhoushan (CNNGB)',
-    role: '#3 container port; 43M TEU (2025)',
-    note: 'Alternative East China origin',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Shenzhen Yantian / Shekou (CNSZX)',
-    role: 'South China gateway',
-    note: 'Throughput not stated in research snapshot',
+    stage: 'Booking stage',
+    lock: 'Named service and routing via your chosen discharge port',
+    why: 'Two discharge ports and fewer sailings than Dubai mean the routing decision is made here, not at the destination',
     confidence: 'LOW',
   },
   {
-    node: 'Guangzhou (CNCAN)',
-    role: 'South China origin named in China→GCC freight guides',
-    note: 'Throughput not stated in research snapshot',
+    stage: 'Documentation stage',
+    lock: 'HS code, certificate of origin, and PAI certification for regulated goods',
+    why: 'Kuwait clearance is document-heavy — fixes made now are free; fixes made at the port are not',
+    confidence: 'MEDIUM',
+  },
+  {
+    stage: 'Pre-arrival stage',
+    lock: 'Import declaration filed before the vessel arrives',
+    why: 'Protects free time; inspection slots fill around vessel calls on a lower-frequency lane',
     confidence: 'LOW',
   },
   {
-    node: 'Qingdao (CNTAO) / Tianjin (CNTSN) / Xiamen (CNXMN)',
-    role: 'Additional China origins on the GCC corridor',
-    note: 'Use when the supplier is closer to the northern or Fujian coast',
+    stage: 'Discharge stage',
+    lock: 'Trucking booked and delivery appointment set',
+    why: 'Shuwaikh sits in the urban capital area with known congestion — the container needs to leave on schedule',
     confidence: 'LOW',
   },
   {
-    node: 'Shuwaikh (KWSWK)',
-    role: 'General, commercial and container gateway near Kuwait City',
-    note: 'Use on the bill of lading for the planning default',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Shuaiba (KWSHB)',
-    role: 'Industrial, petrochemical, bulk and project gateway south',
-    note: 'Confirm cargo fit and berth with the carrier',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Kuwait International Airport',
-    role: 'Air gateway for Kuwait air freight',
-    note: 'Airport-to-airport service for time-critical cargo',
+    stage: 'Closing stage',
+    lock: 'Free-time count and per-day rates written into the booking confirmation',
+    why: 'Unpublished fee schedules make the booking document your only evidence if a clock starts running',
     confidence: 'LOW',
   },
 ];
@@ -362,15 +387,27 @@ const costRows = [
     confidence: 'LOW',
   },
   {
+    item: 'PAI certification (regulated goods)',
+    who: 'Public Authority for Industry',
+    magnitude: 'Not published — confirm scope and cost for your HS code',
+    confidence: 'LOW',
+  },
+  {
     item: 'Port storage / demurrage',
     who: 'Terminal (after free time)',
-    magnitude: 'Per-day charge; free time is not published in verified snapshot — verify',
+    magnitude: 'Per-day charge; free time is not published — verify',
     confidence: 'LOW',
   },
   {
     item: 'Detention',
     who: 'Ocean carrier (after free time)',
-    magnitude: 'Per-day charge; free time is not published in verified snapshot — verify',
+    magnitude: 'Per-day charge; free time is not published — verify',
+    confidence: 'LOW',
+  },
+  {
+    item: 'LCL extras: CFS handling and minimum charge',
+    who: 'CFS / consolidator',
+    magnitude: 'Minimum charge not published — ask before choosing LCL',
     confidence: 'LOW',
   },
   {
@@ -382,104 +419,84 @@ const costRows = [
   {
     item: 'General VAT',
     who: 'Kuwait tax framework',
-    magnitude: 'No general VAT has been introduced in the current Kuwait framework',
+    magnitude: 'No general VAT in force — watch item only, not a budget line',
     confidence: 'MEDIUM',
   },
 ];
 
-const factorRows = [
+const airRows = [
   {
-    factor: 'Fuel, bunker and surcharges',
-    effect: 'BAF / CAF / peak-season surcharges are added to the base rate',
-    direction: 'Cost up',
-    confidence: 'LOW',
-  },
-  {
-    factor: 'Season and capacity',
-    effect: 'Peak season, holidays and tight space raise ocean and air rates',
-    direction: 'Cost up, transit risk up',
-    confidence: 'LOW',
-  },
-  {
-    factor: 'Routing: direct vs transshipment',
-    effect: 'A transshipped box adds another terminal handling point',
-    direction: 'Transit and handling variable',
-    confidence: 'LOW',
-  },
-  {
-    factor: 'Kuwait market size',
-    effect: 'Smaller volume than Dubai or the Saudi Eastern Province raises per-shipment cost',
-    direction: 'Cost up',
-    confidence: 'LOW',
-  },
-  {
-    factor: 'Commodity and HS code',
-    effect: 'Changes the duty line, permit and restricted-goods exposure',
-    direction: 'Clearance and cost variable',
+    option: 'Air freight · chargeable kg',
+    benchmark: 'Indicative $4.6–$8.2/kg (corridor snapshots)',
+    note: 'Billed on chargeable weight — the higher of actual and volumetric (÷6000 convention) — not on scale weight alone',
     confidence: 'MEDIUM',
   },
   {
-    factor: 'Free-time discipline',
-    effect: 'Demurrage and detention apply after free time',
-    direction: 'Cost up after free days',
-    confidence: 'LOW',
+    option: 'DDP air · door-to-door bundle',
+    benchmark: 'Usually priced inside the same $4.6–$8.2/kg band',
+    note: 'Bundles clearance, the 5% duty and delivery; compare the bundle against a self-clearance quote before accepting it',
+    confidence: 'MEDIUM',
   },
   {
-    factor: 'Documents and Kuwait clearance readiness',
-    effect: 'Late or wrong documents delay clearance and start demurrage',
-    direction: 'Transit up, cost up',
-    confidence: 'MEDIUM',
+    option: 'Express courier · small parcels',
+    benchmark: 'Not published separately',
+    note: 'For samples and small urgent consignments; the per-unit rate falls as weight rises',
+    confidence: 'LOW',
   },
 ];
 
 const faqs = [
   {
     q: 'How much does shipping cost from China to Kuwait?',
-    a: 'Kuwait-specific rates are not published, so the only defensible cost anchors are the corridor-wide LCL $20–$180/CBM and 20ft FCL $1,500–$6,200 brackets plus the ×1.05 statutory stack. The quantifiable schedule line is the typical 24-day sea transit to Shuwaikh (LOW confidence). Request itemised quotes from a forwarder rather than using a guessed benchmark.',
+    a: 'The June 2026 forwarder benchmarks put Shanghai→Kuwait at $1,500–$2,900 per 20ft and $2,200–$4,400 per 40ft, Shenzhen at $1,550–$3,000 and $2,300–$4,500, and LCL at $35–$75 per CBM. Those are port-to-port, dated June 2026. On top sits the statutory stack: 5% duty on CIF with no general VAT (CIF × 1.05). Request a current all-in quote, because rates move and these sheets predate the latest Gulf premium moves.',
   },
   {
     q: 'How long does it take to ship from China to Kuwait?',
-    a: 'WorldFreightHub route data records a typical 24 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Shuwaikh (LOW confidence). Shuaiba-specific sea transit and Kuwait air transit are not published in the snapshot. All figures are indicative — verify with your carrier before relying on them.',
+    a: 'WorldFreightHub route data records a typical 24 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Shuwaikh (LOW confidence). The June 2026 forwarder sheets pair Shanghai with 22–38 days, Shenzhen with 20–35, and LCL with 25–45. Build your plan on the slow end of that spread, not the typical figure.',
   },
   {
-    q: 'Why is the China-to-Kuwait corridor cost-sensitive despite the short distance?',
-    a: 'Kuwait\u2019s typical 24-day sea window runs 3 days slower than the UAE\u2019s 21, and the snapshot publishes no Kuwait FCL/LCL/air rate against the corridor\u2019s $20–$180/CBM and $1,500–$6,200 brackets. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
+    q: 'Why is the China-to-Kuwait lane cost-sensitive despite the short distance?',
+    a: 'Schedule density, not geography. Kuwait is served by fewer strings than Dubai or Jeddah — most services transship via Singapore or a regional hub — so the 15–30 day window hides real variability, and carrier sheets stretch it further (22–38 days from Shanghai). Fewer sailings also means less pressure on destination fees. The 0% VAT is a genuine advantage; the schedule is what you pay for it.',
   },
   {
     q: 'How is the Kuwait landed cost calculated?',
-    a: 'On a $10,000 CIF, Kuwait\u2019s baseline statutory landed cost is $10,500 — 5% duty on CIF with no general VAT — because the stack is CIF × 1.05. Add destination THC, documentation, clearance, inspection, inland trucking and any demurrage/detention on top of that.',
+    a: 'On a $10,000 CIF, Kuwait’s baseline statutory landed cost is $10,500: 5% duty on CIF, with no general VAT in force, so the stack is CIF × 1.05. Add destination THC, documentation, clearance, inspection, inland trucking and any demurrage/detention on top of that. The border is the cheap part; the destination side is where quotes diverge.',
+  },
+  {
+    q: 'Does Kuwait charge VAT on imports?',
+    a: 'No. Kuwait signed the GCC Unified VAT Framework in 2017 but has not implemented VAT — no law had passed as of April 2026, and current guidance does not expect it before 2028. The GCC framework itself was amended in May 2026 and Qatar has started moving toward implementation, so a future VAT remains a question worth watching — but today the Kuwait import stack stops at 5% duty. Verify the current position with Kuwait Customs before finalising a long-term budget.',
   },
   {
     q: 'Does the 5% Kuwait duty apply to freight and insurance?',
-    a: 'Yes — every $1 of freight or insurance adds 5 cents of duty, because the 5% charge applies to the full CIF value, not just the invoice. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
+    a: 'Yes — every $1 of freight or insurance adds 5 cents of duty, because the charge applies to the full CIF value, not just the invoice. What you do not pay is a second tax on that duty: with no VAT layer, raising the duty rate by one point on a $10,000 CIF costs $100, not $105 as it would in a 5%-VAT state.',
   },
   {
     q: 'What hidden fees should I expect on a Kuwait shipment?',
-    a: 'Duty is the only quantified statutory line at 5% of CIF — every other Kuwait fee amount was not published, so budget the destination-fee stack as an unknown add-on. Expect origin charges, destination THC and port service fees, documentation and bill of lading fees, customs brokerage, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
-  },
-  {
-    q: 'What is the cheapest way to ship from China to Kuwait?',
-    a: 'Below ~15 CBM, LCL\u2019s $20–$180/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL at $1,500–$6,200 becomes cheaper per CBM. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
+    a: 'Duty is the only quantified statutory line (5% of CIF); every other Kuwait fee amount was not published, so budget the destination stack as structured unknowns and make the provider itemise: origin charges, destination THC and port service fees, documentation, brokerage, inspection if selected, storage, inland transport, and demurrage/detention after free time. Ask for the free-time count in writing — it is the line most likely to cost you later.',
   },
   {
     q: 'Is FCL or LCL better for shipping to Kuwait?',
-    a: 'The ~15 CBM crossover is the decision rule: below it, LCL\u2019s $20–$180/CBM usually wins; above it, FCL\u2019s flat $1,500–$6,200 container rate becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. Kuwait FCL and LCL rates were not published in the snapshot, so request all-in quotes for both and compare the full landed cost.',
+    a: 'Use your quote pair, not a slogan. The corridor’s legacy rule breaks even around 15 CBM; with the June 2026 Kuwait rates, a 20ft box at the bottom of its band breaks even against top-rate LCL at 20 CBM, and against a high-priced box the breakpoint stretches to ~39 CBM. Below the breakpoint LCL wins; above it, FCL does — and a 40ft box generally wins somewhere past 30–59 CBM at top LCL rates. Request both quotes at your actual volume.',
   },
   {
-    q: 'Does Kuwait charge VAT on top of import duty?',
-    a: 'No — Kuwait\u2019s stack stops at ×1.05 (5% duty, 0% VAT), so a $10,000 CIF clears at $10,500 versus $12,075 in Saudi Arabia (×1.2075). The main statutory charge is 5% customs duty on CIF. Verify the current Kuwait position with the General Administration of Customs before finalising a quote.',
-  },
-  {
-    q: 'How can I reduce the landed cost on the China-to-Kuwait route?',
-    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s $20–$180/CBM per-unit pricing into a flat $1,500–$6,200 container spread across your volume. Also compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Kuwait import declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
+    q: 'What is the cheapest way to ship from China to Kuwait?',
+    a: 'For steady volumes, sea freight with a discipline problem solved: consolidate past your crossover so you are buying container space, not per-CBM space, and compare the two discharge ports honestly. Air freight (indicative $4.6–$8.2/kg corridor snapshots) is rarely the cheapest option and is justified by urgency or value density — not by cost. DDP air bundles clearance and duty into one rate, which is convenient and easy to overpay for.',
   },
   {
     q: 'Which port should be used in the landed-cost quote?',
-    a: 'Use Shuwaikh (UN/LOCODE KWSWK) for general containerised sea freight. Consider Shuaiba (UN/LOCODE KWSHB) when the cargo is industrial, petrochemical, bulk or project-linked and the southern corridor is a better fit. Confirm the final discharge point with the carrier and receiver before the bill of lading is cut.',
+    a: 'Shuwaikh (UN/LOCODE KWSWK) for general containerised cargo, consumer goods and anything bound for Kuwait City — it is Kuwait’s main commercial port. Shuaiba (UN/LOCODE KWSHB) for industrial, chemical, bulk and project cargo tied to the southern industrial belt, with deeper berths that suit heavier tonnage. Confirm the discharge port with the carrier and receiver before the bill of lading is cut — the port choice changes the inland leg, the fee schedule and the clearance path.',
   },
   {
     q: 'How should I quote transit time from China to Kuwait?',
-    a: 'Quote 24 days port-to-port to Shuwaikh, then add discharge, Kuwait Customs clearance, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
+    a: 'Quote 24 days port-to-port to Shuwaikh as the planning default, then add discharge, Kuwait clearance, any inspection and last-mile trucking for the door-to-door figure. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise — on a lane where carrier sheets stretch to 38 days, the gap between those two numbers is where missed commitments live.',
+  },
+  {
+    q: 'How can I reduce the landed cost on the China-to-Kuwait route?',
+    a: 'The biggest single saving is consolidating past your FCL/LCL crossover so you stop buying per-CBM space at top rates. Then: classify the HS code correctly before booking, sort PAI certification early if your goods need it, file the import declaration before arrival to protect free time, and negotiate the destination fee schedule rather than accepting a bundled number. The duty side is already as light as the GCC gets — the savings left on this lane are in logistics, not tax.',
+  },
+  {
+    q: 'Do I need SABER or SASO to import into Kuwait?',
+    a: 'No. SABER and SASO are Saudi-only conformity systems — do not copy them into a Kuwait import. Kuwait runs its own requirements instead: documentation through Kuwait Customs, and PAI (Public Authority for Industry) certification for certain regulated products. Confirm the applicable regime for your specific HS code before shipment.',
   },
 ];
 
@@ -497,11 +514,11 @@ const schema = [
   {
     type: 'Article',
     data: {
-      headline: 'China to Kuwait Shipping Cost & Transit Time: Landed-Cost Breakdown (September 2026)',
+      headline: 'China to Kuwait Shipping Cost & Transit Time: the 5% Duty Lane, Two Ports and a 15 CBM Question (September 2026)',
       description:
-        'Complete China-to-Kuwait landed-cost guide: typical 24-day Shuwaikh transit, 5% CIF duty with no general VAT, hidden charges stack and the FCL/LCL/air decision.',
+        'China-to-Kuwait cost guide: June 2026 rate benchmarks, the 5% duty stack with no general VAT (CIF × 1.05), Shuwaikh vs Shuaiba, a Kuwait-specific FCL/LCL crossover and booking windows for a low-frequency lane.',
       datePublished: '2026-09-01',
-      dateModified: '2026-09-01',
+      dateModified: '2026-09-16',
       inLanguage: 'en',
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -539,8 +556,8 @@ const schema = [
 ---
 
 <BaseLayout
-  title="China to Kuwait Shipping Cost & Transit Time: Landed-Cost Breakdown (September 2026)"
-  description="Complete China-to-Kuwait landed-cost guide: typical 24-day Shuwaikh transit, 5% CIF duty with no general VAT, hidden charges stack and the FCL/LCL/air decision."
+  title="China to Kuwait Shipping Cost & Transit Time: the 5% Duty Lane, Two Ports and a 15 CBM Question (September 2026)"
+  description="China-to-Kuwait cost guide: June 2026 rate benchmarks, the 5% duty stack with no general VAT (CIF × 1.05), Shuwaikh vs Shuaiba, a Kuwait-specific FCL/LCL crossover and booking windows for a low-frequency lane."
   canonical={pageUrl}
   ogType="article"
   schema={schema}
@@ -550,137 +567,314 @@ const schema = [
       <Breadcrumb
         items={[
           { label: 'Middle East', href: '/middleeast/' },
-          { label: 'Kuwait Shipping Cost & Transit Time' },
+          { label: 'China to Kuwait Shipping Cost & Transit Time' },
         ]}
       />
       <span class="badge badge--amber">September 2026 updated</span>
-      <h1>China to Kuwait shipping cost &amp; transit time: the full landed-cost picture</h1>
+      <h1>China-to-Kuwait shipping cost &amp; transit time: the no-VAT lane, priced port by port</h1>
       <p class="lead">
-        A complete China-to-Kuwait landed-cost brief for importers. This page separates the freight
-        line, the statutory 5% CIF duty with no general VAT, the typical 24-day Shuwaikh sea window,
-        the hidden destination charge stack, and the FCL-vs-LCL-vs-air decision for the small Kuwait
-        market.
+        Kuwait is the GCC’s clearest tax story — 5% duty, no general VAT, a border that stops at
+        CIF × 1.05 — and one of its least forgiving schedule stories. This page prices both sides:
+        the June 2026 rate benchmarks port by port, the FCL/LCL crossover computed with Kuwait
+        numbers instead of corridor folklore, the Shuwaikh-vs-Shuaiba decision, and the booking
+        discipline a low-frequency lane actually demands.
       </p>
 
       <section class="section container">
         <blockquote class="tldr">
           <p>
-            <strong>TL;DR:</strong> Kuwait clears at &times;1.05 (5% duty, 0% VAT), so a $10,000 CIF
-            shipment adds $500 in statutory cost versus $2,075 in Saudi Arabia (&times;1.2075) — a
-            $1,575 saving. The corridor-wide ocean brackets are LCL $20&ndash;$180/CBM and 20ft FCL
-            $1,500&ndash;$6,200, with the FCL/LCL crossover near 15 CBM ($2,700 at the top LCL rate
-            versus a $1,500 FCL floor). Its typical 24-day sea window (15&ndash;30 range) runs 3 days
-            slower than the UAE's 21, and with no published Kuwait-specific rate the schedule-density
-            gap — not the tax — is the real planning variable.
+            <strong>TL;DR:</strong> Kuwait clears at ×1.05 (5% duty, no general VAT), so a $10,000
+            CIF shipment adds $500 at the border — $1,575 less than Saudi Arabia’s ×1.2075. The June
+            2026 benchmarks put Shanghai→Kuwait at $1,500–$2,900 per 20ft and $2,200–$4,400 per 40ft,
+            with LCL at $35–$75/CBM. The corridor’s famous ~15 CBM FCL/LCL breakpoint survives only
+            at its edges: with Kuwait’s own rates, a 20ft box breaks even against top-rate LCL at
+            roughly 20 CBM — and not until ~39 CBM if the box prices high. And the 24-day typical
+            sea window is the optimist’s number: carrier sheets stretch to 38 days, because fewer
+            sailings mean wider windows. The tax is easy here; the schedule is the project.
           </p>
         </blockquote>
       </section>
 
       <p class="small muted">
-        Confidence badges separate the verified duty/VAT baseline from indicative market snapshots.
-        Every Kuwait rate, transit and fee figure is LOW confidence unless marked otherwise — verify
-        with your carrier or forwarder before relying on it.
+        Confidence badges separate verified rules from dated market snapshots. The June 2026 rate
+        sheets are MEDIUM confidence and dated; the statutory stack is MEDIUM and rules-based; every
+        unquantified fee is LOW and should be requested as an itemised schedule.
       </p>
 
       <div class="fact-grid mt-3">
         <div class="fact">
-          <span class="fact-label">Statutory stack</span>
-          <span class="fact-value">CIF × 1.05 <ConfidenceBadge level="MEDIUM" /></span>
+          <span class="fact-label">Baseline import duty</span>
+          <span class="fact-value">5% CIF <ConfidenceBadge level="MEDIUM" /></span>
         </div>
         <div class="fact">
           <span class="fact-label">General VAT</span>
-          <span class="fact-value">None <ConfidenceBadge level="MEDIUM" /></span>
+          <span class="fact-value">None in force <ConfidenceBadge level="MEDIUM" /></span>
+        </div>
+        <div class="fact">
+          <span class="fact-label">Statutory stack</span>
+          <span class="fact-value">CIF × 1.05 <ConfidenceBadge level="MEDIUM" /></span>
         </div>
         <div class="fact">
           <span class="fact-label">Sea transit</span>
           <span class="fact-value">Typical 24 days <ConfidenceBadge level="LOW" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">FCL / LCL rates</span>
-          <span class="fact-value">Not published <ConfidenceBadge level="LOW" /></span>
+          <span class="fact-label">Jun 2026 20ft print</span>
+          <span class="fact-value">$1,500–$2,900 <ConfidenceBadge level="MEDIUM" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">Air per kg</span>
-          <span class="fact-value">Not published <ConfidenceBadge level="LOW" /></span>
-        </div>
-        <div class="fact">
-          <span class="fact-label">Currency</span>
-          <span class="fact-value">KWD <ConfidenceBadge level="HIGH" /></span>
+          <span class="fact-label">Discharge ports</span>
+          <span class="fact-value">Shuwaikh (KWSWK) · Shuaiba (KWSHB) <ConfidenceBadge level="HIGH" /></span>
         </div>
       </div>
     </div>
   </div>
 
   <section class="section container">
-    <h2>1. What “shipping cost from China to Kuwait” actually includes</h2>
+    <h2>1. Kuwait in one line: a flat 5% at the border and a port decision that changes the quote</h2>
     <p>
-      “Shipping cost from China to Kuwait” is really three groups. <strong>Group one</strong> is the
-      international move: ocean freight for FCL/LCL or air freight by chargeable weight.
-      <strong>Group two</strong> is the statutory stack: 5% customs duty on CIF, with no general VAT.
-      <strong>Group three</strong> is the destination fee stack: THC, port service fees,
-      documentation, brokerage, inspection, inland transport and any demurrage or detention.
+      “Shipping cost from China to Kuwait” is three cost groups wearing one label. <strong>Group
+      one</strong> is the international move: ocean freight for FCL/LCL, or air freight by chargeable
+      weight. <strong>Group two</strong> is the statutory stack — and here Kuwait is the simplest
+      border in the Gulf: 5% customs duty on the CIF value, no general VAT, so the math stops at
+      <code>CIF × 1.05</code>. <strong>Group three</strong> is everything after the border: THC, port
+      service fees, documentation, brokerage, inspection, inland transport and the demurrage/
+      detention clocks.
     </p>
     <p>
-      The common mistake is comparing only group one. Two quotes can look identical on the ocean rate
-      and differ once THC, clearance and inland delivery are included. Kuwait’s smaller market makes
-      that comparison more important: per-shipment fees are not absorbed by Dubai or Jeddah scale.
+      The trap is that group two is so clean that buyers stop reading. A 5% duty makes Kuwait look
+      like a solved problem — but the things that actually move a Kuwait landed cost are group one
+      (fewer sailings, wider transit windows, thinner carrier competition than Dubai) and group three
+      (a fee stack that is largely unpublished and a clearance process that rewards documents
+      discipline). And there is a fourth variable most quotes bury in a line item: which port. Kuwait
+      discharges through two very different facilities, Shuwaikh and Shuaiba, and the choice changes
+      the inland leg, the terminal handling and the clearance path before a single rate is compared.
+    </p>
+    <p>
+      This page keeps the three groups separate, prices the port decision, and computes the FCL/LCL
+      crossover with Kuwait-specific numbers instead of repeating the corridor rule. If you already
+      know the tax story, sections 3 and 4 are where the money actually is.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>2. Indicative freight benchmarks from China to Kuwait</h2>
+      <h2>2. The Kuwait rate sheet: June 2026 benchmarks from both origin ports</h2>
       <p>
-        Freight rates move weekly, so every rate below is LOW confidence. The research snapshot did
-        not publish Kuwait LCL, FCL, air, express or DDP benchmarks, so the table shows
-        “request an all-in quote” rather than filling rows with invented numbers.
+        Kuwait finally has a usable public rate file: a June 2026 forwarder sheet covering both main
+        China origins and LCL, all at MEDIUM confidence. That is better than most thin lanes manage —
+        but “usable” is not “current”. The sheet predates the latest Gulf premium moves, and the
+        corridor context matters: Gulf-side routes have spent 2026 absorbing geopolitical premia,
+        which is exactly why every figure carries its date.
+      </p>
+      <p>
+        One pattern worth noting before you read the table: the two origin sheets sit close together.
+        Shanghai and Shenzhen do not differ much per box on this lane, so the origin decision is a
+        service and sailing-frequency question more than a price question. Use the bands below as
+        your negotiating frame, then test the live market with an RFQ.
       </p>
 
-      <h3>Sea freight</h3>
       <DataTable
         columns={[
-          { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'lane', label: 'Lane / size' },
+          { key: 'benchmark', label: 'Published benchmark' },
+          { key: 'read', label: 'How to read it' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={seaRateRows}
-        caption="Indicative market snapshots, not carrier quotes. Kuwait FCL/LCL lines were not published in the research snapshot — request an all-in quote."
+        rows={rateSheetRows}
+        caption="Port-to-port freight benchmarks dated June 2026, plus corridor sanity bounds. Verify every figure at booking — ranges are indicative, not quotes."
       />
-      <SourceList sources={rateSources} title="Sources — sea freight rates" />
-
-      <h3 class="mt-3">Air and express freight</h3>
-      <DataTable
-        columns={[
-          { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
-          { key: 'confidence', label: 'Confidence', type: 'confidence' },
-        ]}
-        rows={airRateRows}
-        caption="Air and express figures are LOW confidence and vary with chargeable weight, urgency and route. Verify with a forwarder."
-      />
-      <SourceList sources={rateSources} title="Sources — air & express rates" />
+      <SourceList sources={rateSources} title="Sources — Kuwait rate sheet" />
 
       <div class="note mt-2">
-        <strong>Headline rate vs landed cost:</strong> the freight line is only one component.
-        Surcharges, origin charges, destination THC, Kuwait clearance and the 5% duty all sit on top,
-        so request an all-in itemised quote for a realistic comparison.
+        <strong>Base vs all-in:</strong> the $35–$75 LCL band is a per-CBM freight rate, not a
+        door-to-door price. Regional guides quoting $80–$150/CBM are usually bundling more of the
+        destination stack. When two quotes look far apart, check their basis before assuming either
+        is wrong.
       </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>3. The landed-cost formula: build CIF, then add the 5% duty</h2>
+    <h2>3. Shuwaikh or Shuaiba: choose the discharge port first</h2>
     <p>
-      Kuwait duty is calculated on CIF. Build the CIF value from cost, insurance and freight, then
-      add 5% customs duty on that value. With no general VAT, the statutory stack stops at
-      <code>CIF × 1.05</code> rather than the compound multipliers used in Saudi Arabia or the UAE.
+      Kuwait is one of the few Gulf markets where the port question has a real answer that changes
+      the quote. <strong>Shuwaikh (KWSWK)</strong> is the country’s main commercial port — the
+      gateway for containers, general cargo and consumer goods serving the capital. It sits in the
+      Shuwaikh Industrial Area right beside Kuwait City, has 21 berths, and handled 613,093 TEU
+      across 1,419 vessel calls in 2024. <strong>Shuaiba (KWSHB)</strong> is the industrial port, 45
+      km south in Al Ahmadi: 20 berths, deeper water (roughly 10–14 m against Shuwaikh’s 6.7–10 m),
+      and 282,870 TEU across 2,908 vessel calls in 2024 — more vessel calls than Shuwaikh, carrying
+      less containerised box traffic, which tells you what kind of cargo it lives on.
+    </p>
+    <p>
+      The decision logic is blunt: if your consignee and cargo are retail, consumer or general and
+      bound for the capital, you want <strong>Shuwaikh</strong>. If they are industrial, chemical,
+      bulk or project-heavy and tied to the southern industrial belt, you want
+      <strong>Shuaiba</strong> — its deeper berths take tonnage Shuwaikh cannot. Getting this wrong
+      does not just move your inland trucking cost; it changes which terminal charges apply, which
+      inspection regime handles the cargo, and how long the container spends inside a port area on a
+      lane where congestion is a documented constraint.
     </p>
 
-    <h3>Step 1 — Build the CIF value</h3>
+    <DataTable
+      columns={[
+        { key: 'dimension', label: 'Dimension' },
+        { key: 'shuwaikh', label: 'Shuwaikh (KWSWK)' },
+        { key: 'shuaiba', label: 'Shuaiba (KWSHB)' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={portCompareRows}
+      caption="Port roles and 2024 statistics from the Kuwait Ports Authority; depths are approximate and operational details change — confirm the discharge port with the carrier and receiver before the bill of lading is cut."
+    />
+    <SourceList sources={portSources} title="Sources — Kuwait ports" />
+
+    <div class="note mt-2">
+      <strong>One sentence version:</strong> the capital wants Shuwaikh, the industrial belt wants
+      Shuaiba, and the quote should say which one it priced ({shuwaikhUnlocode} or {shuaibaUnlocode}) — a quote that does not
+      name its discharge port is not a comparison. For the full context on both facilities, see the
+      <a href="/middleeast/kuwait-ports/">Kuwait ports guide</a> and the port records for
+      <a href="/ports/shuwaikh/">Shuwaikh</a> and <a href="/ports/shuaiba/">Shuaiba</a>.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The ~15 CBM question: a Kuwait-specific FCL/LCL crossover</h2>
+      <p>
+        The corridor’s folk rule says FCL and LCL break even near 15 CBM. That rule was built from
+        the corridor’s widest LCL bracket ($20–$180/CBM) against a cheap 20ft — it is a useful
+        sanity check, not a Kuwait answer. With the June 2026 Kuwait rates, we can do the actual
+        arithmetic: break-even volume = FCL price ÷ LCL rate.
+      </p>
+      <p>
+        Run it across the real bands and the answer refuses to sit still. At the top LCL rate ($75)
+        against a 20ft floor ($1,500), the crossover is 20 CBM. Against a high-priced box ($2,900),
+        it stretches to 38.7 CBM — more than a 20ft even holds. At the low LCL brackets, the box
+        only wins beyond a 20ft’s usable volume. In other words: the crossover is not a number, it
+        is a band, and the band moves with whichever pair of quotes you are actually holding.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'scenario', label: 'Scenario' },
+          { key: 'arithmetic', label: 'Arithmetic' },
+          { key: 'breakeven', label: 'Break-even' },
+          { key: 'read', label: 'What it tells you' },
+        ]}
+        rows={crossoverRows}
+        caption="Derived arithmetic from the June 2026 rates on this page. Break-even = FCL price ÷ LCL rate per CBM; it excludes minimum charges, CFS fees and destination differences, so treat it as the start of the decision, not the end."
+      />
+      <SourceList sources={rateSources} title="Sources — FCL vs LCL crossover" />
+
+      <div class="grid grid--2 mt-2">
+        <Card title="The three multipliers that matter">
+          <p>
+            Your crossover moves with three things: the LCL rate you were quoted, the FCL price you
+            were quoted, and your true usable volume. Change any one and the breakpoint moves.
+            Recompute with your quote pair — not with this page’s midpoints.
+          </p>
+        </Card>
+        <Card title="The minimum-charge trap">
+          <p>
+            Small LCL consignments often hit a minimum charge that makes the effective per-CBM rate
+            far higher than the headline. Ask for the minimum, then re-run the break-even with the
+            effective number.
+          </p>
+        </Card>
+      </div>
+
+      <div class="note mt-2">
+        <strong>Kuwait-specific verdict:</strong> the corridor rule (~15 CBM) is the optimistic
+        edge of the band; Kuwait’s own rates put the practical 20ft crossover at roughly 20–39 CBM.
+        If you ship 18 CBM, the right answer is “request both quotes” — you are close enough to the
+        line that the economics flip on whichever provider is hungrier that month.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Kuwait’s 24-day clock: typical, range, and the schedule-density tax</h2>
+    <p>
+      Route data gives Shuwaikh a typical <strong>24 days</strong> with a 15–30 day range, from all
+      three main China origins (LOW confidence — it is an estimate). The June 2026 carrier sheet
+      goes further in both directions: 22–38 days from Shanghai and 25–45 days for LCL. That gap
+      between the route-data ceiling (30) and the carrier-sheet ceiling (38) is the schedule-density
+      tax in numbers — Kuwait is a lower-frequency lane, most services transship via Singapore or a
+      regional hub, and the slow end of the range does not care that the average looks fine.
+    </p>
+    <p>
+      Do the buffer math before you book: a 24-day plan against a 30-day window carries 6 extra days
+      of stock; against a 38-day carrier promise it carries 14. On consumer goods with storage costs
+      and on project cargo with installation dates, that buffer is the real cost of this lane — more
+      than the 5% duty will ever be. Two more clock effects to hold: Gulf-side routing has spent
+      2026 absorbing geopolitical premia and routing changes, and any transshipment adds a handling
+      point where your container joins someone else’s schedule.
+    </p>
+
+    <DataTable
+      columns={[
+        { key: 'lane', label: 'Lane' },
+        { key: 'mode', label: 'Mode' },
+        { key: 'transit', label: 'Indicative transit' },
+        { key: 'basis', label: 'Basis' },
+        { key: 'confidence', label: 'Confidence', type: 'confidence' },
+      ]}
+      rows={transitRows}
+      caption="Indicative transit windows only — carrier sheets and route estimates disagree by design. Verify with the relevant carrier before relying on these figures."
+    />
+    <SourceList sources={transitSources} title="Sources — China to Kuwait transit times" />
+
+    <div class="note mt-2">
+      <strong>Planning default:</strong> quote 24 days port-to-port, plan the stock around 30–38.
+      Ask the forwarder to split port-to-port and door dates so the ocean leg is not mistaken for
+      the delivery promise. For Kuwait the tax is small enough that schedule reliability is the
+      thing to pay for — a slightly pricier service that sails on time usually beats a cheap window
+      that does not.
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>6. Booking windows: planning around fewer sailings</h2>
+      <p>
+        On a high-frequency lane you book a sailing; on Kuwait you book a 
+        <em>slot in a schedule</em>. The lane’s lower frequency means each step — booking, documentation,
+        declaration, trucking — has less slack than on a Dubai or Jeddah string, and the fixes cost
+        nothing when they happen early and real money when they happen late. The sequence below is
+        the order that keeps the two riskiest clocks — free time at the terminal and your delivery
+        commitment — from ever starting without you.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'stage', label: 'Stage' },
+          { key: 'lock', label: 'Lock this' },
+          { key: 'why', label: 'Why it matters on Kuwait' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={bookingRows}
+        caption="Operational sequence drawn from the lane characteristics on this page — not a published carrier standard. Confirm actual deadlines with your forwarder per booking."
+      />
+      <SourceList sources={rateSources} title="Sources — booking and lane planning" />
+
+      <div class="note mt-2">
+        <strong>The document clock starts before the vessel:</strong> Kuwait clearance is
+        document-heavy, and PAI certification for regulated goods takes lead time. Treat paperwork
+        as a booking-stage task, not a discharge-stage one — that is the habit that separates a
+        smooth Kuwait arrival from a demurrage conversation.
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>7. The $10,000 CIF walkthrough at Kuwait’s border</h2>
+    <p>
+      Build the CIF value from cost, insurance and freight; apply the 5% duty; stop. With no
+      general VAT in force, the Kuwait statutory stack is the simplest in the GCC —
+      <code>CIF × 1.05</code> and nothing re-taxes the duty.
+    </p>
+
     <DataTable
       columns={[
         { key: 'layer', label: 'Cost layer' },
@@ -690,15 +884,21 @@ const schema = [
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={cifRows}
-      caption="CIF 10,000 USD is an illustrative round figure only. Replace it with your actual declared value, freight and insurance."
+      caption="CIF $10,000 is an illustrative round figure only. Replace it with your actual declared value, freight and insurance."
     />
     <SourceList sources={taxSources} title="Sources — CIF and landed-cost layers" />
 
-    <h3 class="mt-3">Step 2 — Duty, no VAT, then destination fees</h3>
+    <h3 class="mt-3">The worked example, end to end</h3>
     <p>
-      For a USD 10,000 CIF shipment, the 5% duty is USD 500 and the statutory landed cost is USD
-      10,500. Destination fees are added on top and were not quantified in the research snapshot, so
-      request them itemised.
+      For a $10,000 CIF shipment, the 5% duty is $500 and the statutory landed cost is
+      <strong>$10,500</strong>. Compare that across the region: the same CIF clears at $11,025 in
+      the UAE or Oman (×1.1025), $11,550 in Bahrain (×1.155) and $12,075 in Saudi Arabia
+      (×1.2075). Kuwait’s border advantage is $1,575 against Saudi Arabia, $1,050 against Bahrain
+      and $525 against the UAE — a real, structural gap that survives rate volatility. Now note
+      what that gap is worth against the rest of the bill: the freight band on this lane spans
+      $1,400 per box between its low and high prints, and the transit spread runs from 22 to 38
+      days. The tax saving is the smallest moving part of a Kuwait landed cost — which is why the
+      rest of this page spends its time on freight, ports and time.
     </p>
 
     <div class="grid grid--2 mt-2">
@@ -707,127 +907,76 @@ const schema = [
           <strong>CIF × (1 + duty rate)</strong>
         </p>
         <p>
-          Baseline: CIF × 1.05. Add operational fees on top of that statutory figure.
+          Baseline: CIF × 1.05 — the border stops at duty. Add destination fees on top and keep
+          the VAT question on a watch list rather than in the budget.
         </p>
       </Card>
-      <Card title="Why Kuwait is not a Saudi/UAE copy">
+      <Card title="What would change this page">
         <p>
-          Saudi Arabia uses CIF × 1.05 × 1.15, and the UAE uses CIF × 1.05 × 1.05. Kuwait currently
-          stops at CIF × 1.05 for general VAT purposes — but the commodity screen is still strict.
+          Kuwait has signed the GCC VAT framework but not implemented VAT — no law as of April
+          2026, and no expectation before 2028. The framework itself was amended in May 2026,
+          so this is a number to re-check annually, not to assume forever.
         </p>
       </Card>
     </div>
 
     <div class="note mt-2">
-      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
-      and freight. An unrealistically low invoice value invites revaluation, penalties and delay.
+      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost,
+      insurance and freight. A low invoice invites revaluation, penalties and delay — and on a
+      lane with fewer sailings and a document-heavy clearance, delay is the most expensive line
+      item you can create for yourself.
     </div>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>4. Transit time and cost by mode and port</h2>
+      <h2>8. When air wins on a no-VAT lane</h2>
       <p>
-        Kuwait’s destination question is a port choice — Shuwaikh for general cargo, Shuaiba for
-        industrial or project-linked cargo, and Kuwait International Airport for air. The next
-        decision is mode and volume: FCL versus LCL for ocean, and air versus express for urgent cargo.
+        Kuwait’s low tax burden makes one thing easy to get backwards: air freight does not get
+        cheaper because there is no VAT. Duty applies to air cargo the same way it applies to sea —
+        5% of CIF — so air must win on time and money, not on tax. The corridor’s indicative air band
+        sits at $4.6–$8.2/kg, which prices air as a tool for urgency, launches and value-dense cargo,
+        not as a volume solution. For a 200 kg consignment you are looking at roughly $920–$1,640 of
+        air freight before destination fees — comparable to a discounted 20ft on some weeks, and
+        that comparison is exactly why the decision should be made with two quotes, not one instinct.
+      </p>
+      <p>
+        Two mechanics decide the air bill before the rate does. First, <strong>chargeable
+        weight</strong>: air cargo is billed on the greater of actual and volumetric weight, so a box
+        of light, bulky goods can weigh 40 kg on the scale and bill as 60 kg or more. Second,
+        <strong>what is bundled</strong>: DDP air quotes fold clearance and duty into one number,
+        which is convenient but hard to audit. If you self-clear sea cargo regularly, price the air
+        leg the same way and compare the all-in totals.
       </p>
 
       <DataTable
         columns={[
-          { key: 'lane', label: 'Lane' },
-          { key: 'service', label: 'Service' },
+          { key: 'option', label: 'Air option' },
           { key: 'benchmark', label: 'Indicative benchmark' },
           { key: 'note', label: 'Planning note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={byModeRows}
-        caption="Indicative mode/lane benchmarks. FCL, LCL, air, DDP and express lines were not published in the snapshot — request an all-in quote."
+        rows={airRows}
+        caption="Corridor-level air snapshots, not Kuwait-verified quotes. Chargeable weight and service level drive the real number — request a per-kg quote at your weight bracket."
       />
-      <SourceList sources={[...modeSources, wfhRouteData]} title="Sources — cost and time by mode" />
+      <SourceList sources={modeSources} title="Sources — air and mode options" />
 
-      <h3 class="mt-3">Transit-time table by port and mode</h3>
-      <DataTable
-        columns={[
-          { key: 'lane', label: 'Lane' },
-          { key: 'mode', label: 'Mode' },
-          { key: 'transit', label: 'Indicative transit' },
-          { key: 'basis', label: 'Basis' },
-          { key: 'confidence', label: 'Confidence', type: 'confidence' },
-        ]}
-        rows={transitRows}
-        caption="Indicative transit windows only — verify with the relevant carrier before relying on these figures."
-      />
-      <SourceList sources={transitSources} title="Sources — China to Kuwait transit times" />
+      <div class="note mt-2">
+        <strong>Decision rule:</strong> if the cargo can absorb 24–38 days, sea almost always wins on
+        unit cost. Air is justified when the value density is high, the deadline is short, or the
+        alternative is a stock-out. For the full air picture on this corridor, see the
+        <a href="/middleeast/air-freight-from-china-to-kuwait/">China-to-Kuwait air freight guide</a>.
+      </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>5. FCL vs LCL: the cost crossover</h2>
+    <h2>9. After the border: the fee stack, demurrage and detention</h2>
     <p>
-      The Kuwait market’s smaller volume makes the FCL/LCL crossover important. LCL suits small
-      consignments but adds a per-CBM rate, minimum charge and CFS handling; FCL becomes stronger as
-      the shipment approaches a meaningful share of a container. Neither rate is published, so decide
-      from itemised quotes.
-    </p>
-
-    <DataTable
-      columns={[
-        { key: 'factor', label: 'Factor' },
-        { key: 'fcl', label: 'FCL' },
-        { key: 'lcl', label: 'LCL' },
-        { key: 'confidence', label: 'Confidence', type: 'confidence' },
-      ]}
-      rows={fclVsLclRows}
-      caption="FCL and LCL comparison is directional; neither has a quantified market bracket in the Kuwait snapshot."
-    />
-    <SourceList sources={rateSources} title="Sources — FCL vs LCL" />
-
-    <div class="note mt-2">
-      <strong>Kuwait small-market effect:</strong> because LCL consolidation volume is lower than
-      Dubai, a small shipment may sit longer for consolidation or carry a higher minimum charge.
-      Request the CFS cutoff, minimum CBM and next consolidation sailing before choosing LCL.
-    </div>
-  </section>
-
-  <section class="section section--alt">
-    <div class="container">
-      <h2>6. Ports and handlers in the cost chain</h2>
-      <p>
-        Each China-to-Kuwait node adds a cost and a potential delay. The table orients the origin and
-        destination nodes; the destination fees themselves must come from the carrier, terminal and broker.
-      </p>
-
-      <DataTable
-        columns={[
-          { key: 'node', label: 'Node' },
-          { key: 'role', label: 'Role' },
-          { key: 'note', label: 'Planning note' },
-          { key: 'confidence', label: 'Confidence', type: 'confidence' },
-        ]}
-        rows={nodeRows}
-        caption="Port/node orientation. China throughput figures are HIGH confidence; destination operational details are LOW and route-specific."
-      />
-      <SourceList sources={nodeSources} title="Sources — China and Kuwait ports" />
-
-      <h3 class="mt-3">Shuwaikh vs Shuaiba in the landed-cost quote</h3>
-      <p>
-        Keep the port choice inside the quote: Shuwaikh (KWSWK) is the general commercial and
-        container gateway near Kuwait City, while Shuaiba (KWSHB) is the industrial, petrochemical,
-        bulk and project gateway to the south. Confirm the discharge point, terminal allocation and
-        destination fees with the carrier and receiver before comparing landed-cost figures.
-      </p>
-    </div>
-  </section>
-
-  <section class="section container">
-    <h2>7. Hidden charges stack and the factors that move it</h2>
-    <p>
-      The destination charge stack is the highest-variance part of a Kuwait quote. Ask the provider
-      to itemise <strong>THC</strong>, <strong>port service fees</strong>, <strong>documentation</strong>,
-      <strong>customs inspection</strong>, <strong>brokerage</strong>, <strong>port storage</strong>,
-      <strong>demurrage</strong> and <strong>detention</strong> in writing. The verified snapshot does
-      not publish Kuwait amounts, so every operational fee below is LOW confidence.
+      The 5% duty is the only quantified statutory line in Kuwait; every operational fee below
+      it was not published in the verified snapshot. That is not a reason to skip the line — it
+      is a reason to make the provider itemise it. Ask for each component in writing, with the
+      currency and the trigger, before comparing providers.
     </p>
 
     <DataTable
@@ -838,129 +987,140 @@ const schema = [
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={costRows}
-      caption="Only the 5% GCC duty baseline and no-general-VAT position are stated from verified/secondary sources. Unquantified Kuwait fees are LOW confidence because the snapshot did not publish amounts."
+      caption="Only the 5% duty baseline and the no-general-VAT position are stated from verified/secondary sources. Unquantified Kuwait fees are LOW confidence because the snapshot did not publish amounts."
     />
-    <SourceList sources={costSources} title="Sources — cost & transit factors" />
+    <SourceList sources={costSources} title="Sources — Kuwait cost stack" />
 
     <h3 class="mt-3">Demurrage and detention</h3>
     <p>
-      <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
-      the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged by
-      the ocean carrier when the container stays outside the port beyond the free time allowed after
-      collection. Free-time allowances and per-day rates differ by line and terminal and were not
-      published in the research snapshot, so always request the fee schedule before booking.
-    </p>
-    <p>
-      The practical way to avoid both is to finish clearance before the vessel arrives: file the
-      Kuwait import declaration early, keep the HS code and documents ready, screen restricted
-      goods, and book trucking before the container is discharged.
+      <strong>Demurrage</strong> is the terminal’s charge when a container overstays inside the
+      port after discharge; <strong>detention</strong> is the carrier’s charge when the container
+      overstays outside the port after collection. Free-time allowances and per-day rates differ
+      by line and terminal and were not published — so the booking confirmation is your only
+      evidence when a clock starts. On a lower-frequency lane the stakes run higher than usual:
+      if your container misses its slot in the discharge and trucking sequence, the next
+      opportunity may be days away at Shuwaikh’s urban terminal, where congestion is a known
+      constraint.
     </p>
 
-    <h3 class="mt-3">What changes the cost and the clock</h3>
-    <DataTable
-      columns={[
-        { key: 'factor', label: 'Factor' },
-        { key: 'effect', label: 'Effect' },
-        { key: 'direction', label: 'Direction' },
-        { key: 'confidence', label: 'Confidence', type: 'confidence' },
-      ]}
-      rows={factorRows}
-      caption="Directional factors, not quantified figures. Document and HS-code readiness effects are MEDIUM-confidence regulatory effects; surcharges and routing are LOW."
-    />
-    <SourceList sources={[...costSources, ...nodeSources]} title="Sources — Kuwait cost & transit factors" />
-
-    <h3 class="mt-3">Cost optimisation on a small-market corridor</h3>
+    <h3 class="mt-3">What actually moves a Kuwait bill</h3>
     <ul>
-      <li>Consolidate smaller orders into fewer, fuller FCL moves when possible.</li>
-      <li>Compare the FCL and LCL all-in quotes at the same destination point.</li>
+      <li><strong>Schedule density</strong> — fewer sailings mean wider windows; a slow-end transit is inventory you finance, not a rate you negotiate.</li>
+      <li><strong>Discharge port choice</strong> — Shuwaikh or Shuaiba changes the inland leg, the terminal handling and the clearance path.</li>
+      <li><strong>LCL minimums and CFS handling</strong> — small consignments can carry an effective per-CBM rate well above the headline band.</li>
+      <li><strong>Documentation and PAI certification timing</strong> — late paperwork delays clearance and starts free-time clocks.</li>
+      <li><strong>Free-time discipline</strong> — the cheapest demurrage is the demurrage you never incur; pre-clear so the box moves.</li>
+      <li><strong>Surcharge schedule</strong> — BAF/CAF and peak-season lines move the total faster than base rates; ask for them in writing.</li>
+    </ul>
+
+    <h3 class="mt-3">Cost discipline on the no-VAT lane</h3>
+    <ul>
+      <li>Consolidate past your crossover so you are buying container space, not top-rate LCL space.</li>
+      <li>Quote both discharge ports when the consignee’s location allows it — then compare all-in.</li>
       <li>Classify the HS code and screen restricted goods before booking.</li>
-      <li>File the Kuwait import declaration before the vessel arrives.</li>
-      <li>Book last-mile trucking before discharge to protect free time.</li>
-      <li>Negotiate the destination fee schedule, not just the headline freight rate.</li>
+      <li>Start PAI certification in the booking stage for regulated goods.</li>
+      <li>File the import declaration before the vessel arrives.</li>
+      <li>Book trucking before discharge to protect free time.</li>
     </ul>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>8. Compliance points that change the bill</h2>
+      <h2>10. Documents, PAI certification and the clearance order</h2>
 
-      <h3>Tax and duty</h3>
+      <h3>Tax and duty — the short version</h3>
       <p>
         Kuwait’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common
-        External Tariff, with no general VAT in the current framework, so the statutory landed cost
-        for most goods is <code>CIF × 1.05</code>. The HS code remains the first cost decision.
+        External Tariff, and no general VAT is in force, so the statutory landed cost for most goods
+        is <code>CIF × 1.05</code>. Food and some pharmaceuticals can be duty-free; alcohol and
+        tobacco run higher lines. The HS code is still the first cost decision — and the first thing
+        a broker needs to see.
       </p>
 
       <h3>Kuwait clearance order</h3>
       <ol>
         <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
-        <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
-        <li>Prepare the commercial invoice, packing list, bill of lading or air waybill and certificate of origin.</li>
-        <li>File the Kuwait import declaration through the Kuwait Customs electronic clearance system.</li>
-        <li>Pay the assessed 5% duty on CIF, pass inspection if selected, and release the cargo.</li>
+        <li>Confirm importer registration and any PAI (Public Authority for Industry) certification for regulated products.</li>
+        <li>Prepare the commercial invoice, packing list, certificate of origin and bill of lading or air waybill.</li>
+        <li>File the import declaration through the Kuwait Customs electronic system — ideally before the vessel arrives.</li>
+        <li>Pay the assessed 5% duty, pass inspection if selected, and release the cargo.</li>
       </ol>
 
-      <h3>Documents and classification</h3>
+      <h3>Documents that decide the week</h3>
       <p>
-        Standard documents are the commercial invoice, bill of lading or air waybill, packing list
-        and certificate of origin, plus permits for restricted goods. Classify with the correct
-        <strong>HS code</strong> before quoting. <strong>ISF</strong> is a United States requirement
-        and does not apply to Kuwait; Kuwait’s filing step is the import declaration.
+        Standard documents are the commercial invoice, bill of lading or air waybill, packing list,
+        certificate of origin and any permits for restricted goods; add PAI certification where it
+        applies. <strong>ISF</strong> is a United States requirement and does not apply to Kuwait —
+        Kuwait’s filing step is the import declaration. Because clearance here is document-heavy,
+        the practical rule is to have every document correct before the vessel sails, not before it
+        arrives. For a deeper walkthrough, see the
+        <a href="/middleeast/kuwait-customs-duty/">Kuwait customs and duty page</a> and the
+        <a href="/middleeast/shipping-from-china-to-kuwait/">main China-to-Kuwait guide</a>.
       </p>
 
-      <h3>No SABER or SASO requirement for Kuwait</h3>
+      <h3>No SABER, no SASO — but not no rules</h3>
       <p>
-        SABER and SASO are Saudi-only conformity systems, so do not copy them into a Kuwait import.
-        Kuwait may have its own standards or inspection requirements, but those are not published in
-        the verified snapshot — confirm the applicable process with Kuwait Customs.
+        SABER and SASO are Saudi-only conformity systems; do not copy them into a Kuwait import.
+        Kuwait’s own regime leans on Customs documentation and PAI certification for certain
+        products, and while the exact scope depends on your HS code, the lesson is the same as
+        everywhere in the Gulf: conformity screens are commodity-specific and belong in the quoting
+        stage. For how Kuwait’s duty-and-VAT position compares across all six GCC states, the
+        <a href="/middleeast/gcc-customs-duty-comparison/">GCC customs and duty comparison</a> lays
+        the multipliers side by side.
       </p>
 
-      <SourceList sources={taxSources} title="Sources — Kuwait customs, tax & ports" />
+      <SourceList sources={taxSources} title="Sources — Kuwait customs, tax & clearance" />
     </div>
   </section>
 
   <section class="section container">
-    <h2>9. Frequently asked questions</h2>
+    <h2>11. Frequently asked questions</h2>
     <FaqBlock items={faqs} />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>12. Data freshness &amp; monthly update cadence</h2>
+      <p>
+        This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+        statutory lines (5% duty, no general VAT and the CIF × 1.05 stack) are re-checked against
+        Kuwait Customs and the PwC tax summary; the rate sheet keeps its June 2026 date and is
+        re-verified monthly because Kuwait rates move with capacity and season; transit windows are
+        re-checked against route data and carrier sheets; and the VAT watch item is reviewed against
+        GCC framework news, given the May 2026 amendments and Qatar’s movement.
+      </p>
+      <p>
+        If a fresher Kuwait rate print, a terminal fee schedule, a demurrage/detention table or a
+        VAT implementation bill becomes available, the table is updated, the confidence badge is
+        raised, and the modified date in the page metadata changes. Until then, dated figures stay
+        dated and unpublished fees stay itemised-on-request — that is the only honest way to price a
+        lane where the tax is simple and everything else is not.
+      </p>
+    </div>
   </section>
 
   <section class="section container">
     <h2>Key takeaways</h2>
     <ol>
-      <li>Statutory stack: 1.05 × 1.00 = 1.05, so $10,000 CIF lands at $10,500 — with no VAT to re-tax the duty, each extra 1% duty costs only $100, not $105 as in a 5%-VAT GCC state.</li>
-      <li>Saudi gap: Saudi Arabia’s 1.05 × 1.15 = 1.2075 against Kuwait’s 1.05 means $10,000 CIF pays $2,075 there versus $500 here — a $1,575 swing on the same goods.</li>
-      <li>Transit trap: the 15–30 day range is 2× wide; 30 − 24 = 6, so booking to the 24-day typical still leaves 6 extra days of stock if the vessel hits the slow end.</li>
-      <li>Origin ratio: Shanghai’s 55.06M TEU ÷ Ningbo-Zhoushan’s 43M TEU = 1.28×, so Ningbo is 78% of Shanghai — schedule depth does not remove the small-market Kuwait rate gap.</li>
-      <li>Crossover check: 15 CBM × $180 top LCL = $2,700 versus the $1,500 20ft floor, a $1,200 gap; but Kuwait FCL/LCL rates are not published, so request both quotes before using the corridor rule.</li>
+      <li>The border is the easy part: ×1.05 means $10,000 CIF clears at $10,500 — $1,575 under Saudi Arabia’s ×1.2075, with no VAT layer to re-tax the duty. Nothing on the tax side needs a negotiation.</li>
+      <li>The June 2026 rate sheet gives you real bands — $1,500–$2,900 per 20ft, $2,200–$4,400 per 40ft, $35–$75/CBM for LCL — and both China origins price within a whisker of each other, so pick on service, not geography.</li>
+      <li>The ~15 CBM crossover is the optimistic edge of a band: on Kuwait’s own rates a 20ft breaks even against top-rate LCL at ~20 CBM and not until ~39 CBM against a high-priced box. Quote both ways anywhere near the line.</li>
+      <li>The clock is the cost: a 24-day typical sits inside windows that carrier sheets stretch to 38 days, so build 6–14 days of buffer and treat schedule reliability as the thing worth paying for.</li>
+      <li>Pick the port before the price: Shuwaikh (613,093 TEU in 2024, beside the capital) for consumer and general cargo, Shuaiba (282,870 TEU, deeper berths, 45 km south) for industrial and project freight — a quote that does not name its port is not finished.</li>
     </ol>
   </section>
 
   <section class="section container">
     <h2>The Author's Take</h2>
-    <p><strong>Position:</strong> In my view, I would treat Kuwait's no-VAT quote as a schedule-risk trade. The ×1.05 stack saves $1,575 versus Saudi Arabia on $10,000 CIF, but the 15–30-day sea range leaves 6 slow-end days beyond the 24-day headline, with no Kuwait-specific rate to test the $1,500–$6,200 corridor band.</p>
-    <ul><li>×1.05 lands $10,000 CIF at $10,500; Saudi Arabia's ×1.2075 lands the same base at $12,075 — a $1,575 swing.</li><li>The 15–30-day range is 2× wide: 30 − 24 = 6, so a 24-day plan still needs 6 days of buffer at the slow end.</li><li>15 CBM × $180 top LCL = $2,700 versus a $1,500 20ft floor, a $1,200 gap — but neither Kuwait rate is published, so both quotes must be requested.</li></ul>
+    <p><strong>Position:</strong> In my view, Kuwait is the rare lane where the tax code is the easy part — I would book the ×1.05 border without a second thought and spend the entire negotiation on schedule density and the discharge port, because that is where a $1,575 tax saving quietly disappears.</p>
+    <ul><li>×1.05 lands $10,000 CIF at $10,500 — $1,575 under Saudi Arabia — and nothing re-taxes the duty; the border math is settled and knowable, which is more than almost any other number on this lane.</li><li>The June 2026 sheets span 22–38 days from Shanghai against a 24-day typical, and every slow-end day is inventory you finance; schedule reliability is the real purchase decision here.</li><li>The FCL/LCL break-even band runs roughly 20–39 CBM on Kuwait’s own rates; an 18 CBM shipment should be quoted both ways before anyone declares a winner — the ~15 CBM corridor rule is the optimistic edge, not the answer.</li></ul>
     <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
-  </section>
-
-  <section class="section container">
-    <h2>10. Data freshness &amp; monthly update cadence</h2>
-    <p>
-      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
-      statutory lines (5% duty, no general VAT and the CIF × 1.05 stack) are re-checked against the
-      Kuwait General Administration of Customs and the shared GCC framework; the freight benchmarks
-      and transit windows are re-checked monthly because they move with capacity, fuel and season.
-    </p>
-    <p>
-      If a Kuwait fee amount, FCL/LCL rate, transit figure or VAT change becomes available, the table
-      is updated, the confidence badge is raised, and the modified date in the metadata is changed.
-      Until then, unquantified fees stay LOW confidence with a request-the-schedule note.
-    </p>
   </section>
 
   <section class="section container">
     <Cta
       title="Get an itemised China to Kuwait landed-cost quote"
-      text="Tell us your HS code, CIF value, commodity, container or CBM and final Kuwait destination, and we will connect you with providers who can itemise freight, Kuwait clearance, 5% duty and delivery."
+      text="Tell us your HS code, CIF value, commodity, container or CBM, discharge port and final Kuwait destination, and we will connect you with providers who can itemise freight, Shuwaikh or Shuaiba clearance, the 5% duty and delivery."
     />
   </section>
 </BaseLayout>

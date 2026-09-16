@@ -36,7 +36,7 @@ const goodsacrossborders: Source = {
 };
 const presou: Source = {
   id: 'presou-qatar',
-  name: 'Presou — How much does it cost to ship from China to Qatar',
+  name: 'Presou — How much does it cost to ship from China to Qatar (LCL and air snapshots)',
   url: 'https://presou.com/how-much-does-it-cost-to-ship-from-china-to-qatar/',
   type: 'industry',
 };
@@ -46,182 +46,175 @@ const chinabestfreight: Source = {
   url: 'https://www.chinabestfreight.com/region/middle-east/shipping-to-qatar.html',
   type: 'industry',
 };
+const sinoQatar: Source = {
+  id: 'sino-qatar',
+  name: 'Sino Shipping — China→Qatar freight and rate page (Sep 2026)',
+  url: 'https://www.sino-shipping.com/freight-shipping-from-china-to-qatar/',
+  type: 'industry',
+};
+const goodhopeQatar: Source = {
+  id: 'goodhope-qatar',
+  name: 'Goodhope Freight — Shekou/Yantian→Hamad port-to-port sheet (Jul 2026)',
+  url: 'https://goodhopefreight.com/freight/international-logistics-cost-from-china-to-qatar.html',
+  type: 'industry',
+};
+const cogoportQatar: Source = {
+  id: 'cogoport-qatar',
+  name: 'Cogoport — Ningbo→Hamad indicative platform freight (bundled basis; not a port-to-port quote)',
+  url: 'https://www.cogoport.com/lt-LT/rates/ningbo-pt-sp-to-hamad-sp',
+  type: 'industry',
+};
+const windwardReroute: Source = {
+  id: 'windward-reroute',
+  name: 'Windward — Maritime intelligence daily: Qatar designates Sohar, Salalah and Duqm as alternatives to Hamad (Mar 2026)',
+  url: 'https://windward.ai/blog/march-27-maritime-intelligence-daily/',
+  type: 'industry',
+};
+const lloydsPorts: Source = {
+  id: 'lloydslist-update',
+  name: 'Lloyd’s List — Middle East port operational update (12 Mar 2026)',
+  url: 'https://www.lloydslist.com/LL1156595/Middle-East-port-operational-update-Thursday-March-12',
+  type: 'industry',
+};
 const wfhRouteData: Source = {
-  id: 'wfh-qatar-route-data',
+  id: 'wfh-qatar-cost-route-data',
   name: 'WorldFreightHub route data — Shanghai, Ningbo-Zhoushan and Shenzhen to Hamad Port (typical 22 days, range 15–30)',
   url: `${SITE_URL}/routes/`,
   type: 'industry',
 };
+const wfhMethodology: Source = {
+  id: 'wfh-qatar-cost-methodology',
+  name: 'WorldFreightHub methodology — China→GCC research snapshot and confidence framework',
+  url: `${SITE_URL}/methodology/`,
+  type: 'organization',
+};
 
-const chinaPortSources = sourcesByIds(['sipg', 'ningbo-zhoushan-port', 'shenzhen-port-group']);
 const qatarPortSources: Source[] = [mwani, ...sourcesByIds(['qatar-customs'])];
-const rateSources: Source[] = [presou, chinabestfreight];
+const rateSources: Source[] = [sinoQatar, goodhopeQatar, cogoportQatar, presou, chinabestfreight];
+const floorSources: Source[] = [presou, sinoQatar, wfhMethodology];
 const taxSources: Source[] = [...sourcesByIds(['qatar-customs']), traddal, goodsacrossborders];
+const gatewaySources: Source[] = [mwani, windwardReroute, lloydsPorts, wfhMethodology];
 const transitSources: Source[] = [wfhRouteData, chinabestfreight];
 const costSources: Source[] = [...taxSources, presou, chinabestfreight, wfhRouteData];
 
-const seaRateRows = [
+const fclRateRows = [
   {
-    mode: 'LCL ocean · China → Hamad Port / Doha',
-    benchmark: 'USD 70–155 per CBM',
-    basis: 'Presou China→Qatar LCL snapshot',
-    note: 'Per-CBM shared-container basis; minimum charge may apply',
+    ref: 'r-301',
+    lane: 'Shanghai → Hamad',
+    size: '20GP',
+    benchmark: '$4,365–$5,354',
+    basis: 'Sino Shipping Sep-2026 quote set; the source itself flags roughly +25% month-on-month and a Hormuz risk premium. Confirm the charge basis (port-to-port vs all-in).',
+    confidence: 'MEDIUM',
+  },
+  {
+    ref: 'r-302',
+    lane: 'Shanghai → Hamad',
+    size: '40GP / 40HQ',
+    benchmark: '$6,485–$8,204',
+    basis: 'Same Sep-2026 set (40GP quoted; 40HQ usually at parity). A South-China sheet quoted $2,150/40HQ in July — a reminder that basis and service windows move these numbers more than most people expect.',
+    confidence: 'MEDIUM',
+  },
+  {
+    ref: 'r-303',
+    lane: 'Ningbo-Zhoushan → Hamad',
+    size: 'FCL (size not stated)',
+    benchmark: '$7,862–$9,910',
+    basis: 'Platform “indicative freight” that bundles more than base ocean and omits container size — useful as a ceiling signal, not comparable with port-to-port rows.',
     confidence: 'LOW',
   },
   {
-    mode: 'FCL 20GP · China → Hamad Port',
-    benchmark: 'Not published — request an all-in quote',
-    basis: 'No verified Qatar 20GP rate appeared in the research snapshot',
-    note: 'Priced per container; differs by line and season',
+    ref: 'r-304',
+    lane: 'Shenzhen (Shekou/Yantian) → Hamad',
+    size: '20GP',
+    benchmark: '$1,750–$1,954',
+    basis: 'Goodhope port-to-port sheet dated 6 July 2026; carrier card undated. Pre-escalation vintage — verify before modelling.',
     confidence: 'LOW',
   },
   {
-    mode: 'FCL 40GP / 40HQ · China → Hamad Port',
-    benchmark: 'Not published — request an all-in quote',
-    basis: 'No verified Qatar 40GP/40HQ rate appeared in the research snapshot',
-    note: '40ft is usually the volume benchmark for established importers',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'FCL · China → Hamad Port project/oversized cargo',
-    benchmark: 'Not published — request a project-specific quote',
-    basis: 'No verified project cargo rate in the snapshot',
-    note: 'Project freight requires lift, laydown and route clearance checks',
+    ref: 'r-305',
+    lane: 'Shenzhen → Hamad',
+    size: '40GP / 40HQ',
+    benchmark: '$2,150–$2,956',
+    basis: 'Same July sheet ($2,150/40HQ) plus a carrier card at $2,650–$2,956. Confirm service and date.',
     confidence: 'LOW',
   },
 ];
 
-const airRateRows = [
+const lclAirRows = [
   {
-    mode: 'Air freight · China → Qatar market bracket',
-    benchmark: 'USD 4.5–7.5 per kg',
-    basis: 'Presou China→Qatar air snapshot',
-    note: 'Billed on chargeable weight, not actual weight alone',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'Air freight · airport-to-airport planning range',
-    benchmark: 'Not published as a per-kg floor/ceiling — request a quote',
-    basis: 'Planning range for direct airport-to-airport moves',
-    note: 'Varies with chargeable weight, airport pair and season',
-    confidence: 'LOW',
-  },
-  {
-    mode: 'DDP air door-to-door',
-    benchmark: 'Indicative $4.7–$8.5/kg air freight — Chinese forwarder snapshots',
-    basis: 'No verified Qatar DDP air rate in the snapshot',
-    note: 'Embeds clearance, duty and delivery in one price',
+    ref: 'r-306',
+    mode: 'LCL · Shanghai → Hamad (per CBM)',
+    benchmark: '$75–$150',
+    basis: 'Sino: $75/CBM stable (Sep 2026); the top of the range comes from a regional LCL guide ($80–150). Across published snapshots the floor is $70 — a structural small-market premium, not a distance effect.',
     confidence: 'MEDIUM',
   },
   {
-    mode: 'Express courier · China → Qatar',
-    benchmark: 'Indicative $4.7–$8.5/kg air freight — Chinese forwarder snapshots',
-    basis: 'No verified Qatar express rate in the research snapshot',
-    note: 'Best for small, urgent parcels; falls at higher weight',
+    ref: 'r-307',
+    mode: 'Air · China → Doha (per kg)',
+    benchmark: '$3.76–$4.62',
+    basis: 'Goodhope air card QAR 13.7–16.8/kg (converted at the source’s implied rate); Sino quotes $3.95/kg above 1,000 kg. Trade listings run $2.50–$4.50/kg at a 45 kg minimum.',
     confidence: 'MEDIUM',
   },
 ];
 
-const cifRows = [
+const chargeableWeightRows = [
   {
-    layer: 'Goods / invoice value',
-    calc: 'From the supplier invoice',
-    amount: 'Use the actual declared value',
-    note: 'The starting point for Qatar customs duty',
-    confidence: 'LOW',
-  },
-  {
-    layer: 'Freight (sea or air)',
-    calc: 'Carrier / forwarder quote',
-    amount: 'See rate tables',
-    note: 'Ocean or air line item',
-    confidence: 'LOW',
-  },
-  {
-    layer: 'Insurance',
-    calc: 'Insurer or forwarder quote',
-    amount: 'Not published in snapshot',
-    note: 'Usually a small percentage of cargo value',
-    confidence: 'LOW',
-  },
-  {
-    layer: 'CIF value',
-    calc: 'Cost + insurance + freight',
-    amount: '$10,000.00 illustrative',
-    note: 'Illustrative round figure; replace with your CIF',
-    confidence: 'LOW',
-  },
-  {
-    layer: 'Customs duty (baseline)',
-    calc: 'CIF × 5%',
-    amount: '$500.00',
-    note: 'GCC Common External Tariff, ad valorem on CIF',
+    volume: '0.5 CBM',
+    chargeable: '≈ 83 kg',
+    air: '$313–$385',
+    lcl: '$70–$150 (1-CBM minimum billing)',
+    reading: 'The multiple narrows to roughly 2–6× because LCL minimums stop the per-CBM maths from helping small parcels.',
     confidence: 'MEDIUM',
   },
   {
-    layer: 'General VAT',
-    calc: 'No general VAT on imports',
-    amount: '$0.00',
-    note: 'Qatar has no general import VAT in the current framework',
+    volume: '1 CBM',
+    chargeable: '≈ 167 kg',
+    air: '$627–$770',
+    lcl: '$70–$150',
+    reading: 'Roughly 4–11× — the standard gap for a small-but-bulky shipment.',
     confidence: 'MEDIUM',
   },
   {
-    layer: 'Statutory landed cost',
-    calc: 'CIF × 1.05',
-    amount: '$10,500.00',
-    note: '= 1.05 × CIF at the baseline duty rate',
-    confidence: 'MEDIUM',
-  },
-  {
-    layer: 'Destination fees',
-    calc: 'THC + docs + clearance/Al-Nadeeb + inland + demurrage/detention',
-    amount: 'Not published — request schedule',
-    note: 'Added on top of the statutory stack',
-    confidence: 'LOW',
-  },
-  {
-    layer: 'Total landed cost',
-    calc: 'Statutory landed cost + destination fees',
-    amount: '$10,500.00 + destination fees',
-    note: 'The all-in figure to benchmark quotes against',
+    volume: '2 CBM',
+    chargeable: '≈ 333 kg',
+    air: '$1,253–$1,540',
+    lcl: '$140–$300',
+    reading: 'Roughly 4–11×. The air premium in dollars (about $950–$1,400) is what buys back two to three weeks.',
     confidence: 'MEDIUM',
   },
 ];
 
-const byModeRows = [
+const stackCompareRows = [
   {
-    lane: 'Sea FCL · China to Hamad Port',
-    service: 'Full container 20GP / 40GP / 40HQ',
-    benchmark: 'Not published — request an all-in container quote',
-    note: 'Use your exact container size and destination',
-    confidence: 'LOW',
-  },
-  {
-    lane: 'Sea LCL · China to Hamad Port / Doha',
-    service: 'Shared container by CBM',
-    benchmark: 'USD 70–155 per CBM',
-    note: 'Minimum charge applies on small volumes',
-    confidence: 'LOW',
-  },
-  {
-    lane: 'Air freight · China to Doha',
-    service: 'Airport-to-airport by chargeable kg',
-    benchmark: 'USD 4.5–7.5 per kg',
-    note: 'Chargeable weight is the higher of actual and volumetric',
-    confidence: 'LOW',
-  },
-  {
-    lane: 'DDP air door-to-door',
-    service: 'Bundled clearance, duty and delivery',
-    benchmark: 'Indicative $4.7–$8.5/kg air freight — Chinese forwarder snapshots',
-    note: 'Embeds the statutory stack plus destination fees',
+    destination: 'Qatar',
+    stack: '×1.05 (5% duty, no VAT)',
+    landed: '$10,500',
+    gap: '—',
+    note: 'The GCC’s lightest statutory landing stack in the current framework',
     confidence: 'MEDIUM',
   },
   {
-    lane: 'Express courier · China to Qatar',
-    service: 'Door delivery for small parcels',
-    benchmark: 'Indicative $4.7–$8.5/kg air freight — Chinese forwarder snapshots',
-    note: 'Rate falls as weight rises; minimums apply',
+    destination: 'Kuwait',
+    stack: '×1.05 (5% duty, no VAT)',
+    landed: '$10,500',
+    gap: '$0',
+    note: 'Level with Qatar on the statutory layer',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'UAE',
+    stack: '×1.1025 (5% duty + 5% VAT)',
+    landed: '$11,025',
+    gap: '+$525',
+    note: 'VAT compounds on the duty-inclusive base',
+    confidence: 'MEDIUM',
+  },
+  {
+    destination: 'Saudi Arabia',
+    stack: '×1.2075 (5% duty + 15% VAT)',
+    landed: '$12,075',
+    gap: '+$1,575',
+    note: 'The comparison that makes Qatar’s 0% VAT tangible',
     confidence: 'MEDIUM',
   },
 ];
@@ -234,10 +227,16 @@ const fclVsLclRows = [
     confidence: 'LOW',
   },
   {
-    factor: 'Indicative cost',
-    fcl: 'Not published in the Qatar snapshot — request an all-in quote',
-    lcl: 'USD 70–155 per CBM (Presou Qatar snapshot)',
+    factor: 'Published Qatar benchmark',
+    fcl: '$4,365–$5,354 (20GP, Sep); $1,750–$1,954 (20GP, Jul South-China sheet)',
+    lcl: '$75–$150/CBM (floor $70 across snapshots)',
     confidence: 'MEDIUM',
+  },
+  {
+    factor: 'Crossover math',
+    fcl: 'Crossover CBM = FCL rate ÷ LCL rate',
+    lcl: 'Depends on which sheet you read: ≈12–26 CBM (Jul) vs ≈29–71 CBM (Sep)',
+    confidence: 'LOW',
   },
   {
     factor: 'Hidden destination cost',
@@ -246,81 +245,9 @@ const fclVsLclRows = [
     confidence: 'LOW',
   },
   {
-    factor: 'Speed and handling',
-    fcl: 'Simpler sealed move, usually faster to release',
-    lcl: 'Adds consolidation and deconsolidation handling',
-    confidence: 'LOW',
-  },
-  {
     factor: 'Planning rule',
-    fcl: 'Stronger as cargo approaches a meaningful share of a box',
-    lcl: 'Stronger for small, low-volume shipments',
-    confidence: 'LOW',
-  },
-];
-
-const nodeRows = [
-  {
-    node: 'Shanghai',
-    role: 'Top China container origin; 55.06M TEU (2025)',
-    note: 'Origin terminal and export documentation',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Ningbo-Zhoushan',
-    role: '#3 container port; 43M TEU (2025)',
-    note: 'Alternative East China origin',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Shenzhen (Yantian / Shekou)',
-    role: 'South China gateway',
-    note: 'Throughput not stated in research snapshot',
-    confidence: 'LOW',
-  },
-  {
-    node: 'Guangzhou',
-    role: 'South China origin named in Qatar freight guides',
-    note: 'Throughput not stated in research snapshot',
-    confidence: 'LOW',
-  },
-  {
-    node: 'Hamad Port',
-    role: 'Qatar’s primary commercial seaport; Mwani Qatar operated',
-    note: 'UN/LOCODE ' + unlocode + '; use on the bill of lading',
-    confidence: 'HIGH',
-  },
-  {
-    node: 'Doha airport',
-    role: 'Air gateway for Qatar air freight',
-    note: 'Airport-to-airport service for time-critical cargo',
-    confidence: 'LOW',
-  },
-];
-
-const freeZoneRows = [
-  {
-    factor: 'Import duty',
-    mainland: '5% of CIF payable at import',
-    freeZone: 'Treatment depends on the specific zone rules',
-    confidence: 'MEDIUM',
-  },
-  {
-    factor: 'General VAT',
-    mainland: 'No general VAT on imports',
-    freeZone: 'No general VAT on imports in the current framework',
-    confidence: 'MEDIUM',
-  },
-  {
-    factor: 'When goods exit the zone',
-    mainland: 'N/A — goods are already in the domestic market',
-    freeZone: 'Confirm whether duty/regulatory treatment changes on exit',
-    confidence: 'LOW',
-  },
-  {
-    factor: 'Best-fit use case',
-    mainland: 'Direct sale to a Qatar buyer or consumer',
-    freeZone: 'Re-export, distribution and logistics activity near Hamad Port',
+    fcl: 'Stronger near and above a full box; fight for FCL terms past ~25 CBM',
+    lcl: 'Stronger below ~12 CBM on any reading; keep comparing in between',
     confidence: 'LOW',
   },
 ];
@@ -351,6 +278,12 @@ const factorRows = [
     confidence: 'LOW',
   },
   {
+    factor: 'Single-gateway concentration',
+    effect: 'All container cargo clears through Hamad; there is no in-country fallback port',
+    note: 'Crisis routing shifts to Omani ports plus overland legs — plan the contingency',
+    confidence: 'LOW',
+  },
+  {
     factor: 'Commodity and HS code',
     effect: 'Changes the duty line, permit and restricted-goods exposure',
     note: 'Classify before quoting',
@@ -372,52 +305,52 @@ const factorRows = [
 
 const faqs = [
   {
+    q: 'What does China-to-Qatar LCL cost per CBM?',
+    a: 'The published band is $75–$150 per CBM (Sino’s $75 stable quote plus a regional guide’s $80–150 ceiling), with a $70 floor across older snapshots — roughly 3.5× the corridor-wide $20 floor and about 2.3× the UAE’s $30 base bracket. These are indicative collected figures, not carrier quotes; confirm the CFS cutoff, minimum CBM and LCL-specific destination fees at booking.',
+  },
+  {
     q: 'How much does shipping cost from China to Qatar?',
-    a: 'The research snapshot records an indicative China→Qatar LCL benchmark of USD 70–155 per CBM and air freight of USD 4.5–7.5 per kg, both LOW-confidence market figures. Verified Qatar FCL and express rates were not published in the snapshot, so request an all-in quote. These are collected public figures, not carrier quotes — confirm with a forwarder before booking.',
+    a: 'The September 2026 rows: 20ft FCL $4,365–$5,354 and 40ft $6,485–$8,204 from Shanghai (MEDIUM, flagged +~25% month-on-month), a July South-China sheet at $1,750–$2,956 (LOW, pre-escalation), LCL at $75–$150/CBM and air at $3.76–$4.62/kg. Add the ×1.05 statutory stack — 5% duty, no VAT — on the CIF value. Verify every figure with a forwarder before booking.',
   },
   {
-    q: 'How long does it take to ship from China to Qatar?',
-    a: 'WorldFreightHub route data records a typical 22 days with a 15–30 day planning range from Shanghai, Ningbo-Zhoushan or Shenzhen to Hamad Port (MEDIUM confidence). A secondary market guide gives a wider 22–28-day sea bracket and 2–4 days by air (LOW). All figures are indicative — verify with your carrier before relying on them.',
+    q: 'Why is Qatar’s LCL more expensive than Dubai’s?',
+    a: 'Three structural reasons stack up: a single gateway (Hamad Port) with no competing terminal to compress rates, thinner consolidation volume than Jebel Ali so fewer boxes to pool per sailing, and per-CBM handling economics that show up at low volumes when fixed terminal costs are spread across less cargo. The result is a $70+ floor against the UAE’s $30 base bracket. The gap is a market-structure story, not a different ocean.',
   },
   {
-    q: 'Why is the China-to-Qatar corridor cost-sensitive despite the short distance?',
-    a: 'Qatar\u2019s LCL floor of USD 70/CBM is 3.5× the corridor-wide $20 floor, and its typical 22-day sea window sits 1 day behind the UAE\u2019s 21, so the smaller market shows up as a higher per-CBM base. The result is often a higher cost per CBM or per container, especially on LCL and small-volume moves, even though the geographic distance is comparable to other Gulf corridors.',
+    q: 'How long does shipping from China to Qatar take?',
+    a: 'The route-data baseline is a typical 22 days with a 15–30 day window. A secondary market guide gives a 22–28 day sea bracket and 2–4 days by air. One LCL sheet quotes 9–17 days for its service — service-specific and unverified; treat the 22-day typical as the planning number and ask which service a given quote uses. Air at 3–7 days is the wide-end alternative.',
   },
   {
     q: 'How is the Qatar landed cost calculated?',
-    a: 'On a $10,000 CIF, Qatar\u2019s baseline statutory landed cost is $10,500 — 5% duty on CIF with no general VAT — because the stack is CIF × 1.05. Add destination THC, documentation, Al-Nadeeb clearance, inland trucking and any demurrage/detention on top of that.',
-  },
-  {
-    q: 'Does the 5% duty apply to freight and insurance?',
-    a: 'Yes — every $1 of freight or insurance adds 5 cents of duty, because the 5% charge applies to the full CIF value, not just the invoice. A higher freight rate therefore also raises the customs duty, even without a VAT layer.',
-  },
-  {
-    q: 'What hidden fees should I expect on a Qatar shipment?',
-    a: 'Duty is the only quantified statutory line at 5% of CIF — every other Qatar fee amount was not published, so budget the destination-fee stack as an unknown add-on. Expect origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Al-Nadeeb processing, inspection if selected, inland transport, cargo insurance if elected, and demurrage/detention after free time. Request an itemised schedule.',
-  },
-  {
-    q: 'What is the cheapest way to ship from China to Qatar?',
-    a: 'Below ~15 CBM, LCL\u2019s USD 70\u2013155/CBM per-unit pricing usually wins; above ~15 CBM, a flat 20ft FCL becomes cheaper per CBM — the published Qatar LCL floor starts 3.5× above the corridor\u2019s $20 floor. Sea freight gives the lowest unit cost only if you include all destination fees and compare the all-in cost, not the headline rate — air is rarely the cheapest option and is justified by speed, value density or urgency, not by cost.',
-  },
-  {
-    q: 'Is FCL or LCL better for shipping to Qatar?',
-    a: 'The ~15 CBM crossover is the decision rule: below it, LCL at USD 70\u2013155/CBM usually wins; above it, a flat FCL container becomes cheaper per CBM. LCL adds consolidation, minimum charges and more destination handling. The research snapshot only quantified Qatar LCL at USD 70–155 per CBM, so request FCL and LCL all-in quotes and compare the full landed cost.',
+    a: 'On a $10,000 CIF: 5% duty is $500 and there is no general VAT on imports in the current framework, so the statutory landed cost is $10,500 — CIF × 1.05. Destination THC, documentation, Al-Nadeeb clearance, inland trucking and any demurrage or detention are added on top and are not quantified in public snapshots; request them itemised.',
   },
   {
     q: 'Does Qatar charge VAT on top of import duty?',
-    a: 'No — Qatar\u2019s stack stops at ×1.05 (5% duty, 0% VAT), so a $10,000 CIF clears at $10,500 versus $12,075 in Saudi Arabia (×1.2075). The main statutory charge is 5% customs duty on CIF. Verify the current Qatar position with the General Authority of Customs before finalising a quote.',
+    a: 'No — Qatar’s stack stops at ×1.05 (5% duty, 0% general VAT), so a $10,000 CIF clears at $10,500 versus $12,075 in Saudi Arabia (×1.2075) and $11,025 in the UAE (×1.1025). That is a $1,575 saving versus Saudi Arabia and $525 versus the UAE on the same base. Verify the current VAT position with the General Authority of Customs before finalising a quote — frameworks can change.',
+  },
+  {
+    q: 'Is air freight from China to Doha ever cheaper than LCL?',
+    a: 'Rarely per unit, but the trap cuts both ways. Air bills on chargeable weight: 2 CBM becomes 333.33 kg, so at $3.76–$4.62/kg the air bill runs about $1,253–$1,540 versus LCL at roughly $140–$300 — a 4–11× gap. Air can still win when LCL minimums bite (at 0.5 CBM the multiple narrows to about 2–6×), when stock-out or delay costs exceed roughly $50–$90 per day, or when value density is high. Run the per-shipment arithmetic, not the per-kg headline.',
+  },
+  {
+    q: 'Is FCL or LCL better for shipping to Hamad Port?',
+    a: 'Quote both — the published crossover spreads from about 12–26 CBM (July South-China sheet) to about 29–71 CBM (September Shanghai sheet), because the two sheets disagree on FCL levels. Below ~12 CBM LCL is competitive on any reading; above ~25 CBM push hard for FCL terms; in between, the quote does the deciding. Destination fees, which fall more heavily on LCL, push the practical crossover down.',
+  },
+  {
+    q: 'What happens to Qatar cargo if the Strait of Hormuz is disrupted?',
+    a: 'Qatar formalised alternatives during the 2026 disruption: its Ministry of Transport designated Omani and UAE ports for Hamad-bound cargo — Sohar and Duqm as the first alternative, Fujairah and Khorfakkan as the second — with overland legs into Qatar, and Windward’s March 2026 update describes Sohar, Salalah and Duqm as Qatar’s designated alternatives. Budget a transit premium and ask any forwarder how they route around the strait before a crisis does it for them.',
+  },
+  {
+    q: 'Which port and airport should the landed-cost quote use?',
+    a: 'Sea freight: Hamad Port (QAHMD), Qatar’s sole commercial container gateway since 2017. Air: Doha airport (DOH). The legacy Doha Port no longer takes commercial container traffic, so a quote that still routes boxes through “Doha Port” is out of date — ask the forwarder to name the terminal. On the bill of lading, QAHMD is the code that matters.',
+  },
+  {
+    q: 'What hidden fees should I expect on a Qatar shipment?',
+    a: 'Duty is the only quantified statutory line at 5% of CIF; every other fee amount is unpublished, so budget the destination stack as an unknown add-on: origin charges, destination THC and port charges, documentation and bill of lading fees, customs brokerage, Al-Nadeeb processing, inspection if selected, inland transport, cargo insurance if elected, and demurrage or detention after free time. Ask for an itemised schedule rather than a single all-in number.',
   },
   {
     q: 'How can I reduce the landed cost on the China-to-Qatar route?',
-    a: 'The highest-leverage move is consolidating past the ~15 CBM FCL crossover, which converts LCL\u2019s USD 70\u2013155/CBM per-unit pricing into a flat FCL container spread across your volume. Also compare FCL and LCL all-in quotes; classify the HS code correctly before booking; screen restricted goods early; file the Al-Nadeeb declaration before arrival; book trucking before discharge; and negotiate the destination fee schedule rather than accepting the first quote.',
-  },
-  {
-    q: 'Which port should be used in the landed-cost quote?',
-    a: 'Use Hamad Port for containerised sea freight. Its UN/LOCODE is QAHMD. The legacy Doha Port is no longer the commercial container destination, so a quote that still uses Doha Port may be based on outdated routing.',
-  },
-  {
-    q: 'How should I quote transit time from China to Qatar?',
-    a: 'Quote 22 days port-to-port, then add discharge, Al-Nadeeb clearance, any inspection and last-mile trucking to reach the door-to-door total. Ask the forwarder to split the port-to-port and door-to-door dates so the ocean leg is not mistaken for the delivery promise.',
+    a: 'The moves that matter most: consolidate past the practical crossover so LCL’s per-CBM pricing flips into a flat box rate; compare FCL and LCL all-in quotes at the same destination week; classify the HS code correctly before booking; screen restricted goods early; file the Al-Nadeeb declaration before arrival to protect free time; and negotiate the destination fee schedule. The 0% VAT saving is already in your favour — the controllable lines are freight basis and destination fees.',
   },
 ];
 
@@ -435,11 +368,11 @@ const schema = [
   {
     type: 'Article',
     data: {
-      headline: 'Shipping Cost & Transit Time from China to Qatar: Complete Landed Cost Breakdown (September 2026)',
+      headline: 'Shipping Cost & Transit Time from China to Qatar: LCL Floor, 0% VAT and Hamad Port (September 2026)',
       description:
-        'Shipping cost and transit time from China to Qatar explained: sea/air benchmarks, Shanghai/Ningbo/Shenzhen to Hamad typical 22 days, 5% duty with no general VAT, and the CIF × 1.05 landed-cost formula.',
+        'China-to-Qatar shipping cost and transit time: the $70/CBM LCL floor, the ×1.05 zero-VAT landing stack, chargeable-weight maths for air freight, and Hamad Port’s single-gateway risk map.',
       datePublished: '2026-09-01',
-      dateModified: '2026-09-01',
+      dateModified: '2026-09-16',
       inLanguage: 'en',
       mainEntityOfPage: {
         '@type': 'WebPage',
@@ -477,8 +410,8 @@ const schema = [
 ---
 
 <BaseLayout
-  title="Shipping Cost & Transit Time from China to Qatar: Complete Landed Cost Breakdown (September 2026)"
-  description="Shipping cost and transit time from China to Qatar: sea/air benchmarks, Shanghai/Ningbo/Shenzhen to Hamad typical 22 days, 5% duty with no general VAT, and the CIF × 1.05 landed-cost formula."
+  title="Shipping Cost & Transit Time from China to Qatar: LCL Floor, 0% VAT and Hamad Port (September 2026)"
+  description="China-to-Qatar shipping cost and transit time: the $70/CBM LCL floor, the ×1.05 zero-VAT landing stack, chargeable-weight maths for air freight, and Hamad Port’s single-gateway risk map."
   canonical={pageUrl}
   ogType="article"
   schema={schema}
@@ -492,31 +425,34 @@ const schema = [
         ]}
       />
       <span class="badge badge--amber">September 2026 updated</span>
-      <h1>Shipping cost &amp; transit time from China to Qatar: the complete landed-cost breakdown</h1>
+      <h1>Shipping cost &amp; transit time from China to Qatar: the LCL floor, the zero-VAT landing, and Hamad Port</h1>
       <p class="lead">
-        The headline freight rate is only the first line. This page separates China-to-Qatar ocean
-        and air freight from THC, documentation, Al-Nadeeb clearance, inland transport and the 5%
-        duty stack, then shows how the layers compound into a true landed cost — while keeping the
-        typical 22-day transit window in view.
+        Qatar is the easiest GCC landing on paper — 5% duty and no general VAT, so a $10,000 CIF
+        clears at $10,500 — and one of the harder ones to move to, because every container enters
+        through a single port on a thin, war-premium lane. This page does the maths both ways: the
+        $70/CBM LCL floor that sits 3.5× above the corridor, the chargeable-weight trap that flips
+        small shipments toward air, and the single-gateway risk map that matters when the Strait
+        of Hormuz does not cooperate.
       </p>
 
       <section class="section container">
         <blockquote class="tldr">
           <p>
-            <strong>TL;DR:</strong> Qatar's ×1.05 stack (5% duty, 0% VAT) clears a $10,000 CIF at
-            $10,500 versus $12,075 in Saudi Arabia (×1.2075) — a $1,575 saving that offsets a
-            higher per-CBM floor. Its published LCL bracket is USD 70&ndash;155/CBM, a $70 floor that
-            is 3.5× the corridor's $20 floor, alongside air at USD 4.5&ndash;7.5/kg. The typical
-            22-day sea window (15&ndash;30 range) runs 1 day behind the UAE's 21, so the clearance
-            tax-saving trade is what separates Qatar from the bigger hubs.
+            <strong>TL;DR:</strong> Qatar’s ×1.05 stack (5% duty, 0% VAT) lands $10,000 CIF at
+            $10,500 — $1,575 under Saudi Arabia and $525 under the UAE — but the tax saving is not
+            free money on small volumes: the published LCL floor is $70/CBM, 3.5× the corridor’s
+            $20 floor, and at 2 CBM the air alternative ($1,253&ndash;$1,540 chargeable) runs
+            4&ndash;11× the LCL bill ($140&ndash;$300). Hamad Port is the only container gateway,
+            with Sohar, Salalah and Duqm formalised as crisis alternatives.
           </p>
         </blockquote>
       </section>
 
       <p class="small muted">
-        Confidence badges separate verified rules from indicative market snapshots. Treat every
-        LOW-confidence rate and fee note as indicative, and verify with your carrier before relying
-        on it.
+        Confidence badges separate verified rules from indicative market snapshots. The 5% duty and
+        0% VAT lines are verified; rate rows range from MEDIUM (dated 2026 quote sets) to LOW
+        (pre-escalation or bundled-basis figures). Treat every LOW figure as indicative and verify
+        with your carrier before relying on it.
       </p>
 
       <div class="fact-grid mt-3">
@@ -537,99 +473,183 @@ const schema = [
           <span class="fact-value">Typical 22 days <ConfidenceBadge level="MEDIUM" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">LCL benchmark</span>
-          <span class="fact-value">USD 70–155/CBM <ConfidenceBadge level="LOW" /></span>
+          <span class="fact-label">Container gateway</span>
+          <span class="fact-value">Hamad Port (QAHMD) <ConfidenceBadge level="HIGH" /></span>
         </div>
         <div class="fact">
-          <span class="fact-label">Air per kg</span>
-          <span class="fact-value">USD 4.5–7.5 <ConfidenceBadge level="LOW" /></span>
+          <span class="fact-label">LCL floor</span>
+          <span class="fact-value">$70/CBM <ConfidenceBadge level="LOW" /></span>
         </div>
       </div>
     </div>
   </div>
 
   <section class="section container">
-    <h2>1. What “shipping cost from China to Qatar” actually includes</h2>
+    <h2>1. The three layers of a China-to-Qatar quote — and the one most sellers compare</h2>
     <p>
-      “Shipping cost from China to Qatar” is usually quoted as a single freight line, but the amount
-      you actually pay is the sum of three groups. <strong>Group one</strong> is the international
-      move: ocean freight for FCL/LCL or air freight by chargeable weight. <strong>Group two</strong>
-      is the statutory stack: 5% customs duty on the CIF value, with no general VAT in the current
-      framework. <strong>Group three</strong> is the destination fee stack: THC, documentation,
-      customs brokerage, Al-Nadeeb processing, inland transport and, if free time is exceeded,
-      demurrage or detention.
+      Every China-to-Qatar quote contains three layers. <strong>The international move</strong>:
+      ocean freight for FCL or LCL, or air freight billed on chargeable weight. <strong>The
+      statutory stack</strong>: 5% duty on CIF, with no general VAT on imports in the current
+      framework — the ×1.05 position that makes Qatar one of the two lightest GCC landings
+      alongside Kuwait. <strong>The destination fee stack</strong>: terminal handling,
+      documentation, brokerage, Al-Nadeeb processing, inland transport, and demurrage or detention
+      if free time runs out.
     </p>
     <p>
-      The common mistake is to compare only group one. Two quotes can look identical on the ocean
-      rate and differ materially once THC, Al-Nadeeb and inland delivery are included. Qatar’s
-      smaller market makes that comparison more important, not less: with lower volume and a single
-      commercial gateway, per-shipment destination fees are not absorbed by the same scale as a
-      Dubai or Jeddah corridor.
-    </p>
-    <p>
-      This page keeps that structure explicit. Every table separates the freight benchmark from the
-      statutory stack and the unquantified destination fees, so you can see which line a provider is
-      actually quoting — and which ones are still missing.
+      Sellers compare the first layer, because it is the number on the quote. On Qatar that habit
+      is riskier than usual, for two reasons. The lane is thin — fewer sailings, common
+      transshipment, a single container gateway — so the freight layer carries a small-market
+      premium that a Dubai-quoted benchmark will not show. And the tax layer, the one place Qatar
+      beats its neighbours by design, only pays off if your freight basis does not quietly eat the
+      difference. This page prices all three layers separately so the trade is visible.
     </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>2. Indicative freight benchmarks from China to Qatar</h2>
+      <h2>2. The China→Qatar rate card: LCL floor, FCL spread, and the air band</h2>
       <p>
-        Freight rates move weekly with capacity, fuel, peak season and routing, so every rate below
-        is deliberately labelled LOW confidence. The research snapshot only quantified a Qatar LCL
-        bracket and an air bracket; the FCL lines were not published and are shown as
-        “request an all-in quote” rather than being filled with invented numbers.
+        WHFI v1 — the WorldFreightHub Freight Index — now carries seven China→Qatar rows covering
+        FCL, LCL and air. Read the confidence column as carefully as the dollars: the September
+        Shanghai quotes are MEDIUM (dated, but forwarder-sourced), while the South-China FCL sheet
+        and the platform figures are LOW and on different bases. The spread between them is part
+        of the story, not noise to average away.
       </p>
 
-      <h3>Sea freight</h3>
+      <h3>FCL by origin and size</h3>
       <DataTable
         columns={[
-          { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'ref', label: 'Ref' },
+          { key: 'lane', label: 'Lane' },
+          { key: 'size', label: 'Size' },
+          { key: 'benchmark', label: 'Indicative range' },
+          { key: 'basis', label: 'Basis note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={seaRateRows}
-        caption="Indicative market snapshots, not carrier quotes. FCL lines were not published in the Qatar research snapshot — request an all-in quote."
+        rows={fclRateRows}
+        caption="Port-to-port planning ranges where stated; platform figures are bundled. Ref IDs map to the WHFI v1 rate register (r-301 to r-307). Verify at booking."
       />
-      <SourceList sources={rateSources} title="Sources — sea freight rates" />
+      <SourceList sources={rateSources} title="Sources — FCL rate rows" />
 
-      <h3 class="mt-3">Air and express freight</h3>
+      <h3 class="mt-3">LCL and air</h3>
       <DataTable
         columns={[
+          { key: 'ref', label: 'Ref' },
           { key: 'mode', label: 'Mode / lane' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'basis', label: 'Source basis' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'benchmark', label: 'Indicative range' },
+          { key: 'basis', label: 'Basis note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={airRateRows}
-        caption="Air figures are LOW confidence and vary with chargeable weight, urgency and route. Verify with a forwarder."
+        rows={lclAirRows}
+        caption="LCL and air ranges move with volume bracket, weight tier and season. Verify with a forwarder before quoting onward."
       />
-      <SourceList sources={rateSources} title="Sources — air & express rates" />
+      <SourceList sources={rateSources} title="Sources — LCL & air rate rows" />
 
       <div class="note mt-2">
-        <strong>Headline rate vs landed cost:</strong> the freight line is only one component.
-        Surcharges, origin charges, destination THC, Al-Nadeeb and the 5% duty all sit on top, so
-        request an all-in itemised quote for a realistic comparison.
+        <strong>Why the spread is so wide:</strong> the September Shanghai quotes carry a Hormuz
+        risk premium the July South-China sheet predates, and the platform rows bundle services
+        the port-to-port rows exclude. A 2.5× spread across sources is what a strained corridor
+        looks like — treat the low end as the market that was, and the high end as the market the
+        source can defend today.
       </div>
     </div>
   </section>
 
   <section class="section container">
-    <h2>3. The landed-cost formula: build CIF, then add the 5% duty</h2>
+    <h2>3. Why Qatar’s LCL floor sits at 3.5× the corridor’s</h2>
     <p>
-      Qatar duty is calculated on CIF, so the first step is to build the CIF value correctly. CIF
-      means cost of goods plus insurance plus freight. The second step is to add the baseline 5%
-      customs duty on that CIF value. Because Qatar has no general VAT on imports, the statutory
-      stack stops there — <code>CIF × 1.05</code> — rather than the compound multipliers used in
-      Saudi Arabia or the UAE.
+      The corridor-wide LCL benchmark runs $20–$180/CBM with a $20 floor; Qatar’s published floor
+      is $70 — a 3.5× gap on the same nominal product. That gap is not a rounding error, and it is
+      not explained by distance. Doha is not meaningfully further from Shanghai than Dubai is.
+      What differs is market structure, and it shows up in three places.
+    </p>
+    <ol>
+      <li>
+        <strong>Single gateway, zero competition.</strong> All commercial container cargo clears
+        through Hamad Port. Jebel Ali’s rate compression comes from multiple terminal operations,
+        frequent sailings and a deep pool of consolidators; Hamad has one operating model and a
+        thinner carrier roster, so there is less tension pulling per-unit pricing down.
+      </li>
+      <li>
+        <strong>Thin consolidation volume.</strong> LCL is a pooling business. Fewer onward boxes
+        per sailing means a small shipment waits longer to fill a consolidation, carries higher
+        minimum charges, or both. The published LCL window (quoted at 9–17 days by one source, but
+        the lane’s planning number runs longer) is only as good as the next consolidation date,
+        which is why this page keeps LCL at LOW confidence inside a MEDIUM lane.
+      </li>
+      <li>
+        <strong>Terminal economics at low volume.</strong> Fixed terminal and CFS handling costs
+        are spread across fewer CBM in Qatar than in Dubai. The specific fee amounts at Hamad are
+        not published in our snapshot — so we do not quote a number — but the direction is
+        structural, and it is the same force keeping the floor at $70+ rather than $30.
+      </li>
+    </ol>
+    <p>
+      The practical consequence: on small shipments, the corridor’s cheapest LCL market and its
+      most expensive are often compared as if they were interchangeable. They are not. If your
+      goods are LCL-sized and Qatar-bound, budget from the $70–$150 band, and ask the two
+      questions that actually move the number: what is the CFS cutoff and next consolidation
+      sailing, and what is the minimum CBM for the service.
+    </p>
+    <SourceList sources={floorSources} title="Sources — LCL floor and market structure" />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>4. The chargeable-weight trap: when air to Doha beats LCL</h2>
+      <p>
+        Air freight does not bill the weight on your scale. It bills the higher of actual and
+        volumetric weight, and the air convention — roughly 1 CBM per 167 kg (the ÷6000 divisor)
+        — turns bulky light cargo into heavy invoices. Two cubic metres of foam-packed consumer
+        goods weighing 120 kg physically become <strong>333.33 kg chargeable</strong> — a 2.8×
+        uplift that decides the mode question before you do.
+      </p>
+
+      <DataTable
+        columns={[
+          { key: 'volume', label: 'Volume' },
+          { key: 'chargeable', label: 'Chargeable weight (÷6000)' },
+          { key: 'air', label: 'Air cost at $3.76–$4.62/kg' },
+          { key: 'lcl', label: 'LCL cost at $70–$150/CBM' },
+          { key: 'reading', label: 'Read' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+        ]}
+        rows={chargeableWeightRows}
+        caption="Illustrative arithmetic from the published ranges. Actual quotes vary with airports, service type and season."
+      />
+      <SourceList sources={rateSources} title="Sources — chargeable-weight maths" />
+
+      <p class="mt-2">
+        Look at the shape of the table, not just the totals. At 2 CBM the air bill is roughly
+        $1,253–$1,540 against LCL’s $140–$300 — a gap of about $950–$1,400. That premium buys back
+        two to three weeks of transit. It pays when a stock-out, a project deadline or
+        financing-inventory cost exceeds roughly $50–$90 per day of delay — and it never pays for
+        slow-moving bulk. At 0.5 CBM the story flips subtly: LCL minimums stop the per-CBM maths
+        from helping, and the air multiple narrows to about 2–6×, which is why small urgent
+        parcels should compare consolidated air (and courier) against LCL directly rather than
+        assuming sea is always cheaper.
+      </p>
+      <p>
+        One more layer: DDP air and express products (which bundle clearance, duty and delivery)
+        ran above the airport-to-airport band in the earlier snapshot — around $4.70–$8.50/kg —
+        and that is the honest comparison for door-to-door air, not the raw per-kg rate. If a
+        seller quotes you “$3.90/kg” without saying whether it is airport-to-airport or delivered,
+        you do not yet have a price. The <a href="/middleeast/air-freight-from-china-to-qatar/">Qatar
+        air freight guide</a> covers the mode mechanics in full.
+      </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>5. Build CIF, then apply Qatar’s ×1.05: the $10,500 landing</h2>
+    <p>
+      Qatar’s duty base is CIF — cost, insurance and freight — so the first task is assembling a
+      defensible CIF value, and the second is the short statutory arithmetic: 5% duty, no general
+      VAT, <code>CIF × 1.05</code>. Freight and insurance are inside the base, so a higher freight
+      quote raises duty as well, even though there is no VAT layer to compound it.
     </p>
 
-    <h3>Step 1 — Build the CIF value</h3>
+    <h3>Step 1 — Assemble a defensible CIF value</h3>
     <DataTable
       columns={[
         { key: 'layer', label: 'Cost layer' },
@@ -638,73 +658,76 @@ const schema = [
         { key: 'note', label: 'Planning note' },
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
-      rows={cifRows}
+      rows={[
+        { layer: 'Goods / invoice value', calc: 'From the supplier invoice', amount: 'Use the actual declared value', note: 'The starting point for Qatar customs duty', confidence: 'LOW' },
+        { layer: 'Freight (sea or air)', calc: 'Carrier / forwarder quote', amount: 'See the rate card above', note: 'Inside the duty base — freight is not tax-free', confidence: 'LOW' },
+        { layer: 'Insurance', calc: 'Insurer or forwarder quote', amount: 'Not published in the snapshot', note: 'Usually a small percentage of cargo value', confidence: 'LOW' },
+        { layer: 'CIF value', calc: 'Cost + insurance + freight', amount: '$10,000.00 illustrative', note: 'Illustrative round figure; replace it with your CIF', confidence: 'LOW' },
+        { layer: 'Customs duty (baseline)', calc: 'CIF × 5%', amount: '$500.00', note: 'GCC Common External Tariff, ad valorem on CIF', confidence: 'MEDIUM' },
+        { layer: 'General VAT', calc: 'No general VAT on imports', amount: '$0.00', note: 'Qatar has no general import VAT in the current framework', confidence: 'MEDIUM' },
+        { layer: 'Statutory landed cost', calc: 'CIF × 1.05', amount: '$10,500.00', note: '= 1.05 × CIF at the baseline duty rate', confidence: 'MEDIUM' },
+        { layer: 'Destination fees', calc: 'THC + docs + clearance/Al-Nadeeb + inland + demurrage/detention', amount: 'Not published — request schedule', note: 'Added on top of the statutory stack', confidence: 'LOW' },
+        { layer: 'Total landed cost', calc: 'Statutory landed cost + destination fees', amount: '$10,500.00 + destination fees', note: 'The all-in figure to benchmark quotes against', confidence: 'MEDIUM' },
+      ]}
       caption="CIF 10,000 USD is an illustrative round figure only. Replace it with your actual declared value, freight and insurance."
     />
-    <SourceList sources={taxSources} title="Sources — CIF and landed-cost layers" />
-
-    <h3 class="mt-3">Step 2 — Duty, no VAT, then destination fees</h3>
-    <p>
-      For a USD 10,000 CIF shipment, the 5% duty is USD 500 and the statutory landed cost is USD
-      10,500. Destination fees — THC, documentation, Al-Nadeeb clearance, inland transport and
-      possible demurrage or detention — are added on top and were not quantified in the research
-      snapshot, so request them itemised.
-    </p>
-
-    <div class="grid grid--2 mt-2">
-      <Card title="The formula in one line">
-        <p class="lead">
-          <strong>CIF × (1 + duty rate)</strong>
-        </p>
-        <p>
-          Baseline: CIF × 1.05. Add operational fees on top of that statutory figure.
-        </p>
-      </Card>
-      <Card title="Why Qatar is not a Saudi/UAE copy">
-        <p>
-          Saudi Arabia uses CIF × 1.05 × 1.15, and the UAE uses CIF × 1.05 × 1.05. Qatar currently
-          stops at CIF × 1.05 for general VAT purposes — but the commodity screen is still strict.
-        </p>
-      </Card>
-    </div>
+    <SourceList sources={taxSources} title="Sources — CIF and statutory layers" />
 
     <div class="note mt-2">
-      <strong>Under-declaration is not a saving:</strong> the CIF value must reflect cost, insurance
-      and freight. An unrealistically low invoice value invites revaluation, penalties and delay.
+      <strong>One-line formula:</strong> <code>CIF × 1.05</code> — duty only, no VAT layer. The
+      discipline note still applies: under-declaring CIF invites revaluation and penalties, and a
+      correction flows straight through the duty line.
     </div>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>4. Cost and time by mode and port</h2>
+      <h2>6. What 0% VAT is worth: the $10,000 CIF comparison against Saudi Arabia</h2>
       <p>
-        Qatar’s compact geography means the destination port choice is straightforward: Hamad Port
-        for sea freight and Doha airport for air freight. The more important decision is mode and
-        volume — FCL versus LCL for ocean, and air versus express for time-critical cargo.
+        The zero-VAT position is Qatar’s headline advantage, and it is worth putting a number on
+        it across the corridor — same CIF base, four destinations:
       </p>
 
       <DataTable
         columns={[
-          { key: 'lane', label: 'Lane' },
-          { key: 'service', label: 'Service' },
-          { key: 'benchmark', label: 'Indicative benchmark' },
-          { key: 'note', label: 'Planning note' },
+          { key: 'destination', label: 'Destination' },
+          { key: 'stack', label: 'Statutory stack' },
+          { key: 'landed', label: 'Landed on $10,000 CIF' },
+          { key: 'gap', label: 'Gap vs Qatar' },
+          { key: 'note', label: 'Note' },
           { key: 'confidence', label: 'Confidence', type: 'confidence' },
         ]}
-        rows={byModeRows}
-        caption="Indicative mode/lane benchmarks. FCL, DDP and express lines were not published in the snapshot — request an all-in quote."
+        rows={stackCompareRows}
+        caption="Same $10,000 CIF across four GCC destinations. Only Qatar and Kuwait currently stop at ×1.05."
       />
-      <SourceList sources={[...rateSources, wfhRouteData]} title="Sources — cost and time by mode" />
+      <SourceList sources={[...taxSources, ...sourcesByIds(['kuwait-customs'])]} title="Sources — GCC stack comparison" />
+
+      <p class="mt-2">
+        So the saving is <strong>$1,575 against Saudi Arabia</strong> and $525 against the UAE on
+        the same $10,000 base. Now the part most VAT-first arguments miss: on small shipments, the
+        freight layer can claw back a slice of that. The LCL floor premium is $50/CBM against the
+        corridor floor ($70 − $20), so at 15 CBM the premium alone is $750 — roughly half the
+        Saudi saving. Below about 5 CBM the premium is under $250 and barely dents it. Qatar still
+        wins the comparison for most pairs of numbers, but the margin is thinner than the
+        raw VAT gap suggests, and the thinner your volume, the smaller the freight noise.
+      </p>
+      <p>
+        Two caveats to carry forward. Duty lines vary by HS code — certain essential foods can sit
+        at 0%, and tobacco and alcohol carry much higher rates where permitted — so classify
+        before quoting. And VAT frameworks change: Qatar currently has no general import VAT, but
+        several GCC neighbours have introduced theirs on a similar template. Verify the current
+        position with the General Authority of Customs before locking a landed-cost model to 0%.
+      </p>
     </div>
   </section>
 
   <section class="section container">
-    <h2>5. FCL vs LCL: the cost crossover</h2>
+    <h2>7. FCL vs LCL to Hamad Port: where the crossover actually sits</h2>
     <p>
-      The Qatar market’s smaller volume makes the FCL/LCL crossover particularly important. LCL is
-      easy for small consignments, but the per-CBM rate, minimum charge and extra CFS handling can
-      make it more expensive per unit as volume grows. FCL becomes stronger once the shipment
-      approaches a meaningful share of a container.
+      The GCC floor for this argument is “cross over at about 15 CBM”. On Qatar’s published
+      numbers, that heuristic is not wrong so much as under-specified — because the two rate
+      sheets for this lane disagree enough to put the crossover anywhere between roughly 12 and
+      71 CBM.
     </p>
 
     <DataTable
@@ -715,46 +738,88 @@ const schema = [
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={fclVsLclRows}
-      caption="FCL and LCL comparison is directional; only LCL has a quantified market bracket in the snapshot."
+      caption="FCL/LCL comparison on the WHFI v1 rows. The crossover output is a range, not a point."
     />
-    <SourceList sources={rateSources} title="Sources — FCL vs LCL" />
+    <SourceList sources={rateSources} title="Sources — FCL/LCL inputs" />
 
-    <div class="note mt-2">
-      <strong>Qatar small-market effect:</strong> because LCL consolidation volume is lower than
-      Dubai, a small shipment may sit longer for consolidation or carry a higher minimum charge.
-      Request the CFS cutoff, minimum CBM and next consolidation sailing before choosing LCL.
-    </div>
+    <h3 class="mt-3">The arithmetic, both ways</h3>
+    <ul>
+      <li>
+        <strong>September Shanghai sheet:</strong> $4,365–$5,354 ÷ $75–$150 = roughly
+        <strong>29–71 CBM</strong>. On this sheet LCL’s per-CBM maths stays competitive past a full
+        20ft cube (~33 CBM) — a result that should make you suspicious of any single-sheet
+        crossover claim.
+      </li>
+      <li>
+        <strong>July South-China sheet:</strong> $1,750–$1,954 ÷ $75–$150 = roughly
+        <strong>12–26 CBM</strong>, which lands right on the conventional heuristic.
+      </li>
+    </ul>
+    <p>
+      Both arithmetic lines are correct; the inputs differ. That is the whole finding: on Qatar,
+      the crossover is not a property of the lane, it is a property of the rate sheet you can
+      actually get. Two forces then bend the practical decision. Destination fees fall harder on
+      LCL (CFS deconsolidation, extra handling), pushing the real-world crossover down — favor the
+      box earlier than the headline maths says. The September war-premium FCL quotes push it up —
+      LCL looks cheaper for longer than it should. The only defensible instruction is to quote
+      both at the same destination in the same week, and to treat 15 CBM as a hypothesis, not a
+      law. Past roughly 25 CBM, fight for FCL terms; below roughly 12 CBM, LCL is competitive on
+      any reading.
+    </p>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>6. Ports and handlers in the cost chain</h2>
+      <h2>8. Hamad Port, Doha airport, and the single-gateway risk map</h2>
       <p>
-        Each node in the China-to-Qatar chain adds a cost and a potential delay. The table below
-        orients the origin and destination nodes; the destination fees themselves must be obtained
-        from the carrier, terminal and broker.
+        Qatar’s port question has a one-line answer — <strong>Hamad Port ({unlocode})</strong> — and a
+        longer implication. Opened in 2017 to replace the old Doha port, Hamad is the country’s
+        sole commercial container gateway, operated by Mwani Qatar, with a design capacity around
+        7.5 million TEU. The single-gateway structure means no in-country fallback terminal, wider
+        schedule windows than the big hubs, and per-shipment costs that do not get absorbed by
+        competing facilities.
       </p>
-
-      <DataTable
-        columns={[
-          { key: 'node', label: 'Node' },
-          { key: 'role', label: 'Role' },
-          { key: 'note', label: 'Planning note' },
-          { key: 'confidence', label: 'Confidence', type: 'confidence' },
-        ]}
-        rows={nodeRows}
-        caption="Port/node orientation. China throughput figures are HIGH confidence; destination operational details are LOW and route-specific."
-      />
-      <SourceList sources={[...chinaPortSources, ...qatarPortSources]} title="Sources — ports & handlers" />
+      <p>
+        The 2026 Strait of Hormuz disruption turned that theoretical concentration risk into an
+        operating reality. Qatar’s Ministry of Transport formalised alternative routings for
+        Hamad-bound cargo — naming Sohar and Duqm as the first alternative and Fujairah and
+        Khorfakkan as the second, with overland legs into Qatar — while Windward’s March 2026
+        maritime update describes Sohar, Salalah and Duqm as Qatar’s designated alternatives.
+        For an importer, three practical consequences follow:
+      </p>
+      <ol>
+        <li>
+          <strong>Ask how the routing works before booking.</strong> A Hamad quote built on a
+          direct strait transit and one built on an Omani discharge plus truck bridge are
+          different products with different days and dollars. The quote should say which it is.
+        </li>
+        <li>
+          <strong>Budget a contingency line.</strong> Crisis-era routings add a handling point and
+          an overland leg; the September Shanghai FCL quote already flags a Hormuz risk premium on
+          the lane. Keep a buffer, not a hope.
+        </li>
+        <li>
+          <strong>Retire the Doha Port legacy.</strong> The old port no longer takes commercial
+          container traffic. A forwarder quoting boxes through “Doha Port” is working from
+          outdated routing — a cheap tell for who has refreshed their lane data.
+        </li>
+      </ol>
+      <p>
+        Air cargo has its own single gateway: Doha international (DOH), the natural fit for the
+        urgent, light and high-value volume that would otherwise wait for the next consolidation
+        or the next sailing. The port-and-hinterland layer is covered in more depth in the
+        <a href="/middleeast/hamad-port/">Hamad Port guide</a> and the
+        <a href="/middleeast/shipping-from-china-to-qatar/">China→Qatar route pillar</a>.
+      </p>
+      <SourceList sources={[...gatewaySources, ...transitSources]} title="Sources — Hamad Port & crisis routing" />
     </div>
   </section>
 
   <section class="section container">
-    <h2>7. Cost factors, hidden fees and transit pressure points</h2>
+    <h2>9. Qatar’s hidden fee stack: demurrage, storage, and what is not published</h2>
     <p>
-      Qatar’s freight bill is shaped by the same surcharges and seasonal swings as the wider GCC
-      corridor, but the smaller market amplifies two effects: lower schedule density and a higher
-      per-shipment destination cost. The table below keeps those factors explicit.
+      Duty is the only quantified statutory line for Qatar; everything else is a schedule you have
+      to request. The recurring fee families and the operational levers that move them:
     </p>
 
     <DataTable
@@ -765,114 +830,133 @@ const schema = [
         { key: 'confidence', label: 'Confidence', type: 'confidence' },
       ]}
       rows={factorRows}
-      caption="Cost factors are operational context. Only 5% duty and no general VAT are verified — unquantified fees are LOW confidence and require a fee schedule."
+      caption="Operational context. Only 5% duty and no general VAT are verified — unquantified fees are LOW confidence and require a fee schedule."
     />
-    <SourceList sources={costSources} title="Sources — cost & transit factors" />
+    <SourceList sources={costSources} title="Sources — cost & risk factors" />
 
-    <h3 class="mt-3">Demurrage and detention</h3>
+    <h3 class="mt-3">Demurrage and detention on a single-gateway lane</h3>
     <p>
-      <strong>Demurrage</strong> is charged by the terminal when an imported container stays inside
-      the port beyond the free time allowed after discharge. <strong>Detention</strong> is charged by
-      the ocean carrier when the container stays outside the port beyond the free time allowed after
-      collection. Free-time allowances and per-day rates differ by line and terminal and were not
-      published in the research snapshot, so always request the fee schedule before booking.
-    </p>
-    <p>
-      The practical way to avoid both is to finish clearance before the vessel arrives: file the
-      Al-Nadeeb declaration early, keep the HS code and documents ready, screen restricted goods,
-      and book trucking before the container is discharged.
+      <strong>Demurrage</strong> is the terminal’s charge when a container overstays free time
+      inside the port; <strong>detention</strong> is the carrier’s charge when the box overstays
+      free time outside it. On a single-gateway market these clocks matter more, not less: when
+      everything must clear through Hamad, a peak-season queue or a slow inspection can start the
+      meter on multiple containers at once. The schedules are unpublished in our snapshot — ask
+      for both before booking, and pre-clear the Al-Nadeeb declaration so the box is released
+      rather than parked.
     </p>
 
-    <h3 class="mt-3">Cost optimisation on a small-market corridor</h3>
+    <h3 class="mt-3">Cost discipline for a Qatar shipment</h3>
     <ul>
-      <li>Consolidate smaller orders into fewer, fuller FCL moves when possible.</li>
-      <li>Compare the FCL and LCL all-in quotes at the same destination point.</li>
+      <li>Quote FCL and LCL on the same week and destination before choosing — the crossover moves with the sheet.</li>
+      <li>Treat the LCL floor as $70+ and budget the CFS/minimum-charge detail before committing small volumes.</li>
       <li>Classify the HS code and screen restricted goods before booking.</li>
-      <li>Request the Al-Nadeeb declaration before the vessel arrives.</li>
-      <li>Book last-mile trucking before discharge to protect free time.</li>
-      <li>Negotiate the destination fee schedule, not just the headline freight rate.</li>
+      <li>File the Al-Nadeeb declaration before the vessel arrives to protect free time.</li>
+      <li>Ask which routing your Hamad quote assumes, and price the contingency.</li>
+      <li>Negotiate the destination fee schedule, not just the headline rate.</li>
     </ul>
   </section>
 
   <section class="section section--alt">
     <div class="container">
-      <h2>8. Compliance points that change the bill</h2>
-
-      <h3>Tax and duty</h3>
+      <h2>10. Compliance on the Qatar lane: duty lines, Al-Nadeeb, and restricted goods</h2>
       <p>
         Qatar’s baseline import duty is <strong>5% of CIF value</strong> under the GCC Common
-        External Tariff, with no general VAT on imports in the current framework. That means the
-        statutory landed cost for most goods is <code>CIF × 1.05</code>. Specific goods can still
-        carry different duty lines, including 0% for certain essential foods and 100% for tobacco and
-        alcohol where permitted, so the HS code remains the first cost decision.
+        External Tariff, and the framework currently carries <strong>no general VAT on
+        imports</strong> — the ×1.05 stack. Specific goods still move off the baseline: certain
+        essential foods sit at 0%, and tobacco and alcohol carry rates far above 5% where
+        permitted at all. The HS code is the first cost decision and it is made before quoting.
       </p>
-
-      <h3>Al-Nadeeb and the clearance order</h3>
+      <p>
+        The clearance flow runs through <strong>Al-Nadeeb</strong>, the General Authority of
+        Customs’ electronic system:
+      </p>
       <ol>
         <li>Classify the goods with the correct <strong>HS code</strong> before quoting or booking.</li>
         <li>Confirm importer registration, permits and any restricted-commodity approval before shipment.</li>
-        <li>Prepare the commercial invoice, packing list, bill of lading or air waybill and certificate of origin.</li>
-        <li>File the <strong>Al-Nadeeb</strong> electronic declaration through the General Authority of Customs.</li>
-        <li>Pay the assessed 5% duty on CIF, pass inspection if selected, and release the cargo.</li>
+        <li>Prepare the commercial invoice, packing list, bill of lading or air waybill, and certificate of origin.</li>
+        <li>File the <strong>Al-Nadeeb</strong> declaration through the General Authority of Customs.</li>
+        <li>Pay the assessed 5% duty on CIF, pass inspection if selected, and take delivery.</li>
       </ol>
-
-      <h3>Documents and classification</h3>
       <p>
-        Standard documents are the commercial invoice, bill of lading or air waybill, packing list
-        and certificate of origin, plus any product-specific permits for restricted goods. Classify
-        goods with the correct <strong>HS code</strong> before quoting, because both duty and permit
-        requirements depend on it. Note that <strong>ISF</strong> is a United States requirement and
-        does not apply to Qatar; Qatar’s advance-filing step is the Al-Nadeeb declaration.
+        Two frequent import confusions, cleared. <strong>ISF</strong> is a United States
+        requirement and does not apply to Qatar — the advance-filing step here is Al-Nadeeb.
+        And <strong>SABER/SASO certification is a Saudi regime</strong>; Qatar runs its own
+        standards and restricted-goods screening, which is strict on a defined list of products
+        and can hold a release until documentation is resolved. The commodity screen is a schedule
+        item you check before booking, not after.
       </p>
-
-      <SourceList sources={taxSources} title="Sources — Qatar customs, tax & ports" />
+      <SourceList sources={[...taxSources, ...qatarPortSources]} title="Sources — Qatar customs & compliance" />
     </div>
   </section>
 
   <section class="section container">
-    <h2>9. Frequently asked questions</h2>
+    <h2>11. Frequently asked questions</h2>
     <FaqBlock items={faqs} />
-  </section>
-
-  <section class="section container">
-    <h2>10. Data freshness &amp; monthly update cadence</h2>
-    <p>
-      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
-      statutory lines (5% duty, no general VAT and the CIF × 1.05 stack) are re-checked against the
-      General Authority of Customs and secondary Qatar import guides; the freight benchmarks and
-      transit windows are re-checked monthly because they move with capacity, fuel and season.
-    </p>
-    <p>
-      If a destination fee amount, demurrage/detention schedule, FCL rate or Al-Nadeeb processing fee
-      becomes available from a carrier, terminal, Mwani Qatar or the General Authority of Customs, the
-      table is updated, the confidence badge is raised, and the modified date in the page metadata is
-      changed. Until then, unquantified fees stay LOW confidence with a request-the-schedule note
-      rather than being filled with estimates.
-    </p>
   </section>
 
   <section class="section container">
     <h2>Key takeaways</h2>
     <ol>
-      <li>Qatar's LCL floor is 3.5× the corridor floor: USD 70/CBM versus the $20 corridor-wide floor, so the smaller market prices into a higher per-CBM base even though the geographic distance is comparable to other Gulf lanes.</li>
-      <li>Qatar is the cheapest GCC landing spot: ×1.05 (5% duty + 0% VAT) turns $10,000 CIF into $10,500 — $525 under the UAE's $11,025 and $1,575 under Saudi's $12,075 on the same base.</li>
-      <li>Air is an order-of-magnitude premium over LCL on this lane: 2 CBM bills 333.33 kg chargeable, so air is $1,500–$2,500 versus LCL at $140–$310 — a 4.8–17.9× gap that only speed, value density or urgency can justify.</li>
-      <li>Transit sits 1 day behind the UAE: 22-day typical (15–30) versus the UAE's 21, with a secondary 22–28 day sea bracket against 2–4 days air — air saves ~18–24 days at the wide end.</li>
-      <li>Only two rate anchors are published — LCL $70–155/CBM and air $4.5–7.5/kg — so every FCL, express and DDP figure is a request-for-quote item; do not borrow a Jebel Ali FCL number for Hamad Port.</li>
+      <li>The LCL floor sits at $70/CBM — 3.5× the $20 corridor floor and about 2.3× the UAE’s $30 base bracket — a market-structure premium, not a distance one.</li>
+      <li>Zero VAT is worth $1,575 against Saudi Arabia and $525 against the UAE on $10,000 CIF — but a $50/CBM floor premium on 15 CBM of LCL ($750) eats roughly half the Saudi saving.</li>
+      <li>Chargeable weight is the air trap: 2 CBM bills 333.33 kg, so air runs $1,253–$1,540 against LCL’s $140–$300 (4–11×); at 0.5 CBM the multiple narrows to about 2–6× as LCL minimums bite.</li>
+      <li>The FCL/LCL crossover spreads from roughly 12–26 CBM to 29–71 CBM across published sheets — quote both and treat 15 CBM as a hypothesis.</li>
+      <li>Hamad Port (QAHMD) is Qatar’s sole container gateway; when Hormuz strains, Sohar, Salalah and Duqm are the formalised alternatives, so ask every quote which routing it assumes.</li>
     </ol>
   </section>
 
   <section class="section container">
     <h2>The Author's Take</h2>
-    <p><strong>Position:</strong> In my view, I would not route to Qatar for the 0% VAT unless the volume is small: the ×1.05 stack saves $1,575 versus Saudi Arabia on $10,000 CIF, but the published $70/CBM LCL floor is 3.5× the $20 corridor floor, so the small market can claw back the tax saving before the box sails.</p>
-    <ul><li>×1.05 lands $10,000 CIF at $10,500 — $525 under the UAE's $11,025 and $1,575 under Saudi Arabia's $12,075.</li><li>LCL floor math: $70 ÷ $20 = 3.5×, so Qatar's published per-CBM floor prices in the small-market effect.</li><li>Air premium: 2 CBM bills 333.33 kg chargeable, so $1,500–$2,500 by air versus $140–$310 by LCL is a 4.8–17.9× gap.</li></ul>
+    <p><strong>Position:</strong> In my view, Qatar’s 0% VAT is a real advantage that deserves to be taken seriously for anything above LCL scale, but it is oversold for small shippers: the $70/CBM LCL floor can claw back half the $1,575 Saudi saving at 15 CBM, so I would make the forwarder quote the tax-inclusive landing and the per-CBM freight before believing the VAT headline.</p>
+    <ul><li>×1.05 lands $10,000 CIF at $10,500 — $1,575 under Saudi Arabia and $525 under the UAE, on identical goods.</li><li>The floor premium is $50/CBM ($70 − $20); at 15 CBM it is $750, roughly half the Saudi saving, and at sub-5-CBM volumes it is under $250 — which is where the tax case is strongest.</li><li>The crossover spread of 12–71 CBM across sheets means any single “FCL wins at 15 CBM” claim on this lane is a guess until two quotes are on the table.</li></ul>
     <p class="note"><em>Disclosure: This is the author's editorial judgment based on the published data on this page — not an independently verified fact.</em></p>
+  </section>
+
+  <section class="section container">
+    <h2>Update cadence and related Qatar guides</h2>
+    <p>
+      This page is marked <span class="badge badge--amber">September 2026 updated</span>. The
+      statutory lines (5% duty, no general VAT, the ×1.05 stack) are re-checked against the
+      General Authority of Customs; the WHFI v1 rate rows (r-301 to r-307) and the transit windows
+      are re-checked monthly because capacity, fuel and the Hormuz situation all move them. The
+      crisis-routing arrangements are re-verified against port authority and maritime-intelligence
+      updates each cycle.
+    </p>
+    <p>
+      If a destination fee amount, demurrage/detention schedule, port-specific FCL level or an
+      Al-Nadeeb processing cost becomes available from a carrier, terminal, Mwani Qatar or the
+      General Authority of Customs, the table is updated, the confidence badge is raised, and the
+      modified date changes. Until then, unquantified fees stay LOW with a request-the-schedule
+      note rather than being filled with estimates.
+    </p>
+    <div class="grid grid--2 mt-2">
+      <Card
+        title="Hamad Port: the single-gateway deep dive"
+        description="Terminals, hinterland, Hamad vs the old Doha Port, and what the 2017 replacement changed."
+        href="/middleeast/hamad-port/"
+      />
+      <Card
+        title="Shipping from China to Qatar (route pillar)"
+        description="The full Qatar corridor: origins, modes, Al-Nadeeb clearance and the 22-day window."
+        href="/middleeast/shipping-from-china-to-qatar/"
+      />
+      <Card
+        title="Air freight from China to Qatar"
+        description="Chargeable-weight mechanics, airport pairs and the air-versus-sea decision for Doha."
+        href="/middleeast/air-freight-from-china-to-qatar/"
+      />
+      <Card
+        title="GCC customs, duty & VAT comparison"
+        description="The six-country landed-cost comparison: multipliers, thresholds and where the 0% VAT fits."
+        href="/middleeast/gcc-customs-duty-comparison/"
+      />
+    </div>
   </section>
 
   <section class="section container">
     <Cta
       title="Get an itemised China to Qatar landed-cost quote"
-      text="Tell us your HS code, CIF value, commodity, container or CBM and final Qatar destination, and we will connect you with providers who can itemise freight, Al-Nadeeb clearance, 5% duty and delivery."
+      text="Tell us your HS code, CIF value, commodity, container or CBM and final Qatar destination, and we will connect you with providers who can itemise freight, Al-Nadeeb clearance, the 5% duty and delivery."
     />
   </section>
 </BaseLayout>
