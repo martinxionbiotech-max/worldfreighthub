@@ -151,9 +151,14 @@ export interface FreightRate {
   route: string;
   container: string;
   amount: number;
+  amountLow?: number;
+  amountHigh?: number;
   currency: 'USD';
   confidence: Confidence;
   lastUpdated: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  asOf?: string;
   note: string;
 }
 
