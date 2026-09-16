@@ -126,14 +126,47 @@ const schema = [ORGANIZATION_SCHEMA];
       <p>
         {SITE_NAME} is operated by{' '}
         <strong>{ORGANIZATION.legalName}</strong>, established in Yiwu, Zhejiang,
-        China in {ORGANIZATION.foundingDate}. It is researched and maintained by
-        the <strong>{ORGANIZATION.publisherName}</strong>. Every page is a
-        reference document built from structured source data, with no hidden
-        vendor affiliation. Editorial standards, the confidence-labelling
-        system and the correction process are documented and public.
+        China in {ORGANIZATION.foundingDate}. All research, writing and review
+        is done by the{' '}
+        <strong>{ORGANIZATION.publisherName}</strong> — an internal editorial
+        desk, not an individual author.
       </p>
       <p>
-        Reach the research desk at{' '}
+        We do not present named bylines, invented personas or fabricated
+        credentials. The Research Desk is the named author entity for every
+        page: it signs the content, owns the data records and answers for
+        corrections. That entity is a team function of the operating company,
+        not a person.
+      </p>
+      <h3>How the Research Desk works</h3>
+      <ul>
+        <li>
+          <strong>Attribution.</strong> Every page is signed{' '}
+          <strong>{ORGANIZATION.publisherName}</strong> in the page footer and
+          schema metadata, so responsibility is always traceable to the desk
+          rather than a name that cannot be checked.
+        </li>
+        <li>
+          <strong>Research.</strong> Desk researchers collect figures from the
+          approved source registry (customs authorities, port authorities,
+          carriers and official indices) and file dated research notes for
+          each collection run.
+        </li>
+        <li>
+          <strong>Review.</strong> A second desk pass cross-checks every
+          extracted value against its source before it enters the data files;
+          figures that cannot be verified are downgraded to LOW confidence or
+          withheld.
+        </li>
+        <li>
+          <strong>Evidence ledger.</strong> Core claims are registered in the
+          evidence graph (claim, source, entity, date, region, confidence,
+          extracted value, reviewer, expiry) so any published number can be
+          re-checked against the record that produced it.
+        </li>
+      </ul>
+      <p>
+        Reach the desk at{' '}
         <a href={`mailto:${ORGANIZATION.publisherEmail}`}>
           {ORGANIZATION.publisherEmail}</a
         >.

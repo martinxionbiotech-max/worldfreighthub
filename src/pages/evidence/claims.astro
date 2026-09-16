@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DataTable from '../../components/DataTable.astro';
+import Cta from '../../components/Cta.astro';
+import { SITE_URL } from '../../site';
+import { evidenceClaims, evidenceClaimCount, claimsByCategory } from '../../data/evidence';
+
+const categories: { key: 'regulatory' | 'index' | 'market-structure' | 'port' | 'rail'; label: string }[] = [
+  { key: 'regulatory', label: 'Regulatory' },
+  { key: 'index', label: 'Freight indices' },
+  { key: 'market-structure', label: 'Market structure' },
+  { key: 'port', label: 'Port throughput' },
+  { key: 'rail', label: 'China→Europe rail' },
+];
+
+const rows = evidenceClaims.map((claim) => ({
+  claim: claim.claim,
+  entity: claim.entity,
+  extractedValue: claim.extractedValue,
+  region: claim.region,
+  asOf: claim.asOf,
+  confidence: claim.confidence,
+  source: { href: claim.sourceUrl, label: claim.sourceName },
+  reviewer: claim.reviewer,
+  reviewDue: claim.reviewDue,
+  note: claim.note ?? '—',
+}));
+
+const categoryCounts = categories.map((category) => ({
+  label: category.label,
+  count: claimsByCategory(category.key).length,
+}));
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'WorldFreightHub Evidence Graph — claim registry',
+      description:
+        'Claim-level provenance registry: every core published figure recorded with claim, entity, extracted value, region, as-of date, confidence, source URL, reviewer and review-due date.',
+      url: `${SITE_URL}/evidence/claims/`,
+      creator: {
+        '@type': 'Organization',
+        name: 'WorldFreightHub Research Desk',
+        url: SITE_URL,
+      },
+      dateModified: '2026-09-16',
+    },
+  },
+];
+---
+
+<BaseLayout
+  title="Evidence Graph — Claim Registry"
+  description="WorldFreightHub's claim-level provenance registry: core VAT, duty, index, market-structure, port and rail figures, each recorded with source, date, region, confidence, reviewer and review-due date."
+  canonical={`${SITE_URL}/evidence/claims/`}
+  schema={schema}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Evidence Center', href: '/evidence/' }, { label: 'Claim Registry' }]} />
+      <h1>Evidence graph — claim registry</h1>
+      <p class="lead">
+        Every core figure the site asserts is a node in the evidence graph:
+        the claim, the entity it describes, the extracted value, the region,
+        the source and its date, the confidence label, the reviewing desk and
+        the date the record expires and must be re-verified.
+      </p>
+      <blockquote class="tldr">
+        <p>
+          <strong>TL;DR:</strong> {evidenceClaimCount} core claims are registered
+          with source URLs, as-of dates and review-due dates. Each one was
+          extracted verbatim from the cited source or from an existing
+          structured data file — nothing in the graph is invented.
+        </p>
+      </blockquote>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Coverage by category</h2>
+    <ul>
+      {categoryCounts.map((category) => (
+        <li>
+          <strong>{category.count}</strong> — {category.label}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Claim registry</h2>
+      <DataTable
+        columns={[
+          { key: 'claim', label: 'Claim' },
+          { key: 'entity', label: 'Entity' },
+          { key: 'extractedValue', label: 'Extracted value' },
+          { key: 'region', label: 'Region' },
+          { key: 'asOf', label: 'As of' },
+          { key: 'confidence', label: 'Confidence', type: 'confidence' },
+          { key: 'source', label: 'Source', type: 'link' },
+          { key: 'reviewer', label: 'Reviewer' },
+          { key: 'reviewDue', label: 'Review due' },
+          { key: 'note', label: 'Notes' },
+        ]}
+        rows={rows}
+        caption="Extracted values are quoted from the cited source or from the existing structured data files; weekly indices carry review-due dates before the next print."
+      />
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>How the graph stays honest</h2>
+    <ul>
+      <li>
+        <strong>Expiry is built in.</strong> Weekly indices expire before the
+        next print; monthly sheets within a month; regulatory rates within a
+        quarter; annual port figures within a year.
+      </li>
+      <li>
+        <strong>Undated sources are marked.</strong> Where a source prints no
+        date, the access date is recorded and the claim carries the caveat.
+      </li>
+      <li>
+        <strong>Nothing is averaged silently.</strong> Ranges are the span of
+        cited sources; single-source figures are labelled as such.
+      </li>
+    </ul>
+    <p>
+      <a class="btn btn-secondary" href="/evidence/methodology/">
+        Read the methodology
+      </a>
+      {' '}
+      <a class="btn btn-secondary" href="/evidence/">
+        Back to the Evidence Center
+      </a>
+    </p>
+  </section>
+
+  <section class="section container">
+    <Cta />
+  </section>
+</BaseLayout>

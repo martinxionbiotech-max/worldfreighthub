@@ -51,6 +51,33 @@ const methodRows = [
     lastReviewed: 'Policy as published',
   },
 ];
+
+/**
+ * Mandatory fields for WHFI rate records (v1, 2026-09).
+ * A rate record that cannot fill every mandatory field is withheld,
+ * or published only with the missing field flagged as LOW confidence.
+ */
+const rateFieldRows = [
+  { field: 'Collection date', required: 'Mandatory', meaning: 'The date the figure was collected, or the as-of date printed by the source. Undated sources are recorded with an access date and flagged.' },
+  { field: 'Origin', required: 'Mandatory', meaning: 'The load port (e.g. Shanghai, Ningbo-Zhoushan, Shenzhen). Route-lane figures must name the actual origin, not just the country.' },
+  { field: 'Destination', required: 'Mandatory', meaning: 'The discharge port or gateway (e.g. Jeddah, Jebel Ali, Hamad). A country-level figure must say so and cannot be presented as port-specific.' },
+  { field: 'Container type', required: 'Mandatory', meaning: '20ft FCL, 40ft FCL/40HQ, LCL per CBM, or air per kg. Records without a stated container type are excluded from FCL tables.' },
+  { field: 'Incoterm / charge basis', required: 'Mandatory', meaning: 'The trade term under which the figure is quoted where the source states one (e.g. FOB, CIF).' },
+  { field: 'Currency', required: 'Mandatory', meaning: 'Always USD in the WHFI index; source figures in other currencies are converted at a recorded date-rate and the conversion is noted.' },
+  { field: 'Port-to-port vs door-to-door', required: 'Mandatory', meaning: 'Whether the figure covers ocean freight only (port-to-port) or includes collection/delivery (door-to-door). Mixing the two bases in one range is forbidden.' },
+  { field: 'Included charges', required: 'Mandatory', meaning: 'What the figure includes (e.g. base ocean freight, export declaration) exactly as the source states.' },
+  { field: 'Excluded charges', required: 'Mandatory', meaning: 'What the figure excludes (THC, BAF/war-risk surcharges, destination CFS, clearance, last mile). Excluded items must be listed so the figure cannot be read as all-in.' },
+];
+
+/**
+ * Mandatory fields for transit-time (时效) records.
+ */
+const transitFieldRows = [
+  { field: 'Door range', required: 'Mandatory', meaning: 'Whether the time covers port-to-port, terminal-to-terminal or door-to-door. Door-to-door figures cannot be compared with port-to-port ones.' },
+  { field: 'Direct vs transshipment', required: 'Mandatory', meaning: 'Whether the transit is a direct sailing or includes transshipment, and where. Red Sea vs Cape-of-Good-Hope routing is recorded as a routing variant, not a separate service.' },
+  { field: 'Season', required: 'Mandatory', meaning: 'The seasonal window the transit figure applies to (e.g. pre-peak, peak season), since head-haul transit lengthens in peak windows.' },
+  { field: 'Route', required: 'Mandatory', meaning: 'The exact origin-destination pair with routing note (Suez/Red Sea, Cape, or rail corridor).' },
+];
 ---
 
 <BaseLayout
@@ -122,6 +149,45 @@ const methodRows = [
           Read the full methodology
         </a>
       </p>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Mandatory fields: rate records</h2>
+    <p>
+      Every figure admitted to the WorldFreightHub Freight Index (WHFI)
+      must record the fields below. A record that cannot fill a mandatory
+      field is withheld, or published with the gap explicitly flagged as a
+      LOW-confidence caveat — never silently averaged into a range.
+    </p>
+    <DataTable
+      columns={[
+        { key: 'field', label: 'Field' },
+        { key: 'required', label: 'Requirement' },
+        { key: 'meaning', label: 'What it records' },
+      ]}
+      rows={rateFieldRows}
+      caption="WHFI rate-record mandatory fields, as applied to the 34 benchmark rates published 2026-09."
+    />
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2>Mandatory fields: transit-time records</h2>
+      <p>
+        Transit-time (时效) figures follow the same rule: the door range,
+        routing, season and exact route must be recorded with the number,
+        because a transit time is meaningless without them.
+      </p>
+      <DataTable
+        columns={[
+          { key: 'field', label: 'Field' },
+          { key: 'required', label: 'Requirement' },
+          { key: 'meaning', label: 'What it records' },
+        ]}
+        rows={transitFieldRows}
+        caption="WHFI transit-time record mandatory fields."
+      />
     </div>
   </section>
 
