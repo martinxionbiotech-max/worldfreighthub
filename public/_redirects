@@ -7,3 +7,6 @@
 /ar/corrections/                 /corrections/                 301
 /ar/data-changelog/              /data-changelog/              301
 /ar/provider-verification-policy/ /provider-verification-policy/ 301
+
+# --- 欧洲集群恢复（原 /europe/** 曾被拆到独立仓，Google 已抓过；恢复后阿语幻影统一 301 到英文）---
+/ar/europe/*   /europe/:splat   301

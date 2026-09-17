@@ -25,6 +25,8 @@ const navGroups = [
     label: t(locale, 'nav.destinations'),
     items: [
       { label: t(locale, 'nav.middleeast'), href: `${prefix}/middleeast/` },
+      // Europe 目前只有英文版：阿语导航也指向英文路径（与 intelligence / evidence 同例）
+      { label: t(locale, 'nav.europe'), href: '/europe/' },
     ],
   },
   {

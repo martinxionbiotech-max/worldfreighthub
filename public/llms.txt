@@ -1,6 +1,6 @@
 # WorldFreightHub
 
-WorldFreightHub is a freight intelligence reference for the China-to-GCC corridor: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, cost and transit-time guides, a verification-first provider directory (103 real freight forwarders, all source-backed), and interactive freight calculators.
+WorldFreightHub is a freight intelligence reference for two China export corridors — China to the GCC and China to Europe: shipping routes, destination countries, ports and terminals, freight methods, glossary definitions, cost and transit-time guides, a verification-first provider directory (103 real freight forwarders, all source-backed), and interactive freight calculators.
 
 All freight rates and transit times are indicative estimates, not live quotes. Verify figures with the relevant carrier, port authority, or customs authority before making commercial decisions.
 
@@ -24,6 +24,35 @@ All freight rates and transit times are indicative estimates, not live quotes. V
 - [Bahrain](https://worldfreighthub.net/middleeast/shipping-from-china-to-bahrain/): route pillar — Khalifa bin Salman port, 10% VAT, King Fahd Causeway.
 - [SABER / SASO certification](https://worldfreighthub.net/middleeast/saso-saber-certification/): Saudi product conformity requirements.
 - [Jeddah vs Dammam](https://worldfreighthub.net/middleeast/jeddah-vs-dammam/): Saudi port comparison.
+
+## Europe corridor
+
+China to Europe freight intelligence: 15 destination markets with national import VAT, EU common duty, EORI/UK EORI registration, port and rail gateways, and a verified European forwarder directory.
+
+- [Europe hub](https://worldfreighthub.net/europe/): corridor overview for the China-to-Europe market.
+- [Europe data](https://worldfreighthub.net/europe/data/): 12-market import VAT, EU common duty and (1+duty)×(1+VAT) landed-cost table.
+- [Europe rail](https://worldfreighthub.net/europe/rail/): China–Europe rail benchmarks (Xi'an/Chengdu–Duisburg/Hamburg) against sea and air.
+- [Europe routes](https://worldfreighthub.net/europe/routes/): China origin ports to European gateways with indicative transit times.
+- [Europe ports](https://worldfreighthub.net/europe/ports/): destination ports and terminals (Hamburg, Rotterdam, Antwerp, Le Havre, Valencia, Genoa, Gdańsk, Felixstowe and more).
+- [Europe directory](https://worldfreighthub.net/europe/directory/): verified European rail and freight operators with sources.
+- [Europe country guides](https://worldfreighthub.net/europe/countries/): destination country profiles — duty, VAT, EORI and gateway ports.
+- [Germany](https://worldfreighthub.net/europe/shipping-from-china-to-germany/): route pillar — national import VAT 19%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [United Kingdom](https://worldfreighthub.net/europe/shipping-from-china-to-united-kingdom/): route pillar — national import VAT 20%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [France](https://worldfreighthub.net/europe/shipping-from-china-to-france/): route pillar — national import VAT 20%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Netherlands](https://worldfreighthub.net/europe/shipping-from-china-to-netherlands/): route pillar — national import VAT 21%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Spain](https://worldfreighthub.net/europe/shipping-from-china-to-spain/): route pillar — national import VAT 21%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Italy](https://worldfreighthub.net/europe/shipping-from-china-to-italy/): route pillar — national import VAT 22%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Poland](https://worldfreighthub.net/europe/shipping-from-china-to-poland/): route pillar — national import VAT 23%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Belgium](https://worldfreighthub.net/europe/shipping-from-china-to-belgium/): route pillar — national import VAT 21%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Austria](https://worldfreighthub.net/europe/shipping-from-china-to-austria/): route pillar — national import VAT 20%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Sweden](https://worldfreighthub.net/europe/shipping-from-china-to-sweden/): route pillar — national import VAT 25%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Portugal](https://worldfreighthub.net/europe/shipping-from-china-to-portugal/): route pillar — national import VAT 23%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Greece](https://worldfreighthub.net/europe/shipping-from-china-to-greece/): route pillar — national import VAT 24%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Ireland](https://worldfreighthub.net/europe/shipping-from-china-to-ireland/): route pillar — national import VAT 23%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Denmark](https://worldfreighthub.net/europe/shipping-from-china-to-denmark/): route pillar — national import VAT 25%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+- [Finland](https://worldfreighthub.net/europe/shipping-from-china-to-finland/): route pillar — national import VAT 25.5%, EU common duty (UK: post-Brexit UKGT), EORI and gateway ports.
+
+Landing-cost arithmetic: (CIF + duty) × (1 + VAT). Statutory examples — Germany 19%, France 20%, Italy 22%, Spain 21%, Poland 23%, Sweden 25%, Denmark 25%, Finland 25.5%, UK 20%.
 
 ## Tools
 

@@ -1,0 +1,170 @@
+export type Confidence = 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN';
+
+export type VerificationStatus = 'verified' | 'unverified' | 'claimed' | 'sponsored';
+
+export interface DirectoryProvider {
+  slug: string;
+  name: string;
+  nameZh?: string;
+  website: string;
+  hqCountry: string;
+  serviceCountries: string[];
+  methods: string[];
+  platformFocus?: string[];
+  verification: VerificationStatus;
+  source: string;
+  sourceName: string;
+  sourceType: 'own-website' | 'directory';
+  lastVerified: string;
+  contactNote: string;
+  description: string;
+  selfReportedClaims?: string[];
+}
+
+export interface Source {
+  id: string;
+  name: string;
+  url: string;
+  type: 'government' | 'carrier' | 'industry' | 'port-authority' | 'organization';
+}
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export interface Country {
+  slug: string;
+  updated: string;
+  name: string;
+  iso2: string;
+  capital: string;
+  currency: string;
+  vatRate: number | null;
+  vatNote: string;
+  ports: string[];
+  tldr: string;
+  dutyRate: string;
+  dutyNote: string;
+  deMinimis: string;
+  deMinimisNote: string;
+  compliance: string[];
+  clearanceProcess: string[];
+  insight: string;
+  keyTakeaways: string[];
+  faqs: FaqItem[];
+  typicalCargo?: string[];
+  importRisks?: string[];
+  bestPort?: string;
+  inlandLogistics?: string;
+  decisionGuide?: string;
+}
+
+export interface PortSpec {
+  label: string;
+  value: string;
+}
+
+export interface Port {
+  slug: string;
+  confidence: Confidence;
+  name: string;
+  country: string;
+  countrySlug: string;
+  type: 'seaport' | 'dry-port';
+  unlocode?: string;
+  note?: string;
+  tldr: string;
+  operator: string;
+  specs: PortSpec[];
+  hinterland: string;
+  insight: string;
+  keyTakeaways: string[];
+  faqs: FaqItem[];
+  updated: string;
+}
+
+export interface RouteCostRow {
+  label: string;
+  range: string;
+  confidence: Confidence;
+}
+
+export interface Route {
+  slug: string;
+  updated: string;
+  originPort: string;
+  destPort: string;
+  country: string;
+  transitDays: { typical: number; range: [number, number] };
+  confidence: Confidence;
+  note?: string;
+  originNote: string;
+  destNote: string;
+  routingNote: string;
+  transitNote: string;
+  costRows: RouteCostRow[];
+  insight: string;
+  faqs: FaqItem[];
+  keyTakeaways: string[];
+}
+
+export interface MethodFaq {
+  q: string;
+  a: string;
+}
+
+export interface MethodCostRow {
+  label: string;
+  range: string;
+  confidence: Confidence;
+}
+
+export interface Method {
+  slug: string;
+  name: string;
+  summary: string;
+  tldr: string;
+  definition: string;
+  bestFor: string[];
+  pricingLogic: string;
+  costRows: MethodCostRow[];
+  transitTime: { range: string; note: string; confidence: Confidence };
+  pros: string[];
+  cons: string[];
+  insight: string;
+  process: string[];
+  faqs: MethodFaq[];
+  keyTakeaways: string[];
+  compareWith?: { slug: string; label: string };
+  updated: string;
+  sources: Source[];
+}
+
+export interface GlossaryTerm {
+  slug: string;
+  term: string;
+  definition: string;
+  category: string;
+  inDetail: string;
+  whyItMatters: string;
+  example: string;
+  related: string[];
+  updated: string;
+}
+
+export interface FreightRate {
+  id: string;
+  route: string;
+  container: string;
+  amount: number;
+  amountLow?: number;
+  amountHigh?: number;
+  currency: 'USD';
+  confidence: Confidence;
+  lastUpdated: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  asOf?: string;
+  note: string;
+}
