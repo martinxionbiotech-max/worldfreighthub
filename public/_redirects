@@ -10,3 +10,49 @@
 
 # --- 欧洲集群恢复（原 /europe/** 曾被拆到独立仓，Google 已抓过；恢复后阿语幻影统一 301 到英文）---
 /ar/europe/*   /europe/:splat   301
+
+# --- 其余"无阿语版"英文页：把 Google 可能已记录/未来可能发现的 /ar/ 幻影 URL 一并 301 到英文页 ---
+# 生成依据：构建产物中每个英文页面若不存在对应 /ar/<path> 即列出；/ar/europe/** 已由上一条 splat 规则覆盖（42 条）
+
+"无阿语版"英文页：把 Google 可能已记录/未来可能发现的 /ar/ 幻影 URL 一并 301 到英文页 ---
+# 生成依据：构建产物中每个英文页面若不存在对应 /ar/<path>，即列出（176 条）
+/ar/corrections/                                           /corrections/                                              301
+/ar/data-changelog/                                        /data-changelog/                                           301
+/ar/evidence/                                              /evidence/                                                 301
+/ar/evidence/claims/                                       /evidence/claims/                                          301
+/ar/evidence/company/                                      /evidence/company/                                         301
+/ar/evidence/data-sources/                                 /evidence/data-sources/                                    301
+/ar/evidence/freight-rates/                                /evidence/freight-rates/                                   301
+/ar/evidence/methodology/                                  /evidence/methodology/                                     301
+/ar/evidence/ports/                                        /evidence/ports/                                           301
+/ar/evidence/providers/                                    /evidence/providers/                                       301
+/ar/evidence/regulatory/                                   /evidence/regulatory/                                      301
+/ar/glossary/ce-marking/                                   /glossary/ce-marking/                                      301
+/ar/glossary/eori/                                         /glossary/eori/                                            301
+/ar/glossary/ioss/                                         /glossary/ioss/                                            301
+/ar/glossary/reach/                                        /glossary/reach/                                           301
+/ar/glossary/station-to-station/                           /glossary/station-to-station/                              301
+/ar/glossary/taric/                                        /glossary/taric/                                           301
+/ar/glossary/ukca/                                         /glossary/ukca/                                            301
+/ar/glossary/union-customs-code/                           /glossary/union-customs-code/                              301
+/ar/glossary/vat-deferral/                                 /glossary/vat-deferral/                                    301
+/ar/intelligence/                                          /intelligence/                                             301
+/ar/middleeast/air-freight-from-china-to-bahrain/          /middleeast/air-freight-from-china-to-bahrain/             301
+/ar/middleeast/air-freight-from-china-to-kuwait/           /middleeast/air-freight-from-china-to-kuwait/              301
+/ar/middleeast/air-freight-from-china-to-oman/             /middleeast/air-freight-from-china-to-oman/                301
+/ar/middleeast/air-freight-from-china-to-qatar/            /middleeast/air-freight-from-china-to-qatar/               301
+/ar/middleeast/china-to-gcc-landed-cost/                   /middleeast/china-to-gcc-landed-cost/                      301
+/ar/middleeast/china-uae-gcc-vs-direct/                    /middleeast/china-uae-gcc-vs-direct/                       301
+/ar/middleeast/ddp-vs-self-clearance/                      /middleeast/ddp-vs-self-clearance/                         301
+/ar/middleeast/jebel-ali-vs-direct-gcc/                    /middleeast/jebel-ali-vs-direct-gcc/                       301
+/ar/middleeast/jebel-ali-vs-khalifa-port/                  /middleeast/jebel-ali-vs-khalifa-port/                     301
+/ar/middleeast/shanghai-vs-ningbo/                         /middleeast/shanghai-vs-ningbo/                            301
+/ar/middleeast/shanghai-vs-shenzhen/                       /middleeast/shanghai-vs-shenzhen/                          301
+/ar/middleeast/shipping-batteries-china-to-gcc/            /middleeast/shipping-batteries-china-to-gcc/               301
+/ar/middleeast/shipping-chemicals-china-to-gcc/            /middleeast/shipping-chemicals-china-to-gcc/               301
+/ar/middleeast/shipping-electronics-china-to-gcc/          /middleeast/shipping-electronics-china-to-gcc/             301
+/ar/middleeast/shipping-food-china-to-gcc/                 /middleeast/shipping-food-china-to-gcc/                    301
+/ar/middleeast/shipping-furniture-china-to-gcc/            /middleeast/shipping-furniture-china-to-gcc/               301
+/ar/middleeast/shipping-machinery-china-to-gcc/            /middleeast/shipping-machinery-china-to-gcc/               301
+/ar/provider-verification-policy/                          /provider-verification-policy/                             301
+/ar/tools/port-route-selector/                             /tools/port-route-selector/                                301
