@@ -36,6 +36,12 @@ const schema = [
       headline: method.name,
       url: `${SITE_URL}/ar/methods/${method.slug}/`,
       description: method.summary,
+      image: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/og.png`,
+        width: 1200,
+        height: 630,
+      },
       author: {
         '@type': 'Organization',
         name: SITE_NAME,
