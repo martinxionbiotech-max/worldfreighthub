@@ -6,6 +6,7 @@ import JsonLd from '../components/JsonLd.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { localizePath, type Locale } from '../i18n/ui';
+import { hasLocalePath } from '../i18n/routes';
 
 interface SchemaEntry {
   type: string;
@@ -23,6 +24,8 @@ interface Props {
   schema?: SchemaEntry[];
   locale?: Locale;
   hreflang?: boolean;
+  /** 阿语版是否存在：'auto' 由文件树判定（默认）；数据驱动页（如 glossary 词条）可显式传入 */
+  arVersion?: boolean;
 }
 
 const {
@@ -36,6 +39,7 @@ const {
   schema = [],
   locale = 'en',
   hreflang = true,
+  arVersion,
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
@@ -45,6 +49,10 @@ const selfHref = canonical ?? `${SITE_URL}${pathname}`;
 const otherHref = `${SITE_URL}${localizePath(pathname, otherLocale)}`;
 const enHref = isAr ? otherHref : selfHref;
 const arHref = isAr ? selfHref : otherHref;
+
+// 只在阿语版真实存在时才声明 hreflang="ar"：否则会凭空造出 /ar/... 幻影 URL（GSC 404 来源）
+const enRelativePath = isAr ? pathname.replace(/^\/ar/, '') || '/' : pathname;
+const arPageExists = isAr || (arVersion ?? hasLocalePath(enRelativePath, 'ar'));
 ---
 
 <!doctype html>
@@ -56,7 +64,7 @@ const arHref = isAr ? selfHref : otherHref;
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <link rel="alternate" hreflang="en" href={enHref} />
-    {hreflang && <link rel="alternate" hreflang="ar" href={arHref} />}
+    {hreflang && arPageExists && <link rel="alternate" hreflang="ar" href={arHref} />}
     <link rel="alternate" hreflang="x-default" href={enHref} />
     {isAr && (
       <>
@@ -83,7 +91,7 @@ const arHref = isAr ? selfHref : otherHref;
     ))}
   </head>
   <body>
-    <Header locale={locale} />
+    <Header locale={locale} arExists={arPageExists} />
     <main>
       <slot />
     </main>

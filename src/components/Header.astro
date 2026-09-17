@@ -1,17 +1,23 @@
 ---
 import { SITE_NAME, CONTACT } from '../site';
 import { t, localizePath, type Locale } from '../i18n/ui';
+import { hasLocalePath, localeHub } from '../i18n/routes';
 
 interface Props {
   locale?: Locale;
+  /** 阿语版是否存在（由 BaseLayout 传入：文件树自动判定或页面显式声明） */
+  arExists?: boolean;
 }
 
-const { locale = 'en' } = Astro.props;
+const { locale = 'en', arExists = true } = Astro.props;
 const prefix = locale === 'ar' ? '/ar' : '';
 
 const pathname = Astro.url.pathname;
 const otherLocale: Locale = locale === 'ar' ? 'en' : 'ar';
-const otherHref = localizePath(pathname, otherLocale);
+// 阿语版不存在时不要造 /ar/xxx/ 死链：回退到阿语首页（英文为主版本，反向总存在）
+const enRelativePath = locale === 'ar' ? pathname.replace(/^\/ar/, '') || '/' : pathname;
+const otherHref =
+  locale === 'en' && !arExists ? localeHub('ar') : localizePath(pathname, otherLocale);
 
 // Sections with a live Arabic version get the /ar/ prefix; the rest point to English for now.
 const navGroups = [

@@ -1,1 +1,9 @@
 /sitemap.xml /sitemap-index.xml 301
+
+# --- 语言幻影 URL 清理（GSC 404 源头修复：这些 /ar/... 从未存在过）---
+# 英文主版本存在、但没有阿语版的页面：把 Google 已记录的 404 301 到英文页
+/ar/intelligence/                /intelligence/                301
+/ar/evidence/                    /evidence/                    301
+/ar/corrections/                 /corrections/                 301
+/ar/data-changelog/              /data-changelog/              301
+/ar/provider-verification-policy/ /provider-verification-policy/ 301

@@ -8,6 +8,7 @@ import FaqBlock from '../../../components/FaqBlock.astro';
 import { gccPortsAr, chinaPortsAr, getArPortBySlug } from '../../../data/ports.ar';
 import { routesAr } from '../../../data/routes.ar';
 import { portSourceIds, sourcesByIds } from '../../../data/sources';
+import { getArCountryBySlug } from '../../../data/countries.ar';
 import { t } from '../../../i18n/ui';
 import { SITE_URL } from '../../../site';
 
@@ -27,6 +28,8 @@ const portRoutes = isChinaPort
   : routesAr.filter((route) => route.destPort === port.slug);
 
 const portSources = sourcesByIds(portSourceIds[port.slug] ?? []);
+// 只有该国的阿语页面真实存在时才给链接（中国港口没有 /ar/countries/china/）
+const arCountry = getArCountryBySlug(port.countrySlug);
 
 const schema = [
   {
@@ -79,7 +82,11 @@ const schema = [
       <div class="fact">
         <span class="fact-label">الدولة</span>
         <span class="fact-value">
-          <a href={`/ar/countries/${port.countrySlug}/`}>{port.country}</a>
+          {arCountry ? (
+            <a href={`/ar/countries/${port.countrySlug}/`}>{port.country}</a>
+          ) : (
+            <span>{port.country}</span>
+          )}
         </span>
       </div>
       <div class="fact">
