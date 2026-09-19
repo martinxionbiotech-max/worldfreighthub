@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, SITE_NAME, CONTACT } from '../site';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="How WorldFreightHub collects, uses and shares the information you submit through the quote form, what we do not track, and how to contact us about your data."
+  canonical={`${SITE_URL}/privacy-policy/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Privacy Policy' }]} />
+      <h1>Privacy Policy</h1>
+      <p class="lead">
+        WorldFreightHub is a freight information reference. This page explains
+        what information we collect, what we do with it, what we deliberately
+        do not collect, and how to contact us about your data.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Who operates this site</h2>
+    <p>
+      {SITE_NAME} ({SITE_URL}) is operated by YIWU DINGWEI TRADING COMPANY.
+      You can reach us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+    </p>
+
+    <h2>What we collect</h2>
+    <p>
+      We collect only the information you voluntarily submit through the
+      <a href="/get-quote/">get-quote form</a>: your name, contact details and
+      the shipment information you provide (cargo type, origin, destination,
+      volumes). We do not require account registration and we do not collect
+      payment details of any kind.
+    </p>
+
+    <h2>How the quote form works</h2>
+    <p>
+      The quote form is processed by a third-party form service
+      (formsubmit.co) that forwards your submission to our contact inbox at
+      {CONTACT.email}. Submitting the form means your details pass through
+      that service. We then share the relevant shipment details with a freight
+      provider on the corridor you selected so they can quote you — this is
+      the sole purpose of the form.
+    </p>
+
+    <h2>What we do NOT collect</h2>
+    <ul>
+      <li>No analytics or advertising trackers run on this site.</li>
+      <li>We do not set advertising cookies and do not sell personal data.</li>
+      <li>We do not build behavioural profiles of visitors.</li>
+    </ul>
+
+    <h2>How long we keep information</h2>
+    <p>
+      Quote requests are kept only as long as needed to route them to a
+      provider and respond. You can ask us to delete your request at any time
+      by emailing <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+      You may request access to, correction of, or deletion of any personal
+      information you submitted. We respond to such requests by email within a
+      reasonable time.
+    </p>
+
+    <h2>Third-party links</h2>
+    <p>
+      Pages on this site link to external sources such as port authorities,
+      customs authorities and carriers. Their privacy practices are their own;
+      this policy does not cover them.
+    </p>
+
+    <h2>Changes to this policy</h2>
+    <p>
+      If we change how we handle personal information, this page is updated
+      with the revision date. Material changes are announced on the
+      <a href="/data-changelog/">data changelog</a>.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Privacy questions and data requests:
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+    </p>
+    <p class="muted">Last updated: 19 September 2026</p>
+  </section>
+</BaseLayout>

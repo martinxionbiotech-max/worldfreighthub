@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, SITE_NAME, CONTACT } from '../site';
+---
+
+<BaseLayout
+  title="Advertising Disclosure"
+  description="How advertising works on WorldFreightHub: labelled ad slots, sponsored listings in the directory, and the separation between paid placement and editorial content."
+  canonical={`${SITE_URL}/advertising-disclosure/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Advertising Disclosure' }]} />
+      <h1>Advertising Disclosure</h1>
+      <p class="lead">
+        WorldFreightHub is funded in part by advertising. This page explains
+        exactly where paid content appears and how it is separated from
+        editorial content.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>What counts as advertising here</h2>
+    <ul>
+      <li>
+        <strong>Ad slots</strong> — labelled "Advertisement" blocks on pages,
+        offered to freight providers and service companies.
+      </li>
+      <li>
+        <strong>Sponsored directory listings</strong> — paid placements inside
+        the <a href="/directory/">provider directory</a>, always labelled as
+        sponsored.
+      </li>
+    </ul>
+
+    <h2>Editorial separation</h2>
+    <p>
+      Payment does not influence editorial content, confidence ratings,
+      decision scores or methodology. Sponsored listings are excluded from
+      editorial rankings and comparisons. See the
+      <a href="/editorial-policy/">editorial policy</a> for the full
+      separation rules.
+    </p>
+
+    <h2>No affiliate commissions on listings</h2>
+    <p>
+      We do not earn affiliate commissions from directory listings or quote
+      requests. A quote request is routed to a provider on your selected
+      corridor at no cost and with no obligation.
+    </p>
+
+    <h2>Advertising enquiries</h2>
+    <p>
+      To advertise on {SITE_NAME}, contact
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or use the
+      <a href="/contact/">contact page</a>.
+    </p>
+    <p class="muted">Last updated: 19 September 2026</p>
+  </section>
+</BaseLayout>

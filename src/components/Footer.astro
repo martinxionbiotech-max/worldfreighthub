@@ -28,6 +28,15 @@ const company = [
   { label: t(locale, 'nav.middleeast'), href: `${prefix}/middleeast/` },
   { label: t(locale, 'nav.europe'), href: '/europe/' },
 ];
+
+const legal = [
+  { label: t(locale, 'footer.privacy'), href: '/privacy-policy/' },
+  { label: t(locale, 'footer.terms'), href: '/terms-of-use/' },
+  { label: t(locale, 'footer.cookie'), href: '/cookie-policy/' },
+  { label: t(locale, 'footer.advertising'), href: '/advertising-disclosure/' },
+  { label: t(locale, 'footer.corrections'), href: '/corrections/' },
+  { label: t(locale, 'footer.dataChangelog'), href: '/data-changelog/' },
+];
 ---
 
 <footer class="site-footer">
@@ -51,6 +60,16 @@ const company = [
         <h4>{t(locale, 'footer.company')}</h4>
         <ul>
           {company.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>{t(locale, 'footer.legal')}</h4>
+        <ul>
+          {legal.map((item) => (
             <li>
               <a href={item.href}>{item.label}</a>
             </li>

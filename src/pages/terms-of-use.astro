@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, SITE_NAME, CONTACT } from '../site';
+---
+
+<BaseLayout
+  title="Terms of Use"
+  description="The terms under which you may use WorldFreightHub: the informational nature of the data, rate disclaimers, acceptable use and liability limits."
+  canonical={`${SITE_URL}/terms-of-use/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Terms of Use' }]} />
+      <h1>Terms of Use</h1>
+      <p class="lead">
+        These terms apply to your use of {SITE_NAME} ({SITE_URL}). By using the
+        site you accept them.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. What this site is</h2>
+    <p>
+      {SITE_NAME} is a freight information reference covering the China–GCC
+      corridor. It is <strong>not</strong> a freight forwarder, carrier,
+      customs broker or legal advisor. Nothing on this site constitutes an
+      offer to carry goods, a quotation, or professional advice.
+    </p>
+
+    <h2>2. Rates and data are estimates</h2>
+    <p>
+      All freight rates, transit times, duty, VAT and cost figures on this site
+      are <strong>indicative reference estimates</strong>, clearly labelled
+      HIGH / MEDIUM / LOW confidence where data quality permits. Rates move
+      constantly with fuel, season and geopolitical risk. Always confirm
+      figures with a licensed carrier or customs broker before making
+      commercial decisions. See the <a href="/methodology/">methodology</a>
+      and <a href="/data-changelog/">data changelog</a> for how figures are
+      produced and updated.
+    </p>
+
+    <h2>3. No liability for decisions based on site data</h2>
+    <p>
+      We work to keep information accurate and source-backed, but we make no
+      warranty that any figure is current at the moment you read it. To the
+      extent permitted by law, {SITE_NAME} and its operator are not liable for
+      losses arising from reliance on site information, including shipping
+      delays, customs penalties, price differences or missed commercial
+      opportunities.
+    </p>
+
+    <h2>4. Third-party providers and external links</h2>
+    <p>
+      The directory lists freight providers, and quote requests are routed to
+      providers on your selected corridor. Any engagement between you and a
+      provider — pricing, carriage, insurance, disputes — is a contract
+      between you and that provider. External links to port authorities,
+      customs authorities and other sources are provided for reference; we do
+      not control their content.
+    </p>
+
+    <h2>5. Acceptable use</h2>
+    <ul>
+      <li>Do not scrape, republish or resell site data at scale without permission.</li>
+      <li>Do not use the quote form to send spam or false requests.</li>
+      <li>Do not attempt to disrupt site availability.</li>
+    </ul>
+
+    <h2>6. Intellectual property</h2>
+    <p>
+      Site text, tables and data compilations are the property of the operator
+      unless a third-party source is attributed. Short quotations with a link
+      to the page are permitted.
+    </p>
+
+    <h2>7. Corrections</h2>
+    <p>
+      Errors should be reported through the
+      <a href="/corrections/">corrections page</a>; we review and record every
+      correction on the <a href="/data-changelog/">data changelog</a>.
+    </p>
+
+    <h2>8. Changes to these terms</h2>
+    <p>
+      We may update these terms. Continued use after an update means
+      acceptance of the revised terms.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions about these terms:
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+    </p>
+    <p class="muted">Last updated: 19 September 2026</p>
+  </section>
+</BaseLayout>

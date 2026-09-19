@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, CONTACT } from '../site';
+---
+
+<BaseLayout
+  title="Cookie Policy"
+  description="WorldFreightHub's cookie policy: which cookies this site sets, which third-party services may set cookies, and how to control them."
+  canonical={`${SITE_URL}/cookie-policy/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Cookie Policy' }]} />
+      <h1>Cookie Policy</h1>
+      <p class="lead">
+        A short, factual description of how this site uses cookies — mostly it
+        does not.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>Cookies we set ourselves</h2>
+    <p>
+      This site does not set its own tracking or advertising cookies. We do
+      not run analytics scripts and we do not build visitor profiles.
+    </p>
+
+    <h2>Third-party cookies</h2>
+    <p>
+      Two third parties may set cookies in connection with this site:
+    </p>
+    <ul>
+      <li>
+        <strong>FormSubmit</strong> — the quote form is processed by
+        formsubmit.co, which may set a session cookie to prevent spam when you
+        submit the <a href="/get-quote/">get-quote form</a>.
+      </li>
+      <li>
+        <strong>Google Fonts</strong> — the Arabic-language pages load the
+        Tajawal and Noto Naskh Arabic fonts from Google's font service, which
+        logs standard request data as described in Google's own privacy
+        documentation.
+      </li>
+    </ul>
+
+    <h2>Controlling cookies</h2>
+    <p>
+      Because this site sets no functional cookies of its own, no consent
+      banner is required for core browsing. You can block third-party cookies
+      in your browser settings without losing site functionality. Clearing
+      cookies has no effect on your ability to read pages or use the tools.
+    </p>
+
+    <h2>Questions</h2>
+    <p>
+      Cookie-related questions:
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+    </p>
+    <p class="muted">Last updated: 19 September 2026</p>
+  </section>
+</BaseLayout>
