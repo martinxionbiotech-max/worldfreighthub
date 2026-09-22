@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import quotesJson from '../../data/freight-quotes.json';
+import {
+  publicQuotes, effectiveStatus, REGIONS,
+} from '../../lib/freight-quotes.mjs';
+import { SITE_URL } from '../../site';
+
+const quotes = Array.isArray(quotesJson.quotes) ? quotesJson.quotes : [];
+const visible = publicQuotes(quotes);
+const lastUpdate = quotesJson.updated_at ? quotesJson.updated_at.slice(0, 10) : null;
+
+const title = 'Freight Rate Database — Recent Freight Quotes';
+const description =
+  'Search historical freight quotes collected by WorldFreightHub — origin, destination, equipment, rate, currency and validity. Indicative freight forwarder quotes, retained permanently, not guaranteed market prices.';
+
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      name: 'WorldFreightHub Freight Quote Database',
+      description:
+        'Normalized indicative freight forwarder quotes collected by WorldFreightHub. Each record carries origin, destination, equipment, rate, currency, quote date and validity. Quotes are indicative and are not guaranteed market prices.',
+      url: `${SITE_URL}/freight-rates/`,
+      creator: { '@type': 'Organization', name: 'WorldFreightHub Research Desk', url: SITE_URL },
+      dateModified: quotesJson.updated_at,
+      isAccessibleForFree: true,
+      license: 'https://creativecommons.org/licenses/by/4.0/',
+      temporalCoverage: lastUpdate ? `${lastUpdate}/..` : undefined,
+    },
+  },
+];
+
+const fmtDate = (d) => (d ? d : '—');
+const fmtRate = (q) => `${q.currency} ${Number(q.rate).toLocaleString('en-US')}`;
+const regionName = { 'middle-east': 'Middle East', europe: 'Europe' };
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical="/freight-rates/"
+  schema={schema}
+>
+  <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Freight Rates' }]} />
+
+  <section class="section">
+    <div class="container">
+      <h1>Freight Rate Database</h1>
+      <p class="lead">
+        Searchable historical freight quote records. Quotes are
+        <strong> indicative freight forwarder quotes</strong> — they document what
+        forwarders were quoting on a given date, not guaranteed market prices.
+        Records are retained permanently; the homepage shows only the last 5 days.
+        {lastUpdate && <> Last database update: {lastUpdate}.</>}
+      </p>
+
+      <div class="note">
+        <strong>Methodology:</strong> each record binds an origin, destination,
+        equipment, rate, currency, quote date and validity window. Quotes arrive
+        as forwarder indications, are validated field-by-field (missing critical
+        fields are never published), deduplicated, and stored permanently.
+        Expired quotes remain visible for historical comparison.
+      </div>
+
+      <h2 class="mt-3">Browse quotes</h2>
+
+      {visible.length === 0 ? (
+        <div class="note">
+          No published quotes yet. The database fills as verified freight quotes
+          are collected — historical trend data will appear here over time.
+        </div>
+      ) : (
+        <>
+          <div class="filter-row">
+            <input type="text" id="q" placeholder="Search origin, destination, port…" aria-label="Search quotes" />
+            <select id="region" aria-label="Filter by region">
+              <option value="">All regions</option>
+              {REGIONS.map((r) => <option value={r}>{regionName[r] || r}</option>)}
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table" id="quote-table">
+              <caption>Freight quote records (newest first)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Origin</th>
+                  <th scope="col">Destination</th>
+                  <th scope="col">Equipment</th>
+                  <th scope="col">Rate</th>
+                  <th scope="col">Validity</th>
+                  <th scope="col">Quote type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((q) => (
+                  <tr data-region={q.region_slug || ''} data-search={`${q.origin_port || ''} ${q.origin_country || ''} ${q.destination_port || ''} ${q.destination_country || ''} ${q.route || ''}`.toLowerCase()}>
+                    <td>{fmtDate(q.quote_date)}</td>
+                    <td>{q.origin_port || q.origin_country || '—'}</td>
+                    <td>{q.destination_port || q.destination_country || '—'}</td>
+                    <td>{q.equipment ?? '—'}</td>
+                    <td>{fmtRate(q)}</td>
+                    <td>{q.valid_until ? fmtDate(q.valid_until) : '—'}{effectiveStatus(q) === 'expired' ? ' (expired)' : ''}</td>
+                    <td>{q.quote_type}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      <p class="mt-2">
+        <a class="btn btn-secondary" href="/evidence/freight-rates/">Benchmark rate index (WHFI)</a>
+        <a class="btn btn-secondary" href="/methodology/">Methodology</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0 6px; }
+  .filter-row input, .filter-row select {
+    padding: 9px 13px;
+    border: 1px solid var(--border-strong, #cbd5e1);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  .filter-row input { flex: 1; min-width: 220px; }
+  .mt-2 { margin-top: 16px; }
+  .mt-3 { margin-top: 24px; }
+</style>
+
+<script>
+  // Progressive enhancement: table is fully server-rendered; JS only filters.
+  const q = document.getElementById('q');
+  const region = document.getElementById('region');
+  const rows = () => Array.from(document.querySelectorAll('#quote-table tbody tr'));
+  const apply = () => {
+    const qv = (q?.value || '').toLowerCase().trim();
+    const rv = region?.value || '';
+    for (const row of rows()) {
+      const matchQ = !qv || (row.dataset.search || '').includes(qv);
+      const matchR = !rv || row.dataset.region === rv;
+      row.hidden = !(matchQ && matchR);
+    }
+  };
+  q?.addEventListener('input', apply);
+  region?.addEventListener('change', apply);
+</script>

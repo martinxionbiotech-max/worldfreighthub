@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "freight:add": "node scripts/freight-add.mjs",
+    "test": "node --test scripts/"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

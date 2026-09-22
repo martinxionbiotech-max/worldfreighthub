@@ -1,0 +1,123 @@
+---
+/**
+ * LiveFreightUpdates — homepage section (doc §14-§17).
+ * Build-time rendered from the structured quote database; zero client JS for content.
+ * Ticker is CSS-only, pausable, respects prefers-reduced-motion.
+ */
+import quotesJson from '../data/freight-quotes.json';
+import { recentQuotes, DEFAULT_WINDOW_DAYS } from '../lib/freight-quotes.mjs';
+
+const quotes = Array.isArray(quotesJson.quotes) ? quotesJson.quotes : [];
+const recent = recentQuotes(quotes, DEFAULT_WINDOW_DAYS);
+const lastUpdate = quotesJson.updated_at ? quotesJson.updated_at.slice(0, 10) : null;
+
+const fmtDate = (d: string | null) => (d ? d : '—');
+const fmtRate = (q: any) => `${q.currency} ${Number(q.rate).toLocaleString('en-US')}`;
+const fmtRoute = (q: any) => `${q.origin_port || q.origin_country || '?'} → ${q.destination_port || q.destination_country || '?'}`;
+---
+
+<section class="section section--alt" id="live-freight">
+  <div class="container">
+    <h2>Live freight updates</h2>
+    <p class="lead">
+      Recent indicative freight forwarder quotes from the WorldFreightHub quote database —
+      last {DEFAULT_WINDOW_DAYS} days. Historical records are retained permanently.
+      {lastUpdate && <span class="muted-text"> Last database update: {lastUpdate}.</span>}
+    </p>
+
+    {recent.length === 0 ? (
+      <div class="note">
+        No verified quotes in the last {DEFAULT_WINDOW_DAYS} days. Recent quotes will appear here
+        as forwarder quotes are validated and added to the
+        <a href="/freight-rates/">freight rate database</a>.
+      </div>
+    ) : (
+      <>
+        <div class="ticker" role="region" aria-label="Live freight updates">
+          <div class="ticker-track">
+            {[...recent, ...recent].map((q) => (
+              <span class="ticker-item">
+                <strong>{fmtRoute(q)}</strong>
+                <span class="ticker-eq">{q.equipment ?? 'Equipment TBC'}</span>
+                <span class="ticker-rate">{fmtRate(q)}</span>
+                <span class="ticker-date">Updated {fmtDate(q.quote_date)}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <h3 class="mt-3">Recent freight quotes</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <caption>Recent freight quotes — last {DEFAULT_WINDOW_DAYS} days</caption>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Route</th>
+                <th scope="col">Equipment</th>
+                <th scope="col">Quote</th>
+                <th scope="col">Validity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recent.slice(0, 10).map((q) => (
+                <tr>
+                  <td>{fmtDate(q.quote_date)}</td>
+                  <td>{fmtRoute(q)}</td>
+                  <td>{q.equipment ?? '—'}</td>
+                  <td>{fmtRate(q)}</td>
+                  <td>{q.valid_until ? `until ${fmtDate(q.valid_until)}` : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )}
+
+    <p class="mt-2">
+      <a class="btn btn-secondary" href="/freight-rates/">View freight rate history</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .muted-text { color: var(--slate-500, #64748b); font-size: 0.9rem; }
+  .ticker {
+    overflow: hidden;
+    background: var(--navy-800, #10294f);
+    border-radius: 8px;
+    padding: 10px 0;
+    margin-top: 16px;
+    position: relative;
+  }
+  .ticker-track {
+    display: inline-flex;
+    gap: 40px;
+    padding-left: 100%;
+    animation: ticker-scroll 40s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker:hover .ticker-track,
+  .ticker:focus-within .ticker-track { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track { animation: none; padding-left: 0; flex-wrap: wrap; gap: 16px; }
+  }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+  .ticker-item {
+    display: inline-flex;
+    gap: 10px;
+    align-items: baseline;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+  }
+  .ticker-item strong { color: #fff; }
+  .ticker-eq { color: #93c5fd; font-weight: 600; }
+  .ticker-rate { color: #fbbf24; font-weight: 700; }
+  .ticker-date { color: #94a3b8; font-size: 0.85rem; }
+  .mt-2 { margin-top: 16px; }
+  .mt-3 { margin-top: 24px; }
+</style>

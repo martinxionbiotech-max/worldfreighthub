@@ -27,6 +27,7 @@ export default defineConfig({
         methods: chunk('methods/'),
         countries: chunk('countries/'),
         tools: chunk('tools/'),
+        freightrates: chunk('freight-rates/'),
         middleeast: chunk('middleeast/'),
         arabic: chunk('ar/'),
       },
