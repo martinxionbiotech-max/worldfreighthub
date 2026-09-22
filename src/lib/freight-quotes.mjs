@@ -40,6 +40,8 @@ export const REGION_COUNTRY_MAP = {
   Jordan: 'middle-east',
   Iraq: 'middle-east',
   Egypt: 'middle-east',
+  Iran: 'middle-east',
+  Turkey: 'middle-east',
   Germany: 'europe',
   Netherlands: 'europe',
   Belgium: 'europe',
