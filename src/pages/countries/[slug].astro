@@ -14,6 +14,7 @@ import { routes } from '../../data/routes';
 import { countrySourceIds, sourcesByIds } from '../../data/sources';
 import { getPortBySlug, portName } from '../../data/lookup';
 import { SITE_URL } from '../../site';
+import { countryId } from '../../data/entity-ids';
 
 export function getStaticPaths() {
   return gccCountries.map((country) => ({
@@ -40,7 +41,9 @@ const schema = [
   {
     type: 'Country',
     data: {
+      '@id': `${SITE_URL}/countries/${country.slug}/#country`,
       name: country.name,
+      ...(countryId(country.slug) ? { identifier: countryId(country.slug) } : {}),
       url: `${SITE_URL}/countries/${country.slug}/`,
       address: {
         '@type': 'PostalAddress',

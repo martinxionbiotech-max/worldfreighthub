@@ -6,6 +6,7 @@ import {
   quotesByRoute, effectiveStatus, MIN_ROUTE_QUOTES_FOR_INDEXING,
 } from '../../../lib/freight-quotes.mjs';
 import { SITE_URL } from '../../../site';
+import { routeId, rateId, entityUrl } from '../../../data/entity-ids';
 
 // Route pages are generated only for routes with enough real data (doc §13).
 // No empty route pages, no fabricated history.
@@ -18,7 +19,8 @@ export function getStaticPaths() {
     .map(([slug, qs]) => ({ params: { route: slug }, props: { quotes: qs } }));
 }
 
-const { route, quotes: routeQuotes } = Astro.props;
+const { route } = Astro.params;
+const { quotes: routeQuotes } = Astro.props;
 
 const sorted = [...routeQuotes].sort((a, b) => (a.quote_date < b.quote_date ? 1 : -1));
 const latest = sorted[0];
@@ -29,6 +31,21 @@ const description =
 
 const fmtDate = (d) => (d ? d : '—');
 const fmtRate = (q) => `${q.currency} ${Number(q.rate).toLocaleString('en-US')}`;
+
+/** P1: 实体 ID —— 稳定标识接入 JSON-LD（Route / Rate 实体身份） */
+const rid = routeId(route);
+const schema = [
+  {
+    type: 'Dataset',
+    data: {
+      '@id': `${SITE_URL}/freight-rates/${route}/#dataset`,
+      name: `WorldFreightHub freight quotes — ${route}`,
+      description: `Indicative freight forwarder quotes for the ${route} corridor, retained permanently.`,
+      ...(rid ? { identifier: rid } : {}),
+      isPartOf: { '@id': `${SITE_URL}/freight-rates/#dataset` },
+    },
+  },
+];
 
 /** P0-3: optional basis/confidence badges — rendered only when the field exists. */
 const basisLabel = { 'port-to-port': 'Port-to-port', 'all-in': 'All-in' };
@@ -44,6 +61,7 @@ const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
   description={description}
   canonical={`${SITE_URL}/freight-rates/${route}/`}
   noindex={sorted.length < MIN_ROUTE_QUOTES_FOR_INDEXING}
+  schema={schema}
 >
   <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Freight Rates', href: '/freight-rates/' }, { label: route }]} />
 

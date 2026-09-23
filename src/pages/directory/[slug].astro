@@ -12,6 +12,7 @@ import {
   type VerificationLevel,
 } from '../../data/types';
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '../../site';
+import { providerId } from '../../data/entity-ids';
 
 export function getStaticPaths() {
   return directoryProviders.map((provider) => ({
@@ -110,6 +111,8 @@ const schema = [
   {
     type: 'LocalBusiness',
     data: {
+      '@id': `${SITE_URL}/directory/${provider.slug}/#provider`,
+      ...(providerId(provider.slug) ? { identifier: providerId(provider.slug) } : {}),
       name: provider.name,
       ...(provider.website ? { url: provider.website } : {}),
       description: provider.description,
