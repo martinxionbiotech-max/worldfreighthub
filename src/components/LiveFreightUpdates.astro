@@ -34,8 +34,15 @@ const fmtRoute = (q: any) => `${q.origin_port || q.origin_country || '?'} → ${
     ) : (
       <>
         <div class="ticker" role="region" aria-label="Live freight updates">
+          {/*
+            P0-1: single-copy rendering — every quote appears in the DOM exactly once
+            (no more [...recent, ...recent] duplication for crawlers/AI extractors).
+            The seamless CSS loop is kept: padding-left:100% starts the track off-screen
+            right, translateX(-100%) carries it fully off-screen left, and the animation
+            restarts — the screen never goes blank and no duplicate content exists.
+          */}
           <div class="ticker-track">
-            {[...recent, ...recent].map((q) => (
+            {recent.map((q) => (
               <span class="ticker-item">
                 <strong>{fmtRoute(q)}</strong>
                 <span class="ticker-eq">{q.equipment ?? 'Equipment TBC'}</span>
