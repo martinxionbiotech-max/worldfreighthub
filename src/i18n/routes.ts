@@ -18,6 +18,7 @@ const pageFiles = Object.keys(import.meta.glob('/src/pages/**/*.astro'));
 function toPattern(file: string, base: string): string | null {
   if (!file.startsWith(base)) return null;
   let p = file.slice(base.length).replace(/\.astro$/, '').replace(/\/index$/, '/');
+  if (p === 'index') return '/'; // 根首页 index.astro → '/'（此前误映射为 /index/，导致首页 hreflang="ar" 互惠断裂）
   if (!p.endsWith('/')) p += '/';
   return '/' + p.replace(/^\/+/, '');
 }

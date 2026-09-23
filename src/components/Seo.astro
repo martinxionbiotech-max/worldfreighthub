@@ -28,6 +28,7 @@ const fullTitle = title.includes(SITE_NAME) ? title : `${title} — ${SITE_NAME}
 const url = canonical ?? new URL(Astro.url.pathname, SITE_URL).toString();
 const robots = noindex ? 'noindex, nofollow' : 'index, follow';
 const ogLocale = locale === 'ar' ? 'ar_SA' : 'en_US';
+const ogLocaleAlternate = locale === 'ar' ? 'en_US' : 'ar_SA';
 ---
 
 <title>{fullTitle}</title>
@@ -41,6 +42,7 @@ const ogLocale = locale === 'ar' ? 'ar_SA' : 'en_US';
 <meta property="og:description" content={description} />
 <meta property="og:url" content={url} />
 <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlternate} />
 {
   ogImage && (
     <>

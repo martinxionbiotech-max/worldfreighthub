@@ -42,7 +42,7 @@ const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
 <BaseLayout
   title={title}
   description={description}
-  canonical={`/freight-rates/${route}/`}
+  canonical={`${SITE_URL}/freight-rates/${route}/`}
   noindex={sorted.length < MIN_ROUTE_QUOTES_FOR_INDEXING}
 >
   <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Freight Rates', href: '/freight-rates/' }, { label: route }]} />

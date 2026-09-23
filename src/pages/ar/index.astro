@@ -2,10 +2,23 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
 import { t } from '../../i18n/ui';
-import { SITE_URL } from '../../site';
+import { SITE_URL, SITE_NAME, ORGANIZATION_SCHEMA } from '../../site';
 import { stats as s, derivedStats as d } from '../../data/stats';
 
 const locale = 'ar' as const;
+
+// 与英文首页对齐的核心结构化数据（P0-4 M2：阿语首页此前 0 个 JSON-LD 块）
+const schema = [
+  {
+    type: 'WebSite',
+    data: {
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: 'شبكة معلومات شحن لممر الصين–الخليج: مسارات وموانئ ودول وطرق شحن ودليل مزودين موثوق.',
+    },
+  },
+  ORGANIZATION_SCHEMA,
+];
 
 const sections = [
   { title: 'المسارات', description: 'مسارات الشحن من الصين إلى الخليج مع مدد نقل استرشادية.', href: '/ar/routes/' },
@@ -22,6 +35,7 @@ const sections = [
   description="شبكة معلومات شحن لممر الصين–الخليج: مسارات وموانئ ودول وطرق شحن ودليل مزودين موثوق."
   canonical={`${SITE_URL}/ar/`}
   locale={locale}
+  schema={schema}
 >
   <div class="page-header">
     <div class="container">

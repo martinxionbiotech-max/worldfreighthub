@@ -39,7 +39,7 @@ const schema = [
 
 <BaseLayout hreflang={false}
   title="China to Europe Freight — Countries, Ports & Duty"
-  description="China to Europe freight intelligence: eight destination countries, Europe ports, EU common duty, VAT and EORI requirements."
+  description={`China to Europe freight intelligence: ${europeCountries.length} destination countries, Europe ports, EU common duty, VAT and EORI requirements.`}
   canonical={`${SITE_URL}/europe/`}
   schema={schema}
 >
@@ -48,7 +48,7 @@ const schema = [
       <Breadcrumb items={[{ label: 'Europe' }]} />
       <h1>China to Europe freight</h1>
       <p class="lead">
-        The second corridor on the WorldFreightHub network — eight European
+        The second corridor on the WorldFreightHub network — {europeCountries.length} European
         destination markets with their VAT, EU common duty, EORI rules and
         entry ports.
       </p>
@@ -71,7 +71,7 @@ const schema = [
     <h2>Freight routes</h2>
     <p class="muted">
       {europeRoutes.length} China → Europe routes — seven loading ports to
-      eight gateways — with indicative transit times, cost ranges and routing
+      {europePorts.length} gateways — with indicative transit times, cost ranges and routing
       notes.
     </p>
     <p class="mt-2">

@@ -29,6 +29,7 @@ export default defineConfig({
         tools: chunk('tools/'),
         freightrates: chunk('freight-rates/'),
         middleeast: chunk('middleeast/'),
+        europe: chunk('europe/'),
         arabic: chunk('ar/'),
       },
     }),
