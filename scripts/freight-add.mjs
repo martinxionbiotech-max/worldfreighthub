@@ -9,6 +9,11 @@
  * Flow per record: validate → deduplicate → write → report (doc §33/§34).
  * Security: local CLI only — no network write endpoint exists, so there is no
  * unauthenticated surface to protect.
+ *
+ * Optional P0-3 enrichments (missing → warning, never rejected):
+ *   basis ('port-to-port' | 'all-in'), confidence ('HIGH' | 'MEDIUM' | 'LOW'),
+ *   verified (bool), carrier (string), transit_mode ('direct' | 'transshipment'),
+ *   route_via ('Suez' | 'Cape').
  */
 import fs from 'node:fs';
 import path from 'node:path';

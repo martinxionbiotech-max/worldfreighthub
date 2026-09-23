@@ -26,6 +26,12 @@ export const SOURCE_TYPES = ['Freight Forwarder', 'Direct Quote', 'User Provided
 
 export const EQUIPMENT_VALUES = ['20GP', '40GP', '40HQ', '40HC', 'LCL', '20ft FCL', '40ft FCL'];
 
+/** P0-3 optional enrichments — never required, missing = warning, not rejection. */
+export const BASIS_VALUES = ['port-to-port', 'all-in'];
+export const CONFIDENCE_VALUES = ['HIGH', 'MEDIUM', 'LOW'];
+export const TRANSIT_MODE_VALUES = ['direct', 'transshipment'];
+export const ROUTE_VIA_VALUES = ['Suez', 'Cape'];
+
 export const ISO_CURRENCIES = new Set(['USD', 'EUR', 'CNY', 'GBP', 'AED', 'SAR', 'JPY', 'HKD', 'SGD', 'AUD', 'CAD']);
 
 // Region classification: country name → region slug. Extend for future regions.
@@ -169,6 +175,35 @@ export function validateQuote(input) {
     warnings.push(`source_type "${input.source_type}" is non-standard; defaulting to "Other".`);
   }
 
+  // P0-3 optional enrichments: presence is optional, but a present value must be valid.
+  if (input.basis && !BASIS_VALUES.includes(input.basis)) {
+    warnings.push(`basis "${input.basis}" is non-standard (expected ${BASIS_VALUES.join('/')}); leaving unset.`);
+  }
+  if (input.confidence && !CONFIDENCE_VALUES.includes(input.confidence)) {
+    warnings.push(`confidence "${input.confidence}" is non-standard (expected ${CONFIDENCE_VALUES.join('/')}); leaving unset.`);
+  }
+  if (input.transit_mode && !TRANSIT_MODE_VALUES.includes(input.transit_mode)) {
+    warnings.push(`transit_mode "${input.transit_mode}" is non-standard (expected ${TRANSIT_MODE_VALUES.join('/')}); leaving unset.`);
+  }
+  if (input.route_via && !ROUTE_VIA_VALUES.includes(input.route_via)) {
+    warnings.push(`route_via "${input.route_via}" is non-standard (expected ${ROUTE_VIA_VALUES.join('/')}); leaving unset.`);
+  }
+  if (input.basis === undefined || input.basis === null || input.basis === '') {
+    warnings.push('basis is missing — flagged for confirmation (port-to-port vs all-in).');
+  }
+  if (input.confidence === undefined || input.confidence === null || input.confidence === '') {
+    warnings.push('confidence is missing — flagged for confirmation.');
+  }
+  if (input.verified === undefined || input.verified === null) {
+    warnings.push('verified flag is missing — treated as false.');
+  }
+  if (input.transit_mode === undefined || input.transit_mode === null || input.transit_mode === '') {
+    warnings.push('transit_mode is missing — flagged for confirmation (direct vs transshipment).');
+  }
+  if (input.route_via === undefined || input.route_via === null || input.route_via === '') {
+    warnings.push('route_via is missing — flagged for confirmation (Suez vs Cape).');
+  }
+
   return { ok: errors.length === 0, errors, warnings };
 }
 
@@ -208,6 +243,13 @@ export function normalizeQuote(input, existing = []) {
     subject_to: input.subject_to || null,
     source_note: input.source_note || null,
     data_confidence: input.data_confidence || null,
+    // P0-3 optional enrichments (validated enums only; unset stays null).
+    basis: BASIS_VALUES.includes(input.basis) ? input.basis : null,
+    confidence: CONFIDENCE_VALUES.includes(input.confidence) ? input.confidence : null,
+    verified: typeof input.verified === 'boolean' ? input.verified : false,
+    carrier: input.carrier || null,
+    transit_mode: TRANSIT_MODE_VALUES.includes(input.transit_mode) ? input.transit_mode : null,
+    route_via: ROUTE_VIA_VALUES.includes(input.route_via) ? input.route_via : null,
     raw_input: input.raw_input || null,
     normalized_input: null,
     region_slug: regionSlug(input),

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-22T11:16:27.205Z",
+  "updated_at": "2026-09-23T10:32:01.926Z",
   "quotes": [
     {
       "id": "q-20260922-6500-shekou-to-jebel-ali",
@@ -19,7 +19,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 6500/6900 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 6500/6900 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -35,7 +35,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.198Z",
       "updated_at": "2026-09-22T11:16:27.198Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-6900-shekou-to-jebel-ali",
@@ -55,7 +61,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 6500/6900 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 6500/6900 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -71,7 +77,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.201Z",
       "updated_at": "2026-09-22T11:16:27.201Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-5900-shekou-to-sohar",
@@ -91,7 +103,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 5900/7500 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 5900/7500 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -107,7 +119,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.201Z",
       "updated_at": "2026-09-22T11:16:27.201Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-7500-shekou-to-sohar",
@@ -127,7 +145,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 5900/7500 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 5900/7500 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -143,7 +161,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.201Z",
       "updated_at": "2026-09-22T11:16:27.201Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-5750-shekou-to-khor-fakkan",
@@ -163,7 +187,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 5750/6850 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 5750/6850 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -179,7 +203,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-6850-shekou-to-khor-fakkan",
@@ -199,7 +229,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 5750/6850 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 5750/6850 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -215,7 +245,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-8750-shekou-to-dammam",
@@ -235,7 +271,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 8750/9810 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 8750/9810 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -251,7 +287,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-9810-shekou-to-dammam",
@@ -271,7 +313,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 8750/9810 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 8750/9810 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -287,7 +329,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-9150-shekou-to-riyadh-dry-port",
@@ -307,7 +355,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 9150/10450 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 9150/10450 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -323,7 +371,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-10450-shekou-to-riyadh-dry-port",
@@ -343,7 +397,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 9150/10450 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 9150/10450 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -359,7 +413,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-7700-shekou-to-hamad-port",
@@ -379,7 +439,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 7700/10850 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 7700/10850 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -395,7 +455,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-10850-shekou-to-hamad-port",
@@ -415,7 +481,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 7700/10850 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 7700/10850 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -431,7 +497,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-8100-shekou-to-umm-qasr",
@@ -451,7 +523,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 8100/10700 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 8100/10700 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -467,7 +539,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.202Z",
       "updated_at": "2026-09-22T11:16:27.202Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-10700-shekou-to-umm-qasr",
@@ -487,7 +565,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 8100/10700 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 8100/10700 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -503,7 +581,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-7700-nansha-to-bandar-abbas",
@@ -523,7 +607,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 7700/10750 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 7700/10750 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -539,7 +623,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-10750-nansha-to-bandar-abbas",
@@ -559,7 +649,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted 7700/10750 (20GP/40HQ). Forwarder indication, subject to booking.",
+      "notes": "As quoted 7700/10750 (20GP/40HQ). Forwarder indication, subject to booking. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -575,7 +665,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-1850-ningbo-to-european-base-ports",
@@ -595,7 +691,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication.",
+      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -611,7 +707,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-3500-ningbo-to-european-base-ports",
@@ -631,7 +733,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication.",
+      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -647,7 +749,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-1850-shanghai-to-european-base-ports",
@@ -667,7 +775,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication.",
+      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -683,7 +791,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-3500-shanghai-to-european-base-ports",
@@ -703,7 +817,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication.",
+      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -719,7 +833,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-1850-yantian-to-european-base-ports",
@@ -739,7 +859,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication.",
+      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -755,7 +875,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-3500-yantian-to-european-base-ports",
@@ -775,7 +901,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication.",
+      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -791,7 +917,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.203Z",
       "updated_at": "2026-09-22T11:16:27.203Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-1850-qingdao-to-european-base-ports",
@@ -811,7 +943,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication.",
+      "notes": "As quoted: 20GP USD 1850. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -827,7 +959,13 @@
       "equipment_slug": "20gp",
       "created_at": "2026-09-22T11:16:27.204Z",
       "updated_at": "2026-09-22T11:16:27.204Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     },
     {
       "id": "q-20260922-3500-qingdao-to-european-base-ports",
@@ -847,7 +985,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-09-22",
       "valid_until": null,
-      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication.",
+      "notes": "As quoted: 40HQ/40GP USD 3500. European base ports. Forwarder indication. [P0-3 回填: 默认假设, 待货代确认]",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -863,7 +1001,13 @@
       "equipment_slug": "40hq",
       "created_at": "2026-09-22T11:16:27.204Z",
       "updated_at": "2026-09-22T11:16:27.204Z",
-      "status": "published"
+      "status": "published",
+      "basis": "port-to-port",
+      "confidence": "MEDIUM",
+      "verified": false,
+      "transit_mode": "direct",
+      "route_via": "Suez",
+      "carrier": null
     }
   ]
 }
