@@ -54,6 +54,37 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
 // Simple server-rendered history bars from real data only (doc §20).
 const hasHistory = sorted.length >= 2;
 const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
+
+/** P1: Quote Intelligence 层 —— 真实数据统计（不编造趋势） */
+const today = new Date().toISOString().slice(0, 10);
+const daysAgo = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
+const inWindow = (q, days) => q.quote_date >= daysAgo(days) && q.quote_date <= today;
+const distinctDates = [...new Set(sorted.map((q) => q.quote_date))].sort();
+const byEquipment = new Map();
+for (const q of sorted) {
+  const k = q.equipment ?? 'unspecified';
+  if (!byEquipment.has(k)) byEquipment.set(k, []);
+  byEquipment.get(k).push(q);
+}
+const eqStats = Array.from(byEquipment.entries()).map(([eq, qs]) => {
+  const rates = qs.map((q) => Number(q.rate)).sort((a, b) => a - b);
+  const median = rates.length ? rates[Math.floor(rates.length / 2)] : null;
+  const last30 = qs.filter((q) => inWindow(q, 30));
+  const last90 = qs.filter((q) => inWindow(q, 90));
+  const range = (arr) => {
+    const r = arr.map((q) => Number(q.rate));
+    return r.length ? [Math.min(...r), Math.max(...r)] : null;
+  };
+  return {
+    equipment: eq,
+    count: qs.length,
+    latest: qs[0],
+    median,
+    range30: range(last30),
+    range90: range(last90),
+  };
+});
+const enoughForRange = distinctDates.length >= 2;
 ---
 
 <BaseLayout
@@ -68,6 +99,28 @@ const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
   <section class="section">
     <div class="container">
       <h1>{titleFor(latest)} freight quotes</h1>
+
+      <div class="quick-answer" itemscope itemtype="https://schema.org/Question">
+        <h2 class="qa-title" itemprop="name">Quick answer: what is the latest {titleFor(latest)} freight quote?</h2>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+          <p itemprop="text">
+            The latest recorded quote for this route is
+            <strong>{fmtRate(latest)}</strong>
+            {latest.equipment ? ` (${latest.equipment})` : ''}
+            {latest.basis ? `, ${basisLabel[latest.basis] || latest.basis}` : ''},
+            quoted {fmtDate(latest.quote_date)}
+            {latest.valid_until ? `, valid until ${fmtDate(latest.valid_until)}` : ''}.
+            {effectiveStatus(latest) === 'expired' ? ' This quote has expired and remains for historical comparison.' : ''}
+          </p>
+          <ul class="qa-data">
+            <li><strong>Records:</strong> {sorted.length} quote{sorted.length === 1 ? '' : 's'} on {distinctDates.length} distinct date{distinctDates.length === 1 ? '' : 's'}</li>
+            <li><strong>Source:</strong> {latest.source_type} ({latest.quote_type})</li>
+            <li><strong>Confidence:</strong> {latest.confidence || 'not rated'}{latest.verified ? ' · verified' : ''}</li>
+            <li><strong>Decision factors:</strong> basis, equipment, validity window and rate history below — quotes are indicative, not guaranteed prices.</li>
+          </ul>
+        </div>
+      </div>
+
       <p class="lead">
         Indicative freight forwarder quotes collected for this route. Each record
         carries its quote date, equipment, rate and validity — quotes are not
@@ -82,6 +135,42 @@ const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
         {latest.valid_until ? `, valid until ${fmtDate(latest.valid_until)}` : ''}.
         {effectiveStatus(latest) === 'expired' ? ' This quote has expired.' : ''}
       </div>
+
+      <h2 class="mt-3">Quote intelligence</h2>
+      <div class="table-wrap">
+        <table class="data-table">
+          <caption>Quote statistics by equipment — computed from stored records only</caption>
+          <thead>
+            <tr>
+              <th scope="col">Equipment</th>
+              <th scope="col">Records</th>
+              <th scope="col">Latest</th>
+              <th scope="col">30-day range</th>
+              <th scope="col">90-day range</th>
+              <th scope="col">Median</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eqStats.map((s) => (
+              <tr>
+                <td>{s.equipment}</td>
+                <td>{s.count}</td>
+                <td>{fmtRate(s.latest)}</td>
+                <td>{enoughForRange && s.range30 ? `$${s.range30[0].toLocaleString('en-US')}–$${s.range30[1].toLocaleString('en-US')}` : '—'}</td>
+                <td>{enoughForRange && s.range90 ? `$${s.range90[0].toLocaleString('en-US')}–$${s.range90[1].toLocaleString('en-US')}` : '—'}</td>
+                <td>{s.median ? `$${s.median.toLocaleString('en-US')}` : '—'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!enoughForRange && (
+        <div class="note">
+          Range and median comparisons appear once quotes span more than one
+          date — current records are all from a single day, so no fabricated
+          trend is shown.
+        </div>
+      )}
 
       <h2 class="mt-3">Quote history</h2>
       {hasHistory ? (
@@ -146,6 +235,25 @@ const maxRate = Math.max(...sorted.map((q) => Number(q.rate)));
 </BaseLayout>
 
 <style>
+  .quick-answer {
+    margin: 20px 0;
+    padding: 18px 20px;
+    background: #f4f7fb;
+    border-left: 4px solid var(--navy-700, #16345f);
+    border-radius: 8px;
+  }
+  .quick-answer .qa-title {
+    font-size: 1.05rem;
+    margin: 0 0 10px;
+    color: var(--navy-900, #0b1f3a);
+  }
+  .qa-data {
+    margin: 10px 0 0;
+    padding-left: 20px;
+    font-size: 0.92rem;
+    color: var(--slate-700, #334155);
+  }
+  .qa-data li { margin-bottom: 4px; }
   .chart {
     display: flex;
     gap: 12px;
