@@ -54,6 +54,13 @@ China to Europe freight intelligence: 15 destination markets with national impor
 
 Landing-cost arithmetic: (CIF + duty) × (1 + VAT). Statutory examples — Germany 19%, France 20%, Italy 22%, Spain 21%, Poland 23%, Sweden 25%, Denmark 25%, Finland 25.5%, UK 20%.
 
+## Freight rates
+
+- [Freight Rate Database](https://worldfreighthub.net/freight-rates/): searchable historical freight quotes — origin, destination, equipment, rate, basis, confidence, validity.
+- [Route quote history](https://worldfreighthub.net/freight-rates/shekou-to-jebel-ali/): per-route quote history with Quick Answer, per-equipment statistics (30/90-day ranges, median) and charts.
+- [Data export](https://worldfreighthub.net/data/freight-quotes.json): machine-readable freight quote dataset (JSON, CC BY 4.0) — 24 records, updated as quotes are validated.
+- Quotes are indicative freight forwarder quotes, not guaranteed market prices; homepage shows the last 5 days, the database retains all records permanently.
+
 ## Tools
 
 - [CBM Calculator](https://worldfreighthub.net/tools/cbm-calculator/): cargo volume (CBM) calculation.

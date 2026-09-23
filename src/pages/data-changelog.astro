@@ -26,6 +26,19 @@ const cadence = [
 
 const changelog = [
   {
+    date: '2026-09-23',
+    title: 'Freight quote database — data infrastructure (P0–P2)',
+    changes: [
+      'Launched the freight quote database: 24 indicative freight forwarder quotes (16 Middle East + 8 Europe), published 2026-09-22.',
+      'Single Source of Truth: homepage counts (routes, ports, providers, guides, glossary) now derived from data files at build time.',
+      'Quote model extended: basis, confidence, verified, carrier, transit mode and route fields; existing records backfilled (default assumptions marked "待货代确认").',
+      'Entity IDs: stable identifiers for countries (ISO2), ports (UN/LOCODE), routes (origin–destination LOCODE), providers (WH-P-###) and rates (RATE-YYYYMMDD-###) wired into page JSON-LD.',
+      'Quote Intelligence: per-equipment statistics (records, latest, 30/90-day ranges, median) on route pages — computed from stored records only.',
+      'Machine-readable export: /data/freight-quotes.json (CC BY 4.0).',
+      'SEO fixes: homepage hreflang reciprocity, Arabic homepage JSON-LD, Europe description counts, absolute canonicals, Europe sitemap chunk, og:locale:alternate.',
+    ],
+  },
+  {
     date: '2026-09-12',
     title: 'Content depth optimization (V2/V3)',
     changes: [
