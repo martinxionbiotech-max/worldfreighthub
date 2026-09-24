@@ -38,7 +38,24 @@ const countryLabels: Record<string, string> = {
   yemen: 'Yemen',
 };
 
+/** 服务国家 → 对应 GCC 清关指南页（§13 实体互链：Provider → Country → Customs） */
+const countryCustomsGuides: Record<string, string> = {
+  'saudi-arabia': '/middleeast/saudi-customs-clearance/',
+  'united-arab-emirates': '/middleeast/uae-customs-clearance/',
+  kuwait: '/middleeast/kuwait-customs-duty/',
+  qatar: '/middleeast/qatar-customs-duty/',
+  oman: '/middleeast/oman-customs-duty/',
+  bahrain: '/middleeast/bahrain-customs-duty/',
+};
+
 const countryName = (slug: string) => countryLabels[slug] ?? slug;
+
+const linkedServiceCountries = provider.serviceCountries
+  .map((slug) => ({
+    slug,
+    label: countryName(slug),
+    guide: countryCustomsGuides[slug],
+  }));
 
 const verificationExplanations: Record<DirectoryProvider['verification'], string> = {
   verified:
@@ -196,6 +213,28 @@ const schema = [
       rows={tableRows}
       caption="Service scope and claims reflect the published source and are source-documented before publication."
     />
+  </section>
+
+  <section class="section container">
+    <div class="container">
+      <h2>GCC customs guides by service country</h2>
+      <p>
+        Clearance rules differ per GCC state — duty, VAT and filing processes
+        are country-specific. Guides for the countries this provider serves:
+      </p>
+      <ul>
+        {linkedServiceCountries.map((c) => (
+          <li>
+            <strong>{c.label}:</strong>{' '}
+            {c.guide ? (
+              <a href={c.guide}>customs clearance and import duty guide</a>
+            ) : (
+              'customs guide not yet published'
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   </section>
 
   <section class="section section--alt">
