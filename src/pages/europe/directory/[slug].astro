@@ -44,10 +44,10 @@ const countryName = (slug: string) => countryLabels[slug] ?? slug;
 
 const verificationExplanations: Record<DirectoryProvider['verification'], string> = {
   verified:
-    "Business identity, website and published claims have been checked against the provider's own official website. Direct contact details are reached via the provider's website or our Get Quote form.",
+    "LEVEL 2 · SOURCE VERIFIED — business identity, website and published claims have been checked against the provider's own official website. This is not independent verification. Direct contact details are reached via the provider's website or our Get Quote form.",
   unverified:
-    'This provider was found in research, but its identity, contact details and service claims have not yet been independently confirmed.',
-  claimed: 'The business has confirmed its own listing; self-reported details remain labelled until independently verified.',
+    'LEVEL 1 · LISTED — this provider was found in research, but its identity, contact details and service claims have not yet been source-documented.',
+  claimed: 'The business has confirmed its own listing; self-reported details remain labelled until corroborating documentation is supplied.',
   sponsored: 'This is a paid placement, always labelled as sponsored.',
 };
 
@@ -198,15 +198,16 @@ const schema = [
   <section class="section container">
     <h2>Contact & verification</h2>
     <div class="note">
-      <strong>Business identity verified.</strong>{' '}
+      <strong>LEVEL 2 · SOURCE VERIFIED.</strong>{' '}
       {provider.contactNote}
     </div>
     <p>
-      WorldFreightHub has independently confirmed this provider's identity, website,
-      service area and published claims against its own official website. Direct contact
-      details (phone / email) are not published on the listing; reach the provider
-      through their website or via our Get Quote form, which routes your request
-      without adding any fee.
+      Provider identity, website, service area and published claims have been checked
+      against the provider's own official website. This is source verification only —
+      it does not constitute government licensing, certification, endorsement or
+      independent verification. Direct contact details (phone / email) are not
+      published on the listing; reach the provider through their website or via our
+      Get Quote form, which routes your request without adding any fee.
     </p>
     <p class="mt-2">
       <a class="btn btn-secondary" href="/contact/">

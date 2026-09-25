@@ -17,6 +17,7 @@
  */
 import { routes } from './routes';
 import { gccPorts } from './gcc-ports';
+import { chinaPorts } from './china-ports';
 import { europePorts } from './europe/europe-ports';
 import { directoryProviders } from './directory';
 import { europeDirectoryProviders } from './europe/europe-directory';
@@ -35,6 +36,7 @@ const europeGuidePages = Object.keys(
 export const stats = {
   routes: routes.length,
   gccPorts: gccPorts.length,
+  chinaPorts: chinaPorts.length,
   europePorts: europePorts.length,
   ports: gccPorts.length + europePorts.length,
   gccProviders: directoryProviders.length,
