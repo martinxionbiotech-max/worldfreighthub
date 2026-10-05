@@ -94,3 +94,26 @@ The Arabic version mirrors the China-to-GCC data reference under the /ar/ path (
 
 - [Arabic home](https://worldfreighthub.net/ar/): China to GCC freight intelligence overview.
 - [Routes — المسارات](https://worldfreighthub.net/ar/routes/): China to GCC shipping routes with indicative transit times.
+
+## Machine-readable markdown
+
+Clean markdown variants of the data-driven pages are generated at build time (`.md` endpoints) for LLMs and AI agents. Each file carries a YAML frontmatter (title, description, canonical, updated, confidence), an H1, a one-sentence definition, core data tables (rates, transit, ports, compliance), confidence and source fields — with no navigation, footer or JavaScript noise — and links back to its human-readable HTML page.
+
+Endpoint patterns:
+
+- `/routes/{slug}.md`
+- `/countries/{slug}.md`
+- `/ports/{slug}.md`
+- `/glossary/{slug}.md`
+- `/methods/{slug}.md`
+- `/freight-rates/{route}.md`
+- `/ar/routes/{slug}.md`, `/ar/countries/{slug}.md`, `/ar/ports/{slug}.md`, `/ar/glossary/{slug}.md`, `/ar/methods/{slug}.md`
+
+Example URLs:
+
+- [Shanghai → Jeddah route](https://worldfreighthub.net/routes/shanghai-jeddah.md)
+- [Saudi Arabia country profile](https://worldfreighthub.net/countries/saudi-arabia.md)
+- [Jebel Ali port profile](https://worldfreighthub.net/ports/jebel-ali.md)
+- [FCL method](https://worldfreighthub.net/methods/fcl.md)
+- [Shekou → Jebel Ali quote history](https://worldfreighthub.net/freight-rates/shekou-to-jebel-ali.md)
+- [Arabic: Shanghai → Jeddah route](https://worldfreighthub.net/ar/routes/shanghai-jeddah.md)

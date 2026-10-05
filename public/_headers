@@ -39,6 +39,42 @@
 /robots.txt
   Cache-Control: public, max-age=3600
 
+# Machine-readable markdown — explicit Content-Type (Cloudflare MIME table may not map .md)
+/routes/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/countries/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ports/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/glossary/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/methods/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/freight-rates/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ar/routes/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ar/countries/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ar/ports/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ar/glossary/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/ar/methods/*.md
+  Content-Type: text/markdown; charset=utf-8
+
 # HTML pages — edge cache with stale-while-revalidate
 /*
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Link: </sitemap-index.xml>; rel="sitemap"
+  Link: </llms.txt>; rel="llms"
