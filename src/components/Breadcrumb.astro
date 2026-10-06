@@ -13,15 +13,16 @@ interface Props {
 
 const { items, locale = 'en' } = Astro.props;
 
-const list = [
-  { '@type': 'ListItem', position: 1, name: t(locale, 'breadcrumb.home'), item: '/' },
-  ...items.map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 2,
-    name: item.label,
-    ...(item.href ? { item: item.href } : {}),
-  })),
-];
+const startsWithHome =
+  items.length > 0 &&
+  (items[0].href === '/' || items[0].label === t(locale, 'breadcrumb.home'));
+const crumbs = startsWithHome ? items : [{ label: t(locale, 'breadcrumb.home'), href: '/' }, ...items];
+const list = crumbs.map((item, index) => ({
+  '@type': 'ListItem',
+  position: index + 1,
+  name: item.label,
+  ...(item.href ? { item: item.href } : {}),
+}));
 ---
 
 <nav aria-label="Breadcrumb">
