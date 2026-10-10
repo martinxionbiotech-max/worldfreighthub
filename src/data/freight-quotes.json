@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-10T02:36:00.000Z",
+  "updated_at": "2026-10-10T02:37:00.000Z",
   "quotes": [
     {
       "id": "q-20260922-6500-shekou-to-jebel-ali",
@@ -1027,7 +1027,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-10-10",
       "valid_until": "2026-10-17",
-      "notes": "As quoted 3200/3600 (20GP/40HQ), all-in incl. PCS. Sailing 10.20, direct, transit 17-19 days. OWS surcharge: 20GP ≥10t +$100; ≥15t +$150; ≥19t +$200 (space subject to confirmation); ≥24t +$300 (space subject to confirmation); over-height ≥10t: rate and space subject to separate confirmation. [假设回填: 起运港按上次同货代口径 Shekou, 待确认]",
+      "notes": "As quoted 3200/3600 (20GP/40HQ), all-in incl. PCS. Sailing 10.20, direct, transit 17-19 days. OWS surcharge: 20GP ≥10t +$100; ≥15t +$150; ≥19t +$200 (space subject to confirmation); ≥24t +$300 (space subject to confirmation); over-height ≥10t: rate and space subject to separate confirmation.",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
@@ -1069,7 +1069,7 @@
       "source_type": "Freight Forwarder",
       "valid_from": "2026-10-10",
       "valid_until": "2026-10-17",
-      "notes": "As quoted 3500/3900 (20GP/40HQ). Same 10.20 vessel, direct. OWS surcharge: 20GP ≥10t +$100; ≥15t +$150; ≥19t +$200 (space subject to confirmation); ≥24t +$300 (space subject to confirmation); over-height ≥10t: rate and space subject to separate confirmation. [假设回填: 起运港按上次同货代口径 Shekou, 待确认]",
+      "notes": "As quoted 3500/3900 (20GP/40HQ). Same 10.20 vessel, direct. OWS surcharge: 20GP ≥10t +$100; ≥15t +$150; ≥19t +$200 (space subject to confirmation); ≥24t +$300 (space subject to confirmation); over-height ≥10t: rate and space subject to separate confirmation.",
       "forwarder_reference": null,
       "service_type": null,
       "shipping_line": null,
