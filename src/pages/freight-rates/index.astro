@@ -34,7 +34,7 @@ const schema = [
 
 const fmtDate = (d) => (d ? d : '—');
 const fmtRate = (q) => `${q.currency} ${Number(q.rate).toLocaleString('en-US')}`;
-const regionName = { 'middle-east': 'Middle East', europe: 'Europe', 'southeast-asia': 'South & Southeast Asia' };
+const regionName = { 'middle-east': 'Middle East', europe: 'Europe', 'southeast-asia': 'South & Southeast Asia', 'latin-america': 'Latin America' };
 
 /** P0-3: optional basis/confidence badges — rendered only when the field exists. */
 const basisLabel = { 'port-to-port': 'Port-to-port', 'all-in': 'All-in' };
@@ -61,12 +61,23 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
       </p>
 
       <div class="note">
-        <strong>November 2026 update:</strong> records dated 2026-10-21 carry a
-        1–30 November validity window for Bay of Bengal and South-East Asian
-        lanes. Their origin is recorded as <strong>Shekou</strong> — this site's
-        default origin — because the source did not state one; confirm the origin
-        and current rate with a forwarder before booking. Surcharges, weight
-        limits and special rates are shown in the <strong>Notes</strong> column.
+        <strong>Recent updates (2026-10-21):</strong>
+        <ul>
+          <li>
+            <strong>Bay of Bengal &amp; South-East Asia</strong> — November 2026
+            indications with a 1–30 November validity window. Their origin is
+            recorded as <strong>Shekou</strong> (this site's default) because the
+            source did not state one; confirm origin and rate before booking.
+          </li>
+          <li>
+            <strong>Latin America</strong> — sailings dated 25 October to
+            14 November 2026, with carrier, sailing date and allocation shown in
+            the <strong>Notes</strong> column.
+          </li>
+        </ul>
+        Surcharges, weight limits, special rates and vessel allocations are shown
+        in the Notes column. All records are indicative forwarder quotes, not
+        guaranteed market prices.
       </div>
 
       <div class="note">

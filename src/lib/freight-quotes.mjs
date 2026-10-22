@@ -75,10 +75,20 @@ export const REGION_COUNTRY_MAP = {
   Vietnam: 'southeast-asia',
   Cambodia: 'southeast-asia',
   Philippines: 'southeast-asia',
+  Mexico: 'latin-america',
+  Colombia: 'latin-america',
+  Panama: 'latin-america',
+  Peru: 'latin-america',
+  Chile: 'latin-america',
+  Venezuela: 'latin-america',
+  Suriname: 'latin-america',
+  'Dominican Republic': 'latin-america',
+  Jamaica: 'latin-america',
+  Nicaragua: 'latin-america',
 };
 
 /** Region list — initial regions only (doc §12). */
-export const REGIONS = ['middle-east', 'europe', 'southeast-asia'];
+export const REGIONS = ['middle-east', 'europe', 'southeast-asia', 'latin-america'];
 
 export const DEFAULT_WINDOW_DAYS = 5;
 
