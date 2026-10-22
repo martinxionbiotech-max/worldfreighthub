@@ -67,10 +67,18 @@ export const REGION_COUNTRY_MAP = {
   Romania: 'europe',
   Austria: 'europe',
   Switzerland: 'europe',
+  Bangladesh: 'southeast-asia',
+  Indonesia: 'southeast-asia',
+  Malaysia: 'southeast-asia',
+  Singapore: 'southeast-asia',
+  Thailand: 'southeast-asia',
+  Vietnam: 'southeast-asia',
+  Cambodia: 'southeast-asia',
+  Philippines: 'southeast-asia',
 };
 
 /** Region list — initial regions only (doc §12). */
-export const REGIONS = ['middle-east', 'europe'];
+export const REGIONS = ['middle-east', 'europe', 'southeast-asia'];
 
 export const DEFAULT_WINDOW_DAYS = 5;
 

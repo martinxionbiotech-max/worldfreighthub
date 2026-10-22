@@ -34,7 +34,7 @@ const schema = [
 
 const fmtDate = (d) => (d ? d : '—');
 const fmtRate = (q) => `${q.currency} ${Number(q.rate).toLocaleString('en-US')}`;
-const regionName = { 'middle-east': 'Middle East', europe: 'Europe' };
+const regionName = { 'middle-east': 'Middle East', europe: 'Europe', 'southeast-asia': 'South & Southeast Asia' };
 
 /** P0-3: optional basis/confidence badges — rendered only when the field exists. */
 const basisLabel = { 'port-to-port': 'Port-to-port', 'all-in': 'All-in' };
