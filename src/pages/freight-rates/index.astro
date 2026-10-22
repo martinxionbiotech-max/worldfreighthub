@@ -61,6 +61,15 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
       </p>
 
       <div class="note">
+        <strong>November 2026 update:</strong> records dated 2026-10-21 carry a
+        1–30 November validity window for Bay of Bengal and South-East Asian
+        lanes. Their origin is recorded as <strong>Shekou</strong> — this site's
+        default origin — because the source did not state one; confirm the origin
+        and current rate with a forwarder before booking. Surcharges, weight
+        limits and special rates are shown in the <strong>Notes</strong> column.
+      </div>
+
+      <div class="note">
         <strong>Methodology:</strong> each record binds an origin, destination,
         equipment, rate, currency, quote date and validity window. Quotes arrive
         as forwarder indications, are validated field-by-field (missing critical
@@ -99,6 +108,7 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
                   <th scope="col">Confidence</th>
                   <th scope="col">Validity</th>
                   <th scope="col">Quote type</th>
+                  <th scope="col">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,6 +123,7 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
                     <td>{q.confidence ? <span class={`badge ${confClass[q.confidence] || ''}`}>{q.confidence}</span> : '—'}</td>
                     <td>{q.valid_until ? fmtDate(q.valid_until) : '—'}{effectiveStatus(q) === 'expired' ? ' (expired)' : ''}</td>
                     <td>{q.quote_type}</td>
+                    <td class="q-notes">{q.notes || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -140,6 +151,7 @@ const confClass = { HIGH: 'badge-high', MEDIUM: 'badge-medium', LOW: 'badge-low'
     font-family: inherit;
   }
   .filter-row input { flex: 1; min-width: 220px; }
+  .q-notes { font-size: 0.88rem; color: var(--muted); min-width: 220px; max-width: 340px; }
   .badge {
     display: inline-block;
     padding: 2px 8px;
