@@ -34,7 +34,7 @@ export const ORGANIZATION = {
   },
   identifier: {
     propertyID: 'Unified Social Credit Code',
-    value: '92330782MA8G3P***',
+    value: '92330782MA8GW3P***',
   },
   editorialPolicy: `${SITE_URL}/editorial-policy/`,
   correctionsPolicy: `${SITE_URL}/corrections/`,
@@ -53,6 +53,10 @@ export const ORGANIZATION_SCHEMA = {
     address: {
       '@type': 'PostalAddress',
       ...ORGANIZATION.address,
+    },
+    identifier: {
+      '@type': 'PropertyValue',
+      ...ORGANIZATION.identifier,
     },
     logo: {
       '@type': 'ImageObject',
