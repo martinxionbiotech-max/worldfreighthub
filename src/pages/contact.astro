@@ -1,31 +1,48 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
-import { SITE_URL, CONTACT } from '../site';
+import { SITE_URL, SITE_NAME, CONTACT, ORGANIZATION } from '../site';
 ---
 
 <BaseLayout
   title="Contact"
-  description="Contact the WorldFreightHub team with corrections, partnerships or general enquiries."
+  description="Contact the WorldFreightHub team for corrections, quote requests and partnership enquiries — by WhatsApp, phone or email — and what to expect when you do."
   canonical={`${SITE_URL}/contact/`}
 >
   <div class="page-header">
     <div class="container">
       <Breadcrumb items={[{ label: 'Contact' }]} />
       <h1>Contact</h1>
-      <p class="lead">Get in touch with the WorldFreightHub team.</p>
+      <p class="lead">Get in touch with the {SITE_NAME} team.</p>
       <blockquote class="tldr">
         <p>
-          <strong>TL;DR:</strong> Contact gives 1 entry point for corrections and quote requests: WhatsApp, phone or email. The same 3-tier confidence standard (HIGH/MEDIUM/LOW) applies to anything you receive back. A request is routed rather than resold, so 0 fees are added to the quote handoff.
+          <strong>TL;DR:</strong> Contact gives one entry point for corrections
+          and quote requests — WhatsApp, phone or email. Quote requests are the
+          primary channel and are routed to a provider on your lane, not
+          resold, with $0 fee added. Most requests are answered within 1–2
+          business days.
         </p>
       </blockquote>
     </div>
   </div>
 
   <section class="section container">
+    <h2>Request a freight quote (primary channel)</h2>
+    <p>
+      The main reason to contact us is to request a freight quote for a
+      China–GCC shipment. The fastest route is the{' '}
+      <a href="/get-quote/">get-quote form</a>, which collects your origin,
+      destination, cargo, weight, volume, incoterm and method, and routes the
+      request to a provider on your selected corridor.
+    </p>
+    <p>
+      <a class="btn btn-primary" href="/get-quote/">Request a quote</a>
+    </p>
+
     <h2>Contact us directly</h2>
     <p>
-      For the fastest response, reach {CONTACT.name} on WhatsApp or by phone — or email us.
+      To reach {CONTACT.name} directly — for a quote, a correction or a
+      general question — use WhatsApp, phone or email:
     </p>
 
     <div class="contact-actions" style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:1.5rem 0;">
@@ -40,21 +57,67 @@ import { SITE_URL, CONTACT } from '../site';
       </a>
     </div>
 
-    <h2>General enquiries</h2>
+    <h2>What to expect when you contact us</h2>
     <p>
-      For corrections, data updates or general questions, email
-      <a href={`mailto:${CONTACT.email}`}> {CONTACT.email}</a>.
+      We aim to respond to quote requests and general enquiries within{' '}
+      <strong>1–2 business days</strong>, depending on the completeness of your
+      details and the provider's availability. Quote requests are routed to a
+      provider on your selected corridor at no cost to you — we add no fee and
+      there is no obligation to accept any quote you receive.
+    </p>
+    <p>
+      Corrections and data updates are reviewed one issue at a time so each
+      report can be traced against the published data, as described on the{' '}
+      <a href="/corrections/">corrections page</a>.
+    </p>
+
+    <h2>Corrections and data updates</h2>
+    <p>
+      If you find incorrect or outdated data, email{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> and include the
+      page URL, the specific fact or figure that is wrong, and — where possible
+      — the correction with its source. See the{' '}
+      <a href="/corrections/">corrections policy</a> for how reports are
+      reviewed and recorded.
     </p>
 
     <h2>Partnerships & directory</h2>
     <p>
       If you are a freight forwarder, customs broker or logistics provider
       interested in the directory, use the same address with the subject line
-      "Directory".
+      "Directory". Listings are published only after source-documented
+      confirmation, as described in the{' '}
+      <a href="/provider-verification-policy/">provider verification policy</a>.
     </p>
 
-    <p class="mt-3">
-      <a class="btn btn-primary" href="/get-quote/">Request a quote</a>
+    <h2>Who you are contacting</h2>
+    <p>
+      {SITE_NAME} is operated by{' '}
+      <strong>{ORGANIZATION.legalName}</strong>, established in{' '}
+      {ORGANIZATION.foundingDate} and located at{' '}
+      {ORGANIZATION.address.streetAddress}, {ORGANIZATION.address.addressLocality},{' '}
+      {ORGANIZATION.address.addressRegion}, China. The contact details on this
+      page are the operator's. Content on the site is produced and reviewed by
+      the {ORGANIZATION.publisherName}.
     </p>
+
+    <h2>What we do not do</h2>
+    <p>
+      To set expectations clearly, {SITE_NAME} is an information resource, not
+      a freight forwarder, carrier, customs broker or marketplace. We do not
+      publish live prices or schedules, and we do not ourselves carry or clear
+      goods. When you contact us for a quote, we connect you with a provider —
+      we do not quote on the provider's behalf, and we are not a party to any
+      carriage contract that results.
+    </p>
+
+    <p>
+      Related pages:{' '}
+      <a href="/about/">About</a> ·{' '}
+      <a href="/terms-of-use/">Terms of Use</a> ·{' '}
+      <a href="/privacy-policy/">Privacy Policy</a> ·{' '}
+      <a href="/disclaimer/">Disclaimer</a>.
+    </p>
+    <p class="muted">Last updated: 23 October 2026</p>
   </section>
 </BaseLayout>
