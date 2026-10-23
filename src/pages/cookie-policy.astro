@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
-import { SITE_URL, CONTACT } from '../site';
+import { SITE_URL, SITE_NAME, CONTACT } from '../site';
 ---
 
 <BaseLayout
   title="Cookie Policy"
-  description="WorldFreightHub's cookie policy: which cookies this site sets, which third-party services may set cookies, and how to control them."
+  description="WorldFreightHub's cookie policy: the cookie categories on this site, which third-party services may set cookies, their purpose and duration, and how to control them."
   canonical={`${SITE_URL}/cookie-policy/`}
 >
   <div class="page-header">
@@ -14,50 +14,279 @@ import { SITE_URL, CONTACT } from '../site';
       <Breadcrumb items={[{ label: 'Cookie Policy' }]} />
       <h1>Cookie Policy</h1>
       <p class="lead">
-        A short, factual description of how this site uses cookies — mostly it
-        does not.
+        A factual description of how this site uses cookies and similar
+        technologies — which for the most part it does not. This page explains
+        what is set, why, and how you control it.
       </p>
     </div>
   </div>
 
   <section class="section container">
-    <h2>Cookies we set ourselves</h2>
+    <h2>1. What cookies are</h2>
     <p>
-      This site does not set its own tracking or advertising cookies. We do
-      not run analytics scripts and we do not build visitor profiles.
+      This site, {SITE_NAME} ({SITE_URL}), is operated by YIWU DINGWEI TRADING
+      COMPANY. A cookie is a small text file that a website asks your browser
+      to store on your device. Cookies are commonly used to remember
+      preferences, to keep a user signed in, or to measure how a site is used.
+      They can be set by the site you are visiting (first-party) or by a
+      service that the site loads, such as a font provider or a form service
+      (third-party).
+    </p>
+    <p>
+      "Similar technologies" — such as local storage, or the request data
+      logged by a server or a third-party service — are also covered by this
+      policy where they perform the same functions as cookies.
     </p>
 
-    <h2>Third-party cookies</h2>
+    <h3>1.1 Types of cookie</h3>
     <p>
-      Two third parties may set cookies in connection with this site:
+      Cookies are usually described in two ways: by their lifespan, and by who
+      sets them.
     </p>
     <ul>
       <li>
-        <strong>FormSubmit</strong> — the quote form is processed by
-        formsubmit.co, which may set a session cookie to prevent spam when you
-        submit the <a href="/get-quote/">get-quote form</a>.
+        <strong>Session cookies</strong> live only for the duration of your
+        browsing session and are deleted when you close the browser. They are
+        typically used for things like keeping a form submission or a login
+        working while you move between pages.
       </li>
       <li>
-        <strong>Google Fonts</strong> — the Arabic-language pages load the
-        Tajawal and Noto Naskh Arabic fonts from Google's font service, which
-        logs standard request data as described in Google's own privacy
-        documentation.
+        <strong>Persistent cookies</strong> remain on your device for a set
+        period — from minutes to years — until they expire or are deleted. They
+        are typically used to remember a preference or to recognise a returning
+        visitor.
+      </li>
+      <li>
+        <strong>First-party cookies</strong> are set by the website shown in
+        your address bar.
+      </li>
+      <li>
+        <strong>Third-party cookies</strong> are set by a different domain —
+        for example, a font provider or a form service that a page loads.
       </li>
     </ul>
 
-    <h2>Controlling cookies</h2>
+    <h3>1.2 Local storage and similar mechanisms</h3>
     <p>
-      Because this site sets no functional cookies of its own, no consent
-      banner is required for core browsing. You can block third-party cookies
-      in your browser settings without losing site functionality. Clearing
-      cookies has no effect on your ability to read pages or use the tools.
+      In addition to cookies, browsers provide local storage (localStorage and
+      sessionStorage), which can hold data the same way a cookie does but is
+      not automatically sent with every request. This site does not use local
+      storage for tracking or personalisation, and does not place any data in
+      it for its own purposes.
     </p>
 
-    <h2>Questions</h2>
+    <h2>2. Cookies this site sets itself</h2>
     <p>
-      Cookie-related questions:
-      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      This site does <strong>not</strong> set its own tracking, advertising or
+      analytics cookies. We do not run analytics scripts, we do not build
+      visitor profiles, and we do not require a login that would need a
+      session cookie. As a result, there is no first-party cookie consent
+      banner for core browsing — there is nothing of that kind to consent to.
     </p>
-    <p class="muted">Last updated: 19 September 2026</p>
+
+    <h2>3. Third-party cookies</h2>
+    <p>
+      Two third-party services may set or use cookies or similar storage in
+      connection with this site. Both are described in the table below.
+    </p>
+
+    <h3>3.1 Cookie and technology table</h3>
+    <div class="table-wrap" style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Category</th>
+            <th>Purpose</th>
+            <th>Duration</th>
+            <th>Set by</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>FormSubmit</td>
+            <td>Functional / anti-abuse</td>
+            <td>Processes the get-quote form and may set a session marker to
+            prevent automated spam submissions.</td>
+            <td>Session (ends when you close the browser)</td>
+            <td>Third-party (formsubmit.co)</td>
+          </tr>
+          <tr>
+            <td>Google Fonts</td>
+            <td>Performance / delivery</td>
+            <td>Serves the Tajawal and Noto Naskh Arabic fonts used on
+            Arabic-language pages; Google logs standard request data.</td>
+            <td>Varies; governed by Google's own policy</td>
+            <td>Third-party (fonts.googleapis.com)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3.2 FormSubmit</h3>
+    <p>
+      The <a href="/get-quote/">get-quote form</a> is processed by{' '}
+      <strong>FormSubmit</strong> (formsubmit.co). When you submit the form,
+      FormSubmit may set a short-lived session cookie to help prevent automated
+      spam. This is a functional, anti-abuse mechanism — it is not used to
+      track you across other websites or to build a profile. For details of
+      how FormSubmit handles data, see its own privacy documentation.
+    </p>
+
+    <h3>3.3 Google Fonts</h3>
+    <p>
+      The Arabic-language pages of this site load the Tajawal and Noto Naskh
+      Arabic fonts from Google's font service. Google logs standard request
+      data — such as the IP address, browser type and the page making the
+      request — as described in Google's own privacy documentation. This only
+      affects visitors to the <a href="/ar/">Arabic version</a> of the site;
+      the English pages do not load Google Fonts.
+    </p>
+
+    <h2>4. Cookie categories in summary</h2>
+    <p>
+      For clarity, the categories of cookie that exist on this site are:
+    </p>
+    <ul>
+      <li><strong>Strictly necessary / functional:</strong> none set by us; a
+      session marker from FormSubmit may apply only when you submit the quote
+      form.</li>
+      <li><strong>Performance / analytics:</strong> none. We run no analytics.</li>
+      <li><strong>Advertising / targeting:</strong> none. We set no advertising
+      cookies and run no ad-targeting scripts.</li>
+      <li><strong>Third-party delivery:</strong> Google Fonts on Arabic pages
+      only, to render fonts.</li>
+    </ul>
+    <p>
+      Because there are no analytics or advertising cookies, there is nothing
+      on this site that requires an opt-in consent banner. The only cookies in
+      play are a functional anti-spam marker and a font delivery service on
+      the Arabic pages.
+    </p>
+
+    <h2>5. Controlling and deleting cookies</h2>
+    <p>
+      Because this site sets no functional cookies of its own, no consent
+      banner is required for core browsing, and clearing cookies has no effect
+      on your ability to read pages or use the tools.
+    </p>
+    <p>
+      You can control cookies in your browser settings. Most browsers let you:
+    </p>
+    <ul>
+      <li>view and delete stored cookies;</li>
+      <li>block third-party cookies specifically;</li>
+      <li>block all cookies; and</li>
+      <li>clear cookies automatically when the browser closes.</li>
+    </ul>
+    <p>
+      Blocking third-party cookies will disable the FormSubmit anti-spam marker
+      and may stop Google Fonts from loading, but will not otherwise reduce
+      this site's functionality. Consult your browser's help pages for the
+      exact steps, as each browser differs.
+    </p>
+    <p>
+      Note that some browsers offer "private" or "incognito" modes that do not
+      retain cookies after the session closes. Using such a mode will not
+      change your experience of this site, since there is nothing of ours to
+      retain in the first place.
+    </p>
+
+    <h3>5.1 Browser-specific instructions</h3>
+    <p>
+      For the most common browsers, cookie controls are located as follows:
+    </p>
+    <ul>
+      <li><strong>Chrome</strong> — Settings → Privacy and security → Cookies
+      and other site data.</li>
+      <li><strong>Firefox</strong> — Settings → Privacy &amp; Security →
+      Cookies and Site Data.</li>
+      <li><strong>Safari</strong> — Preferences → Privacy → Cookies and
+      website data.</li>
+      <li><strong>Edge</strong> — Settings → Cookies and site permissions →
+      Manage and delete cookies and site data.</li>
+    </ul>
+    <p>
+      These locations change as browsers are updated; refer to the browser's
+      own help documentation for current steps.
+    </p>
+
+    <h2>6. Do Not Track</h2>
+    <p>
+      This site does not engage in tracking, so it does not respond differently
+      to the Do Not Track (DNT) signal — there is no tracking for DNT to
+      disable. We collect no behavioural data in the first place.
+    </p>
+
+    <h2>7. Consent under GDPR and ePrivacy</h2>
+    <p>
+      The EU's ePrivacy Directive and the UK and EU GDPR require consent before
+      placing non-essential cookies — such as analytics or advertising cookies
+      — on a user's device. Because this site sets no such cookies itself, and
+      its only third-party cookies are a functional anti-spam marker (FormSubmit)
+      and a font delivery service (Google Fonts on Arabic pages), no consent
+      banner is currently required or shown.
+    </p>
+    <p>
+      If we ever introduce analytics, advertising or other non-essential
+      cookies, we will add a consent mechanism before those cookies are placed,
+      and this policy will be updated to describe them.
+    </p>
+
+    <h2>8. Changes to this cookie policy</h2>
+    <p>
+      If the services this site relies on change — for example, if we add an
+      analytics or advertising service in the future — this policy will be
+      updated with a new "Last updated" date, and a consent banner will be
+      introduced if a new category of cookie makes one necessary. We do not
+      introduce tracking cookies silently, and we do not retroactively change
+      the description of a cookie already described here without updating this
+      page.
+    </p>
+
+    <h2>9. Relationship to the privacy policy</h2>
+    <p>
+      This cookie policy supplements our{' '}
+      <a href="/privacy-policy/">privacy policy</a>, which explains what
+      personal information we collect, how we use it, how long we keep it, and
+      your GDPR and CCPA rights. Please read that policy for the full picture.
+    </p>
+
+    <h2>10. Questions</h2>
+    <p>
+      Cookie-related questions:{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+    </p>
+    <h2>11. Further reading</h2>
+    <p>
+      The organisations below publish general, independent guidance on cookies
+      and how to control them. They are listed for your convenience and are
+      not affiliated with this site:
+    </p>
+    <ul>
+      <li>
+        <strong>Your Online Choices (EDAA)</strong> — an EU industry guide to
+        behavioural advertising choices at youronlinechoices.com.
+      </li>
+      <li>
+        <strong>Network Advertising Initiative (NAI)</strong> — a US-based
+        opt-out resource at networkadvertising.org.
+      </li>
+      <li>
+        <strong>All About Cookies</strong> — general, non-technical guidance on
+        cookies and how to manage them at allaboutcookies.org.
+      </li>
+    </ul>
+    <p>
+      These links point to external sites over which we have no control and
+      for which we are not responsible.
+    </p>
+    <p>
+      Related policies:{' '}
+      <a href="/privacy-policy/">Privacy Policy</a> ·{' '}
+      <a href="/terms-of-use/">Terms of Use</a> ·{' '}
+      <a href="/disclaimer/">Disclaimer</a>.
+    </p>
+    <p class="muted">Last updated: 23 October 2026</p>
   </section>
 </BaseLayout>
