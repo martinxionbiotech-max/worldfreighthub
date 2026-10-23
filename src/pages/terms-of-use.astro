@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
-import { SITE_URL, SITE_NAME, CONTACT } from '../site';
+import { SITE_URL, SITE_NAME, CONTACT, ORGANIZATION } from '../site';
 ---
 
 <BaseLayout
   title="Terms of Use"
-  description="The terms under which you may use WorldFreightHub: the informational nature of the data, rate disclaimers, acceptable use and liability limits."
+  description="The terms under which you may use WorldFreightHub: the informational nature of the data, rate disclaimers, acceptable use, liability limits, governing law and dispute resolution."
   canonical={`${SITE_URL}/terms-of-use/`}
 >
   <div class="page-header">
@@ -15,33 +15,74 @@ import { SITE_URL, SITE_NAME, CONTACT } from '../site';
       <h1>Terms of Use</h1>
       <p class="lead">
         These terms apply to your use of {SITE_NAME} ({SITE_URL}). By using the
-        site you accept them.
+        site you accept them. If you do not agree, please do not use the site.
       </p>
     </div>
   </div>
 
   <section class="section container">
-    <h2>1. What this site is</h2>
+    <h2>1. Acceptance of these terms</h2>
+    <p>
+      These Terms of Use form a binding agreement between you and{' '}
+      {SITE_NAME} ({SITE_URL}). By accessing or using the site, you confirm
+      that you accept these terms in full. If you are using the site on behalf
+      of a company or organisation, you confirm that you have authority to
+      bind that entity to these terms, and "you" refers to that entity.
+    </p>
+    <p>
+      If you do not agree to these terms, or if you are not able to form a
+      binding contract, you must not use the site.
+    </p>
+
+    <h2>2. What this site is</h2>
     <p>
       {SITE_NAME} is a freight information reference covering the China–GCC
       corridor. It is <strong>not</strong> a freight forwarder, carrier,
-      customs broker or legal advisor. Nothing on this site constitutes an
-      offer to carry goods, a quotation, or professional advice.
+      customs broker, marketplace or legal advisor. Nothing on this site
+      constitutes an offer to carry goods, a binding quotation, or professional
+      advice. The service the site provides is information and, through the
+      get-quote form, an introduction between you and a freight provider.
+    </p>
+    <p>
+      The operator of {SITE_NAME} is{' '}
+      <strong>{ORGANIZATION.legalName}</strong>, established in{' '}
+      {ORGANIZATION.foundingDate} and located at{' '}
+      {ORGANIZATION.address.streetAddress}, {ORGANIZATION.address.addressLocality},{' '}
+      {ORGANIZATION.address.addressRegion}, China. You may contact the
+      operator at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
     </p>
 
-    <h2>2. Rates and data are estimates</h2>
+    <h2>3. Eligibility</h2>
+    <p>
+      The site is intended for businesses and individuals involved in
+      international trade and logistics. By using the site you represent that
+      you are at least 18 years old and have the legal capacity to enter into
+      these terms. The site is not directed at children, and we do not
+      knowingly collect personal information from children.
+    </p>
+    <p>
+      If you are using the site on behalf of an organisation, you confirm that
+      you have authority to bind that organisation to these terms, and that
+      organisation accepts them.
+    </p>
+
+    <h2>4. Rates and data are estimates, not quotes</h2>
     <p>
       All freight rates, transit times, duty, VAT and cost figures on this site
       are <strong>indicative reference estimates</strong>, clearly labelled
       HIGH / MEDIUM / LOW confidence where data quality permits. Rates move
-      constantly with fuel, season and geopolitical risk. Always confirm
-      figures with a licensed carrier or customs broker before making
-      commercial decisions. See the <a href="/methodology/">methodology</a>
-      and <a href="/data-changelog/">data changelog</a> for how figures are
-      produced and updated.
+      constantly with fuel, season, carrier capacity and geopolitical risk.
+      Always confirm figures with a licensed carrier or customs broker before
+      making commercial decisions.
+    </p>
+    <p>
+      See the <a href="/methodology/">methodology</a> and the{' '}
+      <a href="/data-changelog/">data changelog</a> for how figures are
+      produced and updated, and the <a href="/disclaimer/">disclaimer</a> for
+      the full statement of the limits on those figures.
     </p>
 
-    <h2>3. No liability for decisions based on site data</h2>
+    <h2>5. No liability for decisions based on site data</h2>
     <p>
       We work to keep information accurate and source-backed, but we make no
       warranty that any figure is current at the moment you read it. To the
@@ -51,48 +92,173 @@ import { SITE_URL, SITE_NAME, CONTACT } from '../site';
       opportunities.
     </p>
 
-    <h2>4. Third-party providers and external links</h2>
+    <h2>6. Third-party providers and external links</h2>
     <p>
       The directory lists freight providers, and quote requests are routed to
       providers on your selected corridor. Any engagement between you and a
-      provider — pricing, carriage, insurance, disputes — is a contract
-      between you and that provider. External links to port authorities,
-      customs authorities and other sources are provided for reference; we do
-      not control their content.
+      provider — pricing, carriage, insurance, cargo loss or damage, delays and
+      disputes — is a contract between you and that provider alone. {SITE_NAME}{' '}
+      is not a party to that contract and bears no responsibility for the
+      provider's performance.
+    </p>
+    <p>
+      When you engage a provider, that provider's own terms and conditions,
+      bills of lading, waybills and tariffs govern the carriage. You should
+      read those documents carefully before booking.
+    </p>
+    <p>
+      External links to port authorities, customs authorities and other sources
+      are provided for reference. We do not control their content, and a link
+      does not imply endorsement.
     </p>
 
-    <h2>5. Acceptable use</h2>
+    <h2>7. Acceptable use</h2>
+    <p>You agree not to:</p>
     <ul>
-      <li>Do not scrape, republish or resell site data at scale without permission.</li>
-      <li>Do not use the quote form to send spam or false requests.</li>
-      <li>Do not attempt to disrupt site availability.</li>
+      <li>scrape, republish or resell site data at scale without permission;</li>
+      <li>use the quote form to send spam, false requests or misleading
+      shipment information;</li>
+      <li>attempt to disrupt, degrade or gain unauthorised access to the site;</li>
+      <li>misrepresent your identity or the origin of a request;</li>
+      <li>use the site in any way that violates applicable law; or</li>
+      <li>circumvent any technical measure we use to protect the site.</li>
     </ul>
-
-    <h2>6. Intellectual property</h2>
     <p>
-      Site text, tables and data compilations are the property of the operator
-      unless a third-party source is attributed. Short quotations with a link
-      to the page are permitted.
+      We may suspend or terminate access to the site for anyone who violates
+      these terms, without notice and without liability.
     </p>
 
-    <h2>7. Corrections</h2>
+    <h2>8. Intellectual property</h2>
     <p>
-      Errors should be reported through the
-      <a href="/corrections/">corrections page</a>; we review and record every
-      correction on the <a href="/data-changelog/">data changelog</a>.
+      Site text, tables, data compilations, design and structure are the
+      property of the operator unless a third-party source is attributed.
+      Short quotations with a link to the page are permitted. You may not
+      reproduce substantial portions of the site, or its data compilations,
+      without prior written permission.
+    </p>
+    <p>
+      The site's data compilations — its structured rates, routes, ports,
+      countries and directory records — are protected as a compilation even
+      where individual facts are not copyrightable. You may not systematically
+      extract or reuse that compilation for a competing service.
+    </p>
+    <p>
+      Third-party trademarks and logos referenced on the site belong to their
+      respective owners and are used only for identification.
     </p>
 
-    <h2>8. Changes to these terms</h2>
+    <h2>9. User-submitted content</h2>
     <p>
-      We may update these terms. Continued use after an update means
-      acceptance of the revised terms.
+      By submitting information through the quote form or by email, you
+      represent that the information is accurate and that you have the right
+      to provide it. You grant us the limited right to use that information to
+      route your request to a provider and to respond to you, as described in
+      the <a href="/privacy-policy/">privacy policy</a>. We do not claim
+      ownership of the shipment details you submit.
     </p>
 
-    <h2>Contact</h2>
+    <h2>10. Corrections</h2>
     <p>
-      Questions about these terms:
-      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      Errors should be reported through the{' '}
+      <a href="/corrections/">corrections page</a>. We review and record every
+      correction on the <a href="/data-changelog/">data changelog</a>, so
+      there is a visible trail from report to correction.
     </p>
-    <p class="muted">Last updated: 19 September 2026</p>
+
+    <h2>11. Disclaimer of warranties</h2>
+    <p>
+      The site is provided on an "as is" and "as available" basis. To the
+      fullest extent permitted by law, {SITE_NAME} and its operator disclaim
+      all warranties, express or implied, including warranties of
+      merchantability, fitness for a particular purpose, accuracy and
+      non-infringement. We do not warrant that the site will be uninterrupted,
+      error-free or free of harmful components.
+    </p>
+
+    <h2>12. Limitation of liability</h2>
+    <p>
+      To the fullest extent permitted by law, {SITE_NAME} and its operator
+      shall not be liable for any indirect, incidental, special, consequential
+      or punitive damages, or for any loss of profits, revenue, data or
+      goodwill, arising out of or related to your use of the site or your
+      reliance on its information — including shipping delays, customs
+      penalties, price differences or missed commercial opportunities.
+    </p>
+    <p>
+      Where applicable law does not allow the exclusion or limitation of
+      certain warranties or liabilities, the above limitations apply to the
+      maximum extent permitted by that law. Nothing in these terms limits
+      liability that cannot lawfully be limited.
+    </p>
+
+    <h2>13. Indemnification</h2>
+    <p>
+      You agree to hold {SITE_NAME} and its operator harmless from any claims,
+      losses or expenses arising from your misuse of the site, your breach of
+      these terms, or your violation of the rights of a third party through
+      your use of the site.
+    </p>
+
+    <h2>14. Changes to these terms</h2>
+    <p>
+      We may update these terms from time to time. The revised terms are posted
+      on this page with a new "Last updated" date. Continued use of the site
+      after an update means acceptance of the revised terms. Material changes
+      are announced on the <a href="/data-changelog/">data changelog</a>.
+    </p>
+
+    <h2>15. Governing law and dispute resolution</h2>
+    <p>
+      These terms are governed by the laws of the People's Republic of China,
+      reflecting the location of the operator,{' '}
+      {ORGANIZATION.legalName}, in {ORGANIZATION.address.addressLocality},{' '}
+      {ORGANIZATION.address.addressRegion}. Any dispute arising out of or
+      related to these terms or your use of the site shall be subject to the
+      exclusive jurisdiction of the competent courts located in{' '}
+      {ORGANIZATION.address.addressLocality}, {ORGANIZATION.address.addressRegion},
+      China.
+    </p>
+    <p>
+      Before initiating formal proceedings, we ask that you first contact us at{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> so we can attempt
+      to resolve the matter amicably.
+    </p>
+
+    <h2>16. Severability</h2>
+    <p>
+      If any provision of these terms is found to be invalid or unenforceable,
+      that provision shall be limited or removed to the minimum extent
+      necessary, and the remaining provisions shall continue in full force and
+      effect.
+    </p>
+
+    <h2>17. Waiver</h2>
+    <p>
+      Our failure to enforce any provision of these terms is not a waiver of
+      that provision or of our right to enforce it later. A waiver is
+      effective only if given in writing.
+    </p>
+
+    <h2>18. Entire agreement</h2>
+    <p>
+      These terms, together with the <a href="/privacy-policy/">privacy policy</a>{' '}
+      and the <a href="/disclaimer/">disclaimer</a>, form the entire agreement
+      between you and {SITE_NAME} regarding your use of the site, and supersede
+      any prior agreements on that subject.
+    </p>
+
+    <h2>19. Contact</h2>
+    <p>
+      Questions about these terms:{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+    </p>
+    <p>
+      Related policies:{' '}
+      <a href="/privacy-policy/">Privacy Policy</a> ·{' '}
+      <a href="/cookie-policy/">Cookie Policy</a> ·{' '}
+      <a href="/disclaimer/">Disclaimer</a> ·{' '}
+      <a href="/corrections/">Corrections</a>.
+    </p>
+    <p class="muted">Last updated: 23 October 2026</p>
   </section>
 </BaseLayout>
