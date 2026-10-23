@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { SITE_URL, SITE_NAME, CONTACT, ORGANIZATION } from '../site';
+---
+
+<BaseLayout
+  title="Disclaimer"
+  description="WorldFreightHub's disclaimer: rates and quotes are indicative estimates not commitments, third-party carrier liability boundaries, and the limits on duty, port and destination cost figures."
+  canonical={`${SITE_URL}/disclaimer/`}
+>
+  <div class="page-header">
+    <div class="container">
+      <Breadcrumb items={[{ label: 'Disclaimer' }]} />
+      <h1>Disclaimer</h1>
+      <p class="lead">
+        WorldFreightHub is a freight information reference, not a carrier,
+        forwarder or customs broker. This page sets out, plainly, what the
+        figures on this site do and do not mean, and where responsibility for a
+        shipment lies.
+      </p>
+    </div>
+  </div>
+
+  <section class="section container">
+    <h2>1. Informational purpose only</h2>
+    <p>
+      {SITE_NAME} ({SITE_URL}) is operated by{' '}
+      <strong>{ORGANIZATION.legalName}</strong>, established in{' '}
+      {ORGANIZATION.foundingDate}. The site is an informational and research
+      resource for the China–GCC freight corridor. It is{' '}
+      <strong>not</strong> a freight forwarder, carrier, customs broker,
+      marketplace or legal advisor, and it does not itself carry or clear
+      goods.
+    </p>
+    <p>
+      All content on this site — routes, ports, countries, methods, tools and
+      directory listings — is provided for general information only. It does
+      not constitute an offer to carry goods, a binding quotation, a promise of
+      transit time, or professional advice of any kind.
+    </p>
+
+    <h2>2. Rates, quotes and transit times are estimates, not commitments</h2>
+    <p>
+      Every freight rate, transit time, duty, VAT and cost figure on this site
+      is an <strong>indicative reference estimate</strong>, not a live price or
+      a guaranteed schedule. Figures are labelled HIGH / MEDIUM / LOW
+      confidence where data quality permits. A figure shown as a range or a
+      single value is a research estimate, not a promise that your shipment
+      will cost or take that amount.
+    </p>
+    <p>
+      Freight rates move constantly with fuel prices, seasonal demand, carrier
+      capacity, port congestion and geopolitical risk. A rate published today
+      may not be available tomorrow, and a rate shown for one lane may not
+      apply to a specific shipment with its own weight, volume, commodity and
+      delivery terms.
+    </p>
+
+    <h2>3. Quotes are not offers and expire</h2>
+    <p>
+      When you request a quote through the <a href="/get-quote/">get-quote
+      form</a>, any rate or transit time a provider returns is{' '}
+      <strong>that provider's estimate for your stated shipment details</strong>,
+      not a firm offer by {SITE_NAME}. A provider's quote may be subject to:
+    </p>
+    <ul>
+      <li>verification of your cargo's weight, volume, commodity and HS code;</li>
+      <li>availability of space on the relevant vessel or route;</li>
+      <li>changes in fuel, exchange rates, or port and carrier charges; and</li>
+      <li>a validity window, after which the quote lapses.</li>
+    </ul>
+    <p>
+      <strong>The actual rate is only fixed when you receive a written booking
+      confirmation from the carrier or forwarder.</strong> Until that written
+      confirmation is issued, no figure — on this site or in a quote you
+      receive — is a binding price. Always obtain written confirmation of the
+      rate, the transit time and the charges included before booking.
+    </p>
+
+    <h2>4. Third-party carriers, forwarders and agents</h2>
+    <p>
+      This site lists freight providers and, through the quote form, routes
+      your request to a provider on your selected corridor. The carriage of
+      your goods, and any pricing, insurance, cargo loss or damage, delay or
+      dispute arising from that carriage, is a matter between{' '}
+      <strong>you and that provider</strong> under that provider's own terms
+      and conditions. {SITE_NAME} is not a party to that contract.
+    </p>
+    <p>
+      We do not act as your agent, and we do not take custody of goods, money
+      for freight, or insurance premiums on your behalf. We are not responsible
+      for the acts or omissions of any carrier, forwarder, customs broker or
+      agent you engage, whether or not they are listed in our directory.
+    </p>
+
+    <h2>5. Port, duty and destination charges can change</h2>
+    <p>
+      Figures for import duty, VAT, port charges, demurrage, detention,
+      inspection fees and other destination costs are indicative and can change
+      without notice. They depend on factors outside our control, including:
+    </p>
+    <ul>
+      <li>changes in the destination country's tariff or tax rules;</li>
+      <li>the commodity's correct HS code classification;</li>
+      <li>customs valuation of the goods; and</li>
+      <li>port, terminal and carrier surcharges in force at the time of
+      shipment.</li>
+    </ul>
+    <p>
+      Confirm the exact duty, VAT and destination charges for your specific
+      commodity and shipment with a licensed customs broker or the destination
+      authority before relying on any figure.
+    </p>
+
+    <h2>6. Not logistics, legal or trade-compliance advice</h2>
+    <p>
+      Nothing on this site constitutes logistics, legal, tax, customs or trade
+      compliance advice. Information about certifications (such as SABER/SASO
+      for Saudi Arabia), import regulations or dangerous-goods rules is
+      provided for general awareness and may be incomplete or out of date.
+      You are solely responsible for the lawful classification, packing,
+      documentation and compliance of your goods, and for obtaining qualified
+      professional advice where your shipment requires it.
+    </p>
+
+    <h2>7. Accuracy and reliability</h2>
+    <p>
+      We work to keep information accurate and source-backed, and we publish a
+      confidence label with each figure so the reliability is explicit. But we
+      do not guarantee that any figure is current at the moment you read it,
+      and we do not guarantee that the site is free of errors or omissions.
+      Sources change, and data may lag the market.
+    </p>
+    <p>
+      A confidence label of HIGH, MEDIUM or LOW describes how well a figure is
+      supported by its source at the time of publication — it is not a
+      guarantee of correctness, and a HIGH-confidence figure can still become
+      stale as the market moves.
+    </p>
+
+    <h2>8. Dangerous goods, certification and commodity-specific rules</h2>
+    <p>
+      Some commodities — including batteries, chemicals and other regulated or
+      dangerous goods — are subject to special classification, packaging,
+      labelling and documentation requirements. General information on this
+      site about such requirements (for example, SABER/SASO conformity for
+      Saudi Arabia, or UN dangerous-goods classification) is provided for
+      general awareness only and may be incomplete or out of date for your
+      specific product.
+    </p>
+    <p>
+      You are solely responsible for correctly classifying your goods,
+      declaring them accurately, and complying with all applicable dangerous-
+      goods, certification and customs requirements. Confirm the requirements
+      for your exact commodity with a qualified professional before shipping.
+    </p>
+
+    <h2>9. Currency and conversion</h2>
+    <p>
+      Cost figures may be shown in more than one currency. Where a figure is
+      converted, the conversion is indicative and based on the exchange rate
+      in effect at the time of publication. Actual settlement is in the
+      currency and at the rate agreed with the carrier or forwarder.
+    </p>
+
+    <h2>10. Force majeure and circumstances beyond control</h2>
+    <p>
+      Neither we nor any carrier can guarantee a transit time where events
+      outside anyone's control — weather, port closures, labour action,
+      customs holds, conflict or public health measures — intervene. Any
+      transit time on this site is an estimate under normal conditions and is
+      subject to such events.
+    </p>
+
+    <h2>11. No warranty</h2>
+    <p>
+      The site is provided on an "as is" and "as available" basis. To the
+      fullest extent permitted by law, {SITE_NAME} and its operator disclaim
+      all warranties, express or implied, including warranties of
+      merchantability, fitness for a particular purpose, accuracy and
+      non-infringement.
+    </p>
+    <p>
+      We make no warranty that the site will be available at all times, that
+      access will be uninterrupted or error-free, or that any defect will be
+      corrected. We may modify, suspend or withdraw the site, or any part of
+      it, at any time.
+    </p>
+
+    <h2>12. Limitation of liability</h2>
+    <p>
+      To the fullest extent permitted by law, {SITE_NAME} and its operator
+      shall not be liable for any direct, indirect, incidental, special,
+      consequential or punitive damages, or for any loss of profits, revenue,
+      data or goodwill, arising out of or related to your use of the site or
+      your reliance on its information. This includes, without limitation,
+      shipping delays, customs penalties, cargo loss or damage, price
+      differences and missed commercial opportunities.
+    </p>
+
+    <h2>13. Corrections channel</h2>
+    <p>
+      If you believe any figure or statement on this site is wrong or outdated,
+      we want to correct it. Report it through the{' '}
+      <a href="/corrections/">corrections page</a> or email{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. We review every
+      report and record corrections on the{' '}
+      <a href="/data-changelog/">data changelog</a>, so there is a visible
+      trail.
+    </p>
+
+    <h2>14. Changes to this disclaimer</h2>
+    <p>
+      We may update this disclaimer from time to time. The revised version is
+      posted on this page with a new "Last updated" date, and material changes
+      are announced on the <a href="/data-changelog/">data changelog</a>.
+    </p>
+
+    <h2>15. Governing law and severability</h2>
+    <p>
+      This disclaimer is governed by the laws of the People's Republic of
+      China, reflecting the location of the operator,{' '}
+      {ORGANIZATION.legalName}, in {ORGANIZATION.address.addressLocality},{' '}
+      {ORGANIZATION.address.addressRegion}. If any provision is found invalid
+      or unenforceable, it is limited or removed to the minimum extent
+      necessary, and the remaining provisions continue in full force and
+      effect.
+    </p>
+
+    <h2>16. Contact</h2>
+    <p>
+      Questions about this disclaimer:{' '}
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+    </p>
+    <p>
+      If you are unsure whether a figure on this site applies to your specific
+      shipment, ask the carrier or forwarder you are engaging — do not rely on
+      the site alone. The quickest way to get a shipment-specific answer is to
+      submit the <a href="/get-quote/">get-quote form</a>.
+    </p>
+    <p>
+      Related policies:{' '}
+      <a href="/terms-of-use/">Terms of Use</a> ·{' '}
+      <a href="/privacy-policy/">Privacy Policy</a> ·{' '}
+      <a href="/cookie-policy/">Cookie Policy</a> ·{' '}
+      <a href="/corrections/">Corrections</a>.
+    </p>
+    <p class="muted">Last updated: 23 October 2026</p>
+  </section>
+</BaseLayout>
